@@ -51,9 +51,13 @@ export const initialCustomers: Customer[] = [
 export const TX_TYPES = ["SATIŞ", "ALIŞ", "TAHSİLAT", "ÖDEME"] as const;
 export type TxType = (typeof TX_TYPES)[number];
 
-/** Gruba göre girilebilen işlem türleri: müşteride satış/alış/tahsilat, diğer gruplarda alış/ödeme */
+/**
+ * Gruba göre girilebilen işlem türleri.
+ * Müşteri: ürün sattığınızda SATIŞ, müşteri ödeme yaptığında TAHSİLAT.
+ * Tedarikçi ve diğer sekmeler: ürün aldığınızda ALIŞ, ödeme yaptığınızda ÖDEME.
+ */
 export function txTypesFor(kind: PartyKind): TxType[] {
-  return kind === "customer" ? ["SATIŞ", "ALIŞ", "TAHSİLAT"] : ["ALIŞ", "ÖDEME"];
+  return kind === "customer" ? ["SATIŞ", "TAHSİLAT"] : ["ALIŞ", "ÖDEME"];
 }
 
 export interface Transaction {
@@ -84,17 +88,17 @@ export const initialSuppliers: Customer[] = [
 
 export const initialTransactions: Transaction[] = [
   { id: "t1", customerId: "1", type: "SATIŞ", date: ago(0, 9, 30), description: "Kumaş satışı", amount: 9175 },
-  { id: "t2", customerId: "2", type: "ALIŞ", date: ago(0, 10, 15), description: "Aksesuar alımı", amount: 2990 },
+  { id: "t2", customerId: "s2", type: "ALIŞ", date: ago(0, 10, 15), description: "Aksesuar alımı", amount: 2990 },
   { id: "t3", customerId: "3", type: "SATIŞ", date: ago(0, 11, 0), description: "Takım satışı, 30 ve 20 cm", amount: 4880 },
   { id: "t4", customerId: "1", type: "TAHSİLAT", date: ago(0, 12, 0), description: "Kısmi ödeme", amount: 3000 },
-  { id: "t5", customerId: "4", type: "ALIŞ", date: ago(2, 11, 5), description: "Hammadde alımı", amount: 25000 },
+  { id: "t5", customerId: "s1", type: "ALIŞ", date: ago(2, 11, 5), description: "Hammadde alımı", amount: 25000 },
   { id: "t6", customerId: "5", type: "SATIŞ", date: ago(3, 16, 20), description: "Toplu sipariş", amount: 40200 },
-  { id: "t7", customerId: "6", type: "ALIŞ", date: ago(4, 13, 10), description: "Malzeme alımı", amount: 3360 },
+  { id: "t7", customerId: "s3", type: "ALIŞ", date: ago(4, 13, 10), description: "Malzeme alımı", amount: 3360 },
   { id: "t8", customerId: "7", type: "SATIŞ", date: ago(5, 8, 50), description: "Ürün satışı", amount: 13310 },
   { id: "t9", customerId: "5", type: "TAHSİLAT", date: ago(6, 14, 0), description: "Sipariş ödemesi", amount: 20000 },
   { id: "t10", customerId: "8", type: "SATIŞ", date: ago(12, 15, 45), description: "Kırtasiye siparişi", amount: 62760 },
   { id: "t11", customerId: "7", type: "TAHSİLAT", date: ago(15, 10, 0), description: "Ödeme", amount: 8000 },
-  { id: "t12", customerId: "3", type: "ALIŞ", date: ago(25, 9, 0), description: "Hammadde alımı", amount: 12000 },
+  { id: "t12", customerId: "s1", type: "ALIŞ", date: ago(25, 9, 0), description: "Hammadde alımı", amount: 12000 },
   { id: "t13", customerId: "2", type: "SATIŞ", date: ago(60, 14, 30), description: "Montaj hizmeti", amount: 18000 },
   { id: "t14", customerId: "4", type: "SATIŞ", date: ago(90, 13, 0), description: "Ürün satışı", amount: 54000 },
   { id: "t15", customerId: "6", type: "TAHSİLAT", date: ago(120, 11, 0), description: "Çek tahsilatı", amount: 5000 },
@@ -118,6 +122,7 @@ export const initialTransactions: Transaction[] = [
   { id: "t23", customerId: "1", type: "SATIŞ", date: ago(800, 10, 0), description: "Kumaş satışı", amount: 98000 },
   { id: "t24", customerId: "7", type: "SATIŞ", date: ago(1200, 10, 0), description: "Ürün satışı", amount: 76000 },
   { id: "t25", customerId: "3", type: "SATIŞ", date: ago(1600, 10, 0), description: "Takım satışı", amount: 54000 },
+  { id: "t26", customerId: "6", type: "SATIŞ", date: ago(140, 11, 0), description: "Kumaş satışı", amount: 15000 },
   { id: "ts11", customerId: "s1", type: "ALIŞ", date: ago(440, 11, 0), description: "Kumaş alımı", amount: 60000 },
   { id: "ts12", customerId: "s3", type: "ALIŞ", date: ago(810, 11, 0), description: "Ambalaj malzemesi", amount: 45000 },
   { id: "ts13", customerId: "s2", type: "ALIŞ", date: ago(1210, 11, 0), description: "Aksesuar alımı", amount: 30000 },
