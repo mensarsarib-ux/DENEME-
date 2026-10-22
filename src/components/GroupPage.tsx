@@ -20,6 +20,8 @@ export default function GroupPage({
   onNew,
   onSelectTab,
   onCreateTab,
+  onRenameTab,
+  onDeleteTab,
   onBack,
 }: {
   group: Group;
@@ -32,6 +34,8 @@ export default function GroupPage({
   onNew: () => void;
   onSelectTab: (id: string) => void;
   onCreateTab: (name: string) => void;
+  onRenameTab: (id: string, name: string) => void;
+  onDeleteTab: (id: string) => void;
   onBack: () => void;
 }) {
   const highlightRef = useRef<HTMLButtonElement>(null);
@@ -75,6 +79,8 @@ export default function GroupPage({
         active={group.id}
         onSelect={onSelectTab}
         onCreate={onCreateTab}
+        onRename={onRenameTab}
+        onDelete={onDeleteTab}
       />
 
       <div className="group-head">

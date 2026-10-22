@@ -86,6 +86,23 @@ export default function App() {
     go({ name: "group", id: group.id });
   }
 
+  function renameTab(id: PartyKind, name: string) {
+    setGroups((prev) => prev.map((g) => (g.id === id ? { ...g, name } : g)));
+  }
+
+  /**
+   * Sekmeyi, içindeki kayıtları ve bu kayıtların işlemlerini siler.
+   * Müşteriler ana ekranın parçası olduğu için sekme kalır, yalnızca içi boşaltılır.
+   */
+  function deleteTab(id: PartyKind) {
+    const doomed = new Set(parties.filter((p) => p.kind === id).map((p) => p.id));
+    setParties((prev) => prev.filter((p) => p.kind !== id));
+    setTransactions((prev) => prev.filter((t) => !doomed.has(t.customerId)));
+    if (id === "customer") return;
+    setGroups((prev) => prev.filter((g) => g.id !== id));
+    if (view.name === "group" && view.id === id) setView({ name: "home" });
+  }
+
   function go(next: View) {
     setAddedId(null);
     setView(next);
@@ -146,6 +163,8 @@ export default function App() {
           onNew={() => go({ name: "new", kind: group.id })}
           onSelectTab={openTab}
           onCreateTab={createTab}
+          onRenameTab={renameTab}
+          onDeleteTab={deleteTab}
           onBack={() => go({ name: "home" })}
         />
       );
@@ -164,6 +183,8 @@ export default function App() {
       onNewCustomer={() => go({ name: "new", kind: "customer" })}
       onSelectTab={openTab}
       onCreateTab={createTab}
+      onRenameTab={renameTab}
+      onDeleteTab={deleteTab}
     />
   );
 }

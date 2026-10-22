@@ -604,6 +604,29 @@ button {
   background: rgba(60, 143, 217, 0.12);
 }
 
+.party-tab {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  transition: transform 0.15s ease;
+}
+
+/* Basılı tutarken sekme hafifçe küçülür */
+.party-tab.is-pressing {
+  transform: scale(0.96);
+}
+
+.danger-btn {
+  width: 100%;
+  padding: 14px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--red);
+  color: #fff;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
 .party-tab-name {
   min-width: 0;
   overflow: hidden;
@@ -1390,6 +1413,10 @@ button {
   .action-sheet,
   .toast {
     animation: none;
+  }
+
+  .party-tab {
+    transition: none;
   }
 
   .keypad-wrap,

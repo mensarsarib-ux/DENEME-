@@ -57,6 +57,8 @@ export default function Dashboard({
   onNewCustomer,
   onSelectTab,
   onCreateTab,
+  onRenameTab,
+  onDeleteTab,
 }: {
   customers: Customer[];
   /** Müşteriler, Tedarikçiler ve kullanıcının sekmeleri */
@@ -69,6 +71,8 @@ export default function Dashboard({
   /** Müşteriler dışındaki bir sekmeye geçer */
   onSelectTab: (id: string) => void;
   onCreateTab: (name: string) => void;
+  onRenameTab: (id: string, name: string) => void;
+  onDeleteTab: (id: string) => void;
 }) {
   const [period, setPeriod] = useState<Period>("monthly");
   const [searchOpen, setSearchOpen] = useState(false);
@@ -284,6 +288,8 @@ export default function Dashboard({
             tabs={tabs}
             active="customer"
             onCreate={onCreateTab}
+            onRename={onRenameTab}
+            onDelete={onDeleteTab}
             onSelect={(id) => {
               if (id !== "customer") onSelectTab(id);
               else
@@ -295,9 +301,13 @@ export default function Dashboard({
           />
         )}
 
-        {searching && rows.length === 0 ? (
+        {rows.length === 0 ? (
           <div className="search-empty">
-            <p>“{query.trim()}” ile eşleşen müşteri yok.</p>
+            <p>
+              {searching
+                ? `“${query.trim()}” ile eşleşen müşteri yok.`
+                : "Henüz müşteri yok."}
+            </p>
             <button type="button" className="help-link" onClick={onNewCustomer}>
               Yeni müşteri ekle
             </button>
