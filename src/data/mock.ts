@@ -25,17 +25,60 @@ export const accounts: Account[] = [
 export interface Customer {
   id: string;
   name: string;
-  /** Pozitif: alacak, negatif: borç */
-  balance: number;
 }
 
 export const customers: Customer[] = [
-  { id: "1", name: "Ahmet Yılmaz Ticaret", balance: 9175 },
-  { id: "2", name: "Ayşe Demir Mobilya", balance: -2990 },
-  { id: "3", name: "Mehmet Kaya İnşaat", balance: 4880 },
-  { id: "4", name: "Zeynep Çelik Gıda", balance: -25000 },
-  { id: "5", name: "Ali Vural Lojistik", balance: 402000 },
-  { id: "6", name: "Elif Arslan Tekstil", balance: -3360 },
-  { id: "7", name: "Burak Öztürk Market", balance: 133100 },
-  { id: "8", name: "Derya Aydın Kırtasiye", balance: 62760 },
+  { id: "1", name: "Ahmet Yılmaz Ticaret" },
+  { id: "2", name: "Ayşe Demir Mobilya" },
+  { id: "3", name: "Mehmet Kaya İnşaat" },
+  { id: "4", name: "Zeynep Çelik Gıda" },
+  { id: "5", name: "Ali Vural Lojistik" },
+  { id: "6", name: "Elif Arslan Tekstil" },
+  { id: "7", name: "Burak Öztürk Market" },
+  { id: "8", name: "Derya Aydın Kırtasiye" },
 ];
+
+export const TX_TYPES = ["SATIŞ", "ALIŞ", "TAHSİLAT"] as const;
+export type TxType = (typeof TX_TYPES)[number];
+
+export interface Transaction {
+  id: string;
+  customerId: string;
+  type: TxType;
+  /** ISO tarih-saat */
+  date: string;
+  description: string;
+  amount: number;
+}
+
+export const transactions: Transaction[] = [
+  { id: "t1", customerId: "1", type: "SATIŞ", date: "2026-09-28T10:15:00", description: "Kumaş satışı", amount: 9175 },
+  { id: "t2", customerId: "2", type: "ALIŞ", date: "2026-09-27T09:40:00", description: "Aksesuar alımı", amount: 2990 },
+  { id: "t3", customerId: "3", type: "SATIŞ", date: "2026-09-30T14:32:00", description: "Takım satışı, 30 ve 20 cm", amount: 4880 },
+  { id: "t4", customerId: "4", type: "ALIŞ", date: "2026-09-25T11:05:00", description: "Hammadde alımı", amount: 25000 },
+  { id: "t5", customerId: "5", type: "SATIŞ", date: "2026-09-29T16:20:00", description: "Toplu sipariş", amount: 402000 },
+  { id: "t6", customerId: "6", type: "ALIŞ", date: "2026-09-24T13:10:00", description: "Malzeme alımı", amount: 3360 },
+  { id: "t7", customerId: "7", type: "SATIŞ", date: "2026-09-26T08:50:00", description: "Ürün satışı", amount: 133100 },
+  { id: "t8", customerId: "8", type: "SATIŞ", date: "2026-09-23T15:45:00", description: "Kırtasiye siparişi", amount: 62760 },
+];
+
+/** Alacak yönü: satış bakiyeyi artırır; alış ve tahsilat azaltır. */
+const SIGN: Record<TxType, number> = {
+  SATIŞ: 1,
+  ALIŞ: -1,
+  TAHSİLAT: -1,
+};
+
+export function transactionsOf(customerId: string): Transaction[] {
+  return transactions
+    .filter((t) => t.customerId === customerId)
+    .sort((a, b) => b.date.localeCompare(a.date));
+}
+
+/** Pozitif: alacak, negatif: borç */
+export function balanceOf(customerId: string): number {
+  return transactionsOf(customerId).reduce(
+    (sum, t) => sum + SIGN[t.type] * t.amount,
+    0,
+  );
+}

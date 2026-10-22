@@ -452,3 +452,242 @@ button {
     transition: none;
   }
 }
+
+/* ---------- Müşteri sayfası ---------- */
+
+.cust-page {
+  max-width: 480px;
+  min-height: 100dvh;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  background: #1f252d;
+}
+
+.cust-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: #161b22;
+}
+
+.round-btn {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border: 0;
+  border-radius: 50%;
+  background: #262d37;
+  display: grid;
+  place-items: center;
+}
+
+.cust-title {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cust-avatar {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: #2b6b4f;
+  color: #7fe0a8;
+  display: grid;
+  place-items: center;
+}
+
+.cust-name {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+}
+
+.cust-name strong {
+  overflow-wrap: anywhere;
+  font-size: 1rem;
+}
+
+.cust-name small {
+  color: #5fbf87;
+  font-size: 0.8rem;
+}
+
+.cust-tools {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 999px;
+  background: #262d37;
+}
+
+.cust-tools button {
+  width: 40px;
+  height: 36px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--blue);
+  display: grid;
+  place-items: center;
+}
+
+.tx-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.tx {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--line);
+  background: #161b22;
+}
+
+.tx-info {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tx-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: baseline;
+  font-size: 0.85rem;
+}
+
+.tx-meta span {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.tx-info p {
+  margin: 0;
+  color: #c9d1db;
+  font-size: 0.95rem;
+  overflow-wrap: anywhere;
+}
+
+.tx-amount {
+  white-space: nowrap;
+  font-size: 1.1rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.tx-empty {
+  padding: 24px 16px;
+  color: var(--muted);
+  text-align: center;
+}
+
+.tx-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: #1f252d;
+  color: var(--muted);
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+}
+
+.tx-total strong {
+  color: var(--text);
+  font-size: 1.2rem;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.help-link {
+  align-self: flex-end;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 16px;
+  border: 0;
+  background: transparent;
+  color: var(--blue);
+  font-size: 0.95rem;
+}
+
+.entry-bar {
+  margin-top: auto;
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px 10px 12px;
+  background: #3e8a5f;
+}
+
+.entry-input {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+  padding: 4px;
+  border-radius: 14px;
+  background: #15221b;
+}
+
+.entry-input input {
+  flex: 1;
+  min-width: 0;
+  padding: 12px;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 1.1rem;
+  outline: none;
+}
+
+.entry-input input::placeholder {
+  color: #5f7d6c;
+}
+
+.save-btn {
+  border: 0;
+  border-radius: 10px;
+  padding: 0 18px;
+  background: #2f6a49;
+  color: #b8e6cb;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.entry-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+}
+
+.entry-tabs button {
+  border: 0;
+  background: transparent;
+  padding: 8px 4px;
+  border-radius: 10px;
+  color: #d6ecdf;
+  font-size: 0.9rem;
+  letter-spacing: 0.02em;
+}
+
+.entry-tabs button.is-active {
+  background: #15221b;
+  color: #fff;
+  font-weight: 700;
+}

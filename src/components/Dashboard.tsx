@@ -1,22 +1,19 @@
 import { useState } from "react";
 import {
   accounts,
+  balanceOf,
   customers,
   summaryByPeriod,
   type Period,
 } from "../data/mock";
+import { money } from "../lib/format";
+import { Svg } from "./Icon";
 
 const PERIODS: { value: Period; label: string }[] = [
   { value: "monthly", label: "Aylık" },
   { value: "weekly", label: "Haftalık" },
   { value: "yearly", label: "Yıllık" },
 ];
-
-const money = new Intl.NumberFormat("tr-TR", {
-  style: "currency",
-  currency: "TRY",
-  minimumFractionDigits: 2,
-});
 
 const now = new Date();
 
@@ -32,30 +29,27 @@ function periodTitle(period: Period): string {
 
 /** Sol kenar çubuğu. Şimdilik yalnızca görsel; işlevleri sonraki adımlarda eklenecek. */
 const NAV_ICONS = [
-  {
-    label: "Takvim",
-    path: "M4 6h16v14H4zM4 10h16M8 3v4M16 3v4",
-  },
-  {
-    label: "Defter",
-    path: "M6 3h12v18H6zM9 8h6M9 12h6M9 16h4",
-  },
-  {
-    label: "Grafik",
-    path: "M5 20V12M12 20V5M19 20v-9",
-  },
-  {
-    label: "Pasta",
-    path: "M12 3v9h9a9 9 0 1 1-9-9z",
-  },
+  { label: "Takvim", path: "M4 6h16v14H4zM4 10h16M8 3v4M16 3v4" },
+  { label: "Defter", path: "M6 3h12v18H6zM9 8h6M9 12h6M9 16h4" },
+  { label: "Grafik", path: "M5 20V12M12 20V5M19 20v-9" },
+  { label: "Pasta", path: "M12 3v9h9a9 9 0 1 1-9-9z" },
 ];
 
-export default function Dashboard() {
+export default function Dashboard({
+  onSelectCustomer,
+}: {
+  onSelectCustomer: (id: string) => void;
+}) {
   const [period, setPeriod] = useState<Period>("monthly");
   const summary = summaryByPeriod[period];
   const net = summary.income - summary.expense;
   const maxFlow = Math.max(summary.income, summary.expense, 1);
-  const customersTotal = customers.reduce((sum, c) => sum + c.balance, 0);
+
+  const customerRows = customers.map((c) => ({
+    ...c,
+    balance: balanceOf(c.id),
+  }));
+  const customersTotal = customerRows.reduce((sum, c) => sum + c.balance, 0);
 
   return (
     <div className="app">
@@ -170,9 +164,9 @@ export default function Dashboard() {
           <span className="group-total">{money.format(customersTotal)}</span>
         </div>
         <ul className="list">
-          {customers.map((c) => (
+          {customerRows.map((c) => (
             <li key={c.id}>
-              <button className="row">
+              <button className="row" onClick={() => onSelectCustomer(c.id)}>
                 <span className="row-name">{c.name}</span>
                 <span
                   className={`row-amount ${c.balance < 0 ? "is-debt" : ""}`}
@@ -185,23 +179,5 @@ export default function Dashboard() {
         </ul>
       </section>
     </div>
-  );
-}
-
-function Svg({ d }: { d: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      width="22"
-      height="22"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d={d} />
-    </svg>
   );
 }
