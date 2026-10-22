@@ -1,39 +1,18 @@
-import {
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-  type CSSProperties,
-} from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
   accounts,
   balanceOf,
-  totalsFor,
   type Customer,
-  type Period,
-  type Totals,
   type Transaction,
 } from "../data/mock";
-import { money, moneyRound } from "../lib/format";
+import { money } from "../lib/format";
 import { findMatch, type MatchRange } from "../lib/search";
 import ChartCarousel from "./ChartCarousel";
 import Highlight from "./Highlight";
 import MonthlyChart from "./MonthlyChart";
+import PeriodChart from "./PeriodChart";
 import PartyTabs, { type TabInfo } from "./PartyTabs";
 import { Svg } from "./Icon";
-
-const PERIODS: { value: Period; label: string }[] = [
-  { value: "daily", label: "Günlük" },
-  { value: "weekly", label: "Haftalık" },
-  { value: "monthly", label: "Aylık" },
-  { value: "yearly", label: "Yıllık" },
-];
-
-const COLUMNS: { key: keyof Totals; label: string }[] = [
-  { key: "alis", label: "ALIŞ" },
-  { key: "satis", label: "SATIŞ" },
-  { key: "tahsilat", label: "TAHSİLAT" },
-];
 
 /** Etkin sekmeye göre değişen metinler */
 function labelsFor(kind: string) {
@@ -99,7 +78,6 @@ export default function Dashboard({
   onRenameTab: (id: string, name: string) => void;
   onDeleteTab: (id: string) => void;
 }) {
-  const [period, setPeriod] = useState<Period>("monthly");
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
   const highlightRef = useRef<HTMLButtonElement>(null);
@@ -117,9 +95,6 @@ export default function Dashboard({
   useEffect(() => {
     highlightRef.current?.scrollIntoView({ block: "center" });
   }, []);
-
-  const totals = totalsFor(transactions, period);
-  const maxFlow = Math.max(totals.alis, totals.satis, totals.tahsilat, 1);
 
   const labels = labelsFor(activeTab);
   const activeName =
@@ -231,47 +206,10 @@ export default function Dashboard({
 
           {/* Özet bölümü: yana kaydırılan grafikler */}
           <section className="summary">
-            <ChartCarousel labels={["Gelir ve gider", "Alış, satış ve tahsilat"]}>
+            <ChartCarousel labels={["Aylık gelir ve gider", "Dönemlere göre gelir ve gider"]}>
               <MonthlyChart transactions={transactions} />
 
-              <div className="chart-card">
-                <div className="chart-head">
-                  <div className="segmented" role="tablist" aria-label="Dönem">
-                    {PERIODS.map((p) => (
-                      <button
-                        key={p.value}
-                        role="tab"
-                        aria-selected={period === p.value}
-                        className={period === p.value ? "is-active" : ""}
-                        onClick={() => setPeriod(p.value)}
-                      >
-                        {p.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="chart">
-                  {COLUMNS.map((col) => (
-                    <div key={col.key} className={`col col-${col.key}`}>
-                      <span className="col-value">
-                        {moneyRound.format(totals[col.key])}
-                      </span>
-                      <div className="col-track">
-                        <div
-                          className="col-bar"
-                          style={
-                            {
-                              "--h": `${Math.max((totals[col.key] / maxFlow) * 100, 3)}%`,
-                            } as CSSProperties
-                          }
-                        />
-                      </div>
-                      <span className="col-label">{col.label}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
+              <PeriodChart transactions={transactions} />
             </ChartCarousel>
           </section>
         </>
