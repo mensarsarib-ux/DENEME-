@@ -29,7 +29,7 @@ export default function PartyTabs({
 
   // Çok sekme olunca seçili sekme görünür alana kaydırılır
   useEffect(() => {
-    activeRef.current?.scrollIntoView({ block: "nearest", inline: "center" });
+    activeRef.current?.scrollIntoView({ block: "nearest", inline: "nearest" });
   }, [active]);
 
   useEffect(() => {
@@ -86,15 +86,16 @@ export default function PartyTabs({
               </span>
             </button>
           ))}
+          {/* Sekme satırının sonunda: sağa kaydırınca görünür */}
+          <button
+            className="party-add"
+            type="button"
+            aria-label="Yeni sekme ekle"
+            onClick={() => setCreating(true)}
+          >
+            +
+          </button>
         </div>
-        <button
-          className="party-add"
-          type="button"
-          aria-label="Yeni sekme ekle"
-          onClick={() => setCreating(true)}
-        >
-          +
-        </button>
       </div>
 
       {creating && (
