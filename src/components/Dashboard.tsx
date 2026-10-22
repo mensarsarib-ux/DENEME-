@@ -208,7 +208,6 @@ export default function Dashboard({
               <CompanyLogo logo={profile.logo} name={profile.name} />
               <span className="company-text">
                 <strong>{profile.name || t("Hesabım")}</strong>
-                <small>{profile.owner || profile.email || t("Şirket adınız")}</small>
               </span>
             </div>
             <div className="topbar-actions">
