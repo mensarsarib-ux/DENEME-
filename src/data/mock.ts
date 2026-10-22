@@ -161,9 +161,23 @@ export interface Totals {
   tahsilat: number;
 }
 
+/** Bugünün ayına göre `offset` ay önceki/sonraki ayın başlangıcı (dahil) ve bitişi (hariç). 0: bu ay. */
+export function monthRange(offset: number, now = new Date()): [Date, Date] {
+  const y = now.getFullYear();
+  const m = now.getMonth() + offset;
+  return [new Date(y, m, 1), new Date(y, m + 1, 1)];
+}
+
 /** Seçilen dönemdeki alış, satış ve tahsilat toplamları */
 export function totalsFor(list: Transaction[], period: Period): Totals {
-  const [start, end] = periodRange(period);
+  return totalsBetween(list, periodRange(period));
+}
+
+/** Verilen tarih aralığındaki alış, satış ve tahsilat toplamları */
+export function totalsBetween(
+  list: Transaction[],
+  [start, end]: [Date, Date],
+): Totals {
   const totals: Totals = { alis: 0, satis: 0, tahsilat: 0 };
   for (const t of list) {
     const at = new Date(t.date);

@@ -349,18 +349,207 @@ button {
 }
 
 .chart-card {
+  flex: 1;
+  min-width: 0;
   padding: 12px 16px 14px;
   border-radius: 20px;
+  border: 1px solid rgba(60, 143, 217, 0.2);
   background: rgba(10, 22, 30, 0.6);
-  box-shadow: 0 0 0 1px rgba(60, 143, 217, 0.15), 0 10px 30px rgba(0, 0, 0, 0.25);
 }
 
-.chart-title {
+.chart-head {
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* ---------- Grafik geçidi ---------- */
+
+.carousel-track {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  border-radius: 20px;
+  outline-offset: 2px;
+}
+
+.carousel-track::-webkit-scrollbar {
+  display: none;
+}
+
+.carousel-slide {
+  flex: 0 0 100%;
+  min-width: 0;
+  display: flex;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+.carousel-dots {
+  display: flex;
+  justify-content: center;
+  gap: 2px;
+  margin-top: 4px;
+}
+
+.carousel-dot {
+  width: 22px;
+  height: 18px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  display: grid;
+  place-items: center;
+}
+
+.carousel-dot::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.3);
+  transition:
+    width 0.25s ease,
+    background 0.25s ease;
+}
+
+.carousel-dot.is-active::before {
+  width: 18px;
+  background: var(--blue);
+}
+
+/* ---------- Aylık gelir ve gider ---------- */
+
+.month-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.month-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.month-nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+
+.month-nav button {
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text);
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.month-nav button:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.month-title {
+  padding: 0 4px;
   font-size: 0.9rem;
   font-weight: 600;
   letter-spacing: 0.02em;
-  padding-bottom: 8px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  white-space: nowrap;
+}
+
+.month-net {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  min-width: 0;
+}
+
+.month-net-label {
+  color: var(--muted);
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+}
+
+.month-net strong {
+  color: var(--blue);
+  font-size: 1.2rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.month-net strong.is-loss {
+  color: var(--red);
+}
+
+.flow-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.flow-row-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 5px;
+}
+
+.flow-label {
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+}
+
+.flow-amount {
+  font-size: 0.95rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.flow-in .flow-label,
+.flow-in .flow-amount {
+  color: #6db3f0;
+}
+
+.flow-out .flow-label,
+.flow-out .flow-amount {
+  color: #f0867b;
+}
+
+.flow-track {
+  height: 12px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.07);
+  overflow: hidden;
+}
+
+.flow-fill {
+  height: 100%;
+  border-radius: 6px;
+  transition: width 0.4s ease;
+}
+
+.flow-in .flow-fill {
+  background: linear-gradient(90deg, #2f78bd, #5fb0f5);
+}
+
+.flow-out .flow-fill {
+  background: linear-gradient(90deg, #c4463a, #f08a7e);
+}
+
+.month-note {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.75rem;
 }
 
 .chart {
@@ -1339,7 +1528,9 @@ button {
     animation: none;
   }
 
-  .col-bar {
+  .col-bar,
+  .flow-fill,
+  .carousel-dot::before {
     transition: none;
   }
 

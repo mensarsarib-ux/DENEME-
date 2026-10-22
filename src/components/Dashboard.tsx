@@ -16,7 +16,9 @@ import {
 } from "../data/mock";
 import { money, moneyRound } from "../lib/format";
 import { findMatch, type MatchRange } from "../lib/search";
+import ChartCarousel from "./ChartCarousel";
 import Highlight from "./Highlight";
+import MonthlyChart from "./MonthlyChart";
 import PartyTabs, { type TabInfo } from "./PartyTabs";
 import { Svg } from "./Icon";
 
@@ -32,19 +34,6 @@ const COLUMNS: { key: keyof Totals; label: string }[] = [
   { key: "satis", label: "SATIŞ" },
   { key: "tahsilat", label: "TAHSİLAT" },
 ];
-
-const now = new Date();
-
-function periodTitle(period: Period): string {
-  if (period === "daily") return "BUGÜN";
-  if (period === "weekly") return "BU HAFTA";
-  if (period === "monthly") {
-    return now
-      .toLocaleDateString("tr-TR", { month: "long" })
-      .toLocaleUpperCase("tr-TR");
-  }
-  return String(now.getFullYear());
-}
 
 /** Etkin sekmeye göre değişen metinler */
 function labelsFor(kind: string) {
@@ -240,46 +229,50 @@ export default function Dashboard({
             </button>
           </div>
 
-          {/* Özet bölümü: dönem seçici + grafik */}
+          {/* Özet bölümü: yana kaydırılan grafikler */}
           <section className="summary">
-            <div className="segmented" role="tablist" aria-label="Dönem">
-              {PERIODS.map((p) => (
-                <button
-                  key={p.value}
-                  role="tab"
-                  aria-selected={period === p.value}
-                  className={period === p.value ? "is-active" : ""}
-                  onClick={() => setPeriod(p.value)}
-                >
-                  {p.label}
-                </button>
-              ))}
-            </div>
+            <ChartCarousel labels={["Gelir ve gider", "Alış, satış ve tahsilat"]}>
+              <MonthlyChart transactions={transactions} />
 
-            <div className="chart-card">
-              <div className="chart-title">{periodTitle(period)}</div>
-
-              <div className="chart">
-                {COLUMNS.map((col) => (
-                  <div key={col.key} className={`col col-${col.key}`}>
-                    <span className="col-value">
-                      {moneyRound.format(totals[col.key])}
-                    </span>
-                    <div className="col-track">
-                      <div
-                        className="col-bar"
-                        style={
-                          {
-                            "--h": `${Math.max((totals[col.key] / maxFlow) * 100, 3)}%`,
-                          } as CSSProperties
-                        }
-                      />
-                    </div>
-                    <span className="col-label">{col.label}</span>
+              <div className="chart-card">
+                <div className="chart-head">
+                  <div className="segmented" role="tablist" aria-label="Dönem">
+                    {PERIODS.map((p) => (
+                      <button
+                        key={p.value}
+                        role="tab"
+                        aria-selected={period === p.value}
+                        className={period === p.value ? "is-active" : ""}
+                        onClick={() => setPeriod(p.value)}
+                      >
+                        {p.label}
+                      </button>
+                    ))}
                   </div>
-                ))}
+                </div>
+
+                <div className="chart">
+                  {COLUMNS.map((col) => (
+                    <div key={col.key} className={`col col-${col.key}`}>
+                      <span className="col-value">
+                        {moneyRound.format(totals[col.key])}
+                      </span>
+                      <div className="col-track">
+                        <div
+                          className="col-bar"
+                          style={
+                            {
+                              "--h": `${Math.max((totals[col.key] / maxFlow) * 100, 3)}%`,
+                            } as CSSProperties
+                          }
+                        />
+                      </div>
+                      <span className="col-label">{col.label}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
+            </ChartCarousel>
           </section>
         </>
       )}
