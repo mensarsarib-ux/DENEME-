@@ -50,6 +50,8 @@ export default function CustomerPage({
   const [dateValue, setDateValue] = useState<string | null>(null);
   const [category, setCategory] = useState("");
   const [description, setDescription] = useState("");
+  // "+" ile bekleyen listeye alınan, henüz kaydedilmemiş işlemler
+  const [drafts, setDrafts] = useState<Transaction[]>([]);
 
   const history = transactionsOf(transactions, customer.id);
   const value = parseAmount(amount);
@@ -60,23 +62,47 @@ export default function CustomerPage({
     setCategory("");
   }
 
-  function save() {
-    if (!canSave) return;
-    onAdd({
-      id: `t${Date.now()}`,
+  function resetFields() {
+    setAmount("");
+    setDescription("");
+    setCategory("");
+    setDateValue(null);
+  }
+
+  /** Formdaki mevcut değerlerden işlem üretir; tutar geçersizse null */
+  function buildCurrent(): Transaction | null {
+    if (value === null || value <= 0) return null;
+    return {
+      id: `t${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
       customerId: customer.id,
       type: txType,
       date: dateValue ? new Date(dateValue).toISOString() : new Date().toISOString(),
       category: category || undefined,
       description,
       amount: value,
-    });
-    setAmount("");
-    setDescription("");
-    setCategory("");
-    setDateValue(null);
+    };
+  }
+
+  /** "+": mevcut işlemi bekleyen listeye al ve formu yeni işlem için temizle */
+  function stage() {
+    const tx = buildCurrent();
+    if (!tx) return;
+    setDrafts((prev) => [...prev, tx]);
+    resetFields();
+  }
+
+  /** Ana buton: bekleyen işlemleri ve formdaki işlemi birlikte kaydet */
+  function save() {
+    const current = buildCurrent();
+    const all = current ? [...drafts, current] : drafts;
+    if (all.length === 0) return;
+    all.forEach(onAdd);
+    setDrafts([]);
+    resetFields();
     setKeypadOpen(false);
   }
+
+  const pendingCount = drafts.length + (canSave ? 1 : 0);
 
   return (
     <div className="cust-page">
@@ -218,10 +244,48 @@ export default function CustomerPage({
           >
             {amount || "0"}
           </button>
-          <button className="save-btn" type="button" disabled={!canSave} onClick={save}>
-            {txType}
+          <button
+            className="add-btn"
+            type="button"
+            aria-label="Bekleyen listeye ekle"
+            disabled={!canSave}
+            onClick={stage}
+          >
+            <Svg d="M12 5v14M5 12h14" />
+          </button>
+          <button
+            className="save-btn"
+            type="button"
+            disabled={pendingCount === 0}
+            onClick={save}
+          >
+            {drafts.length > 0 ? `KAYDET (${pendingCount})` : txType}
           </button>
         </div>
+
+        {drafts.length > 0 && (
+          <div className="drafts" role="list" aria-label="Bekleyen işlemler">
+            {drafts.map((d) => (
+              <span
+                key={d.id}
+                role="listitem"
+                className="draft-chip"
+                style={{ "--chip": ACCENT[d.type] } as CSSProperties}
+              >
+                <strong>{d.type}</strong> {money.format(d.amount)}
+                <button
+                  type="button"
+                  aria-label="Bekleyen işlemi kaldır"
+                  onClick={() =>
+                    setDrafts((prev) => prev.filter((x) => x.id !== d.id))
+                  }
+                >
+                  ×
+                </button>
+              </span>
+            ))}
+          </div>
+        )}
 
         <div className="entry-tabs" role="tablist" aria-label="İşlem türü">
           {TX_TYPES.map((type) => (
