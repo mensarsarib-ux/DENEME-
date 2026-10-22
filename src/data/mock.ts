@@ -9,8 +9,7 @@ export interface Account {
 }
 
 export const accounts: Account[] = [
-  { id: "cash", name: "Nakit (Kasa)", balance: 117866 },
-  { id: "bank", name: "Banka hesabım", balance: 67153 },
+  { id: "cash", name: "Kasa", balance: 117866 },
 ];
 
 export interface Customer {

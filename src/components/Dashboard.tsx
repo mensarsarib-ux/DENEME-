@@ -160,9 +160,6 @@ export default function Dashboard({
       <section className="sheet">
         <div className="sheet-handle" aria-hidden="true" />
 
-        <div className="group-head">
-          <span>HESAPLAR</span>
-        </div>
         <ul className="list">
           {accounts.map((a) => (
             <li key={a.id}>
