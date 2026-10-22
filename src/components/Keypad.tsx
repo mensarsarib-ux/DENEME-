@@ -2,18 +2,7 @@ import { Svg } from "./Icon";
 
 const MAX_LENGTH = 14;
 
-/** Sayısal klavye düzeni: rakamlar ve altlarındaki harf grupları */
-const DIGITS: { key: string; letters?: string }[] = [
-  { key: "1" },
-  { key: "2", letters: "ABC" },
-  { key: "3", letters: "DEF" },
-  { key: "4", letters: "GHI" },
-  { key: "5", letters: "JKL" },
-  { key: "6", letters: "MNO" },
-  { key: "7", letters: "PQRS" },
-  { key: "8", letters: "TUV" },
-  { key: "9", letters: "WXYZ" },
-];
+const DIGITS = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
 
 /** Tutar girişi için ekran tuş takımı. Değer "12,50" gibi metin olarak tutulur. */
 export default function Keypad({
@@ -42,10 +31,9 @@ export default function Keypad({
 
   return (
     <div className="keypad" role="group" aria-label="Tuş takımı">
-      {DIGITS.map(({ key, letters }) => (
+      {DIGITS.map((key) => (
         <button key={key} type="button" onClick={() => press(key)}>
           <span className="key-num">{key}</span>
-          {letters && <span className="key-letters">{letters}</span>}
         </button>
       ))}
       <button

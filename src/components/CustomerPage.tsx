@@ -49,8 +49,6 @@ export default function CustomerPage({
   const [keypadOpen, setKeypadOpen] = useState(true);
   const [dateValue, setDateValue] = useState<string | null>(null);
   const [description, setDescription] = useState("");
-  // "+" ile bekleyen listeye alınan, henüz kaydedilmemiş işlemler
-  const [drafts, setDrafts] = useState<Transaction[]>([]);
   // Az önce kaydedilen işlemler: listede kaydırılıp kısa süre vurgulanır
   const [justAdded, setJustAdded] = useState<string[]>([]);
   const newRowRef = useRef<HTMLLIElement>(null);
@@ -96,26 +94,14 @@ export default function CustomerPage({
     };
   }
 
-  /** "+": mevcut işlemi bekleyen listeye al ve formu yeni işlem için temizle */
-  function stage() {
+  /** Formdaki işlemi kaydet */
+  function save() {
     const tx = buildCurrent();
     if (!tx) return;
-    setDrafts((prev) => [...prev, tx]);
+    onAdd(tx);
+    setJustAdded([tx.id]);
     resetFields();
   }
-
-  /** Ana buton: bekleyen işlemleri ve formdaki işlemi birlikte kaydet */
-  function save() {
-    const current = buildCurrent();
-    const all = current ? [...drafts, current] : drafts;
-    if (all.length === 0) return;
-    all.forEach(onAdd);
-    setJustAdded(all.map((t) => t.id));
-    setDrafts([]);
-    resetFields();
-  }
-
-  const pendingCount = drafts.length + (canSave ? 1 : 0);
 
   return (
     <div className="cust-page">
@@ -257,47 +243,14 @@ export default function CustomerPage({
             {amount || "0"}
           </button>
           <button
-            className="add-btn"
-            type="button"
-            aria-label="Bekleyen listeye ekle"
-            disabled={!canSave}
-            onClick={stage}
-          >
-            <Svg d="M12 5v14M5 12h14" />
-          </button>
-          <button
             className="save-btn"
             type="button"
-            disabled={pendingCount === 0}
+            disabled={!canSave}
             onClick={save}
           >
-            {drafts.length > 0 ? `KAYDET (${pendingCount})` : txType}
+            {txType}
           </button>
         </div>
-
-        {drafts.length > 0 && (
-          <div className="drafts" role="list" aria-label="Bekleyen işlemler">
-            {drafts.map((d) => (
-              <span
-                key={d.id}
-                role="listitem"
-                className="draft-chip"
-                style={{ "--chip": ACCENT[d.type].color } as CSSProperties}
-              >
-                <strong>{d.type}</strong> {money.format(d.amount)}
-                <button
-                  type="button"
-                  aria-label="Bekleyen işlemi kaldır"
-                  onClick={() =>
-                    setDrafts((prev) => prev.filter((x) => x.id !== d.id))
-                  }
-                >
-                  ×
-                </button>
-              </span>
-            ))}
-          </div>
-        )}
 
         <div className="entry-tabs" role="tablist" aria-label="İşlem türü">
           {TX_TYPES.map((type) => (
