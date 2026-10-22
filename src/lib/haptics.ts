@@ -1,29 +1,15 @@
+import { createBus, scheduleSound, type SoundKind } from "./sounds";
+
 /**
  * Dokunma geri bildirimi: kısa bir ses ve titreşim. Görsel kısım (basılan düğmenin parlaması
  * ve küçülmesi) stil dosyasındaki :active kurallarıyla verilir.
- * - Ses: Web Audio ile üretilen çok kısa tıklama sesleri. Tarayıcılar sesi ilk dokunuştan sonra açar.
+ * - Ses: Web Audio ile üretilen tok tuş sesleri ve kaydetme çanı (bkz. sounds.ts). Tarayıcılar sesi ilk dokunuştan sonra açar.
  * - Titreşim: Android ve masaüstü Chrome'da Titreşim API'si. iPhone Safari bu API'yi desteklemez;
  *   iOS 17.4+ için gizli bir "switch" anahtarı en iyi çabayla denenir ve çerçeve ya da uygulama
  *   içi tarayıcıda çalışmayabilir.
  * Hiçbiri desteklenmiyorsa hiçbir şey olmaz, uygulama normal çalışır.
  */
-export type Haptic = "light" | "medium" | "success" | "warning";
-
-/** Her tür için [frekans Hz, başlangıç sn, süre sn] notaları */
-const SOUNDS: Record<Haptic, [number, number, number][]> = {
-  light: [[1400, 0, 0.03]],
-  medium: [[800, 0, 0.05]],
-  success: [
-    [660, 0, 0.07],
-    [990, 0.08, 0.09],
-  ],
-  warning: [
-    [300, 0, 0.08],
-    [220, 0.09, 0.12],
-  ],
-};
-
-const VOLUME = 0.07;
+export type Haptic = SoundKind;
 
 let audio: AudioContext | null = null;
 
@@ -52,23 +38,14 @@ if (typeof document !== "undefined") {
   });
 }
 
+/** Ses hattı (yankı + sıkıştırıcı), ses motoru oluşturulunca bir kez kurulur */
+let bus: AudioNode | null = null;
+
 function playSound(kind: Haptic) {
   const ctx = getAudio();
   if (!ctx) return;
-  const now = ctx.currentTime;
-  for (const [frequency, offset, duration] of SOUNDS[kind]) {
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    const at = now + offset;
-    osc.type = "sine";
-    osc.frequency.value = frequency;
-    gain.gain.setValueAtTime(0, at);
-    gain.gain.linearRampToValueAtTime(VOLUME, at + 0.004);
-    gain.gain.exponentialRampToValueAtTime(0.0001, at + duration);
-    osc.connect(gain).connect(ctx.destination);
-    osc.start(at);
-    osc.stop(at + duration + 0.02);
-  }
+  if (!bus) bus = createBus(ctx);
+  scheduleSound(ctx, bus, kind, ctx.currentTime);
 }
 
 /** Milisaniye cinsinden titreşim desenleri */
