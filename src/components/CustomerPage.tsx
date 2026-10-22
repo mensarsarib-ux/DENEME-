@@ -46,7 +46,8 @@ export default function CustomerPage({
 }) {
   const [txType, setTxType] = useState<TxType>("SATIŞ");
   const [amount, setAmount] = useState("");
-  const [keypadOpen, setKeypadOpen] = useState(false);
+  // Sayfa tuş takımı açık gelir; kayıttan sonra da kapanmaz
+  const [keypadOpen, setKeypadOpen] = useState(true);
   const [dateValue, setDateValue] = useState<string | null>(null);
   const [category, setCategory] = useState("");
   const [description, setDescription] = useState("");
@@ -55,6 +56,7 @@ export default function CustomerPage({
   // Az önce kaydedilen işlemler: listede kaydırılıp kısa süre vurgulanır
   const [justAdded, setJustAdded] = useState<string[]>([]);
   const newRowRef = useRef<HTMLLIElement>(null);
+  const entryRef = useRef<HTMLElement>(null);
 
   const history = transactionsOf(transactions, customer.id);
   const value = parseAmount(amount);
@@ -63,8 +65,18 @@ export default function CustomerPage({
     .reverse()
     .find((t) => justAdded.includes(t.id))?.id;
 
+  // Eklenen satır, alttaki giriş panelinin arkasında kalmayacak şekilde görünür yapılır
   useEffect(() => {
-    newRowRef.current?.scrollIntoView({ block: "center", behavior: "smooth" });
+    const row = newRowRef.current;
+    const panel = entryRef.current;
+    if (!row || !panel) return;
+    const rect = row.getBoundingClientRect();
+    const visibleBottom = panel.getBoundingClientRect().top - 12;
+    if (rect.bottom > visibleBottom) {
+      window.scrollBy({ top: rect.bottom - visibleBottom, behavior: "smooth" });
+    } else if (rect.top < 0) {
+      window.scrollBy({ top: rect.top - 12, behavior: "smooth" });
+    }
   }, [justAdded]);
 
   function changeType(type: TxType) {
@@ -110,7 +122,6 @@ export default function CustomerPage({
     setJustAdded(all.map((t) => t.id));
     setDrafts([]);
     resetFields();
-    setKeypadOpen(false);
   }
 
   const pendingCount = drafts.length + (canSave ? 1 : 0);
@@ -189,6 +200,7 @@ export default function CustomerPage({
 
       {/* Alt bölüm: işlem girişi */}
       <section
+        ref={entryRef}
         className="entry"
         style={
           {
