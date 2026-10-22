@@ -5,6 +5,7 @@ import {
   type FormEvent,
   type PointerEvent,
 } from "react";
+import { haptic } from "../lib/haptics";
 import { money } from "../lib/format";
 import { Svg } from "./Icon";
 
@@ -100,11 +101,7 @@ export default function PartyTabs({
       pressTimer.current = null;
       longPressed.current = true;
       setPressingId(null);
-      try {
-        navigator.vibrate?.(15);
-      } catch {
-        /* titreşim desteklenmiyorsa sessizce geç */
-      }
+      haptic("medium");
       openMenu(tab);
     }, LONG_PRESS_MS);
   }
@@ -174,6 +171,7 @@ export default function PartyTabs({
                 e.preventDefault();
                 endPress();
                 longPressed.current = true;
+                haptic("medium");
                 openMenu(tab);
               }}
               onClick={() => {
@@ -181,6 +179,7 @@ export default function PartyTabs({
                   longPressed.current = false;
                   return;
                 }
+                haptic("light");
                 onSelect(tab.id);
               }}
             >
@@ -287,6 +286,7 @@ export default function PartyTabs({
                 className="danger-btn"
                 type="button"
                 onClick={() => {
+                  haptic("warning");
                   onDelete(dialog.tab.id);
                   closeDialog();
                 }}

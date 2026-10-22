@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type PointerEvent } from "react";
+import { haptic } from "./haptics";
 
 const DELAY_MS = 500;
 const MOVE_TOLERANCE = 8;
@@ -43,11 +44,7 @@ export function useLongPress(onLongPress: () => void) {
         timer.current = null;
         fired.current = true;
         setPressing(false);
-        try {
-          navigator.vibrate?.(15);
-        } catch {
-          /* titreşim desteklenmiyorsa sessizce geç */
-        }
+        haptic("medium");
         callback.current();
       }, DELAY_MS);
     },
@@ -67,6 +64,7 @@ export function useLongPress(onLongPress: () => void) {
       event.preventDefault();
       end();
       fired.current = true;
+      haptic("medium");
       callback.current();
     },
     onClickCapture(event: React.MouseEvent) {

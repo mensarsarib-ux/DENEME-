@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { totalsBetween, type Period, type Transaction } from "../data/mock";
 import { money } from "../lib/format";
+import { haptic } from "../lib/haptics";
 import {
   MODE_LABELS,
   fromDateInput,
@@ -99,6 +100,7 @@ export default function FlowChart({
         : "Bu dönemde işlem yok.";
 
   function choosePeriod(next: Period) {
+    haptic("light");
     setMode(next);
     setOffset(0);
     setSheet(null);
@@ -138,6 +140,7 @@ export default function FlowChart({
   function submitCustom(event: FormEvent) {
     event.preventDefault();
     if (!canCreate || !fromDate || !toDate) return;
+    haptic("success");
     // Bitiş günü de dahil olsun diye ertesi günün başlangıcı alınır
     setCustom([
       fromDate,

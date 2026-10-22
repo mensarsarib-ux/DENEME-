@@ -10,6 +10,7 @@ import {
   type TxType,
 } from "../data/mock";
 import { formatDateTime, money } from "../lib/format";
+import { haptic } from "../lib/haptics";
 import { Svg } from "./Icon";
 import Keypad from "./Keypad";
 
@@ -148,6 +149,7 @@ export default function CustomerPage({
   function save() {
     const tx = buildCurrent();
     if (!tx) return;
+    haptic("success");
     if (editingId) {
       onUpdate({ ...tx, id: editingId });
       setJustAdded([editingId]);
@@ -177,6 +179,7 @@ export default function CustomerPage({
 
   /** Seçenek penceresinden "Sil": işlemi siler, kısa süre geri alınabilir */
   function remove(tx: Transaction) {
+    haptic("warning");
     onDelete(tx.id);
     if (editingId === tx.id) cancelEdit();
     setSelected(null);
@@ -185,6 +188,7 @@ export default function CustomerPage({
 
   function undoDelete() {
     if (!undoTx) return;
+    haptic("light");
     onAdd(undoTx);
     setJustAdded([undoTx.id]);
     setUndoTx(null);
@@ -376,7 +380,10 @@ export default function CustomerPage({
                     "--tab-glow": ACCENT[type].glow,
                   } as CSSProperties
                 }
-                onClick={() => setTxType(type)}
+                onClick={() => {
+                  haptic("light");
+                  setTxType(type);
+                }}
               >
                 {type}
               </button>

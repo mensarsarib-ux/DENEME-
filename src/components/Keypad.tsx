@@ -1,3 +1,4 @@
+import { haptic } from "../lib/haptics";
 import { Svg } from "./Icon";
 
 const MAX_LENGTH = 14;
@@ -13,6 +14,7 @@ export default function Keypad({
   onChange: (next: string) => void;
 }) {
   function press(key: string) {
+    haptic("light");
     if (key === "back") {
       onChange(value.slice(0, -1));
       return;
