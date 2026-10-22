@@ -1007,6 +1007,44 @@ button {
   border-color: var(--red);
 }
 
+.form-section-title {
+  margin: 8px 0 -4px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+
+.form-hint {
+  margin: 0 0 8px;
+  color: var(--muted);
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.primary-btn:disabled {
+  background: #2a323d;
+  color: var(--muted);
+  cursor: not-allowed;
+}
+
+/* Az önce eklenen müşteri satırı kısa süre vurgulanır */
+.row.is-new {
+  animation: row-new 2.6s ease-out;
+}
+
+@keyframes row-new {
+  0%,
+  40% {
+    background: rgba(60, 143, 217, 0.35);
+  }
+  100% {
+    background: transparent;
+  }
+}
+
 .form-error {
   margin: 0;
   color: var(--red);
@@ -1040,5 +1078,10 @@ button {
 
   .col-bar {
     transition: none;
+  }
+
+  .row.is-new {
+    animation: none;
+    background: rgba(60, 143, 217, 0.18);
   }
 }

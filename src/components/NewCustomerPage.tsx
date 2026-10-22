@@ -13,26 +13,26 @@ export default function NewCustomerPage({
 }) {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
+  const [address, setAddress] = useState("");
   const [email, setEmail] = useState("");
   const [note, setNote] = useState("");
-  const [error, setError] = useState("");
+
+  const trimmed = name.trim();
+  const lower = trimmed.toLocaleLowerCase("tr-TR");
+  const duplicate =
+    trimmed !== "" &&
+    existingNames.some((n) => n.toLocaleLowerCase("tr-TR") === lower);
+  // Firma adı yazılmadan ve aynı isim varken ekleme yapılamaz
+  const canSave = trimmed !== "" && !duplicate;
 
   function submit(event: FormEvent) {
     event.preventDefault();
-    const trimmed = name.trim();
-    if (!trimmed) {
-      setError("Müşteri adını yazın.");
-      return;
-    }
-    const lower = trimmed.toLocaleLowerCase("tr-TR");
-    if (existingNames.some((n) => n.toLocaleLowerCase("tr-TR") === lower)) {
-      setError("Bu isimde bir müşteri zaten var.");
-      return;
-    }
+    if (!canSave) return;
     onSave({
       id: `c${Date.now()}`,
       name: trimmed,
       phone: phone.trim() || undefined,
+      address: address.trim() || undefined,
       email: email.trim() || undefined,
       note: note.trim() || undefined,
     });
@@ -57,28 +57,27 @@ export default function NewCustomerPage({
 
       <form className="form" onSubmit={submit} noValidate>
         <div className="field">
-          <label htmlFor="customer-name">Müşteri adı / unvanı *</label>
+          <label htmlFor="customer-name">Firma adı *</label>
           <input
             id="customer-name"
             autoFocus
             autoComplete="off"
             value={name}
-            onChange={(e) => {
-              setName(e.target.value);
-              setError("");
-            }}
-            aria-invalid={error ? true : undefined}
-            aria-describedby={error ? "customer-error" : undefined}
+            onChange={(e) => setName(e.target.value)}
+            aria-invalid={duplicate ? true : undefined}
+            aria-describedby={duplicate ? "customer-error" : undefined}
           />
-          {error && (
+          {duplicate && (
             <p className="form-error" id="customer-error" role="alert">
-              {error}
+              Bu isimde bir müşteri zaten var.
             </p>
           )}
         </div>
 
+        <h2 className="form-section-title">EK BİLGİLER (İSTEĞE BAĞLI)</h2>
+
         <div className="field">
-          <label htmlFor="customer-phone">Telefon</label>
+          <label htmlFor="customer-phone">Telefon numarası</label>
           <input
             id="customer-phone"
             type="tel"
@@ -86,6 +85,17 @@ export default function NewCustomerPage({
             autoComplete="off"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
+          />
+        </div>
+
+        <div className="field">
+          <label htmlFor="customer-address">Adres</label>
+          <textarea
+            id="customer-address"
+            rows={2}
+            autoComplete="off"
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
           />
         </div>
 
@@ -104,15 +114,18 @@ export default function NewCustomerPage({
           <label htmlFor="customer-note">Not</label>
           <textarea
             id="customer-note"
-            rows={3}
+            rows={2}
             value={note}
             onChange={(e) => setNote(e.target.value)}
           />
         </div>
 
         <div className="form-actions">
-          <button className="primary-btn" type="submit">
-            MÜŞTERİYİ KAYDET
+          {!trimmed && (
+            <p className="form-hint">Müşteriyi eklemek için firma adını yazın.</p>
+          )}
+          <button className="primary-btn" type="submit" disabled={!canSave}>
+            MÜŞTERİ EKLE
           </button>
         </div>
       </form>

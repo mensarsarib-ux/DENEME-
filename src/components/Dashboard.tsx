@@ -1,4 +1,4 @@
-import { useState, type CSSProperties } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import {
   accounts,
   balanceOf,
@@ -50,17 +50,25 @@ interface Row {
 export default function Dashboard({
   customers,
   transactions,
+  highlightId,
   onSelectCustomer,
   onNewCustomer,
 }: {
   customers: Customer[];
   transactions: Transaction[];
+  /** Az önce eklenen müşteri: listede kaydırılıp vurgulanır */
+  highlightId?: string | null;
   onSelectCustomer: (id: string) => void;
   onNewCustomer: () => void;
 }) {
   const [period, setPeriod] = useState<Period>("monthly");
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
+  const highlightRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    highlightRef.current?.scrollIntoView({ block: "center" });
+  }, []);
 
   const totals = totalsFor(transactions, period);
   const maxFlow = Math.max(totals.alis, totals.satis, totals.tahsilat, 1);
@@ -282,7 +290,8 @@ export default function Dashboard({
             {rows.map((r, i) => (
               <li key={r.id}>
                 <button
-                  className={`row ${searching ? "is-match" : ""} ${searching && i === 0 ? "is-top" : ""}`}
+                  ref={r.id === highlightId ? highlightRef : undefined}
+                  className={`row ${searching ? "is-match" : ""} ${searching && i === 0 ? "is-top" : ""} ${r.id === highlightId ? "is-new" : ""}`}
                   onClick={() => onSelectCustomer(r.id)}
                 >
                   <span className="row-name">

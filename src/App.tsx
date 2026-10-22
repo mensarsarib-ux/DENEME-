@@ -19,6 +19,8 @@ export default function App() {
   const [customers, setCustomers] = useState<Customer[]>(initialCustomers);
   const [customerId, setCustomerId] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
+  // Az önce eklenen müşteri; ana ekranda vurgulanır
+  const [addedId, setAddedId] = useState<string | null>(null);
   const [transactions, setTransactions] =
     useState<Transaction[]>(initialTransactions);
 
@@ -43,7 +45,7 @@ export default function App() {
           onSave={(customer) => {
             setCustomers((prev) => [...prev, customer]);
             setCreating(false);
-            setCustomerId(customer.id);
+            setAddedId(customer.id);
           }}
         />
       );
@@ -65,8 +67,15 @@ export default function App() {
       <Dashboard
         customers={customers}
         transactions={transactions}
-        onSelectCustomer={setCustomerId}
-        onNewCustomer={() => setCreating(true)}
+        highlightId={addedId}
+        onSelectCustomer={(id) => {
+          setAddedId(null);
+          setCustomerId(id);
+        }}
+        onNewCustomer={() => {
+          setAddedId(null);
+          setCreating(true);
+        }}
       />
     );
   }

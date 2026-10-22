@@ -118,7 +118,10 @@ export default function CustomerPage({
           <div className="cust-name">
             <strong>{customer.name}</strong>
             <small>
-              {customer.phone || customer.email || "İletişim bilgisi ekle"}
+              {customer.phone ||
+                customer.email ||
+                customer.address ||
+                "İletişim bilgisi ekle"}
             </small>
           </div>
         </div>
