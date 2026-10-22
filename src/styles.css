@@ -188,38 +188,6 @@ button {
   background: rgba(255, 255, 255, 0.08);
 }
 
-.notice-row {
-  display: flex;
-  justify-content: center;
-  padding: 4px 0 0;
-}
-
-.bell {
-  position: relative;
-  width: 44px;
-  height: 36px;
-  border: 0;
-  background: transparent;
-  display: grid;
-  place-items: center;
-}
-
-.badge {
-  position: absolute;
-  top: 0;
-  right: 2px;
-  min-width: 20px;
-  height: 20px;
-  padding: 0 5px;
-  border-radius: 10px;
-  background: #e8c547;
-  color: #1a1a1a;
-  font-size: 0.75rem;
-  font-weight: 700;
-  line-height: 20px;
-  text-align: center;
-}
-
 /* ---------- Arama ---------- */
 
 .topbar-search {
@@ -530,8 +498,7 @@ button {
 
 /* ---------- Alt sayfa ---------- */
 
-.topbar,
-.notice-row {
+.topbar {
   flex-shrink: 0;
 }
 

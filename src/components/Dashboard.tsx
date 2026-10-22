@@ -208,12 +208,6 @@ export default function Dashboard({
             </div>
           </header>
 
-          <div className="notice-row">
-            <button className="bell" aria-label="Bildirimler">
-              <Svg d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4zM10 21h4" />
-              <span className="badge">1</span>
-            </button>
-          </div>
         </>
       )}
 
