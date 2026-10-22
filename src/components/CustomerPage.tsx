@@ -19,6 +19,7 @@ import { haptic } from "../lib/haptics";
 import { t } from "../lib/i18n";
 import { Svg } from "./Icon";
 import { parseAmount } from "../lib/amount";
+import { saveViaViewer } from "../lib/saveFile";
 import StatementSheet from "./StatementSheet";
 import { statementText } from "../lib/statement";
 import Keypad from "./Keypad";
@@ -267,6 +268,9 @@ export default function CustomerPage({
     } catch (error) {
       if ((error as DOMException)?.name === "AbortError") return;
     }
+    // Tarayıcı paylaşımı yoksa (ör. Claude önizlemesi): metni dosya olarak paylaşım/kaydetme penceresine ver
+    const viewer = await saveViaViewer(`${t("Ekstre")}.txt`, text);
+    if (viewer !== "unavailable") return;
     try {
       await navigator.clipboard.writeText(text);
       setShareNote(t("Paylaşım bu cihazda açılamadı; ekstre panoya kopyalandı."));

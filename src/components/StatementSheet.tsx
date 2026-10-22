@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { haptic } from "../lib/haptics";
 import { t } from "../lib/i18n";
+import { saveViaViewer } from "../lib/saveFile";
 import { createStatementPdf, type StatementInput, type StatementPdf } from "../lib/statement";
 
 /**
@@ -41,27 +42,23 @@ export default function StatementSheet({
   const file = pdf ? new File([pdf.blob], pdf.filename, { type: "application/pdf" }) : null;
   const canShareFile = !!file && typeof navigator.canShare === "function" && navigator.canShare({ files: [file] });
 
+  /**
+   * Paylaş / Kaydet: önce Claude'un dosya kaydetme penceresi (iOS uygulamasında paylaşım sayfası),
+   * olmazsa tarayıcının paylaşımı, o da olmazsa indirme bağlantısı.
+   */
   async function share() {
-    if (!file) return;
+    if (!file || !pdf || !url) return;
     haptic("light");
-    try {
-      await navigator.share({ files: [file], title: input.party.name });
-    } catch (error) {
-      // Kullanıcı paylaşım penceresini kapattıysa sessizce geç
-      if ((error as DOMException)?.name !== "AbortError") setNote(t("Paylaşım açılamadı; PDF'i açıp oradan paylaşabilirsiniz."));
+    const viewer = await saveViaViewer(pdf.filename, pdf.blob);
+    if (viewer !== "unavailable") return;
+    if (canShareFile) {
+      try {
+        await navigator.share({ files: [file], title: input.party.name });
+        return;
+      } catch (error) {
+        if ((error as DOMException)?.name === "AbortError") return;
+      }
     }
-  }
-
-  function open() {
-    if (!url) return;
-    haptic("light");
-    const w = window.open(url, "_blank");
-    if (!w) setNote(t("PDF bu pencerede açılamadı; İndir'i deneyin."));
-  }
-
-  function download() {
-    if (!url || !pdf) return;
-    haptic("light");
     const a = document.createElement("a");
     a.href = url;
     a.download = pdf.filename;
@@ -69,6 +66,13 @@ export default function StatementSheet({
     a.click();
     a.remove();
     setNote(t("İndirme başlatıldı. Başlamazsa PDF'i açıp oradan kaydedin."));
+  }
+
+  function open() {
+    if (!url) return;
+    haptic("light");
+    const w = window.open(url, "_blank");
+    if (!w) setNote(t("PDF bu pencerede açılamadı; Paylaş / Kaydet'i deneyin."));
   }
 
   return (
@@ -93,15 +97,10 @@ export default function StatementSheet({
                 <img key={i} src={src} alt={t("Sayfa {n} / {total}", { n: i + 1, total: pdf.previews.length })} />
               ))}
             </div>
-            {canShareFile && (
-              <button className="primary-btn" type="button" onClick={share}>
-                {t("Paylaş / Kaydet")}
-              </button>
-            )}
-            <div className="statement-actions">
-              <button className="action-btn" type="button" onClick={open}>{t("PDF'i aç")}</button>
-              <button className="action-btn" type="button" onClick={download}>{t("İndir")}</button>
-            </div>
+            <button className="primary-btn" type="button" onClick={share}>
+              {t("Paylaş / Kaydet")}
+            </button>
+            <button className="action-btn" type="button" onClick={open}>{t("PDF'i aç")}</button>
             {note && <p className="field-hint" role="status">{note}</p>}
           </>
         )}
