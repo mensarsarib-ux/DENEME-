@@ -332,25 +332,6 @@ export default function CustomerPage({
           >
             <Svg d="M4 20h4L19 9l-4-4L4 16zM13 7l4 4" />
           </button>
-          {menu === "share" && (
-            <div className="tools-menu" role="menu">
-              <button type="button" role="menuitem" onClick={() => void sendStatement()}>
-                <Svg d="M12 3v12M8 7l4-4 4 4M5 13v6h14v-6" />
-                {t("Gönder")}
-              </button>
-              <button
-                type="button"
-                role="menuitem"
-                onClick={() => {
-                  setMenu(null);
-                  setStatementOpen(true);
-                }}
-              >
-                <Svg d="M6 3h9l4 4v14H6zM14 3v5h5M9 13h6M9 17h6" />
-                {t("PDF oluştur")}
-              </button>
-            </div>
-          )}
           {menu === "edit" && (
             <div className="tools-menu" role="menu">
               <button
@@ -567,6 +548,44 @@ export default function CustomerPage({
           </div>
         </div>
       </div>
+
+      {menu === "share" && (
+        <div className="action-backdrop" data-keep-keypad onClick={() => setMenu(null)}>
+          <div
+            className="action-sheet share-sheet"
+            role="dialog"
+            aria-label={t("Paylaş")}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="action-handle" aria-hidden="true" />
+            <h2 className="share-title">{t("PAYLAŞ")}</h2>
+            <button type="button" className="share-option" onClick={() => void sendStatement()}>
+              <Svg d="M12 3v12M8 7l4-4 4 4M5 13v6h14v-6" />
+              <span>
+                <strong>{t("Hesap Paylaş")}</strong>
+                <small>{t("Hesap özetini telefonunuzdaki uygulamalardan biriyle gönderin")}</small>
+              </span>
+            </button>
+            <button
+              type="button"
+              className="share-option"
+              onClick={() => {
+                setMenu(null);
+                setStatementOpen(true);
+              }}
+            >
+              <Svg d="M6 3h9l4 4v14H6zM14 3v5h5M9 13h6M9 17h6" />
+              <span>
+                <strong>{t("PDF oluştur")}</strong>
+                <small>{t("Ayrıntılı işlem listesi içeren hesap ekstresini PDF olarak oluşturun")}</small>
+              </span>
+            </button>
+            <button type="button" className="share-close" onClick={() => setMenu(null)}>
+              {t("Kapat")}
+            </button>
+          </div>
+        </div>
+      )}
 
       {statementOpen && (
         <StatementSheet input={statementInput} onClose={() => setStatementOpen(false)} />

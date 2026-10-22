@@ -31,3 +31,7 @@ export const statement: Record<string, string> = {
 statement["Miktar"] = "Amount";
 statement["Toplam"] = "Total";
 statement["TOPLAM"] = "TOTAL";
+statement["PAYLAŞ"] = "SHARE";
+statement["Hesap Paylaş"] = "Share account";
+statement["Hesap özetini telefonunuzdaki uygulamalardan biriyle gönderin"] = "Send the account summary with any app on your phone";
+statement["Ayrıntılı işlem listesi içeren hesap ekstresini PDF olarak oluşturun"] = "Create the account statement with the detailed transaction list as a PDF";

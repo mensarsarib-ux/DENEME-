@@ -2358,3 +2358,44 @@ a.action-btn {
 .statement-preview img { width: 100%; height: auto; border-radius: 4px; background: #fff; }
 .statement-actions { display: flex; gap: 8px; }
 .statement-actions .action-btn { flex: 1; justify-content: center; }
+
+/* Paylaş penceresi: ortada açılan seçenek listesi */
+.share-sheet { padding-bottom: 12px; }
+.share-title {
+  margin: 4px 0 8px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.85rem;
+  letter-spacing: 0.06em;
+}
+.share-option {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  padding: 16px 12px;
+  border: 0;
+  border-top: 1px solid var(--line);
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.share-option:active { background: var(--surface-head); }
+.share-option svg { flex: none; width: 28px; height: 28px; fill: none; stroke: var(--blue); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.share-option span { display: flex; flex-direction: column; gap: 4px; }
+.share-option strong { font-size: 1.15rem; font-weight: 600; }
+.share-option small { color: var(--muted); font-size: 0.95rem; line-height: 1.35; }
+.share-close {
+  width: 100%;
+  padding: 16px;
+  border: 0;
+  border-top: 1px solid var(--line);
+  background: transparent;
+  color: var(--blue);
+  font: inherit;
+  font-size: 1.1rem;
+  cursor: pointer;
+}
