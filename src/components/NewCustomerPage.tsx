@@ -48,10 +48,13 @@ export default function NewCustomerPage({
   kind,
   groupName,
   existingNames,
+  initial,
   onSave,
   onBack,
 }: {
   kind: PartyKind;
+  /** Verilirse sayfa düzenleme modunda açılır: alanlar bu kaydın bilgileriyle dolar */
+  initial?: Customer;
   /** Kayıt eklenen sekmenin adı */
   groupName: string;
   /** Aynı türdeki mevcut kayıtların isimleri (tekrar kontrolü için) */
@@ -59,12 +62,21 @@ export default function NewCustomerPage({
   onSave: (customer: Customer) => void;
   onBack: () => void;
 }) {
-  const text = textFor(kind, groupName);
-  const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [address, setAddress] = useState("");
-  const [email, setEmail] = useState("");
-  const [note, setNote] = useState("");
+  const base = textFor(kind, groupName);
+  const text: FormText = initial
+    ? {
+        ...base,
+        title: "Bilgileri düzenle",
+        subtitle: initial.name,
+        hint: "Firma adı boş bırakılamaz.",
+        submit: "KAYDET",
+      }
+    : base;
+  const [name, setName] = useState(initial?.name ?? "");
+  const [phone, setPhone] = useState(initial?.phone ?? "");
+  const [address, setAddress] = useState(initial?.address ?? "");
+  const [email, setEmail] = useState(initial?.email ?? "");
+  const [note, setNote] = useState(initial?.note ?? "");
 
   const trimmed = name.trim();
   const lower = trimmed.toLocaleLowerCase("tr-TR");
@@ -72,13 +84,20 @@ export default function NewCustomerPage({
     trimmed !== "" &&
     existingNames.some((n) => n.toLocaleLowerCase("tr-TR") === lower);
   // Firma adı yazılmadan ve aynı isim varken ekleme yapılamaz
-  const canSave = trimmed !== "" && !duplicate;
+  const changed =
+    !initial ||
+    trimmed !== initial.name ||
+    phone.trim() !== (initial.phone ?? "") ||
+    address.trim() !== (initial.address ?? "") ||
+    email.trim() !== (initial.email ?? "") ||
+    note.trim() !== (initial.note ?? "");
+  const canSave = trimmed !== "" && !duplicate && changed;
 
   function submit(event: FormEvent) {
     event.preventDefault();
     if (!canSave) return;
     onSave({
-      id: `${text.idPrefix}${Date.now()}`,
+      id: initial?.id ?? `${text.idPrefix}${Date.now()}`,
       kind,
       name: trimmed,
       phone: phone.trim() || undefined,
@@ -111,7 +130,7 @@ export default function NewCustomerPage({
           aria-label={text.submit}
           disabled={!canSave}
         >
-          EKLE
+          {initial ? "KAYDET" : "EKLE"}
         </button>
       </header>
 
@@ -120,7 +139,7 @@ export default function NewCustomerPage({
           <label htmlFor="customer-name">Firma adı *</label>
           <input
             id="customer-name"
-            autoFocus
+            autoFocus={!initial}
             autoComplete="off"
             value={name}
             onChange={(e) => setName(e.target.value)}

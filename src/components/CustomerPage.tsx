@@ -45,8 +45,11 @@ export default function CustomerPage({
   onAdd,
   onUpdate,
   onDelete,
+  onEdit,
   onBack,
 }: {
+  /** Sağ üstteki düzenle düğmesi: firma bilgileri sayfasını açar */
+  onEdit: () => void;
   customer: Customer;
   accounts: Account[];
   transactions: Transaction[];
@@ -250,8 +253,8 @@ export default function CustomerPage({
           <button aria-label="Paylaş">
             <Svg d="M12 3v12M8 7l4-4 4 4M5 13v6h14v-6" />
           </button>
-          <button aria-label="Ayarlar">
-            <Svg d="M4 7h16M4 17h16M9 4v6M15 14v6" />
+          <button aria-label="Bilgileri düzenle" onClick={onEdit}>
+            <Svg d="M4 20h4L19 9l-4-4L4 16zM13 7l4 4" />
           </button>
         </div>
       </header>

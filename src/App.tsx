@@ -45,6 +45,7 @@ type View =
   | { name: "home" }
   | { name: "kasa"; account?: AccountId; back?: View }
   | { name: "menu"; page: MenuPage }
+  | { name: "edit"; id: string; back: View }
   | { name: "party"; id: string; back?: View }
   | { name: "new"; kind: PartyKind };
 
@@ -224,6 +225,28 @@ export default function App() {
     );
   }
 
+  if (view.name === "edit") {
+    const party = parties.find((p) => p.id === view.id);
+    if (party) {
+      const back = view.back;
+      return (
+        <NewCustomerPage
+          kind={party.kind}
+          groupName={groups.find((g) => g.id === party.kind)?.name ?? ""}
+          existingNames={membersOf(party.kind)
+            .filter((p) => p.id !== party.id)
+            .map((p) => p.name)}
+          initial={party}
+          onBack={() => go(back)}
+          onSave={(updated) => {
+            setParties((prev) => prev.map((p) => (p.id === updated.id ? updated : p)));
+            go(back);
+          }}
+        />
+      );
+    }
+  }
+
   if (view.name === "kasa") {
     return (
       <KasaPage
@@ -334,6 +357,7 @@ export default function App() {
           onDelete={(id) =>
             setTransactions((prev) => prev.filter((t) => t.id !== id))
           }
+          onEdit={() => go({ name: "edit", id: party.id, back: view })}
           onBack={() => go(view.back ?? { name: "home" })}
         />
       );
