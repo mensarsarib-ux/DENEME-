@@ -299,6 +299,8 @@ export interface Settings {
   haptics: boolean;
   /** ISO para birimi kodu (TRY, USD, EUR…) */
   currency: string;
+  /** Arayüz dili: "tr" veya "en" */
+  language: "tr" | "en";
   notifyReceivable: boolean;
   /** Bir kişinin alacağı bu tutarı geçince bildirim üretilir */
   receivableLimit: number;
@@ -314,6 +316,8 @@ export interface Settings {
 
 export const DEFAULT_SETTINGS: Settings = {
   currency: "TRY",
+  /** Arayüz dili */
+  language: "tr",
   haptics: true,
   notifyReceivable: true,
   receivableLimit: 100000,

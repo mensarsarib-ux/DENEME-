@@ -35,6 +35,7 @@ import type { MenuPage } from "./lib/menu";
 import { buildNotifications } from "./lib/notifications";
 import { useSwipeBack } from "./lib/useSwipeBack";
 import { setCurrency } from "./lib/format";
+import { setLanguage } from "./lib/i18n";
 import { clearStored, usePersistedState } from "./lib/storage";
 
 // Açılış ekranı ne kadar görünsün (ms) ve çıkış animasyonunun süresi
@@ -75,6 +76,7 @@ export default function App() {
   const settings = { ...DEFAULT_SETTINGS, ...storedSettings };
   // Alt bileşenler çizilmeden önce para birimi biçimi güncellenir
   setCurrency(settings.currency);
+  setLanguage(settings.language);
   const [drawerOpen, setDrawerOpen] = useState(false);
   // Az önce eklenen kayıt; listede vurgulanır
   const [addedId, setAddedId] = useState<string | null>(null);
@@ -88,7 +90,7 @@ export default function App() {
   const notifications = useMemo(
     () => buildNotifications(parties, transactions, accounts, settings, new Date()),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [parties, transactions, accounts, settings, today],
+    [parties, transactions, accounts, settings, today, settings.language],
   );
   const unread = notifications.filter((n) => !readIds.includes(n.id)).length;
 
