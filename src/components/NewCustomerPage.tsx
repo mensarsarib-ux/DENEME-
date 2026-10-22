@@ -1,16 +1,50 @@
 import { useState, type FormEvent } from "react";
-import type { Customer } from "../data/mock";
+import type { Customer, PartyKind } from "../data/mock";
 import { Svg } from "./Icon";
 
+/** Müşteri ve tedarikçi formunda değişen metinler */
+const TEXT: Record<
+  PartyKind,
+  {
+    title: string;
+    subtitle: string;
+    duplicate: string;
+    hint: string;
+    submit: string;
+    idPrefix: string;
+  }
+> = {
+  customer: {
+    title: "Yeni müşteri",
+    subtitle: "Cari hesap oluştur",
+    duplicate: "Bu isimde bir müşteri zaten var.",
+    hint: "Müşteriyi eklemek için firma adını yazın.",
+    submit: "MÜŞTERİ EKLE",
+    idPrefix: "c",
+  },
+  supplier: {
+    title: "Yeni tedarikçi",
+    subtitle: "Tedarikçi hesabı oluştur",
+    duplicate: "Bu isimde bir tedarikçi zaten var.",
+    hint: "Tedarikçiyi eklemek için firma adını yazın.",
+    submit: "TEDARİKÇİ EKLE",
+    idPrefix: "s",
+  },
+};
+
 export default function NewCustomerPage({
+  kind,
   existingNames,
   onSave,
   onBack,
 }: {
+  kind: PartyKind;
+  /** Aynı türdeki mevcut kayıtların isimleri (tekrar kontrolü için) */
   existingNames: string[];
   onSave: (customer: Customer) => void;
   onBack: () => void;
 }) {
+  const text = TEXT[kind];
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
@@ -29,7 +63,8 @@ export default function NewCustomerPage({
     event.preventDefault();
     if (!canSave) return;
     onSave({
-      id: `c${Date.now()}`,
+      id: `${text.idPrefix}${Date.now()}`,
+      kind,
       name: trimmed,
       phone: phone.trim() || undefined,
       address: address.trim() || undefined,
@@ -49,8 +84,8 @@ export default function NewCustomerPage({
             <Svg d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21a8 8 0 0 1 16 0M19 8v6M16 11h6" />
           </span>
           <div className="cust-name">
-            <strong>Yeni müşteri</strong>
-            <small>Cari hesap oluştur</small>
+            <strong>{text.title}</strong>
+            <small>{text.subtitle}</small>
           </div>
         </div>
       </header>
@@ -69,7 +104,7 @@ export default function NewCustomerPage({
           />
           {duplicate && (
             <p className="form-error" id="customer-error" role="alert">
-              Bu isimde bir müşteri zaten var.
+              {text.duplicate}
             </p>
           )}
         </div>
@@ -121,11 +156,9 @@ export default function NewCustomerPage({
         </div>
 
         <div className="form-actions">
-          {!trimmed && (
-            <p className="form-hint">Müşteriyi eklemek için firma adını yazın.</p>
-          )}
+          {!trimmed && <p className="form-hint">{text.hint}</p>}
           <button className="primary-btn" type="submit" disabled={!canSave}>
-            MÜŞTERİ EKLE
+            {text.submit}
           </button>
         </div>
       </form>

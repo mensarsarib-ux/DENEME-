@@ -11,6 +11,7 @@ import {
 import { money, moneyRound } from "../lib/format";
 import { findMatch, type MatchRange } from "../lib/search";
 import Highlight from "./Highlight";
+import PartyTabs from "./PartyTabs";
 import { Svg } from "./Icon";
 
 const PERIODS: { value: Period; label: string }[] = [
@@ -49,22 +50,28 @@ interface Row {
 
 export default function Dashboard({
   customers,
+  suppliers,
   transactions,
   highlightId,
   onSelectCustomer,
   onNewCustomer,
+  onOpenSuppliers,
 }: {
   customers: Customer[];
+  suppliers: Customer[];
   transactions: Transaction[];
   /** Az önce eklenen müşteri: listede kaydırılıp vurgulanır */
   highlightId?: string | null;
   onSelectCustomer: (id: string) => void;
   onNewCustomer: () => void;
+  /** Tedarikçiler seçeneği: tedarikçi sayfasını açar */
+  onOpenSuppliers: () => void;
 }) {
   const [period, setPeriod] = useState<Period>("monthly");
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
   const highlightRef = useRef<HTMLButtonElement>(null);
+  const sheetRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     highlightRef.current?.scrollIntoView({ block: "center" });
@@ -85,6 +92,10 @@ export default function Dashboard({
     }))
     .sort((a, b) => a.name.localeCompare(b.name, "tr"));
   const customersTotal = allRows.reduce((sum, r) => sum + r.balance, 0);
+  const suppliersTotal = suppliers.reduce(
+    (sum, s) => sum + balanceOf(transactions, s.id),
+    0,
+  );
 
   const searching = searchOpen && query.trim() !== "";
   // Aramada isim başında eşleşenler öne gelir, sonra alfabetik sıra
@@ -245,7 +256,7 @@ export default function Dashboard({
       )}
 
       {/* Alt sayfa: kasa ve cariler (aramada yalnızca müşteri sonuçları) */}
-      <section className="sheet">
+      <section className="sheet" ref={sheetRef}>
         <div className="sheet-handle" aria-hidden="true" />
 
         {!searchOpen && (
@@ -261,22 +272,30 @@ export default function Dashboard({
           </ul>
         )}
 
-        <div className="group-head">
-          <span>
-            {searching
-              ? "ARAMA SONUÇLARI"
-              : searchOpen
-                ? "MÜŞTERİLER"
-                : "CARİ (BORÇ / ALACAK)"}
-          </span>
-          <span className="group-total" aria-live="polite">
-            {searching
-              ? `${rows.length} sonuç`
-              : searchOpen
-                ? `${rows.length} müşteri`
-                : money.format(customersTotal)}
-          </span>
-        </div>
+        {searchOpen ? (
+          <div className="group-head">
+            <span>{searching ? "ARAMA SONUÇLARI" : "MÜŞTERİLER"}</span>
+            <span className="group-total" aria-live="polite">
+              {searching
+                ? `${rows.length} sonuç`
+                : `${rows.length} müşteri`}
+            </span>
+          </div>
+        ) : (
+          <PartyTabs
+            active="customer"
+            customers={{ count: customers.length, total: customersTotal }}
+            suppliers={{ count: suppliers.length, total: suppliersTotal }}
+            onSelect={(kind) => {
+              if (kind === "supplier") onOpenSuppliers();
+              else
+                sheetRef.current?.scrollIntoView({
+                  behavior: "smooth",
+                  block: "start",
+                });
+            }}
+          />
+        )}
 
         {searching && rows.length === 0 ? (
           <div className="search-empty">

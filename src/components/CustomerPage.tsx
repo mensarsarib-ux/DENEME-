@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import {
-  TX_TYPES,
+  TX_TYPES_BY_KIND,
   balanceOf,
   signOf,
   transactionsOf,
@@ -17,6 +17,7 @@ const ACCENT: Record<TxType, { color: string; fill: string }> = {
   SATIŞ: { color: "#3c8fd9", fill: "#3c8fd9" },
   ALIŞ: { color: "#e4574a", fill: "#e4574a" },
   TAHSİLAT: { color: "#3fbf82", fill: "#3fbf82" },
+  ÖDEME: { color: "#e8c547", fill: "#c9a227" },
 };
 
 /** Geri al seçeneğinin ekranda kalma süresi (ms) */
@@ -50,7 +51,9 @@ export default function CustomerPage({
   onDelete: (id: string) => void;
   onBack: () => void;
 }) {
-  const [txType, setTxType] = useState<TxType>("SATIŞ");
+  // Müşteride SATIŞ / ALIŞ / TAHSİLAT, tedarikçide ALIŞ / ÖDEME girilebilir
+  const types = TX_TYPES_BY_KIND[customer.kind];
+  const [txType, setTxType] = useState<TxType>(types[0]);
   const [amount, setAmount] = useState("");
   // Tuş takımı sayfa yerleştikten kısa süre sonra yumuşakça açılır; kayıttan sonra kapanmaz
   const [keypadOpen, setKeypadOpen] = useState(false);
@@ -359,8 +362,13 @@ export default function CustomerPage({
             </button>
           </div>
 
-          <div className="entry-tabs" role="tablist" aria-label="İşlem türü">
-            {TX_TYPES.map((type) => (
+          <div
+            className="entry-tabs"
+            role="tablist"
+            aria-label="İşlem türü"
+            style={{ gridTemplateColumns: `repeat(${types.length}, 1fr)` }}
+          >
+            {types.map((type) => (
               <button
                 key={type}
                 role="tab"

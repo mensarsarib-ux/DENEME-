@@ -12,9 +12,13 @@ export const accounts: Account[] = [
   { id: "cash", name: "Kasa", balance: 117866 },
 ];
 
+export type PartyKind = "customer" | "supplier";
+
+/** Cari hesap: müşteri veya tedarikçi */
 export interface Customer {
   id: string;
   name: string;
+  kind: PartyKind;
   phone?: string;
   address?: string;
   email?: string;
@@ -22,18 +26,24 @@ export interface Customer {
 }
 
 export const initialCustomers: Customer[] = [
-  { id: "1", name: "Ahmet Yılmaz Ticaret" },
-  { id: "2", name: "Ayşe Demir Mobilya" },
-  { id: "3", name: "Mehmet Kaya İnşaat" },
-  { id: "4", name: "Zeynep Çelik Gıda" },
-  { id: "5", name: "Ali Vural Lojistik" },
-  { id: "6", name: "Elif Arslan Tekstil" },
-  { id: "7", name: "Burak Öztürk Market" },
-  { id: "8", name: "Derya Aydın Kırtasiye" },
+  { id: "1", name: "Ahmet Yılmaz Ticaret", kind: "customer" },
+  { id: "2", name: "Ayşe Demir Mobilya", kind: "customer" },
+  { id: "3", name: "Mehmet Kaya İnşaat", kind: "customer" },
+  { id: "4", name: "Zeynep Çelik Gıda", kind: "customer" },
+  { id: "5", name: "Ali Vural Lojistik", kind: "customer" },
+  { id: "6", name: "Elif Arslan Tekstil", kind: "customer" },
+  { id: "7", name: "Burak Öztürk Market", kind: "customer" },
+  { id: "8", name: "Derya Aydın Kırtasiye", kind: "customer" },
 ];
 
-export const TX_TYPES = ["SATIŞ", "ALIŞ", "TAHSİLAT"] as const;
+export const TX_TYPES = ["SATIŞ", "ALIŞ", "TAHSİLAT", "ÖDEME"] as const;
 export type TxType = (typeof TX_TYPES)[number];
+
+/** Cari türüne göre girilebilen işlem türleri */
+export const TX_TYPES_BY_KIND: Record<PartyKind, TxType[]> = {
+  customer: ["SATIŞ", "ALIŞ", "TAHSİLAT"],
+  supplier: ["ALIŞ", "ÖDEME"],
+};
 
 export interface Transaction {
   id: string;
@@ -54,6 +64,13 @@ function ago(days: number, hour: number, minute = 0): string {
 }
 
 // Örnek işlemler bugüne göre üretilir; böylece her dönemde veri görünür.
+export const initialSuppliers: Customer[] = [
+  { id: "s1", name: "Kaya Kumaş Toptan", kind: "supplier" },
+  { id: "s2", name: "Demir Aksesuar San.", kind: "supplier" },
+  { id: "s3", name: "Yıldız Ambalaj", kind: "supplier" },
+  { id: "s4", name: "Öz Boya Kimya", kind: "supplier" },
+];
+
 export const initialTransactions: Transaction[] = [
   { id: "t1", customerId: "1", type: "SATIŞ", date: ago(0, 9, 30), description: "Kumaş satışı", amount: 9175 },
   { id: "t2", customerId: "2", type: "ALIŞ", date: ago(0, 10, 15), description: "Aksesuar alımı", amount: 2990 },
@@ -70,13 +87,20 @@ export const initialTransactions: Transaction[] = [
   { id: "t13", customerId: "2", type: "SATIŞ", date: ago(60, 14, 30), description: "Montaj hizmeti", amount: 18000 },
   { id: "t14", customerId: "4", type: "SATIŞ", date: ago(90, 13, 0), description: "Ürün satışı", amount: 54000 },
   { id: "t15", customerId: "6", type: "TAHSİLAT", date: ago(120, 11, 0), description: "Çek tahsilatı", amount: 5000 },
+  { id: "ts1", customerId: "s1", type: "ALIŞ", date: ago(1, 10, 20), description: "Kumaş alımı", amount: 18000 },
+  { id: "ts2", customerId: "s1", type: "ÖDEME", date: ago(0, 9, 45), description: "Kısmi ödeme", amount: 6000 },
+  { id: "ts3", customerId: "s2", type: "ALIŞ", date: ago(8, 14, 10), description: "Fermuar ve düğme", amount: 7400 },
+  { id: "ts4", customerId: "s3", type: "ALIŞ", date: ago(20, 11, 30), description: "Ambalaj malzemesi", amount: 3200 },
+  { id: "ts5", customerId: "s3", type: "ÖDEME", date: ago(10, 16, 0), description: "Ödeme", amount: 3200 },
+  { id: "ts6", customerId: "s4", type: "ALIŞ", date: ago(35, 13, 15), description: "Boya alımı", amount: 9600 },
 ];
 
-/** Alacak yönü: satış bakiyeyi artırır; alış ve tahsilat azaltır. */
+/** Alacak yönü: satış ve ödeme bakiyeyi artırır; alış ve tahsilat azaltır. */
 const SIGN: Record<TxType, number> = {
   SATIŞ: 1,
   ALIŞ: -1,
   TAHSİLAT: -1,
+  ÖDEME: 1,
 };
 
 export function signOf(type: TxType): number {
@@ -135,7 +159,7 @@ export function totalsFor(list: Transaction[], period: Period): Totals {
     if (at < start || at >= end) continue;
     if (t.type === "SATIŞ") totals.satis += t.amount;
     else if (t.type === "ALIŞ") totals.alis += t.amount;
-    else totals.tahsilat += t.amount;
+    else if (t.type === "TAHSİLAT") totals.tahsilat += t.amount;
   }
   return totals;
 }

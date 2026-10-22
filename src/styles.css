@@ -553,6 +553,57 @@ button {
   color: var(--red);
 }
 
+/* ---------- Müşteriler / Tedarikçiler seçenekleri ---------- */
+
+.party-tabs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  padding: 12px;
+}
+
+.party-tab {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface-head);
+  text-align: left;
+}
+
+.party-tab.is-active {
+  border-color: var(--blue);
+  background: rgba(60, 143, 217, 0.14);
+}
+
+.party-tab-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+}
+
+.party-chevron {
+  color: var(--muted);
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.party-tab-meta {
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.supplier-list {
+  background: var(--surface);
+  min-height: 40dvh;
+}
+
 /* ---------- Müşteri sayfası ---------- */
 
 .cust-page {
