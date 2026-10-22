@@ -297,6 +297,8 @@ export const initialNotes: Note[] = [
 
 export interface Settings {
   haptics: boolean;
+  /** ISO para birimi kodu (TRY, USD, EUR…) */
+  currency: string;
   notifyReceivable: boolean;
   /** Bir kişinin alacağı bu tutarı geçince bildirim üretilir */
   receivableLimit: number;
@@ -311,6 +313,7 @@ export interface Settings {
 }
 
 export const DEFAULT_SETTINGS: Settings = {
+  currency: "TRY",
   haptics: true,
   notifyReceivable: true,
   receivableLimit: 100000,

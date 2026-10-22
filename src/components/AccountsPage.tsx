@@ -7,7 +7,7 @@ import {
   type AccountId,
   type Transaction,
 } from "../data/mock";
-import { money } from "../lib/format";
+import { currencySymbol, money } from "../lib/format";
 import { haptic } from "../lib/haptics";
 import { MENU_ITEMS } from "../lib/menu";
 import PageHeader from "./PageHeader";
@@ -105,7 +105,7 @@ export default function AccountsPage({
               Hesabın başlangıç tutarı. Bakiye, bu tutara tahsilatlar eklenip ödemeler çıkarılarak hesaplanır.
             </p>
             <div className="field">
-              <label htmlFor="opening">Açılış bakiyesi (₺)</label>
+              <label htmlFor="opening">Açılış bakiyesi ({currencySymbol()})</label>
               <input
                 id="opening"
                 autoFocus

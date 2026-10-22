@@ -1,5 +1,7 @@
 import { useState } from "react";
 import type { Settings } from "../data/mock";
+import { CURRENCIES, currencyOf } from "../lib/currencies";
+import { currencySymbol } from "../lib/format";
 import { haptic } from "../lib/haptics";
 import { MENU_ITEMS } from "../lib/menu";
 import PageHeader from "./PageHeader";
@@ -88,6 +90,8 @@ export default function SettingsPage({
   const [restoreText, setRestoreText] = useState("");
   const [restoreMsg, setRestoreMsg] = useState<{ ok: boolean; text: string } | null>(null);
   const [confirmReset, setConfirmReset] = useState(false);
+  const [pickingCurrency, setPickingCurrency] = useState(false);
+  const current = currencyOf(settings.currency);
   const set = <K extends keyof Settings>(key: K, value: Settings[K]) =>
     onChange({ ...settings, [key]: value });
 
@@ -128,14 +132,27 @@ export default function SettingsPage({
           />
         </section>
 
+        <section className="card" aria-label="Para birimi">
+          <h2 className="card-title">Para birimi</h2>
+          <button type="button" className="currency-current" onClick={() => setPickingCurrency(true)}>
+            <span className="currency-badge" aria-hidden="true">{current.symbol}</span>
+            <span className="setting-text">
+              <strong>{current.flag} {current.name}</strong>
+              <small>{current.code}</small>
+            </span>
+            <span className="drawer-chevron" aria-hidden="true">›</span>
+          </button>
+          <p className="field-hint">Yalnızca gösterilen simge değişir; mevcut tutarlar başka bir para birimine çevrilmez.</p>
+        </section>
+
         <section className="card" aria-label="Bildirimler">
           <h2 className="card-title">Bildirim limitleri</h2>
           <Switch label="Yüksek alacak" hint="Bir kişinin alacağı limiti aşınca" checked={settings.notifyReceivable} onChange={(v) => set("notifyReceivable", v)} />
-          <Limit id="lim-rec" label="Alacak limiti (₺)" value={settings.receivableLimit} disabled={!settings.notifyReceivable} onChange={(v) => set("receivableLimit", v)} />
+          <Limit id="lim-rec" label={`Alacak limiti (${currencySymbol()})`} value={settings.receivableLimit} disabled={!settings.notifyReceivable} onChange={(v) => set("receivableLimit", v)} />
           <Switch label="Yüksek borç" hint="Bir kişiye borcunuz limiti aşınca" checked={settings.notifyPayable} onChange={(v) => set("notifyPayable", v)} />
-          <Limit id="lim-pay" label="Borç limiti (₺)" value={settings.payableLimit} disabled={!settings.notifyPayable} onChange={(v) => set("payableLimit", v)} />
+          <Limit id="lim-pay" label={`Borç limiti (${currencySymbol()})`} value={settings.payableLimit} disabled={!settings.notifyPayable} onChange={(v) => set("payableLimit", v)} />
           <Switch label="Düşük kasa" hint="Nakit ve banka toplamı limitin altına inince" checked={settings.notifyLowCash} onChange={(v) => set("notifyLowCash", v)} />
-          <Limit id="lim-cash" label="Kasa limiti (₺)" value={settings.lowCashLimit} disabled={!settings.notifyLowCash} onChange={(v) => set("lowCashLimit", v)} />
+          <Limit id="lim-cash" label={`Kasa limiti (${currencySymbol()})`} value={settings.lowCashLimit} disabled={!settings.notifyLowCash} onChange={(v) => set("lowCashLimit", v)} />
         </section>
 
         <section className="card" aria-label="Destek">
@@ -186,6 +203,38 @@ export default function SettingsPage({
           </button>
         </section>
       </div>
+
+      {pickingCurrency && (
+        <div className="action-backdrop" onClick={() => setPickingCurrency(false)}>
+          <div className="action-sheet currency-sheet" role="dialog" aria-label="Para birimi seç" onClick={(e) => e.stopPropagation()}>
+            <div className="action-handle" aria-hidden="true" />
+            <h2 className="sheet-title">Para birimi seç</h2>
+            <ul className="currency-list">
+              {CURRENCIES.map((c) => (
+                <li key={c.code}>
+                  <button
+                    type="button"
+                    className={`currency-option ${c.code === settings.currency ? "is-active" : ""}`}
+                    aria-pressed={c.code === settings.currency}
+                    onClick={() => {
+                      haptic("success");
+                      set("currency", c.code);
+                      setPickingCurrency(false);
+                    }}
+                  >
+                    <span className="currency-badge" aria-hidden="true">{c.symbol}</span>
+                    <span className="setting-text">
+                      <strong>{c.flag} {c.name}</strong>
+                      <small>{c.code}</small>
+                    </span>
+                    {c.code === settings.currency && <span className="currency-check" aria-hidden="true">✓</span>}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )}
 
       {confirmReset && (
         <div className="action-backdrop" onClick={() => setConfirmReset(false)}>

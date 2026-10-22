@@ -2149,3 +2149,45 @@ a.action-btn {
   from { opacity: 0; transform: scale(0.92) translateY(-4px); }
   to { opacity: 1; transform: none; }
 }
+
+/* Para birimi seçimi */
+.currency-current,
+.currency-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface-head);
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.currency-current .setting-text,
+.currency-option .setting-text { flex: 1; }
+
+.currency-badge {
+  flex: none;
+  display: grid;
+  place-items: center;
+  min-width: 42px;
+  height: 42px;
+  padding: 0 6px;
+  border-radius: 50%;
+  background: var(--blue);
+  color: #fff;
+  font-size: 1.05rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.currency-sheet { max-height: 80dvh; display: flex; flex-direction: column; }
+.currency-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.currency-option { border-color: transparent; }
+.currency-option:active { background: var(--line); }
+.currency-option.is-active { border-color: var(--green); }
+.currency-check { color: var(--green); font-weight: 700; font-size: 1.2rem; }

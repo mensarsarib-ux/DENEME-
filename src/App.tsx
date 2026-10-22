@@ -34,6 +34,7 @@ import { setHapticsEnabled } from "./lib/haptics";
 import type { MenuPage } from "./lib/menu";
 import { buildNotifications } from "./lib/notifications";
 import { useSwipeBack } from "./lib/useSwipeBack";
+import { setCurrency } from "./lib/format";
 import { clearStored, usePersistedState } from "./lib/storage";
 
 // Açılış ekranı ne kadar görünsün (ms) ve çıkış animasyonunun süresi
@@ -69,7 +70,11 @@ export default function App() {
   const [profile, setProfile] = usePersistedState("profile", DEFAULT_PROFILE);
   const [notes, setNotes] = usePersistedState("notes", initialNotes);
   const [readIds, setReadIds] = usePersistedState<string[]>("readIds", []);
-  const [settings, setSettings] = usePersistedState("settings", DEFAULT_SETTINGS);
+  const [storedSettings, setSettings] = usePersistedState("settings", DEFAULT_SETTINGS);
+  // Eski kayıtlarda bulunmayan alanlar varsayılanla tamamlanır
+  const settings = { ...DEFAULT_SETTINGS, ...storedSettings };
+  // Alt bileşenler çizilmeden önce para birimi biçimi güncellenir
+  setCurrency(settings.currency);
   const [drawerOpen, setDrawerOpen] = useState(false);
   // Az önce eklenen kayıt; listede vurgulanır
   const [addedId, setAddedId] = useState<string | null>(null);
