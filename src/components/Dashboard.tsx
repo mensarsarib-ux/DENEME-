@@ -86,9 +86,6 @@ export default function Dashboard({
 
   const totals = totalsFor(transactions, period);
   const maxFlow = Math.max(totals.alis, totals.satis, totals.tahsilat, 1);
-  // Ciro: dönemdeki satış toplamı. Kar: satıştan alışın çıkarılmasıyla bulunur.
-  const ciro = totals.satis;
-  const kar = totals.satis - totals.alis;
 
   const allRows: Row[] = customers
     .map((c) => ({
@@ -232,25 +229,6 @@ export default function Dashboard({
                     <span className="col-label">{col.label}</span>
                   </div>
                 ))}
-              </div>
-
-              <div className="result">
-                <div className="result-block">
-                  <span className="result-label">CİRO</span>
-                  <span className="result-value">{money.format(ciro)}</span>
-                  <span className="equation">Satış toplamı</span>
-                </div>
-                <div className="result-block">
-                  <span className="result-label">KAR</span>
-                  <span
-                    className={`result-value ${kar < 0 ? "is-loss" : ""}`}
-                  >
-                    {money.format(kar)}
-                  </span>
-                  <span className="equation">
-                    Satış <b>−</b> Alış
-                  </span>
-                </div>
               </div>
             </div>
           </section>
