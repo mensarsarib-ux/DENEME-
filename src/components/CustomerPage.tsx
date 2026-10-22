@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import {
-  txTypesFor,
+  TX_TYPES,
+  defaultTxType,
   balanceOf,
   signOf,
   transactionsOf,
@@ -13,11 +14,11 @@ import { Svg } from "./Icon";
 import Keypad from "./Keypad";
 
 /** İşlem türüne göre vurgu rengi */
-const ACCENT: Record<TxType, { color: string; fill: string }> = {
-  SATIŞ: { color: "#3c8fd9", fill: "#3c8fd9" },
-  ALIŞ: { color: "#e4574a", fill: "#e4574a" },
-  TAHSİLAT: { color: "#3fbf82", fill: "#3fbf82" },
-  ÖDEME: { color: "#e8c547", fill: "#c9a227" },
+const ACCENT: Record<TxType, { color: string; fill: string; glow: string }> = {
+  SATIŞ: { color: "#3c8fd9", fill: "#3c8fd9", glow: "rgba(60, 143, 217, 0.55)" },
+  ALIŞ: { color: "#e4574a", fill: "#e4574a", glow: "rgba(228, 87, 74, 0.55)" },
+  TAHSİLAT: { color: "#3fbf82", fill: "#3fbf82", glow: "rgba(63, 191, 130, 0.55)" },
+  ÖDEME: { color: "#e8c547", fill: "#c9a227", glow: "rgba(232, 197, 71, 0.55)" },
 };
 
 /** Geri al seçeneğinin ekranda kalma süresi (ms) */
@@ -51,9 +52,8 @@ export default function CustomerPage({
   onDelete: (id: string) => void;
   onBack: () => void;
 }) {
-  // Müşteride SATIŞ / ALIŞ / TAHSİLAT, diğer gruplarda ALIŞ / ÖDEME girilebilir
-  const types = txTypesFor(customer.kind);
-  const [txType, setTxType] = useState<TxType>(types[0]);
+  // Her sekmede dört işlem türü de girilebilir; müşteride SATIŞ, diğerlerinde ALIŞ seçili başlar
+  const [txType, setTxType] = useState<TxType>(defaultTxType(customer.kind));
   const [amount, setAmount] = useState("");
   // Tuş takımı sayfa yerleştikten kısa süre sonra yumuşakça açılır; kayıttan sonra kapanmaz
   const [keypadOpen, setKeypadOpen] = useState(false);
@@ -358,22 +358,24 @@ export default function CustomerPage({
               disabled={!canSave}
               onClick={save}
             >
-              {editingId ? "GÜNCELLE" : txType}
+              {editingId ? "GÜNCELLE" : "EKLE"}
             </button>
           </div>
 
-          <div
-            className="entry-tabs"
-            role="tablist"
-            aria-label="İşlem türü"
-            style={{ gridTemplateColumns: `repeat(${types.length}, 1fr)` }}
-          >
-            {types.map((type) => (
+          <div className="entry-tabs" role="tablist" aria-label="İşlem türü">
+            {TX_TYPES.map((type) => (
               <button
                 key={type}
                 role="tab"
                 aria-selected={txType === type}
                 className={txType === type ? "is-active" : ""}
+                // Seçilince sekme kendi renginde ışık yayar
+                style={
+                  {
+                    "--tab-accent": ACCENT[type].color,
+                    "--tab-glow": ACCENT[type].glow,
+                  } as CSSProperties
+                }
                 onClick={() => setTxType(type)}
               >
                 {type}

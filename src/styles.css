@@ -1222,22 +1222,41 @@ button {
 
 .entry-tabs {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 4px;
+  padding: 6px;
   border-top: 1px solid var(--line);
 }
 
 .entry-tabs button {
-  padding: 12px 4px;
+  padding: 11px 2px;
   border: 0;
+  border-radius: 10px;
   background: transparent;
   color: var(--muted);
-  font-size: 0.9rem;
+  font-size: 0.78rem;
   letter-spacing: 0.02em;
+  white-space: nowrap;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease,
+    text-shadow 0.2s ease;
 }
 
+/* Seçilen işlem türü kendi renginde ışık yayar */
 .entry-tabs button.is-active {
-  color: var(--accent);
+  color: var(--tab-accent);
   font-weight: 700;
+  background: radial-gradient(
+    ellipse at 50% 120%,
+    var(--tab-glow),
+    transparent 75%
+  );
+  box-shadow:
+    0 0 14px -2px var(--tab-glow),
+    inset 0 -2px 0 var(--tab-accent);
+  text-shadow: 0 0 10px var(--tab-glow);
 }
 
 @keyframes page-in {
@@ -1589,6 +1608,7 @@ button {
     animation: none;
   }
 
+  .entry-tabs button,
   .series-bar,
   .flow-fill,
   .carousel-dot::before {

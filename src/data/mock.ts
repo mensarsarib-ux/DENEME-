@@ -48,16 +48,13 @@ export const initialCustomers: Customer[] = [
   { id: "8", name: "Derya Aydın Kırtasiye", kind: "customer" },
 ];
 
-export const TX_TYPES = ["SATIŞ", "ALIŞ", "TAHSİLAT", "ÖDEME"] as const;
+/** Her sekmede girilebilen dört işlem türü; ekrandaki sıra bu sıradır */
+export const TX_TYPES = ["SATIŞ", "TAHSİLAT", "ALIŞ", "ÖDEME"] as const;
 export type TxType = (typeof TX_TYPES)[number];
 
-/**
- * Gruba göre girilebilen işlem türleri.
- * Müşteri: ürün sattığınızda SATIŞ, müşteri ödeme yaptığında TAHSİLAT.
- * Tedarikçi ve diğer sekmeler: ürün aldığınızda ALIŞ, ödeme yaptığınızda ÖDEME.
- */
-export function txTypesFor(kind: PartyKind): TxType[] {
-  return kind === "customer" ? ["SATIŞ", "TAHSİLAT"] : ["ALIŞ", "ÖDEME"];
+/** Sayfa açılırken seçili gelen işlem türü: müşteride SATIŞ, tedarikçi ve diğer sekmelerde ALIŞ */
+export function defaultTxType(kind: PartyKind): TxType {
+  return kind === "customer" ? "SATIŞ" : "ALIŞ";
 }
 
 export interface Transaction {
