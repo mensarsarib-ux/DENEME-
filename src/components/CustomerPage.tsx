@@ -45,8 +45,12 @@ export default function CustomerPage({
 }) {
   const [txType, setTxType] = useState<TxType>("SATIŞ");
   const [amount, setAmount] = useState("");
-  // Sayfa tuş takımı açık gelir; kayıttan sonra da kapanmaz
-  const [keypadOpen, setKeypadOpen] = useState(true);
+  // Tuş takımı sayfa yerleştikten kısa süre sonra yumuşakça açılır; kayıttan sonra kapanmaz
+  const [keypadOpen, setKeypadOpen] = useState(false);
+  useEffect(() => {
+    const timer = window.setTimeout(() => setKeypadOpen(true), 350);
+    return () => window.clearTimeout(timer);
+  }, []);
   const [dateValue, setDateValue] = useState<string | null>(null);
   const [description, setDescription] = useState("");
   // Az önce kaydedilen işlemler: listede kaydırılıp kısa süre vurgulanır
@@ -169,11 +173,6 @@ export default function CustomerPage({
         <strong>{money.format(balanceOf(transactions, customer.id))}</strong>
       </div>
 
-      <button className="help-link" type="button">
-        <Svg d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5M12 17h0" />
-        Yardım &amp; Öneri
-      </button>
-
       {/* Alt bölüm: işlem girişi ve tuş takımı */}
       <div ref={entryRef} className="entry-dock">
       <section
@@ -267,7 +266,14 @@ export default function CustomerPage({
         </div>
       </section>
 
-      {keypadOpen && <Keypad value={amount} onChange={setAmount} />}
+      <div
+        className={`keypad-wrap ${keypadOpen ? "is-open" : ""}`}
+        aria-hidden={!keypadOpen}
+      >
+        <div className="keypad-inner">
+          <Keypad value={amount} onChange={setAmount} />
+        </div>
+      </div>
       </div>
     </div>
   );

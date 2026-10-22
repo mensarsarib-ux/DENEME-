@@ -556,6 +556,7 @@ button {
 /* ---------- Müşteri sayfası ---------- */
 
 .cust-page {
+  animation: page-in 0.28s ease-out;
   max-width: 480px;
   min-height: 100dvh;
   margin: 0 auto;
@@ -898,6 +899,53 @@ button {
   font-weight: 700;
 }
 
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Tuş takımı: yükseklik 0'dan açılır, giriş paneli onunla birlikte yukarı süzülür */
+.keypad-wrap {
+  display: grid;
+  grid-template-rows: 0fr;
+  visibility: hidden;
+  transition:
+    grid-template-rows 0.42s cubic-bezier(0.22, 0.8, 0.24, 1),
+    visibility 0s linear 0.42s;
+}
+
+.keypad-wrap.is-open {
+  grid-template-rows: 1fr;
+  visibility: visible;
+  transition:
+    grid-template-rows 0.42s cubic-bezier(0.22, 0.8, 0.24, 1),
+    visibility 0s;
+}
+
+.keypad-inner {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.keypad-wrap .keypad {
+  opacity: 0;
+  transform: translateY(14px);
+  transition:
+    opacity 0.3s ease,
+    transform 0.42s cubic-bezier(0.22, 0.8, 0.24, 1);
+}
+
+.keypad-wrap.is-open .keypad {
+  opacity: 1;
+  transform: none;
+}
+
 /* iOS sayısal klavyesine benzer tuş takımı */
 .keypad {
   display: grid;
@@ -1061,5 +1109,14 @@ button {
 
   .tx.is-new {
     animation: none;
+  }
+
+  .cust-page {
+    animation: none;
+  }
+
+  .keypad-wrap,
+  .keypad-wrap .keypad {
+    transition: none;
   }
 }
