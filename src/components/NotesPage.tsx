@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { Note } from "../data/mock";
 import { haptic } from "../lib/haptics";
+import { locale, t } from "../lib/i18n";
 import { MENU_ITEMS } from "../lib/menu";
 import { fold } from "../lib/search";
 import PageHeader from "./PageHeader";
@@ -10,7 +11,7 @@ const ICON = MENU_ITEMS[3].icon;
 const PIN_ICON = "M12 3l3 6 5 1-4 4 1 6-5-3-5 3 1-6-4-4 5-1z";
 
 const dateLabel = (iso: string) =>
-  new Date(iso).toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" });
+  new Date(iso).toLocaleDateString(locale(), { day: "numeric", month: "long", year: "numeric" });
 
 /** Notlar: arama, ekleme, düzenleme, sabitleme ve silme */
 export default function NotesPage({
@@ -82,25 +83,25 @@ export default function NotesPage({
     return (
       <div className="cust-page">
         <PageHeader
-          title={editing === "new" ? "Yeni not" : "Notu düzenle"}
-          subtitle="Geri dönünce otomatik kaydedilir"
+          title={editing === "new" ? t("Yeni not") : t("Notu düzenle")}
+          subtitle={t("Geri dönünce otomatik kaydedilir")}
           icon={ICON}
           onBack={closeEditor}
           action={
             editing !== "new" ? (
               <button className="header-danger" type="button" onClick={() => setConfirmDelete(true)}>
-                SİL
+                {t("SİL")}
               </button>
             ) : undefined
           }
         />
         <div className="form">
           <div className="field">
-            <label htmlFor="note-title">Başlık</label>
+            <label htmlFor="note-title">{t("Başlık")}</label>
             <input id="note-title" autoFocus={editing === "new"} autoComplete="off" value={title} onChange={(e) => setTitle(e.target.value)} />
           </div>
           <div className="field">
-            <label htmlFor="note-text">Not</label>
+            <label htmlFor="note-text">{t("Not")}</label>
             <textarea id="note-text" rows={10} value={text} onChange={(e) => setText(e.target.value)} />
           </div>
           <button
@@ -113,18 +114,18 @@ export default function NotesPage({
             }}
           >
             <Svg d={PIN_ICON} />
-            {pinned ? "Üste sabitlendi" : "Üste sabitle"}
+            {pinned ? t("Üste sabitlendi") : t("Üste sabitle")}
           </button>
         </div>
 
         {confirmDelete && (
           <div className="action-backdrop" onClick={() => setConfirmDelete(false)}>
-            <div className="action-sheet is-centered" role="alertdialog" aria-label="Silme onayı" onClick={(e) => e.stopPropagation()}>
+            <div className="action-sheet is-centered" role="alertdialog" aria-label={t("Silme onayı")} onClick={(e) => e.stopPropagation()}>
               <div className="action-handle" aria-hidden="true" />
-              <h2 className="sheet-title">Bu notu silmek istediğinize emin misiniz?</h2>
-              <p className="sheet-note">Silinen not geri alınamaz.</p>
-              <button className="danger-btn" type="button" onClick={remove}>EVET, SİL</button>
-              <button className="action-btn is-cancel" type="button" autoFocus onClick={() => setConfirmDelete(false)}>Vazgeç</button>
+              <h2 className="sheet-title">{t("Bu notu silmek istediğinize emin misiniz?")}</h2>
+              <p className="sheet-note">{t("Silinen not geri alınamaz.")}</p>
+              <button className="danger-btn" type="button" onClick={remove}>{t("EVET, SİL")}</button>
+              <button className="action-btn is-cancel" type="button" autoFocus onClick={() => setConfirmDelete(false)}>{t("Vazgeç")}</button>
             </div>
           </div>
         )}
@@ -135,21 +136,21 @@ export default function NotesPage({
   return (
     <div className="cust-page">
       <PageHeader
-        title="Notlar"
-        subtitle={`${notes.length} not`}
+        title={t("Notlar")}
+        subtitle={t("{n} not", { n: notes.length })}
         icon={ICON}
         onBack={onBack}
         action={
-          <button className="header-add" type="button" aria-label="Yeni not" onClick={() => open(null)}>
-            + YENİ
+          <button className="header-add" type="button" aria-label={t("Yeni not")} onClick={() => open(null)}>
+            {t("+ YENİ")}
           </button>
         }
       />
       <div className="search-bar">
         <input
           type="search"
-          aria-label="Notlarda ara"
-          placeholder="Notlarda ara"
+          aria-label={t("Notlarda ara")}
+          placeholder={t("Notlarda ara")}
           autoComplete="off"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
@@ -158,8 +159,8 @@ export default function NotesPage({
 
       {visible.length === 0 ? (
         <div className="search-empty">
-          <p>{notes.length === 0 ? "Henüz not yok." : `“${query.trim()}” ile eşleşen not yok.`}</p>
-          <button type="button" className="help-link" onClick={() => open(null)}>Yeni not ekle</button>
+          <p>{notes.length === 0 ? t("Henüz not yok.") : t("“{query}” ile eşleşen not yok.", { query: query.trim() })}</p>
+          <button type="button" className="help-link" onClick={() => open(null)}>{t("Yeni not ekle")}</button>
         </div>
       ) : (
         <ul className="list">
@@ -167,9 +168,9 @@ export default function NotesPage({
             <li key={n.id}>
               <button type="button" className="note-row" onClick={() => open(n)}>
                 <span className="note-top">
-                  <strong>{n.title || "Başlıksız not"}</strong>
+                  <strong>{n.title || t("Başlıksız not")}</strong>
                   {n.pinned && (
-                    <span className="note-pin" aria-label="Sabitlenmiş">
+                    <span className="note-pin" aria-label={t("Sabitlenmiş")}>
                       <Svg d={PIN_ICON} />
                     </span>
                   )}

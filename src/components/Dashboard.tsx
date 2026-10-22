@@ -9,6 +9,7 @@ import {
 } from "../data/mock";
 import { money } from "../lib/format";
 import { findMatch, type MatchRange } from "../lib/search";
+import { locale, t } from "../lib/i18n";
 import FlowChart from "./FlowChart";
 import Highlight from "./Highlight";
 import PartyTabs, { type TabInfo } from "./PartyTabs";
@@ -18,25 +19,28 @@ import { Svg } from "./Icon";
 function labelsFor(kind: string) {
   if (kind === "customer") {
     return {
-      singular: "müşteri",
-      add: "Yeni müşteri ekle",
-      empty: "Henüz müşteri yok.",
-      search: "Müşteri ara",
+      count: (n: number) => t("{n} müşteri", { n }),
+      noMatch: (q: string) => t("“{q}” ile eşleşen müşteri yok.", { q }),
+      add: t("Yeni müşteri ekle"),
+      empty: t("Henüz müşteri yok."),
+      search: t("Müşteri ara"),
     };
   }
   if (kind === "supplier") {
     return {
-      singular: "tedarikçi",
-      add: "Yeni tedarikçi ekle",
-      empty: "Henüz tedarikçi yok.",
-      search: "Tedarikçi ara",
+      count: (n: number) => t("{n} tedarikçi", { n }),
+      noMatch: (q: string) => t("“{q}” ile eşleşen tedarikçi yok.", { q }),
+      add: t("Yeni tedarikçi ekle"),
+      empty: t("Henüz tedarikçi yok."),
+      search: t("Tedarikçi ara"),
     };
   }
   return {
-    singular: "kayıt",
-    add: "Yeni kayıt ekle",
-    empty: "Bu sekmede henüz kayıt yok.",
-    search: "Kayıt ara",
+    count: (n: number) => t("{n} kayıt", { n }),
+    noMatch: (q: string) => t("“{q}” ile eşleşen kayıt yok.", { q }),
+    add: t("Yeni kayıt ekle"),
+    empty: t("Bu sekmede henüz kayıt yok."),
+    search: t("Kayıt ara"),
   };
 }
 
@@ -122,7 +126,7 @@ export default function Dashboard({
 
   const labels = labelsFor(activeTab);
   const activeName =
-    tabs.find((t) => t.id === activeTab)?.name.toLocaleUpperCase("tr-TR") ?? "";
+    t(tabs.find((tab) => tab.id === activeTab)?.name ?? "").toLocaleUpperCase(locale());
 
   const allRows: Row[] = members
     .map((c) => ({
@@ -176,7 +180,7 @@ export default function Dashboard({
               <button
                 className="search-clear"
                 type="button"
-                aria-label="Aramayı temizle"
+                aria-label={t("Aramayı temizle")}
                 onClick={() => setQuery("")}
               >
                 ×
@@ -184,7 +188,7 @@ export default function Dashboard({
             )}
           </div>
           <button className="search-cancel" type="button" onClick={closeSearch}>
-            Vazgeç
+            {t("Vazgeç")}
           </button>
         </header>
       ) : (
@@ -193,25 +197,25 @@ export default function Dashboard({
           <header className="topbar">
             <button
               className="topbar-menu"
-              aria-label="Menüyü aç"
+              aria-label={t("Menüyü aç")}
               aria-haspopup="dialog"
               onClick={onOpenMenu}
             >
-              Menü
+              {t("Menü")}
             </button>
             <div className="company-pill">
               <span className="company-logo" aria-hidden="true">
                 <img src="/logo.svg" alt="" />
               </span>
               <span className="company-text">
-                <strong>{profile.name || "Hesabım"}</strong>
-                <small>{profile.owner || profile.email || "Şirket adınız"}</small>
+                <strong>{profile.name || t("Hesabım")}</strong>
+                <small>{profile.owner || profile.email || t("Şirket adınız")}</small>
               </span>
             </div>
             <div className="topbar-actions">
               <button
                 className="icon-btn"
-                aria-label="Ara"
+                aria-label={t("Ara")}
                 onClick={() => setSearchOpen(true)}
               >
                 <Svg d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM20 20l-4.3-4.3" />
@@ -248,10 +252,10 @@ export default function Dashboard({
             <li>
               <button
                 className="row row-big"
-                aria-label="Kasa: nakit ve banka"
+                aria-label={t("Kasa: nakit ve banka")}
                 onClick={onOpenKasa}
               >
-                <span className="row-name">Kasa</span>
+                <span className="row-name">{t("Kasa")}</span>
                 <span className="row-amount">
                   {money.format(cashTotal(transactions, accounts))}
                   <span className="row-chevron" aria-hidden="true">
@@ -265,11 +269,11 @@ export default function Dashboard({
 
         {searchOpen ? (
           <div className="group-head">
-            <span>{searching ? "ARAMA SONUÇLARI" : activeName}</span>
+            <span>{searching ? t("ARAMA SONUÇLARI") : activeName}</span>
             <span className="group-total" aria-live="polite">
               {searching
-                ? `${rows.length} sonuç`
-                : `${rows.length} ${labels.singular}`}
+                ? t("{n} sonuç", { n: rows.length })
+                : labels.count(rows.length)}
             </span>
           </div>
         ) : (
@@ -288,7 +292,7 @@ export default function Dashboard({
           <div className="search-empty">
             <p>
               {searching
-                ? `“${query.trim()}” ile eşleşen ${labels.singular} yok.`
+                ? labels.noMatch(query.trim())
                 : labels.empty}
             </p>
             <button type="button" className="help-link" onClick={onNewParty}>

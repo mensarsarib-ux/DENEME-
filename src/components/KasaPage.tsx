@@ -10,6 +10,7 @@ import {
 } from "../data/mock";
 import { ACCENT } from "../lib/accents";
 import { formatDateTime, money } from "../lib/format";
+import { locale, t } from "../lib/i18n";
 import { Svg } from "./Icon";
 
 /** Kasa: nakit ve banka seçenekleri; her birinin bakiyesi ve tahsilat/ödeme hareketleri */
@@ -35,7 +36,7 @@ export default function KasaPage({
   return (
     <div className="cust-page">
       <header className="cust-header">
-        <button className="round-btn" aria-label="Geri" onClick={onBack}>
+        <button className="round-btn" aria-label={t("Geri")} onClick={onBack}>
           <Svg d="M15 5l-7 7 7 7" />
         </button>
         <div className="cust-title">
@@ -43,15 +44,15 @@ export default function KasaPage({
             <Svg d="M3 7h16a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2zM3 7l2-3h12M16 14h.01" />
           </span>
           <div className="cust-name">
-            <strong>Kasa</strong>
-            <small>Toplam {money.format(cashTotal(transactions, accounts))}</small>
+            <strong>{t("Kasa")}</strong>
+            <small>{t("Toplam {amount}", { amount: money.format(cashTotal(transactions, accounts)) })}</small>
           </div>
         </div>
       </header>
 
       {/* Nakit ve banka seçenekleri */}
       <div className="party-bar">
-        <div className="party-tabs" role="tablist" aria-label="Hesaplar">
+        <div className="party-tabs" role="tablist" aria-label={t("Hesaplar")}>
           {accounts.map((a) => (
             <button
               key={a.id}
@@ -61,7 +62,7 @@ export default function KasaPage({
               onClick={() => setActive(a.id)}
             >
               <span className="party-tab-label">
-                <span className="party-tab-name">{a.name}</span>
+                <span className="party-tab-name">{t(a.name)}</span>
               </span>
               <span className="party-tab-meta">
                 {money.format(accountBalance(transactions, accounts, a.id))}
@@ -76,9 +77,9 @@ export default function KasaPage({
           <div className="tx-hit">
             <div className="tx-info">
               <div className="tx-meta">
-                <strong>AÇILIŞ BAKİYESİ</strong>
+                <strong>{t("AÇILIŞ BAKİYESİ")}</strong>
               </div>
-              <p>{account.name}</p>
+              <p>{t(account.name)}</p>
             </div>
             <span className="tx-amount">{money.format(account.opening)}</span>
           </div>
@@ -91,7 +92,7 @@ export default function KasaPage({
               <div className="tx-hit">
                 <div className="tx-info">
                   <div className="tx-meta">
-                    <strong style={{ color: ACCENT[m.type].color }}>{m.type}</strong>
+                    <strong style={{ color: ACCENT[m.type].color }}>{t(m.type)}</strong>
                     <span>{formatDateTime(m.date)}</span>
                   </div>
                   <p>{nameOf(m.customerId)}</p>
@@ -108,11 +109,11 @@ export default function KasaPage({
       </ul>
 
       {movements.length === 0 && (
-        <p className="tx-empty">Bu hesapta henüz tahsilat veya ödeme yok.</p>
+        <p className="tx-empty">{t("Bu hesapta henüz tahsilat veya ödeme yok.")}</p>
       )}
 
       <div className="tx-total">
-        <span>{account.name.toLocaleUpperCase("tr-TR")} BAKİYESİ</span>
+        <span>{t("{name} BAKİYESİ", { name: t(account.name).toLocaleUpperCase(locale()) })}</span>
         <strong>{money.format(accountBalance(transactions, accounts, active))}</strong>
       </div>
     </div>

@@ -4,7 +4,7 @@ import { totalsBetween, type Period, type Transaction } from "../data/mock";
 import { money } from "../lib/format";
 import { haptic } from "../lib/haptics";
 import {
-  MODE_LABELS,
+  modeLabel,
   fromDateInput,
   rangeOf,
   titleOf,
@@ -13,6 +13,7 @@ import {
 } from "../lib/ranges";
 import { useLongPress } from "../lib/useLongPress";
 import { Svg } from "./Icon";
+import { t } from "../lib/i18n";
 
 /** Pencere açıldıktan sonra bu süre boyunca tıklamalar yok sayılır (ms) */
 const OPEN_GUARD_MS = 450;
@@ -95,10 +96,10 @@ export default function FlowChart({
 
   const note =
     gelir > 0
-      ? `Gider / gelir: %${Math.round((gider / gelir) * 100)}`
+      ? t("Gider / gelir: %{n}", { n: Math.round((gider / gelir) * 100) })
       : gider > 0
-        ? "Bu dönemde gelir yok."
-        : "Bu dönemde işlem yok.";
+        ? t("Bu dönemde gelir yok.")
+        : t("Bu dönemde işlem yok.");
 
   function choosePeriod(next: Period) {
     haptic("light");
@@ -134,7 +135,7 @@ export default function FlowChart({
   const toDate = fromDateInput(to);
   const rangeError =
     fromDate && toDate && toDate < fromDate
-      ? "Bitiş tarihi başlangıçtan önce olamaz."
+      ? t("Bitiş tarihi başlangıçtan önce olamaz.")
       : "";
   const canCreate = Boolean(fromDate && toDate) && !rangeError;
 
@@ -156,17 +157,17 @@ export default function FlowChart({
     <>
       <div
         className={`chart-card month-card ${pressing ? "is-pressing" : ""}`}
-        title="Dönemi değiştirmek için basılı tutun"
+        title={t("Dönemi değiştirmek için basılı tutun")}
         {...handlers}
       >
         <div className="month-head">
           <div className="month-title-block">
-            <span className="month-mode">{MODE_LABELS[mode]}</span>
+            <span className="month-mode">{modeLabel(mode)}</span>
             <div className="month-nav">
               {mode !== "custom" && (
                 <button
                   type="button"
-                  aria-label="Önceki dönem"
+                  aria-label={t("Önceki dönem")}
                   onClick={() => setOffset((o) => o - 1)}
                 >
                   ‹
@@ -176,7 +177,7 @@ export default function FlowChart({
               {mode !== "custom" && (
                 <button
                   type="button"
-                  aria-label="Sonraki dönem"
+                  aria-label={t("Sonraki dönem")}
                   disabled={offset === 0}
                   onClick={() => setOffset((o) => Math.min(o + 1, 0))}
                 >
@@ -186,14 +187,14 @@ export default function FlowChart({
             </div>
           </div>
           <div className="month-net">
-            <span className="month-net-label">NET</span>
+            <span className="month-net-label">{t("NET")}</span>
             <strong className={net < 0 ? "is-loss" : ""}>{money.format(net)}</strong>
           </div>
         </div>
 
         <div className="flow-rows">
-          <FlowRow label="GELİR" value={gelir} max={max} tone="in" />
-          <FlowRow label="GİDER" value={gider} max={max} tone="out" />
+          <FlowRow label={t("GELİR")} value={gelir} max={max} tone="in" />
+          <FlowRow label={t("GİDER")} value={gider} max={max} tone="out" />
         </div>
 
         <p className="month-note">{note}</p>
@@ -217,13 +218,13 @@ export default function FlowChart({
             <div
               className="action-sheet is-centered"
               role="dialog"
-              aria-label="Dönem seç"
+              aria-label={t("Dönem seç")}
               onClick={(e) => e.stopPropagation()}
             >
               <div className="action-handle" aria-hidden="true" />
-              <h2 className="sheet-title">Dönem seç</h2>
+              <h2 className="sheet-title">{t("Dönem seç")}</h2>
               <p className="sheet-note">
-                Grafiği hangi döneme göre görmek istediğinizi seçin.
+                {t("Grafiği hangi döneme göre görmek istediğinizi seçin.")}
               </p>
               <div className="period-options">
                 {PERIOD_OPTIONS.map((option) => (
@@ -234,12 +235,12 @@ export default function FlowChart({
                     aria-pressed={mode === option.value}
                     onClick={() => choosePeriod(option.value)}
                   >
-                    {option.label}
+                    {t(option.label)}
                   </button>
                 ))}
               </div>
               <div className="sheet-divider" aria-hidden="true">
-                <span>veya</span>
+                <span>{t("veya")}</span>
               </div>
               <button
                 type="button"
@@ -248,14 +249,14 @@ export default function FlowChart({
                 onClick={openCustom}
               >
                 <Svg d="M4 5h16v15H4zM4 10h16M8 3v4M16 3v4" />
-                Özel tarih aralığı
+                {t("Özel tarih aralığı")}
               </button>
               <button
                 type="button"
                 className="action-btn is-cancel"
                 onClick={() => setSheet(null)}
               >
-                Vazgeç
+                {t("Vazgeç")}
               </button>
             </div>
           )}
@@ -264,20 +265,19 @@ export default function FlowChart({
             <form
               className="action-sheet is-centered"
               role="dialog"
-              aria-label="Özel tarih aralığı"
+              aria-label={t("Özel tarih aralığı")}
               onClick={(e) => e.stopPropagation()}
               onSubmit={submitCustom}
               noValidate
             >
               <div className="action-handle" aria-hidden="true" />
-              <h2 className="sheet-title">Özel tarih aralığı</h2>
+              <h2 className="sheet-title">{t("Özel tarih aralığı")}</h2>
               <p className="sheet-note">
-                Grafik, seçtiğiniz iki tarih arasındaki (bu günler dahil) işlemlerle
-                oluşturulur.
+                {t("Grafik, seçtiğiniz iki tarih arasındaki (bu günler dahil) işlemlerle oluşturulur.")}
               </p>
               <div className="date-range">
                 <div className="field">
-                  <label htmlFor="range-from">Başlangıç</label>
+                  <label htmlFor="range-from">{t("Başlangıç")}</label>
                   <input
                     id="range-from"
                     type="date"
@@ -287,7 +287,7 @@ export default function FlowChart({
                   />
                 </div>
                 <div className="field">
-                  <label htmlFor="range-to">Bitiş</label>
+                  <label htmlFor="range-to">{t("Bitiş")}</label>
                   <input
                     id="range-to"
                     type="date"
@@ -304,14 +304,14 @@ export default function FlowChart({
                 </p>
               )}
               <button className="primary-btn" type="submit" disabled={!canCreate}>
-                GRAFİĞİ OLUŞTUR
+                {t("GRAFİĞİ OLUŞTUR")}
               </button>
               <button
                 type="button"
                 className="action-btn is-cancel"
                 onClick={() => setSheet("menu")}
               >
-                Geri
+                {t("Geri")}
               </button>
             </form>
           )}

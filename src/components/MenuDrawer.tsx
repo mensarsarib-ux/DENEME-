@@ -3,6 +3,7 @@ import type { Profile } from "../data/mock";
 import { haptic } from "../lib/haptics";
 import { MENU_ITEMS, SUPPORT_ICON, type MenuPage } from "../lib/menu";
 import { Svg } from "./Icon";
+import { t } from "../lib/i18n";
 
 /**
  * Soldan açılan yarı genişlikte menü penceresi. Seçenekler: işletme profili, hesaplarım, raporlar,
@@ -44,7 +45,7 @@ export default function MenuDrawer({
         tabIndex={-1}
         role="dialog"
         aria-modal="true"
-        aria-label="Menü"
+        aria-label={t("Menü")}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="drawer-head">
@@ -52,15 +53,15 @@ export default function MenuDrawer({
             <img src="/logo.svg" alt="" />
           </span>
           <span className="drawer-company">
-            <strong>{profile.name || "Hesabım"}</strong>
-            <small>{profile.owner || profile.email || "Şirket adınız"}</small>
+            <strong>{profile.name || t("Hesabım")}</strong>
+            <small>{profile.owner || profile.email || t("Şirket adınız")}</small>
           </span>
-          <button className="drawer-close" aria-label="Menüyü kapat" onClick={onClose}>
+          <button className="drawer-close" aria-label={t("Menüyü kapat")} onClick={onClose}>
             ×
           </button>
         </div>
 
-        <nav className="drawer-nav" aria-label="Menü seçenekleri">
+        <nav className="drawer-nav" aria-label={t("Menü seçenekleri")}>
           {MENU_ITEMS.map((item) => (
             <button
               key={item.page}
@@ -69,9 +70,9 @@ export default function MenuDrawer({
               onClick={() => open(item.page)}
             >
               <Svg d={item.icon} />
-              <span className="drawer-label">{item.label}</span>
+              <span className="drawer-label">{t(item.label)}</span>
               {item.page === "notifications" && unread > 0 && (
-                <span className="drawer-badge" aria-label={`${unread} okunmamış`}>
+                <span className="drawer-badge" aria-label={t("{n} okunmamış", { n: unread })}>
                   {unread}
                 </span>
               )}
@@ -86,7 +87,7 @@ export default function MenuDrawer({
 
         <button type="button" className="drawer-support" onClick={() => open("support")}>
           <Svg d={SUPPORT_ICON} />
-          Destek al
+          {t("Destek al")}
         </button>
       </aside>
     </div>

@@ -1,15 +1,20 @@
 import { monthRange, type Period } from "../data/mock";
+import { locale, t } from "./i18n";
 
 /** Grafikte gösterilen dönem türü: günlük, haftalık, aylık, yıllık veya kullanıcının seçtiği tarih aralığı */
 export type RangeMode = Period | "custom";
 
-export const MODE_LABELS: Record<RangeMode, string> = {
-  daily: "GÜNLÜK",
-  weekly: "HAFTALIK",
-  monthly: "AYLIK",
-  yearly: "YILLIK",
-  custom: "ÖZEL ARALIK",
-};
+/** Dönem etiketi; dil değişebildiği için her çağrıda çevrilir */
+export const modeLabel = (mode: RangeMode): string =>
+  t(
+    {
+      daily: "GÜNLÜK",
+      weekly: "HAFTALIK",
+      monthly: "AYLIK",
+      yearly: "YILLIK",
+      custom: "ÖZEL ARALIK",
+    }[mode],
+  );
 
 /**
  * Dönemin başlangıcı (dahil) ve bitişi (hariç).
@@ -41,17 +46,17 @@ export function rangeOf(
   }
 }
 
-const upper = (text: string) => text.toLocaleUpperCase("tr-TR");
+const upper = (text: string) => text.toLocaleUpperCase(locale());
 
 const longDate = (date: Date) =>
-  date.toLocaleDateString("tr-TR", {
+  date.toLocaleDateString(locale(), {
     day: "numeric",
     month: "long",
     year: "numeric",
   });
 
 const shortDate = (date: Date, withYear: boolean) =>
-  date.toLocaleDateString("tr-TR", {
+  date.toLocaleDateString(locale(), {
     day: "numeric",
     month: "short",
     ...(withYear ? { year: "numeric" } : {}),
@@ -70,7 +75,7 @@ export function titleOf(mode: RangeMode, [start, end]: [Date, Date]): string {
       );
     case "monthly":
       return upper(
-        start.toLocaleDateString("tr-TR", { month: "long", year: "numeric" }),
+        start.toLocaleDateString(locale(), { month: "long", year: "numeric" }),
       );
     case "yearly":
       return String(start.getFullYear());

@@ -6,14 +6,16 @@ import {
   type Transaction,
 } from "../data/mock";
 import { money } from "./format";
+import { t } from "./i18n";
 
 export type ReportPeriod = "month" | "lastMonth" | "year" | "all";
 
-export const REPORT_PERIODS: { value: ReportPeriod; label: string }[] = [
-  { value: "month", label: "Bu ay" },
-  { value: "lastMonth", label: "Geçen ay" },
-  { value: "year", label: "Bu yıl" },
-  { value: "all", label: "Tümü" },
+/** Etiketler dile göre çizim anında çevrilir */
+export const reportPeriods = (): { value: ReportPeriod; label: string }[] => [
+  { value: "month", label: t("Bu ay") },
+  { value: "lastMonth", label: t("Geçen ay") },
+  { value: "year", label: t("Bu yıl") },
+  { value: "all", label: t("Tümü") },
 ];
 
 /** Raporun tarih aralığı: başlangıç (dahil) ve bitiş (hariç) */
@@ -97,22 +99,22 @@ export function reportText(
   report: Report,
 ): string {
   const lines = [
-    `${title} — ${periodLabel} raporu`,
+    t("{title} — {period} raporu", { title, period: periodLabel }),
     "",
-    `Gelir (satış): ${money.format(report.totals.satis)}`,
-    `Gider (alış): ${money.format(report.totals.alis)}`,
-    `Net: ${money.format(report.totals.satis - report.totals.alis)}`,
-    `Tahsilat: ${money.format(report.totals.tahsilat)}`,
+    `${t("Gelir (satış)")}: ${money.format(report.totals.satis)}`,
+    `${t("Gider (alış)")}: ${money.format(report.totals.alis)}`,
+    `${t("Net")}: ${money.format(report.totals.satis - report.totals.alis)}`,
+    `${t("Tahsilat")}: ${money.format(report.totals.tahsilat)}`,
     "",
-    `Toplam alacak: ${money.format(report.receivable)}`,
-    `Toplam borç: ${money.format(report.payable)}`,
+    `${t("Toplam alacak")}: ${money.format(report.receivable)}`,
+    `${t("Toplam borç")}: ${money.format(report.payable)}`,
   ];
   if (report.topCustomers.length) {
-    lines.push("", "En çok satış yapılanlar:");
+    lines.push("", `${t("En çok satış yapılanlar")}:`);
     report.topCustomers.forEach((r, i) => lines.push(`${i + 1}. ${r.name}: ${money.format(r.amount)}`));
   }
   if (report.topSuppliers.length) {
-    lines.push("", "En çok alış yapılanlar:");
+    lines.push("", `${t("En çok alış yapılanlar")}:`);
     report.topSuppliers.forEach((r, i) => lines.push(`${i + 1}. ${r.name}: ${money.format(r.amount)}`));
   }
   return lines.join("\n");

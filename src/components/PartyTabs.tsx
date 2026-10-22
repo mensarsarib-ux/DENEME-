@@ -8,6 +8,7 @@ import {
 import { haptic } from "../lib/haptics";
 import { money } from "../lib/format";
 import { Svg } from "./Icon";
+import { t } from "../lib/i18n";
 
 export interface TabInfo {
   id: string;
@@ -151,7 +152,7 @@ export default function PartyTabs({
   return (
     <>
       <div className="party-bar">
-        <div className="party-tabs" role="tablist" aria-label="Cari hesaplar">
+        <div className="party-tabs" role="tablist" aria-label={t("Cari hesaplar")}>
           {tabs.map((tab) => (
             <button
               key={tab.id}
@@ -159,7 +160,7 @@ export default function PartyTabs({
               role="tab"
               aria-selected={active === tab.id}
               aria-haspopup="menu"
-              title="Düzenlemek veya silmek için basılı tutun"
+              title={t("Düzenlemek veya silmek için basılı tutun")}
               className={`party-tab ${active === tab.id ? "is-active" : ""} ${pressingId === tab.id ? "is-pressing" : ""}`}
               onPointerDown={(e) => startPress(e, tab)}
               onPointerMove={movePress}
@@ -184,7 +185,7 @@ export default function PartyTabs({
               }}
             >
               <span className="party-tab-label">
-                <span className="party-tab-name">{tab.name}</span>
+                <span className="party-tab-name">{t(tab.name)}</span>
                 {active !== tab.id && (
                   <span className="party-chevron" aria-hidden="true">
                     ›
@@ -192,7 +193,7 @@ export default function PartyTabs({
                 )}
               </span>
               <span className="party-tab-meta">
-                {tab.count} kayıt · {money.format(tab.total)}
+                {t("{n} kayıt", { n: tab.count })} · {money.format(tab.total)}
               </span>
             </button>
           ))}
@@ -200,7 +201,7 @@ export default function PartyTabs({
           <button
             className="party-add"
             type="button"
-            aria-label="Yeni sekme ekle"
+            aria-label={t("Yeni sekme ekle")}
             onClick={() => {
               setName("");
               setDialog({ type: "create" });
@@ -227,14 +228,14 @@ export default function PartyTabs({
             <div
               className="action-sheet"
               role="dialog"
-              aria-label="Sekme seçenekleri"
+              aria-label={t("Sekme seçenekleri")}
               onClick={(e) => e.stopPropagation()}
             >
               <div className="action-handle" aria-hidden="true" />
               <div className="action-summary">
-                <strong>{dialog.tab.name}</strong>
+                <strong>{t(dialog.tab.name)}</strong>
                 <span className="party-tab-meta">
-                  {dialog.tab.count} kayıt · {money.format(dialog.tab.total)}
+                  {t("{n} kayıt", { n: dialog.tab.count })} · {money.format(dialog.tab.total)}
                 </span>
               </div>
               <button
@@ -246,7 +247,7 @@ export default function PartyTabs({
                 }}
               >
                 <Svg d="M4 20h4L19 9l-4-4L4 16zM13 7l4 4" />
-                Düzenle
+                {t("Düzenle")}
               </button>
               <button
                 className="action-btn is-danger"
@@ -254,14 +255,14 @@ export default function PartyTabs({
                 onClick={() => setDialog({ type: "confirm", tab: dialog.tab })}
               >
                 <Svg d="M5 7h14M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3" />
-                Sil
+                {t("Sil")}
               </button>
               <button
                 className="action-btn is-cancel"
                 type="button"
                 onClick={closeDialog}
               >
-                Vazgeç
+                {t("Vazgeç")}
               </button>
             </div>
           )}
@@ -271,16 +272,16 @@ export default function PartyTabs({
             <div
               className="action-sheet"
               role="alertdialog"
-              aria-label="Silme onayı"
+              aria-label={t("Silme onayı")}
               aria-describedby="confirm-text"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="action-handle" aria-hidden="true" />
-              <h2 className="sheet-title">Silmek istediğinize emin misiniz?</h2>
+              <h2 className="sheet-title">{t("Silmek istediğinize emin misiniz?")}</h2>
               <p className="sheet-note" id="confirm-text">
                 {dialog.tab.id === "customer"
-                  ? `“${dialog.tab.name}” sekmesindeki ${dialog.tab.count} kayıt ve bu kayıtlara ait tüm işlemler silinecek. Ana ekranın parçası olduğu için sekme boş olarak kalacak. Bu işlem geri alınamaz.`
-                  : `“${dialog.tab.name}” sekmesi, içindeki ${dialog.tab.count} kayıt ve bu kayıtlara ait tüm işlemler silinecek. Bu işlem geri alınamaz.`}
+                  ? t("“{name}” sekmesindeki {n} kayıt ve bu kayıtlara ait tüm işlemler silinecek. Ana ekranın parçası olduğu için sekme boş olarak kalacak. Bu işlem geri alınamaz.", { name: t(dialog.tab.name), n: dialog.tab.count })
+                  : t("“{name}” sekmesi, içindeki {n} kayıt ve bu kayıtlara ait tüm işlemler silinecek. Bu işlem geri alınamaz.", { name: t(dialog.tab.name), n: dialog.tab.count })}
               </p>
               <button
                 className="danger-btn"
@@ -291,7 +292,7 @@ export default function PartyTabs({
                   closeDialog();
                 }}
               >
-                EVET, SİL
+                {t("EVET, SİL")}
               </button>
               <button
                 className="action-btn is-cancel"
@@ -299,7 +300,7 @@ export default function PartyTabs({
                 autoFocus
                 onClick={closeDialog}
               >
-                Vazgeç
+                {t("Vazgeç")}
               </button>
             </div>
           )}
@@ -309,22 +310,22 @@ export default function PartyTabs({
             <form
               className="action-sheet"
               role="dialog"
-              aria-label={dialog.type === "create" ? "Yeni sekme" : "Sekmeyi düzenle"}
+              aria-label={dialog.type === "create" ? t("Yeni sekme") : t("Sekmeyi düzenle")}
               onClick={(e) => e.stopPropagation()}
               onSubmit={submitName}
               noValidate
             >
               <div className="action-handle" aria-hidden="true" />
               <h2 className="sheet-title">
-                {dialog.type === "create" ? "Yeni sekme" : "Sekmeyi düzenle"}
+                {dialog.type === "create" ? t("Yeni sekme") : t("Sekmeyi düzenle")}
               </h2>
               <p className="sheet-note">
                 {dialog.type === "create"
-                  ? "Kendi sekmenizi adlandırın; örneğin Vergi Giderleri."
-                  : "Sekmenin yeni adını yazın. Kayıtlar ve işlemler aynen kalır."}
+                  ? t("Kendi sekmenizi adlandırın; örneğin Vergi Giderleri.")
+                  : t("Sekmenin yeni adını yazın. Kayıtlar ve işlemler aynen kalır.")}
               </p>
               <div className="field">
-                <label htmlFor="tab-name">Sekme adı</label>
+                <label htmlFor="tab-name">{t("Sekme adı")}</label>
                 <input
                   id="tab-name"
                   autoFocus
@@ -337,19 +338,19 @@ export default function PartyTabs({
                 />
                 {duplicate && (
                   <p className="form-error" id="tab-error" role="alert">
-                    Bu isimde bir sekme zaten var.
+                    {t("Bu isimde bir sekme zaten var.")}
                   </p>
                 )}
               </div>
               <button className="primary-btn" type="submit" disabled={!canSubmit}>
-                {dialog.type === "create" ? "SEKME OLUŞTUR" : "KAYDET"}
+                {dialog.type === "create" ? t("SEKME OLUŞTUR") : t("KAYDET")}
               </button>
               <button
                 className="action-btn is-cancel"
                 type="button"
                 onClick={closeDialog}
               >
-                Vazgeç
+                {t("Vazgeç")}
               </button>
             </form>
           )}

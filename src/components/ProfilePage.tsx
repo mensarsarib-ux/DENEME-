@@ -1,6 +1,7 @@
 import { useEffect, useState, type FormEvent } from "react";
 import type { Profile } from "../data/mock";
 import { haptic } from "../lib/haptics";
+import { t } from "../lib/i18n";
 import { MENU_ITEMS } from "../lib/menu";
 import PageHeader from "./PageHeader";
 
@@ -52,13 +53,13 @@ export default function ProfilePage({
   return (
     <div className="cust-page">
       <PageHeader
-        title="İşletme profili"
-        subtitle="Adınız ve iletişim bilgileriniz"
+        title={t("İşletme profili")}
+        subtitle={t("Adınız ve iletişim bilgileriniz")}
         icon={ICON}
         onBack={onBack}
         action={
           <button className="header-add" type="submit" form="profile-form" disabled={!dirty}>
-            KAYDET
+            {t("KAYDET")}
           </button>
         }
       />
@@ -69,40 +70,40 @@ export default function ProfilePage({
             <img src="/logo.svg" alt="" />
           </span>
           <span className="company-text">
-            <strong>{draft.name.trim() || "Hesabım"}</strong>
-            <small>{draft.owner.trim() || draft.email.trim() || "Şirket adınız"}</small>
+            <strong>{draft.name.trim() || t("Hesabım")}</strong>
+            <small>{draft.owner.trim() || draft.email.trim() || t("Şirket adınız")}</small>
           </span>
         </div>
-        <p className="field-hint">Üst çubukta bu şekilde görünür.</p>
+        <p className="field-hint">{t("Üst çubukta bu şekilde görünür.")}</p>
 
         <div className="field">
-          <label htmlFor="pf-name">İşletme adı</label>
+          <label htmlFor="pf-name">{t("İşletme adı")}</label>
           <input id="pf-name" autoComplete="off" value={draft.name} onChange={(e) => set("name")(e.target.value)} />
         </div>
         <div className="field">
-          <label htmlFor="pf-owner">Yetkili</label>
+          <label htmlFor="pf-owner">{t("Yetkili")}</label>
           <input id="pf-owner" autoComplete="off" value={draft.owner} onChange={(e) => set("owner")(e.target.value)} />
         </div>
         <div className="field">
-          <label htmlFor="pf-phone">Telefon</label>
+          <label htmlFor="pf-phone">{t("Telefon")}</label>
           <input id="pf-phone" type="tel" inputMode="tel" autoComplete="off" value={draft.phone} onChange={(e) => set("phone")(e.target.value)} />
         </div>
         <div className="field">
-          <label htmlFor="pf-email">E-posta</label>
+          <label htmlFor="pf-email">{t("E-posta")}</label>
           <input id="pf-email" type="email" autoComplete="off" value={draft.email} onChange={(e) => set("email")(e.target.value)} />
         </div>
         <div className="field">
-          <label htmlFor="pf-address">Adres</label>
+          <label htmlFor="pf-address">{t("Adres")}</label>
           <textarea id="pf-address" rows={2} value={draft.address} onChange={(e) => set("address")(e.target.value)} />
         </div>
         <div className="field">
-          <label htmlFor="pf-tax">Vergi numarası</label>
+          <label htmlFor="pf-tax">{t("Vergi numarası")}</label>
           <input id="pf-tax" inputMode="numeric" autoComplete="off" value={draft.taxNo} onChange={(e) => set("taxNo")(e.target.value)} />
         </div>
 
         {saved && (
           <p className="form-success" role="status">
-            Profil kaydedildi.
+            {t("Profil kaydedildi.")}
           </p>
         )}
       </form>

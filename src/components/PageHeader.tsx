@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Svg } from "./Icon";
+import { t } from "../lib/i18n";
 
 /** Menü sayfalarının ortak başlığı: geri düğmesi, başlık ve isteğe bağlı sağ düğme */
 export default function PageHeader({
@@ -17,7 +18,7 @@ export default function PageHeader({
 }) {
   return (
     <header className="cust-header">
-      <button className="round-btn" aria-label="Geri" onClick={onBack}>
+      <button className="round-btn" aria-label={t("Geri")} onClick={onBack}>
         <Svg d="M15 5l-7 7 7 7" />
       </button>
       <div className="cust-title">

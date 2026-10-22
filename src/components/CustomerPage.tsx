@@ -15,6 +15,7 @@ import {
 import { formatDateTime, money } from "../lib/format";
 import { ACCENT } from "../lib/accents";
 import { haptic } from "../lib/haptics";
+import { t } from "../lib/i18n";
 import { Svg } from "./Icon";
 import Keypad from "./Keypad";
 
@@ -144,7 +145,7 @@ export default function CustomerPage({
   const canSave = value !== null && value > 0;
   const lastNewId = [...history]
     .reverse()
-    .find((t) => justAdded.includes(t.id))?.id;
+    .find((row) => justAdded.includes(row.id))?.id;
 
   // Eklenen satır, alttaki giriş panelinin arkasında kalmayacak şekilde görünür yapılır
   useEffect(() => {
@@ -251,7 +252,7 @@ export default function CustomerPage({
   return (
     <div className="cust-page">
       <header className="cust-header">
-        <button className="round-btn" aria-label="Geri" onClick={onBack}>
+        <button className="round-btn" aria-label={t("Geri")} onClick={onBack}>
           <Svg d="M15 5l-7 7 7 7" />
         </button>
 
@@ -265,17 +266,17 @@ export default function CustomerPage({
               {customer.phone ||
                 customer.email ||
                 customer.address ||
-                "İletişim bilgisi ekle"}
+                t("İletişim bilgisi ekle")}
             </small>
           </div>
         </div>
 
         <div className="cust-tools" ref={toolsRef}>
-          <button aria-label="Paylaş">
+          <button aria-label={t("Paylaş")}>
             <Svg d="M12 3v12M8 7l4-4 4 4M5 13v6h14v-6" />
           </button>
           <button
-            aria-label="Düzenle menüsü"
+            aria-label={t("Düzenle menüsü")}
             aria-haspopup="menu"
             aria-expanded={menuOpen}
             onClick={() => {
@@ -296,7 +297,7 @@ export default function CustomerPage({
                 }}
               >
                 <Svg d="M4 20h4L19 9l-4-4L4 16zM13 7l4 4" />
-                Düzenle
+                {t("Düzenle")}
               </button>
               <button
                 type="button"
@@ -308,7 +309,7 @@ export default function CustomerPage({
                 }}
               >
                 <Svg d="M5 7h14M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3" />
-                Sil
+                {t("Sil")}
               </button>
             </div>
           )}
@@ -316,44 +317,44 @@ export default function CustomerPage({
       </header>
 
       <ul className="tx-list">
-        {history.map((t) => {
-          const outflow = signOf(t.type) < 0;
+        {history.map((row) => {
+          const outflow = signOf(row.type) < 0;
           return (
             <li
-              key={t.id}
-              ref={t.id === lastNewId ? newRowRef : undefined}
-              className={`tx ${justAdded.includes(t.id) ? "is-new" : ""} ${editingId === t.id ? "is-editing" : ""}`}
+              key={row.id}
+              ref={row.id === lastNewId ? newRowRef : undefined}
+              className={`tx ${justAdded.includes(row.id) ? "is-new" : ""} ${editingId === row.id ? "is-editing" : ""}`}
             >
               <button
                 className="tx-hit"
                 type="button"
-                aria-label={`${t.type} işlemi için seçenekler`}
+                aria-label={t("{type} işlemi için seçenekler", { type: t(row.type) })}
                 onClick={() => {
                   // Tuş takımı açıksa ilk dokunuş yalnızca onu kapatır; seçenekler ikinci dokunuşta çıkar
                   if (keypadOpen) {
                     setKeypadOpen(false);
                     return;
                   }
-                  setSelected(t);
+                  setSelected(row);
                 }}
               >
                 <div className="tx-info">
                   <div className="tx-meta">
-                    <strong style={{ color: ACCENT[t.type].color }}>
-                      {t.type}
+                    <strong style={{ color: ACCENT[row.type].color }}>
+                      {t(row.type)}
                     </strong>
-                    <span>{formatDateTime(t.date)}</span>
-                    {t.account && (
+                    <span>{formatDateTime(row.date)}</span>
+                    {row.account && (
                       <span className="tx-account">
-                        {accounts.find((a) => a.id === t.account)?.name}
+                        {t(accounts.find((a) => a.id === row.account)?.name ?? "")}
                       </span>
                     )}
                   </div>
-                  {t.description && <p>{t.description}</p>}
+                  {row.description && <p>{row.description}</p>}
                 </div>
                 <span className={`tx-amount ${outflow ? "is-debt" : ""}`}>
                   {outflow ? "-" : ""}
-                  {money.format(t.amount)}
+                  {money.format(row.amount)}
                 </span>
               </button>
             </li>
@@ -361,10 +362,10 @@ export default function CustomerPage({
         })}
       </ul>
 
-      {history.length === 0 && <p className="tx-empty">Henüz hareket yok.</p>}
+      {history.length === 0 && <p className="tx-empty">{t("Henüz hareket yok.")}</p>}
 
       <div className="tx-total">
-        <span>TOPLAM</span>
+        <span>{t("TOPLAM")}</span>
         <strong>{money.format(balanceOf(transactions, customer.id))}</strong>
       </div>
 
@@ -372,9 +373,9 @@ export default function CustomerPage({
       <div ref={entryRef} className="entry-dock">
         {undoTx && (
           <div className="toast" role="status">
-            <span>İşlem silindi</span>
+            <span>{t("İşlem silindi")}</span>
             <button type="button" onClick={undoDelete}>
-              Geri al
+              {t("Geri al")}
             </button>
           </div>
         )}
@@ -390,9 +391,9 @@ export default function CustomerPage({
         >
           {editingId && (
             <div className="entry-editing">
-              <span>İŞLEMİ DÜZENLE</span>
+              <span>{t("İŞLEMİ DÜZENLE")}</span>
               <button type="button" onClick={cancelEdit}>
-                Vazgeç
+                {t("Vazgeç")}
               </button>
             </div>
           )}
@@ -401,7 +402,7 @@ export default function CustomerPage({
             {dateValue ? (
               <input
                 type="datetime-local"
-                aria-label="Tarih"
+                aria-label={t("Tarih")}
                 value={dateValue}
                 onChange={(e) => setDateValue(e.target.value)}
               />
@@ -411,7 +412,7 @@ export default function CustomerPage({
                 type="button"
                 onClick={() => setDateValue(toLocalInput(new Date().toISOString()))}
               >
-                Tarih: şimdi
+                {t("Tarih: şimdi")}
               </button>
             )}
             {/* Tarih seçiliyse tarayıcının kendi takvim ikonu yeterli */}
@@ -419,7 +420,7 @@ export default function CustomerPage({
               <button
                 className="entry-icon"
                 type="button"
-                aria-label="Tarih seç"
+                aria-label={t("Tarih seç")}
                 onClick={() => setDateValue(toLocalInput(new Date().toISOString()))}
               >
                 <Svg d="M4 5h16v15H4zM4 10h16M8 3v4M16 3v4" />
@@ -429,13 +430,13 @@ export default function CustomerPage({
 
           <div className="entry-desc">
             <textarea
-              placeholder="Açıklama"
-              aria-label="Açıklama"
+              placeholder={t("Açıklama")}
+              aria-label={t("Açıklama")}
               rows={2}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
             />
-            <button className="entry-icon entry-attach" type="button" aria-label="Görsel ekle">
+            <button className="entry-icon entry-attach" type="button" aria-label={t("Görsel ekle")}>
               <Svg d="M4 5h16v14H4zM4 16l5-5 4 4 2-2 5 5M15 9h.01" />
             </button>
           </div>
@@ -444,7 +445,7 @@ export default function CustomerPage({
             <button
               className="entry-icon"
               type="button"
-              aria-label="Tuş takımını aç"
+              aria-label={t("Tuş takımını aç")}
               onClick={() => setKeypadOpen((open) => !open)}
             >
               <Svg d="M6 3h12v18H6zM9 7h6M9 11h1M12 11h1M15 11h1M9 15h1M12 15h1M15 15h1" />
@@ -452,7 +453,7 @@ export default function CustomerPage({
             <button
               className={`amount-field ${amount ? "" : "is-empty"}`}
               type="button"
-              aria-label="Tutar"
+              aria-label={t("Tutar")}
               onClick={() => setKeypadOpen(true)}
             >
               {amount || "0"}
@@ -463,11 +464,11 @@ export default function CustomerPage({
               disabled={!canSave}
               onClick={save}
             >
-              {editingId ? "GÜNCELLE" : "EKLE"}
+              {editingId ? t("GÜNCELLE") : t("EKLE")}
             </button>
           </div>
 
-          <div className="entry-tabs" role="tablist" aria-label="İşlem türü">
+          <div className="entry-tabs" role="tablist" aria-label={t("İşlem türü")}>
             {TX_TYPES.map((type) => (
               <button
                 key={type}
@@ -486,7 +487,7 @@ export default function CustomerPage({
                   setTxType(type);
                 }}
               >
-                {type}
+                {t(type)}
               </button>
             ))}
           </div>
@@ -507,13 +508,13 @@ export default function CustomerPage({
           <div
             className="action-sheet is-centered"
             role="alertdialog"
-            aria-label="Silme onayı"
+            aria-label={t("Silme onayı")}
             onClick={(e) => e.stopPropagation()}
           >
             <div className="action-handle" aria-hidden="true" />
             <h2 className="sheet-title">{customer.name}</h2>
             <p className="sheet-note">
-              Bu kaydı ve tüm işlemlerini silmek istediğinize emin misiniz? Bu işlem geri alınamaz.
+              {t("Bu kaydı ve tüm işlemlerini silmek istediğinize emin misiniz? Bu işlem geri alınamaz.")}
             </p>
             <button
               className="danger-btn"
@@ -523,7 +524,7 @@ export default function CustomerPage({
                 onDeleteParty();
               }}
             >
-              EVET, SİL
+              {t("EVET, SİL")}
             </button>
             <button
               className="action-btn is-cancel"
@@ -531,7 +532,7 @@ export default function CustomerPage({
               autoFocus
               onClick={() => setConfirmParty(false)}
             >
-              Vazgeç
+              {t("Vazgeç")}
             </button>
           </div>
         </div>
@@ -547,14 +548,14 @@ export default function CustomerPage({
           <div
             className="action-sheet"
             role="dialog"
-            aria-label="İşlem seçenekleri"
+            aria-label={t("İşlem seçenekleri")}
             onClick={(e) => e.stopPropagation()}
           >
             <div className="action-handle" aria-hidden="true" />
             <div className="action-summary">
               <div className="tx-meta">
                 <strong style={{ color: ACCENT[selected.type].color }}>
-                  {selected.type}
+                  {t(selected.type)}
                 </strong>
                 <span>{formatDateTime(selected.date)}</span>
               </div>
@@ -568,14 +569,14 @@ export default function CustomerPage({
             {confirmingDelete ? (
               <>
                 <p className="sheet-note">
-                  Bu işlemi silmek istediğinize emin misiniz?
+                  {t("Bu işlemi silmek istediğinize emin misiniz?")}
                 </p>
                 <button
                   className="danger-btn"
                   type="button"
                   onClick={() => remove(selected)}
                 >
-                  EVET, SİL
+                  {t("EVET, SİL")}
                 </button>
                 <button
                   className="action-btn is-cancel"
@@ -583,7 +584,7 @@ export default function CustomerPage({
                   autoFocus
                   onClick={() => setConfirmingDelete(false)}
                 >
-                  Vazgeç
+                  {t("Vazgeç")}
                 </button>
               </>
             ) : (
@@ -594,7 +595,7 @@ export default function CustomerPage({
                   onClick={() => startEdit(selected)}
                 >
                   <Svg d="M4 20h4L19 9l-4-4L4 16zM13 7l4 4" />
-                  Düzenle
+                  {t("Düzenle")}
                 </button>
                 <button
                   className="action-btn is-danger"
@@ -605,14 +606,14 @@ export default function CustomerPage({
                   }}
                 >
                   <Svg d="M5 7h14M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3" />
-                  Sil
+                  {t("Sil")}
                 </button>
                 <button
                   className="action-btn is-cancel"
                   type="button"
                   onClick={() => setSelected(null)}
                 >
-                  Vazgeç
+                  {t("Vazgeç")}
                 </button>
               </>
             )}
@@ -630,19 +631,19 @@ export default function CustomerPage({
           <div
             className="action-sheet is-centered"
             role="dialog"
-            aria-label="Hesap seç"
+            aria-label={t("Hesap seç")}
             onClick={(e) => e.stopPropagation()}
           >
             <div className="action-handle" aria-hidden="true" />
             <h2 className="sheet-title">
               {asking.type === "TAHSİLAT"
-                ? "Tahsilat nereye girsin?"
-                : "Ödeme nereden yapıldı?"}
+                ? t("Tahsilat nereye girsin?")
+                : t("Ödeme nereden yapıldı?")}
             </h2>
             <p className="sheet-note">
               {asking.type === "TAHSİLAT"
-                ? `${money.format(asking.amount)} nakit mi alındı, bankaya mı geldi?`
-                : `${money.format(asking.amount)} nakit mi ödendi, bankadan mı çıktı?`}
+                ? t("{amount} nakit mi alındı, bankaya mı geldi?", { amount: money.format(asking.amount) })
+                : t("{amount} nakit mi ödendi, bankadan mı çıktı?", { amount: money.format(asking.amount) })}
             </p>
             <div className="period-options">
               {accounts.map((a) => (
@@ -651,14 +652,14 @@ export default function CustomerPage({
                   type="button"
                   className={`action-btn account-btn ${
                     editingId &&
-                    transactions.find((t) => t.id === editingId)?.account === a.id
+                    transactions.find((row) => row.id === editingId)?.account === a.id
                       ? "is-active"
                       : ""
                   }`}
                   onClick={() => chooseAccount(a.id)}
                 >
                   <Svg d={a.id === "cash" ? CASH_ICON : BANK_ICON} />
-                  {a.name}
+                  {t(a.name)}
                 </button>
               ))}
             </div>
@@ -667,7 +668,7 @@ export default function CustomerPage({
               className="action-btn is-cancel"
               onClick={() => setAsking(null)}
             >
-              Vazgeç
+              {t("Vazgeç")}
             </button>
           </div>
         </div>

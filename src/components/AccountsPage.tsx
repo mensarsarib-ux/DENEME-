@@ -9,6 +9,7 @@ import {
 } from "../data/mock";
 import { currencySymbol, money } from "../lib/format";
 import { haptic } from "../lib/haptics";
+import { t } from "../lib/i18n";
 import { MENU_ITEMS } from "../lib/menu";
 import PageHeader from "./PageHeader";
 
@@ -51,8 +52,8 @@ export default function AccountsPage({
   return (
     <div className="cust-page">
       <PageHeader
-        title="Hesaplarım"
-        subtitle={`Toplam ${money.format(cashTotal(transactions, accounts))}`}
+        title={t("Hesaplarım")}
+        subtitle={t("Toplam {amount}", { amount: money.format(cashTotal(transactions, accounts)) })}
         icon={ICON}
         onBack={onBack}
       />
@@ -63,25 +64,25 @@ export default function AccountsPage({
           const incoming = moves.filter((m) => m.type === "TAHSİLAT").reduce((s, m) => s + m.amount, 0);
           const outgoing = moves.filter((m) => m.type === "ÖDEME").reduce((s, m) => s + m.amount, 0);
           return (
-            <section key={a.id} className="card" aria-label={a.name}>
+            <section key={a.id} className="card" aria-label={t(a.name)}>
               <div className="card-head">
-                <h2>{a.name}</h2>
+                <h2>{t(a.name)}</h2>
                 <strong className="card-amount">
                   {money.format(accountBalance(transactions, accounts, a.id))}
                 </strong>
               </div>
               <dl className="stat-list">
-                <div><dt>Açılış bakiyesi</dt><dd>{money.format(a.opening)}</dd></div>
-                <div><dt>Toplam tahsilat</dt><dd className="is-in">{money.format(incoming)}</dd></div>
-                <div><dt>Toplam ödeme</dt><dd className="is-out">{money.format(outgoing)}</dd></div>
-                <div><dt>Hareket sayısı</dt><dd>{moves.length}</dd></div>
+                <div><dt>{t("Açılış bakiyesi")}</dt><dd>{money.format(a.opening)}</dd></div>
+                <div><dt>{t("Toplam tahsilat")}</dt><dd className="is-in">{money.format(incoming)}</dd></div>
+                <div><dt>{t("Toplam ödeme")}</dt><dd className="is-out">{money.format(outgoing)}</dd></div>
+                <div><dt>{t("Hareket sayısı")}</dt><dd>{moves.length}</dd></div>
               </dl>
               <div className="card-actions">
                 <button type="button" className="action-btn" onClick={() => onOpenKasa(a.id)}>
-                  Hareketleri gör
+                  {t("Hareketleri gör")}
                 </button>
                 <button type="button" className="action-btn" onClick={() => startEdit(a)}>
-                  Açılış bakiyesini düzenle
+                  {t("Açılış bakiyesini düzenle")}
                 </button>
               </div>
             </section>
@@ -94,18 +95,18 @@ export default function AccountsPage({
           <form
             className="action-sheet is-centered"
             role="dialog"
-            aria-label={`${editing.name} açılış bakiyesi`}
+            aria-label={t("{name} açılış bakiyesi", { name: t(editing.name) })}
             onClick={(e) => e.stopPropagation()}
             onSubmit={submit}
             noValidate
           >
             <div className="action-handle" aria-hidden="true" />
-            <h2 className="sheet-title">{editing.name} açılış bakiyesi</h2>
+            <h2 className="sheet-title">{t("{name} açılış bakiyesi", { name: t(editing.name) })}</h2>
             <p className="sheet-note">
-              Hesabın başlangıç tutarı. Bakiye, bu tutara tahsilatlar eklenip ödemeler çıkarılarak hesaplanır.
+              {t("Hesabın başlangıç tutarı. Bakiye, bu tutara tahsilatlar eklenip ödemeler çıkarılarak hesaplanır.")}
             </p>
             <div className="field">
-              <label htmlFor="opening">Açılış bakiyesi ({currencySymbol()})</label>
+              <label htmlFor="opening">{t("Açılış bakiyesi")} ({currencySymbol()})</label>
               <input
                 id="opening"
                 autoFocus
@@ -116,11 +117,11 @@ export default function AccountsPage({
                 aria-invalid={text.trim() !== "" && !valid ? true : undefined}
               />
               {text.trim() !== "" && !valid && (
-                <p className="form-error" role="alert">Geçerli bir tutar yazın.</p>
+                <p className="form-error" role="alert">{t("Geçerli bir tutar yazın.")}</p>
               )}
             </div>
-            <button className="primary-btn" type="submit" disabled={!valid}>KAYDET</button>
-            <button className="action-btn is-cancel" type="button" onClick={() => setEditing(null)}>Vazgeç</button>
+            <button className="primary-btn" type="submit" disabled={!valid}>{t("KAYDET")}</button>
+            <button className="action-btn is-cancel" type="button" onClick={() => setEditing(null)}>{t("Vazgeç")}</button>
           </form>
         </div>
       )}

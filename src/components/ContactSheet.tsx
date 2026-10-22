@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 import type { Customer } from "../data/mock";
 import { haptic } from "../lib/haptics";
+import { t } from "../lib/i18n";
 
 export type ContactPatch = Pick<Customer, "phone" | "email" | "address" | "note">;
 
@@ -41,7 +42,7 @@ export default function ContactSheet({
       <form
         className="action-sheet"
         role="dialog"
-        aria-label={`${party.name} iletişim bilgileri`}
+        aria-label={t("{name} iletişim bilgileri", { name: party.name })}
         onClick={(e) => e.stopPropagation()}
         onSubmit={submit}
         noValidate
@@ -51,27 +52,27 @@ export default function ContactSheet({
         {groupName && <p className="sheet-note">{groupName}</p>}
 
         <div className="field">
-          <label htmlFor="ct-phone">Telefon</label>
+          <label htmlFor="ct-phone">{t("Telefon")}</label>
           <input id="ct-phone" type="tel" inputMode="tel" autoComplete="off" value={phone} onChange={(e) => setPhone(e.target.value)} />
         </div>
         <div className="field">
-          <label htmlFor="ct-email">E-posta</label>
+          <label htmlFor="ct-email">{t("E-posta")}</label>
           <input id="ct-email" type="email" autoComplete="off" value={email} onChange={(e) => setEmail(e.target.value)} />
         </div>
         <div className="field">
-          <label htmlFor="ct-address">Adres</label>
+          <label htmlFor="ct-address">{t("Adres")}</label>
           <textarea id="ct-address" rows={2} value={address} onChange={(e) => setAddress(e.target.value)} />
         </div>
         <div className="field">
-          <label htmlFor="ct-note">Not</label>
+          <label htmlFor="ct-note">{t("Not")}</label>
           <textarea id="ct-note" rows={2} value={note} onChange={(e) => setNote(e.target.value)} />
         </div>
 
-        <button className="primary-btn" type="submit">KAYDET</button>
+        <button className="primary-btn" type="submit">{t("KAYDET")}</button>
         {onOpenAccount && (
-          <button className="action-btn" type="button" onClick={onOpenAccount}>Hesabı aç</button>
+          <button className="action-btn" type="button" onClick={onOpenAccount}>{t("Hesabı aç")}</button>
         )}
-        <button className="action-btn is-cancel" type="button" onClick={onClose}>Vazgeç</button>
+        <button className="action-btn is-cancel" type="button" onClick={onClose}>{t("Vazgeç")}</button>
       </form>
     </div>
   );

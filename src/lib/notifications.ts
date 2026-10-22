@@ -7,6 +7,7 @@ import {
   type Transaction,
 } from "../data/mock";
 import { money } from "./format";
+import { t } from "./i18n";
 
 export interface AppNotification {
   /** Aynı uyarı için hep aynı kimlik; okundu bilgisi buna göre saklanır */
@@ -39,8 +40,11 @@ export function buildNotifications(
     out.push({
       id: "cash:low",
       kind: "cash",
-      title: "Kasa bakiyesi düşük",
-      body: `Nakit ve banka toplamı ${money.format(total)}; belirlediğiniz ${money.format(settings.lowCashLimit)} limitinin altında.`,
+      title: t("Kasa bakiyesi düşük"),
+      body: t("Nakit ve banka toplamı {total}; belirlediğiniz {limit} limitinin altında.", {
+        total: money.format(total),
+        limit: money.format(settings.lowCashLimit),
+      }),
     });
   }
 
@@ -52,8 +56,8 @@ export function buildNotifications(
     out.push({
       id: `activity:${today}`,
       kind: "activity",
-      title: "Bugünkü işlemler",
-      body: `Bugün ${todayCount} işlem girildi.`,
+      title: t("Bugünkü işlemler"),
+      body: t("Bugün {n} işlem girildi.", { n: todayCount }),
     });
   }
 
@@ -67,8 +71,8 @@ export function buildNotifications(
         out.push({
           id: `receivable:${p.id}`,
           kind: "receivable",
-          title: `Yüksek alacak: ${p.name}`,
-          body: `${money.format(balance)} tahsil edilmeyi bekliyor.`,
+          title: t("Yüksek alacak: {name}", { name: p.name }),
+          body: t("{amount} tahsil edilmeyi bekliyor.", { amount: money.format(balance) }),
           partyId: p.id,
         }),
       );
@@ -82,8 +86,8 @@ export function buildNotifications(
         out.push({
           id: `payable:${p.id}`,
           kind: "payable",
-          title: `Yüksek borç: ${p.name}`,
-          body: `${money.format(-balance)} ödemeniz bekleniyor.`,
+          title: t("Yüksek borç: {name}", { name: p.name }),
+          body: t("{amount} ödemeniz bekleniyor.", { amount: money.format(-balance) }),
           partyId: p.id,
         }),
       );

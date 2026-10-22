@@ -2,9 +2,10 @@ import { useState } from "react";
 import { cashTotal, type Account, type Customer, type Transaction } from "../data/mock";
 import { money } from "../lib/format";
 import { haptic } from "../lib/haptics";
+import { t } from "../lib/i18n";
 import { MENU_ITEMS } from "../lib/menu";
 import {
-  REPORT_PERIODS,
+  reportPeriods,
   buildReport,
   reportText,
   type RankedParty,
@@ -75,9 +76,10 @@ export default function ReportsPage({
   const [copied, setCopied] = useState<"ok" | "fail" | null>(null);
 
   const report = buildReport(parties, transactions, period);
-  const label = REPORT_PERIODS.find((p) => p.value === period)?.label ?? "";
+  const periods = reportPeriods();
+  const label = periods.find((p) => p.value === period)?.label ?? "";
   const net = report.totals.satis - report.totals.alis;
-  const text = reportText(businessName || "Hesabım", label, report);
+  const text = reportText(businessName || t("Hesabım"), label, report);
 
   async function copy() {
     haptic("light");
@@ -92,10 +94,10 @@ export default function ReportsPage({
 
   return (
     <div className="cust-page">
-      <PageHeader title="Raporlar" subtitle={`${label} özeti`} icon={ICON} onBack={onBack} />
+      <PageHeader title={t("Raporlar")} subtitle={t("{period} özeti", { period: label })} icon={ICON} onBack={onBack} />
 
-      <div className="chip-row" role="tablist" aria-label="Rapor dönemi">
-        {REPORT_PERIODS.map((p) => (
+      <div className="chip-row" role="tablist" aria-label={t("Rapor dönemi")}>
+        {periods.map((p) => (
           <button
             key={p.value}
             role="tab"
@@ -113,47 +115,47 @@ export default function ReportsPage({
       </div>
 
       <div className="stack">
-        <section className="card" aria-label="Gelir ve gider">
+        <section className="card" aria-label={t("Gelir ve gider")}>
           <div className="card-head">
-            <h2>Net sonuç</h2>
+            <h2>{t("Net sonuç")}</h2>
             <strong className={`card-amount ${net < 0 ? "is-out" : "is-in"}`}>{money.format(net)}</strong>
           </div>
           <dl className="stat-list">
-            <div><dt>Gelir (satış)</dt><dd className="is-in">{money.format(report.totals.satis)}</dd></div>
-            <div><dt>Gider (alış)</dt><dd className="is-out">{money.format(report.totals.alis)}</dd></div>
-            <div><dt>Tahsilat</dt><dd>{money.format(report.totals.tahsilat)}</dd></div>
+            <div><dt>{t("Gelir (satış)")}</dt><dd className="is-in">{money.format(report.totals.satis)}</dd></div>
+            <div><dt>{t("Gider (alış)")}</dt><dd className="is-out">{money.format(report.totals.alis)}</dd></div>
+            <div><dt>{t("Tahsilat")}</dt><dd>{money.format(report.totals.tahsilat)}</dd></div>
           </dl>
         </section>
 
-        <section className="card" aria-label="Alacak ve borç">
-          <h2 className="card-title">Güncel durum</h2>
+        <section className="card" aria-label={t("Alacak ve borç")}>
+          <h2 className="card-title">{t("Güncel durum")}</h2>
           <dl className="stat-list">
-            <div><dt>Toplam alacak</dt><dd className="is-in">{money.format(report.receivable)}</dd></div>
-            <div><dt>Toplam borç</dt><dd className="is-out">{money.format(report.payable)}</dd></div>
-            <div><dt>Kasa (nakit + banka)</dt><dd>{money.format(cashTotal(transactions, accounts))}</dd></div>
+            <div><dt>{t("Toplam alacak")}</dt><dd className="is-in">{money.format(report.receivable)}</dd></div>
+            <div><dt>{t("Toplam borç")}</dt><dd className="is-out">{money.format(report.payable)}</dd></div>
+            <div><dt>{t("Kasa (nakit + banka)")}</dt><dd>{money.format(cashTotal(transactions, accounts))}</dd></div>
           </dl>
         </section>
 
         <Ranking
-          title="En çok satış yapılan müşteriler"
+          title={t("En çok satış yapılan müşteriler")}
           rows={report.topCustomers}
-          empty="Bu dönemde satış yok."
+          empty={t("Bu dönemde satış yok.")}
           onOpenParty={onOpenParty}
         />
         <Ranking
-          title="En çok alış yapılanlar"
+          title={t("En çok alış yapılanlar")}
           rows={report.topSuppliers}
-          empty="Bu dönemde alış yok."
+          empty={t("Bu dönemde alış yok.")}
           onOpenParty={onOpenParty}
         />
 
         <button type="button" className="primary-btn" onClick={copy}>
-          RAPORU KOPYALA
+          {t("RAPORU KOPYALA")}
         </button>
-        {copied === "ok" && <p className="form-success" role="status">Rapor panoya kopyalandı.</p>}
+        {copied === "ok" && <p className="form-success" role="status">{t("Rapor panoya kopyalandı.")}</p>}
         {copied === "fail" && (
           <div>
-            <p className="field-hint">Kopyalanamadı. Metni seçip kopyalayabilirsiniz:</p>
+            <p className="field-hint">{t("Kopyalanamadı. Metni seçip kopyalayabilirsiniz:")}</p>
             <textarea className="copy-box" readOnly rows={10} value={text} onFocus={(e) => e.currentTarget.select()} />
           </div>
         )}

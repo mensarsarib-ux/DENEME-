@@ -1,3 +1,4 @@
+import { t } from "../lib/i18n";
 import { haptic } from "../lib/haptics";
 import { MENU_ITEMS } from "../lib/menu";
 import type { AppNotification } from "../lib/notifications";
@@ -39,8 +40,8 @@ export default function NotificationsPage({
   return (
     <div className="cust-page">
       <PageHeader
-        title="Bildirimler"
-        subtitle={unread > 0 ? `${unread} okunmamış` : "Hepsi okundu"}
+        title={t("Bildirimler")}
+        subtitle={unread > 0 ? t("{n} okunmamış", { n: unread }) : t("Hepsi okundu")}
         icon={ICON}
         onBack={onBack}
         action={
@@ -53,16 +54,16 @@ export default function NotificationsPage({
               onReadAll();
             }}
           >
-            HEPSİNİ OKU
+            {t("HEPSİNİ OKU")}
           </button>
         }
       />
 
       {notifications.length === 0 ? (
         <div className="search-empty">
-          <p>Şu an bildirim yok.</p>
+          <p>{t("Şu an bildirim yok.")}</p>
           <button type="button" className="help-link" onClick={onOpenSettings}>
-            Bildirim limitlerini düzenle
+            {t("Bildirim limitlerini düzenle")}
           </button>
         </div>
       ) : (
@@ -87,7 +88,7 @@ export default function NotificationsPage({
                     <strong>{n.title}</strong>
                     <span>{n.body}</span>
                   </span>
-                  {isUnread && <span className="notif-dot" aria-label="Okunmamış" />}
+                  {isUnread && <span className="notif-dot" aria-label={t("Okunmamış")} />}
                 </button>
               </li>
             );
@@ -96,7 +97,7 @@ export default function NotificationsPage({
       )}
 
       <button type="button" className="help-link notif-settings" onClick={onOpenSettings}>
-        Bildirim limitlerini düzenle
+        {t("Bildirim limitlerini düzenle")}
       </button>
     </div>
   );

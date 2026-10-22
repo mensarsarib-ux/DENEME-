@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from "react";
 import type { Customer, PartyKind } from "../data/mock";
+import { t } from "../lib/i18n";
 import { Svg } from "./Icon";
 
 interface FormText {
@@ -13,36 +14,35 @@ interface FormText {
 
 /** Müşteri, tedarikçi ve kullanıcının açtığı sekmelerde değişen metinler */
 function textFor(kind: PartyKind, groupName: string): FormText {
-  if (kind === "customer") return TEXT.customer;
-  if (kind === "supplier") return TEXT.supplier;
+  if (kind === "customer") {
+    return {
+      title: t("Yeni müşteri"),
+      subtitle: t("Cari hesap oluştur"),
+      duplicate: t("Bu isimde bir müşteri zaten var."),
+      hint: t("Müşteriyi eklemek için firma adını yazın."),
+      submit: t("MÜŞTERİ EKLE"),
+      idPrefix: "c",
+    };
+  }
+  if (kind === "supplier") {
+    return {
+      title: t("Yeni tedarikçi"),
+      subtitle: t("Tedarikçi hesabı oluştur"),
+      duplicate: t("Bu isimde bir tedarikçi zaten var."),
+      hint: t("Tedarikçiyi eklemek için firma adını yazın."),
+      submit: t("TEDARİKÇİ EKLE"),
+      idPrefix: "s",
+    };
+  }
   return {
-    title: "Yeni kayıt",
-    subtitle: groupName,
-    duplicate: "Bu isimde bir kayıt zaten var.",
-    hint: "Kaydı eklemek için firma adını yazın.",
-    submit: "KAYIT EKLE",
+    title: t("Yeni kayıt"),
+    subtitle: t(groupName),
+    duplicate: t("Bu isimde bir kayıt zaten var."),
+    hint: t("Kaydı eklemek için firma adını yazın."),
+    submit: t("KAYIT EKLE"),
     idPrefix: "p",
   };
 }
-
-const TEXT: Record<"customer" | "supplier", FormText> = {
-  customer: {
-    title: "Yeni müşteri",
-    subtitle: "Cari hesap oluştur",
-    duplicate: "Bu isimde bir müşteri zaten var.",
-    hint: "Müşteriyi eklemek için firma adını yazın.",
-    submit: "MÜŞTERİ EKLE",
-    idPrefix: "c",
-  },
-  supplier: {
-    title: "Yeni tedarikçi",
-    subtitle: "Tedarikçi hesabı oluştur",
-    duplicate: "Bu isimde bir tedarikçi zaten var.",
-    hint: "Tedarikçiyi eklemek için firma adını yazın.",
-    submit: "TEDARİKÇİ EKLE",
-    idPrefix: "s",
-  },
-};
 
 export default function NewCustomerPage({
   kind,
@@ -66,10 +66,10 @@ export default function NewCustomerPage({
   const text: FormText = initial
     ? {
         ...base,
-        title: "Bilgileri düzenle",
+        title: t("Bilgileri düzenle"),
         subtitle: initial.name,
-        hint: "Firma adı boş bırakılamaz.",
-        submit: "KAYDET",
+        hint: t("Firma adı boş bırakılamaz."),
+        submit: t("KAYDET"),
       }
     : base;
   const [name, setName] = useState(initial?.name ?? "");
@@ -110,7 +110,7 @@ export default function NewCustomerPage({
   return (
     <div className="cust-page">
       <header className="cust-header">
-        <button className="round-btn" aria-label="Geri" onClick={onBack}>
+        <button className="round-btn" aria-label={t("Geri")} onClick={onBack}>
           <Svg d="M15 5l-7 7 7 7" />
         </button>
         <div className="cust-title">
@@ -130,13 +130,13 @@ export default function NewCustomerPage({
           aria-label={text.submit}
           disabled={!canSave}
         >
-          {initial ? "KAYDET" : "EKLE"}
+          {initial ? t("KAYDET") : t("EKLE")}
         </button>
       </header>
 
       <form id="party-form" className="form" onSubmit={submit} noValidate>
         <div className="field">
-          <label htmlFor="customer-name">Firma adı *</label>
+          <label htmlFor="customer-name">{t("Firma adı *")}</label>
           <input
             id="customer-name"
             autoFocus={!initial}
@@ -154,10 +154,10 @@ export default function NewCustomerPage({
           {!trimmed && <p className="field-hint">{text.hint}</p>}
         </div>
 
-        <h2 className="form-section-title">EK BİLGİLER (İSTEĞE BAĞLI)</h2>
+        <h2 className="form-section-title">{t("EK BİLGİLER (İSTEĞE BAĞLI)")}</h2>
 
         <div className="field">
-          <label htmlFor="customer-phone">Telefon numarası</label>
+          <label htmlFor="customer-phone">{t("Telefon numarası")}</label>
           <input
             id="customer-phone"
             type="tel"
@@ -169,7 +169,7 @@ export default function NewCustomerPage({
         </div>
 
         <div className="field">
-          <label htmlFor="customer-address">Adres</label>
+          <label htmlFor="customer-address">{t("Adres")}</label>
           <textarea
             id="customer-address"
             rows={2}
@@ -180,7 +180,7 @@ export default function NewCustomerPage({
         </div>
 
         <div className="field">
-          <label htmlFor="customer-email">E-posta</label>
+          <label htmlFor="customer-email">{t("E-posta")}</label>
           <input
             id="customer-email"
             type="email"
@@ -191,7 +191,7 @@ export default function NewCustomerPage({
         </div>
 
         <div className="field">
-          <label htmlFor="customer-note">Not</label>
+          <label htmlFor="customer-note">{t("Not")}</label>
           <textarea
             id="customer-note"
             rows={2}

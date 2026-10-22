@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { Settings } from "../data/mock";
 import { CURRENCIES, currencyOf } from "../lib/currencies";
+import { LANGUAGES, t } from "../lib/i18n";
 import { currencySymbol } from "../lib/format";
 import { haptic } from "../lib/haptics";
 import { MENU_ITEMS } from "../lib/menu";
@@ -109,10 +110,10 @@ export default function SettingsPage({
     const error = onRestore(restoreText);
     if (error) {
       haptic("warning");
-      setRestoreMsg({ ok: false, text: error });
+      setRestoreMsg({ ok: false, text: t(error) });
     } else {
       haptic("success");
-      setRestoreMsg({ ok: true, text: "Yedek geri yüklendi." });
+      setRestoreMsg({ ok: true, text: t("Yedek geri yüklendi.") });
       setRestoreText("");
       setRestoring(false);
     }
@@ -120,78 +121,103 @@ export default function SettingsPage({
 
   return (
     <div className="cust-page">
-      <PageHeader title="Ayarlar" subtitle="Tercihleriniz bu cihazda saklanır" icon={ICON} onBack={onBack} />
+      <PageHeader title={t("Ayarlar")} subtitle={t("Tercihleriniz bu cihazda saklanır")} icon={ICON} onBack={onBack} />
       <div className="stack">
-        <section className="card" aria-label="Genel">
-          <h2 className="card-title">Genel</h2>
+        <section className="card" aria-label={t("Genel")}>
+          <h2 className="card-title">{t("Genel")}</h2>
           <Switch
-            label="Titreşim"
-            hint="Düğmelere ve işlemlere dokununca hafif titreşim (iPhone desteklemeyebilir)"
+            label={t("Titreşim")}
+            hint={t("Düğmelere ve işlemlere dokununca hafif titreşim (iPhone desteklemeyebilir)")}
             checked={settings.haptics}
             onChange={(v) => set("haptics", v)}
           />
         </section>
 
-        <section className="card" aria-label="Para birimi">
-          <h2 className="card-title">Para birimi</h2>
+        <section className="card" aria-label={t("Dil")}>
+          <h2 className="card-title">{t("Dil")}</h2>
+          <div className="currency-list" role="radiogroup" aria-label={t("Dil")}>
+            {LANGUAGES.map((l) => (
+              <button
+                key={l.code}
+                type="button"
+                role="radio"
+                aria-checked={l.code === settings.language}
+                className={`currency-option ${l.code === settings.language ? "is-active" : ""}`}
+                onClick={() => {
+                  haptic("success");
+                  set("language", l.code);
+                }}
+              >
+                <span className="currency-badge" aria-hidden="true">{l.flag}</span>
+                <span className="setting-text">
+                  <strong>{l.native}</strong>
+                </span>
+                {l.code === settings.language && <span className="currency-check" aria-hidden="true">✓</span>}
+              </button>
+            ))}
+          </div>
+        </section>
+
+        <section className="card" aria-label={t("Para birimi")}>
+          <h2 className="card-title">{t("Para birimi")}</h2>
           <button type="button" className="currency-current" onClick={() => setPickingCurrency(true)}>
             <span className="currency-badge" aria-hidden="true">{current.symbol}</span>
             <span className="setting-text">
-              <strong>{current.flag} {current.name}</strong>
+              <strong>{current.flag} {t(current.name)}</strong>
               <small>{current.code}</small>
             </span>
             <span className="drawer-chevron" aria-hidden="true">›</span>
           </button>
-          <p className="field-hint">Yalnızca gösterilen simge değişir; mevcut tutarlar başka bir para birimine çevrilmez.</p>
+          <p className="field-hint">{t("Yalnızca gösterilen simge değişir; mevcut tutarlar başka bir para birimine çevrilmez.")}</p>
         </section>
 
-        <section className="card" aria-label="Bildirimler">
-          <h2 className="card-title">Bildirim limitleri</h2>
-          <Switch label="Yüksek alacak" hint="Bir kişinin alacağı limiti aşınca" checked={settings.notifyReceivable} onChange={(v) => set("notifyReceivable", v)} />
-          <Limit id="lim-rec" label={`Alacak limiti (${currencySymbol()})`} value={settings.receivableLimit} disabled={!settings.notifyReceivable} onChange={(v) => set("receivableLimit", v)} />
-          <Switch label="Yüksek borç" hint="Bir kişiye borcunuz limiti aşınca" checked={settings.notifyPayable} onChange={(v) => set("notifyPayable", v)} />
-          <Limit id="lim-pay" label={`Borç limiti (${currencySymbol()})`} value={settings.payableLimit} disabled={!settings.notifyPayable} onChange={(v) => set("payableLimit", v)} />
-          <Switch label="Düşük kasa" hint="Nakit ve banka toplamı limitin altına inince" checked={settings.notifyLowCash} onChange={(v) => set("notifyLowCash", v)} />
-          <Limit id="lim-cash" label={`Kasa limiti (${currencySymbol()})`} value={settings.lowCashLimit} disabled={!settings.notifyLowCash} onChange={(v) => set("lowCashLimit", v)} />
+        <section className="card" aria-label={t("Bildirimler")}>
+          <h2 className="card-title">{t("Bildirim limitleri")}</h2>
+          <Switch label={t("Yüksek alacak")} hint={t("Bir kişinin alacağı limiti aşınca")} checked={settings.notifyReceivable} onChange={(v) => set("notifyReceivable", v)} />
+          <Limit id="lim-rec" label={`${t("Alacak limiti")} (${currencySymbol()})`} value={settings.receivableLimit} disabled={!settings.notifyReceivable} onChange={(v) => set("receivableLimit", v)} />
+          <Switch label={t("Yüksek borç")} hint={t("Bir kişiye borcunuz limiti aşınca")} checked={settings.notifyPayable} onChange={(v) => set("notifyPayable", v)} />
+          <Limit id="lim-pay" label={`${t("Borç limiti")} (${currencySymbol()})`} value={settings.payableLimit} disabled={!settings.notifyPayable} onChange={(v) => set("payableLimit", v)} />
+          <Switch label={t("Düşük kasa")} hint={t("Nakit ve banka toplamı limitin altına inince")} checked={settings.notifyLowCash} onChange={(v) => set("notifyLowCash", v)} />
+          <Limit id="lim-cash" label={`${t("Kasa limiti")} (${currencySymbol()})`} value={settings.lowCashLimit} disabled={!settings.notifyLowCash} onChange={(v) => set("lowCashLimit", v)} />
         </section>
 
-        <section className="card" aria-label="Destek">
-          <h2 className="card-title">Destek e-postası</h2>
+        <section className="card" aria-label={t("Destek")}>
+          <h2 className="card-title">{t("Destek e-postası")}</h2>
           <div className="field">
-            <label htmlFor="support-email">Destek mesajları bu adrese gönderilir</label>
+            <label htmlFor="support-email">{t("Destek mesajları bu adrese gönderilir")}</label>
             <input
               id="support-email"
               type="email"
               autoComplete="off"
-              placeholder="destek@sirketiniz.com"
+              placeholder={t("destek@sirketiniz.com")}
               value={settings.supportEmail}
               onChange={(e) => set("supportEmail", e.target.value)}
             />
           </div>
         </section>
 
-        <section className="card" aria-label="Veriler">
-          <h2 className="card-title">Veriler</h2>
-          <p className="card-empty">Veriler yalnızca bu tarayıcıda saklanır. Yedek alıp başka cihaza taşıyabilirsiniz.</p>
+        <section className="card" aria-label={t("Veriler")}>
+          <h2 className="card-title">{t("Veriler")}</h2>
+          <p className="card-empty">{t("Veriler yalnızca bu tarayıcıda saklanır. Yedek alıp başka cihaza taşıyabilirsiniz.")}</p>
           <div className="card-actions">
-            <button type="button" className="action-btn" onClick={copyBackup}>Yedeği kopyala</button>
+            <button type="button" className="action-btn" onClick={copyBackup}>{t("Yedeği kopyala")}</button>
             <button type="button" className="action-btn" onClick={() => { setRestoring((r) => !r); setRestoreMsg(null); }}>
-              Yedekten yükle
+              {t("Yedekten yükle")}
             </button>
           </div>
-          {copied === "ok" && <p className="form-success">Yedek panoya kopyalandı.</p>}
+          {copied === "ok" && <p className="form-success">{t("Yedek panoya kopyalandı.")}</p>}
           {copied === "fail" && (
             <>
-              <p className="field-hint">Kopyalanamadı; metni elle kopyalayın:</p>
+              <p className="field-hint">{t("Kopyalanamadı; metni elle kopyalayın:")}</p>
               <textarea className="copy-box" readOnly rows={5} value={backupText} onFocus={(e) => e.currentTarget.select()} />
             </>
           )}
           {restoring && (
             <div className="field">
-              <label htmlFor="restore-text">Yedek metnini yapıştırın</label>
+              <label htmlFor="restore-text">{t("Yedek metnini yapıştırın")}</label>
               <textarea id="restore-text" rows={5} value={restoreText} onChange={(e) => setRestoreText(e.target.value)} />
               <button type="button" className="primary-btn" disabled={!restoreText.trim()} onClick={restore}>
-                GERİ YÜKLE
+                {t("GERİ YÜKLE")}
               </button>
             </div>
           )}
@@ -199,16 +225,16 @@ export default function SettingsPage({
             <p className={restoreMsg.ok ? "form-success" : "field-hint"} role="status">{restoreMsg.text}</p>
           )}
           <button type="button" className="action-btn is-danger" onClick={() => setConfirmReset(true)}>
-            Tüm verileri sıfırla
+            {t("Tüm verileri sıfırla")}
           </button>
         </section>
       </div>
 
       {pickingCurrency && (
         <div className="action-backdrop" onClick={() => setPickingCurrency(false)}>
-          <div className="action-sheet currency-sheet" role="dialog" aria-label="Para birimi seç" onClick={(e) => e.stopPropagation()}>
+          <div className="action-sheet currency-sheet" role="dialog" aria-label={t("Para birimi seç")} onClick={(e) => e.stopPropagation()}>
             <div className="action-handle" aria-hidden="true" />
-            <h2 className="sheet-title">Para birimi seç</h2>
+            <h2 className="sheet-title">{t("Para birimi seç")}</h2>
             <ul className="currency-list">
               {CURRENCIES.map((c) => (
                 <li key={c.code}>
@@ -224,7 +250,7 @@ export default function SettingsPage({
                   >
                     <span className="currency-badge" aria-hidden="true">{c.symbol}</span>
                     <span className="setting-text">
-                      <strong>{c.flag} {c.name}</strong>
+                      <strong>{c.flag} {t(c.name)}</strong>
                       <small>{c.code}</small>
                     </span>
                     {c.code === settings.currency && <span className="currency-check" aria-hidden="true">✓</span>}
@@ -238,14 +264,14 @@ export default function SettingsPage({
 
       {confirmReset && (
         <div className="action-backdrop" onClick={() => setConfirmReset(false)}>
-          <div className="action-sheet is-centered" role="alertdialog" aria-label="Sıfırlama onayı" onClick={(e) => e.stopPropagation()}>
+          <div className="action-sheet is-centered" role="alertdialog" aria-label={t("Sıfırlama onayı")} onClick={(e) => e.stopPropagation()}>
             <div className="action-handle" aria-hidden="true" />
-            <h2 className="sheet-title">Tüm verileri sıfırlamak istediğinize emin misiniz?</h2>
-            <p className="sheet-note">Kayıtlar, notlar ve ayarlar örnek verilere döner. Bu işlem geri alınamaz.</p>
+            <h2 className="sheet-title">{t("Tüm verileri sıfırlamak istediğinize emin misiniz?")}</h2>
+            <p className="sheet-note">{t("Kayıtlar, notlar ve ayarlar örnek verilere döner. Bu işlem geri alınamaz.")}</p>
             <button className="danger-btn" type="button" onClick={() => { haptic("warning"); setConfirmReset(false); onReset(); }}>
-              EVET, SIFIRLA
+              {t("EVET, SIFIRLA")}
             </button>
-            <button className="action-btn is-cancel" type="button" autoFocus onClick={() => setConfirmReset(false)}>Vazgeç</button>
+            <button className="action-btn is-cancel" type="button" autoFocus onClick={() => setConfirmReset(false)}>{t("Vazgeç")}</button>
           </div>
         </div>
       )}

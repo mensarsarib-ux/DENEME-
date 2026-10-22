@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import { haptic } from "../lib/haptics";
+import { t } from "../lib/i18n";
 import { Svg } from "./Icon";
 
 const MAX_LENGTH = 14;
@@ -58,7 +59,7 @@ export default function Keypad({
   }
 
   return (
-    <div className="keypad" role="group" aria-label="Tuş takımı">
+    <div className="keypad" role="group" aria-label={t("Tuş takımı")}>
       {DIGITS.map((key) => (
         <button
           key={key}
@@ -73,7 +74,7 @@ export default function Keypad({
       <button
         type="button"
         className={`key-fn ${down === "," ? "is-down" : ""}`}
-        aria-label="Virgül"
+        aria-label={t("Virgül")}
         {...gesture(",")}
         onClick={() => press(",")}
       >
@@ -90,7 +91,7 @@ export default function Keypad({
       <button
         type="button"
         className={`key-fn ${down === "back" ? "is-down" : ""}`}
-        aria-label="Sil"
+        aria-label={t("Sil")}
         {...gesture("back")}
         onClick={() => press("back")}
       >

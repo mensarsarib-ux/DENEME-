@@ -35,7 +35,7 @@ import type { MenuPage } from "./lib/menu";
 import { buildNotifications } from "./lib/notifications";
 import { useSwipeBack } from "./lib/useSwipeBack";
 import { setCurrency } from "./lib/format";
-import { setLanguage } from "./lib/i18n";
+import { setLanguage, t } from "./lib/i18n";
 import { clearStored, usePersistedState } from "./lib/storage";
 
 // Açılış ekranı ne kadar görünsün (ms) ve çıkış animasyonunun süresi
@@ -141,7 +141,7 @@ export default function App() {
     try {
       data = JSON.parse(text);
     } catch {
-      return "Metin geçerli bir yedek değil.";
+      return t("Metin geçerli bir yedek değil.");
     }
     if (
       !data ||
@@ -151,7 +151,7 @@ export default function App() {
       !Array.isArray(data.transactions) ||
       !Array.isArray(data.accounts)
     ) {
-      return "Bu bir Hesabım yedeği gibi görünmüyor.";
+      return t("Bu bir Hesabım yedeği gibi görünmüyor.");
     }
     setGroups(data.groups as Group[]);
     setParties(data.parties as Customer[]);
@@ -219,7 +219,7 @@ export default function App() {
     return (
       <NewCustomerPage
         kind={kind}
-        groupName={group?.name ?? ""}
+        groupName={t(group?.name ?? "")}
         existingNames={membersOf(kind).map((p) => p.name)}
         onBack={() => setView({ name: "home" })}
         onSave={(party) => {
@@ -239,7 +239,7 @@ export default function App() {
       return (
         <NewCustomerPage
           kind={party.kind}
-          groupName={groups.find((g) => g.id === party.kind)?.name ?? ""}
+          groupName={t(groups.find((g) => g.id === party.kind)?.name ?? "")}
           existingNames={membersOf(party.kind)
             .filter((p) => p.id !== party.id)
             .map((p) => p.name)}
@@ -341,7 +341,7 @@ export default function App() {
         return (
           <SupportPage
             supportEmail={settings.supportEmail}
-            diagnostics={`Hesabım • ${parties.length} kişi, ${transactions.length} işlem, ${notes.length} not • ${navigator.userAgent}`}
+            diagnostics={t("Hesabım • {p} kişi, {x} işlem, {n} not • {ua}", { p: parties.length, x: transactions.length, n: notes.length, ua: navigator.userAgent })}
             onOpenSettings={() => go({ name: "menu", page: "settings" })}
             onBack={toHome}
           />
