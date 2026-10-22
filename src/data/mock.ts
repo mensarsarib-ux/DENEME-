@@ -41,25 +41,33 @@ export const customers: Customer[] = [
 export const TX_TYPES = ["SATIŞ", "ALIŞ", "TAHSİLAT"] as const;
 export type TxType = (typeof TX_TYPES)[number];
 
+/** Her işlem türü için seçilebilecek kategoriler */
+export const CATEGORIES: Record<TxType, string[]> = {
+  SATIŞ: ["Ürün satışı", "Hizmet", "Toplu sipariş"],
+  ALIŞ: ["Hammadde", "Malzeme", "Aksesuar", "Hizmet alımı"],
+  TAHSİLAT: ["Nakit", "Havale / EFT", "Çek"],
+};
+
 export interface Transaction {
   id: string;
   customerId: string;
   type: TxType;
   /** ISO tarih-saat */
   date: string;
+  category?: string;
   description: string;
   amount: number;
 }
 
-export const transactions: Transaction[] = [
-  { id: "t1", customerId: "1", type: "SATIŞ", date: "2026-09-28T10:15:00", description: "Kumaş satışı", amount: 9175 },
-  { id: "t2", customerId: "2", type: "ALIŞ", date: "2026-09-27T09:40:00", description: "Aksesuar alımı", amount: 2990 },
-  { id: "t3", customerId: "3", type: "SATIŞ", date: "2026-09-30T14:32:00", description: "Takım satışı, 30 ve 20 cm", amount: 4880 },
-  { id: "t4", customerId: "4", type: "ALIŞ", date: "2026-09-25T11:05:00", description: "Hammadde alımı", amount: 25000 },
-  { id: "t5", customerId: "5", type: "SATIŞ", date: "2026-09-29T16:20:00", description: "Toplu sipariş", amount: 402000 },
-  { id: "t6", customerId: "6", type: "ALIŞ", date: "2026-09-24T13:10:00", description: "Malzeme alımı", amount: 3360 },
-  { id: "t7", customerId: "7", type: "SATIŞ", date: "2026-09-26T08:50:00", description: "Ürün satışı", amount: 133100 },
-  { id: "t8", customerId: "8", type: "SATIŞ", date: "2026-09-23T15:45:00", description: "Kırtasiye siparişi", amount: 62760 },
+export const initialTransactions: Transaction[] = [
+  { id: "t1", customerId: "1", type: "SATIŞ", date: "2026-09-28T10:15:00", category: "Ürün satışı", description: "Kumaş satışı", amount: 9175 },
+  { id: "t2", customerId: "2", type: "ALIŞ", date: "2026-09-27T09:40:00", category: "Aksesuar", description: "Aksesuar alımı", amount: 2990 },
+  { id: "t3", customerId: "3", type: "SATIŞ", date: "2026-09-30T14:32:00", category: "Ürün satışı", description: "Takım satışı, 30 ve 20 cm", amount: 4880 },
+  { id: "t4", customerId: "4", type: "ALIŞ", date: "2026-09-25T11:05:00", category: "Hammadde", description: "Hammadde alımı", amount: 25000 },
+  { id: "t5", customerId: "5", type: "SATIŞ", date: "2026-09-29T16:20:00", category: "Toplu sipariş", description: "Toplu sipariş", amount: 402000 },
+  { id: "t6", customerId: "6", type: "ALIŞ", date: "2026-09-24T13:10:00", category: "Malzeme", description: "Malzeme alımı", amount: 3360 },
+  { id: "t7", customerId: "7", type: "SATIŞ", date: "2026-09-26T08:50:00", category: "Ürün satışı", description: "Ürün satışı", amount: 133100 },
+  { id: "t8", customerId: "8", type: "SATIŞ", date: "2026-09-23T15:45:00", category: "Ürün satışı", description: "Kırtasiye siparişi", amount: 62760 },
 ];
 
 /** Alacak yönü: satış bakiyeyi artırır; alış ve tahsilat azaltır. */
@@ -69,15 +77,22 @@ const SIGN: Record<TxType, number> = {
   TAHSİLAT: -1,
 };
 
-export function transactionsOf(customerId: string): Transaction[] {
-  return transactions
+export function signOf(type: TxType): number {
+  return SIGN[type];
+}
+
+export function transactionsOf(
+  list: Transaction[],
+  customerId: string,
+): Transaction[] {
+  return list
     .filter((t) => t.customerId === customerId)
     .sort((a, b) => b.date.localeCompare(a.date));
 }
 
 /** Pozitif: alacak, negatif: borç */
-export function balanceOf(customerId: string): number {
-  return transactionsOf(customerId).reduce(
+export function balanceOf(list: Transaction[], customerId: string): number {
+  return transactionsOf(list, customerId).reduce(
     (sum, t) => sum + SIGN[t.type] * t.amount,
     0,
   );

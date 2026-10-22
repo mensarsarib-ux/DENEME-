@@ -5,6 +5,7 @@ import {
   customers,
   summaryByPeriod,
   type Period,
+  type Transaction,
 } from "../data/mock";
 import { money } from "../lib/format";
 import { Svg } from "./Icon";
@@ -36,8 +37,10 @@ const NAV_ICONS = [
 ];
 
 export default function Dashboard({
+  transactions,
   onSelectCustomer,
 }: {
+  transactions: Transaction[];
   onSelectCustomer: (id: string) => void;
 }) {
   const [period, setPeriod] = useState<Period>("monthly");
@@ -47,7 +50,7 @@ export default function Dashboard({
 
   const customerRows = customers.map((c) => ({
     ...c,
-    balance: balanceOf(c.id),
+    balance: balanceOf(transactions, c.id),
   }));
   const customersTotal = customerRows.reduce((sum, c) => sum + c.balance, 0);
 

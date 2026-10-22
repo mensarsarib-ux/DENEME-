@@ -1,24 +1,82 @@
-import { useState } from "react";
+import { useState, type CSSProperties } from "react";
 import {
+  CATEGORIES,
   TX_TYPES,
   balanceOf,
+  signOf,
   transactionsOf,
   type Customer,
+  type Transaction,
   type TxType,
 } from "../data/mock";
 import { formatDateTime, money } from "../lib/format";
 import { Svg } from "./Icon";
+import Keypad from "./Keypad";
+
+/** İşlem türüne göre vurgu rengi */
+const ACCENT: Record<TxType, string> = {
+  SATIŞ: "#3c8fd9",
+  ALIŞ: "#e4574a",
+  TAHSİLAT: "#3fbf82",
+};
+
+/** Ekrandaki metinden tutar üretir; geçersizse null */
+function parseAmount(text: string): number | null {
+  const value = Number(text.replace(",", "."));
+  return text && Number.isFinite(value) ? value : null;
+}
+
+/** datetime-local alanı için yerel "şimdi" değeri */
+function localNow(): string {
+  const d = new Date();
+  d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+  return d.toISOString().slice(0, 16);
+}
 
 export default function CustomerPage({
   customer,
+  transactions,
+  onAdd,
   onBack,
 }: {
   customer: Customer;
+  transactions: Transaction[];
+  onAdd: (tx: Transaction) => void;
   onBack: () => void;
 }) {
   const [txType, setTxType] = useState<TxType>("SATIŞ");
   const [amount, setAmount] = useState("");
-  const transactions = transactionsOf(customer.id);
+  const [keypadOpen, setKeypadOpen] = useState(false);
+  const [dateValue, setDateValue] = useState<string | null>(null);
+  const [category, setCategory] = useState("");
+  const [description, setDescription] = useState("");
+
+  const history = transactionsOf(transactions, customer.id);
+  const value = parseAmount(amount);
+  const canSave = value !== null && value > 0;
+
+  function changeType(type: TxType) {
+    setTxType(type);
+    setCategory("");
+  }
+
+  function save() {
+    if (!canSave) return;
+    onAdd({
+      id: `t${Date.now()}`,
+      customerId: customer.id,
+      type: txType,
+      date: dateValue ? new Date(dateValue).toISOString() : new Date().toISOString(),
+      category: category || undefined,
+      description,
+      amount: value,
+    });
+    setAmount("");
+    setDescription("");
+    setCategory("");
+    setDateValue(null);
+    setKeypadOpen(false);
+  }
 
   return (
     <div className="cust-page">
@@ -48,27 +106,34 @@ export default function CustomerPage({
       </header>
 
       <ul className="tx-list">
-        {transactions.map((t) => (
-          <li key={t.id} className="tx">
-            <div className="tx-info">
-              <div className="tx-meta">
-                <strong>{t.type}</strong>
-                <span>{formatDateTime(t.date)}</span>
+        {history.map((t) => {
+          const outflow = signOf(t.type) < 0;
+          return (
+            <li key={t.id} className="tx">
+              <div className="tx-info">
+                <div className="tx-meta">
+                  <strong style={{ color: ACCENT[t.type] }}>
+                    {t.type}
+                  </strong>
+                  <span>{formatDateTime(t.date)}</span>
+                </div>
+                {t.category && <p className="tx-category">{t.category}</p>}
+                {t.description && <p>{t.description}</p>}
               </div>
-              <p>{t.description}</p>
-            </div>
-            <span className="tx-amount">{money.format(t.amount)}</span>
-          </li>
-        ))}
+              <span className={`tx-amount ${outflow ? "is-debt" : ""}`}>
+                {outflow ? "-" : ""}
+                {money.format(t.amount)}
+              </span>
+            </li>
+          );
+        })}
       </ul>
 
-      {transactions.length === 0 && (
-        <p className="tx-empty">Henüz hareket yok.</p>
-      )}
+      {history.length === 0 && <p className="tx-empty">Henüz hareket yok.</p>}
 
       <div className="tx-total">
         <span>TOPLAM</span>
-        <strong>{money.format(balanceOf(customer.id))}</strong>
+        <strong>{money.format(balanceOf(transactions, customer.id))}</strong>
       </div>
 
       <button className="help-link" type="button">
@@ -76,18 +141,85 @@ export default function CustomerPage({
         Yardım &amp; Öneri
       </button>
 
-      {/* Alt bölüm: tutar girişi ve işlem türleri */}
-      <footer className="entry-bar">
-        <div className="entry-input">
-          <input
-            inputMode="decimal"
-            placeholder="0,00"
-            aria-label="Tutar"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
+      {/* Alt bölüm: işlem girişi */}
+      <section
+        className="entry"
+        style={{ "--accent": ACCENT[txType] } as CSSProperties}
+      >
+        <div className="entry-field">
+          {dateValue ? (
+            <input
+              type="datetime-local"
+              aria-label="Tarih"
+              value={dateValue}
+              onChange={(e) => setDateValue(e.target.value)}
+            />
+          ) : (
+            <button
+              className="entry-placeholder"
+              type="button"
+              onClick={() => setDateValue(localNow())}
+            >
+              Tarih: şimdi
+            </button>
+          )}
+          <button
+            className="entry-icon"
+            type="button"
+            aria-label="Tarih seç"
+            onClick={() => setDateValue(dateValue ?? localNow())}
+          >
+            <Svg d="M4 5h16v15H4zM4 10h16M8 3v4M16 3v4" />
+          </button>
+        </div>
+
+        <div className="entry-field">
+          <select
+            aria-label="Kategori"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+          >
+            <option value="">Kategori seçin</option>
+            {CATEGORIES[txType].map((c) => (
+              <option key={c} value={c}>
+                {c}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="entry-desc">
+          <textarea
+            placeholder="Açıklama"
+            aria-label="Açıklama"
+            rows={2}
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
           />
-          <button className="save-btn" type="button">
-            KAYDET
+          <button className="entry-icon entry-attach" type="button" aria-label="Görsel ekle">
+            <Svg d="M4 5h16v14H4zM4 16l5-5 4 4 2-2 5 5M15 9h.01" />
+          </button>
+        </div>
+
+        <div className="entry-amount">
+          <button
+            className="entry-icon"
+            type="button"
+            aria-label="Tuş takımını aç"
+            onClick={() => setKeypadOpen((open) => !open)}
+          >
+            <Svg d="M6 3h12v18H6zM9 7h6M9 11h1M12 11h1M15 11h1M9 15h1M12 15h1M15 15h1" />
+          </button>
+          <button
+            className={`amount-field ${amount ? "" : "is-empty"}`}
+            type="button"
+            aria-label="Tutar"
+            onClick={() => setKeypadOpen(true)}
+          >
+            {amount || "0"}
+          </button>
+          <button className="save-btn" type="button" disabled={!canSave} onClick={save}>
+            {txType}
           </button>
         </div>
 
@@ -98,13 +230,17 @@ export default function CustomerPage({
               role="tab"
               aria-selected={txType === type}
               className={txType === type ? "is-active" : ""}
-              onClick={() => setTxType(type)}
+              onClick={() => changeType(type)}
             >
               {type}
             </button>
           ))}
         </div>
-      </footer>
+
+        {keypadOpen && (
+          <Keypad value={amount} onChange={setAmount} />
+        )}
+      </section>
     </div>
   );
 }

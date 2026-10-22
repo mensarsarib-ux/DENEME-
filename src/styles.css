@@ -624,70 +624,184 @@ button {
   font-size: 0.95rem;
 }
 
-.entry-bar {
-  margin-top: auto;
+/* Tutar girişi paneli: vurgu rengi --accent ile işlem türüne göre değişir */
+.entry {
   position: sticky;
   bottom: 0;
+  margin: auto 8px 8px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: 10px 10px 12px;
-  background: #3e8a5f;
-}
-
-.entry-input {
-  display: flex;
-  align-items: stretch;
-  gap: 8px;
-  padding: 4px;
+  overflow: hidden;
+  border: 2px solid var(--accent);
   border-radius: 14px;
-  background: #15221b;
+  background: #161d26;
 }
 
-.entry-input input {
+.entry-field,
+.entry-desc,
+.entry-amount {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid var(--line);
+}
+
+.entry-field {
+  min-height: 52px;
+  padding: 10px 14px;
+}
+
+.entry-field input,
+.entry-field select {
   flex: 1;
   min-width: 0;
-  padding: 12px;
   border: 0;
   background: transparent;
   color: var(--text);
   font: inherit;
-  font-size: 1.1rem;
+  outline: none;
+  color-scheme: dark;
+}
+
+.entry-field select option {
+  background: #161d26;
+}
+
+.entry-placeholder {
+  flex: 1;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  text-align: left;
+}
+
+.entry-icon {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted);
+  display: grid;
+  place-items: center;
+}
+
+.entry-desc {
+  align-items: stretch;
+  gap: 0;
+}
+
+.entry-desc textarea {
+  flex: 1;
+  min-width: 0;
+  min-height: 64px;
+  padding: 12px 14px;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  resize: none;
   outline: none;
 }
 
-.entry-input input::placeholder {
-  color: #5f7d6c;
+.entry-desc textarea::placeholder,
+.entry-placeholder {
+  color: var(--muted);
+}
+
+.entry-attach {
+  align-self: center;
+  margin-right: 8px;
+}
+
+.entry-amount {
+  padding: 6px 8px 6px 10px;
+  border-bottom: 0;
+}
+
+.amount-field {
+  flex: 1;
+  min-width: 0;
+  padding: 4px 8px;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  font-size: 1.8rem;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.amount-field.is-empty {
+  color: var(--muted);
 }
 
 .save-btn {
+  flex-shrink: 0;
+  padding: 12px 16px;
   border: 0;
   border-radius: 10px;
-  padding: 0 18px;
-  background: #2f6a49;
-  color: #b8e6cb;
-  font-weight: 600;
-  letter-spacing: 0.04em;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+.save-btn:disabled {
+  background: #2a323d;
+  color: var(--muted);
+  cursor: not-allowed;
 }
 
 .entry-tabs {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 4px;
+  border-top: 1px solid var(--line);
 }
 
 .entry-tabs button {
+  padding: 12px 4px;
   border: 0;
   background: transparent;
-  padding: 8px 4px;
-  border-radius: 10px;
-  color: #d6ecdf;
+  color: var(--muted);
   font-size: 0.9rem;
   letter-spacing: 0.02em;
 }
 
 .entry-tabs button.is-active {
-  background: #15221b;
-  color: #fff;
+  color: var(--accent);
   font-weight: 700;
+}
+
+.keypad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  padding: 10px;
+  border-top: 1px solid var(--line);
+  background: #22292f;
+}
+
+.keypad button {
+  height: 52px;
+  border: 0;
+  border-radius: 10px;
+  background: #3a424c;
+  color: #fff;
+  font-size: 1.4rem;
+  display: grid;
+  place-items: center;
+}
+
+.keypad button:active {
+  background: #4a535e;
+}
+
+.tx-category {
+  color: var(--muted) !important;
+  font-size: 0.8rem !important;
 }
