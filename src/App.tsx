@@ -37,6 +37,9 @@ import { buildNotifications } from "./lib/notifications";
 import { useSwipeBack } from "./lib/useSwipeBack";
 import { money, setCurrency } from "./lib/format";
 import { setLanguage, t } from "./lib/i18n";
+import AuthScreen from "./components/AuthScreen";
+import { cloudEnabled, loadSession, signOut, type Session } from "./lib/cloud";
+import { useCloudSync } from "./lib/useCloudSync";
 import { clearStored, usePersistedState } from "./lib/storage";
 
 // Açılış ekranı ne kadar görünsün (ms) ve çıkış animasyonunun süresi
@@ -82,6 +85,79 @@ export default function App() {
   setCurrency(settings.currency);
   setLanguage(settings.language);
   const [drawerOpen, setDrawerOpen] = useState(false);
+
+  // Hesap ve bulut eşitleme: Supabase tanımlıysa giriş gerekir; değilse uygulama yalnızca bu cihazda çalışır
+  const [session, setSession] = useState<Session | null>(() => (cloudEnabled ? loadSession() : null));
+  // Titreşim cihaza özgüdür; diğer ayarlar hesapla birlikte eşitlenir
+  const syncSettings = (all: typeof settings) => {
+    const { haptics: _haptics, ...rest } = all;
+    void _haptics;
+    return rest;
+  };
+  const snapshot = {
+    groups,
+    parties,
+    transactions,
+    accounts,
+    profile,
+    notes,
+    readIds,
+    settings: syncSettings(settings),
+  };
+  const sync = useCloudSync({
+    session,
+    snapshot,
+    onExpired: () => setSession(null),
+    apply: (d) => {
+      const nextGroups = Array.isArray(d.groups) ? (d.groups as Group[]) : BUILTIN_GROUPS;
+      const nextParties = Array.isArray(d.parties) ? (d.parties as Customer[]) : [];
+      const nextTx = Array.isArray(d.transactions) ? (d.transactions as Transaction[]) : [];
+      const nextAccounts = Array.isArray(d.accounts) ? (d.accounts as typeof accounts) : initialAccounts;
+      const nextProfile = { ...DEFAULT_PROFILE, ...(d.profile as object) };
+      const nextNotes = Array.isArray(d.notes) ? (d.notes as typeof notes) : [];
+      const nextRead = Array.isArray(d.readIds) ? (d.readIds as string[]) : [];
+      const nextSettings = { ...DEFAULT_SETTINGS, ...(d.settings as object), haptics: settings.haptics };
+      setGroups(nextGroups);
+      setParties(nextParties);
+      setTransactions(nextTx);
+      setAccounts(nextAccounts);
+      setProfile(nextProfile);
+      setNotes(nextNotes);
+      setReadIds(nextRead);
+      setSettings(nextSettings);
+      return {
+        groups: nextGroups,
+        parties: nextParties,
+        transactions: nextTx,
+        accounts: nextAccounts,
+        profile: nextProfile,
+        notes: nextNotes,
+        readIds: nextRead,
+        settings: syncSettings({ ...DEFAULT_SETTINGS, ...nextSettings }),
+      };
+    },
+  });
+
+  /** Yeni hesap boş bir çalışma alanıyla başlar (örnek veriler yalnızca yerel denemede görünür) */
+  function emptyWorkspace(name: string) {
+    setGroups(BUILTIN_GROUPS);
+    setParties([]);
+    setTransactions([]);
+    setAccounts(initialAccounts.map((a) => ({ ...a, opening: 0 })));
+    setProfile({ ...DEFAULT_PROFILE, name, owner: "", logo: "" });
+    setNotes([]);
+    setReadIds([]);
+    setActiveTab("customer");
+  }
+
+  function logout() {
+    signOut();
+    clearStored();
+    emptyWorkspace("");
+    setDrawerOpen(false);
+    setView({ name: "home" });
+    setSession(null);
+  }
   // Sesli komutla eklenen işlem için kısa süre görünen bildirim ve geri alma
   const [toast, setToast] = useState<{ text: string; txId: string } | null>(null);
   useEffect(() => {
@@ -123,6 +199,22 @@ export default function App() {
         <Splash />
       </div>
     );
+  }
+
+  if (cloudEnabled && !session) {
+    return (
+      <AuthScreen
+        onSession={(next, info) => {
+          if (info?.isNew) emptyWorkspace(info.businessName);
+          setSession(next);
+          setView({ name: "home" });
+        }}
+      />
+    );
+  }
+
+  if (session && !sync.ready) {
+    return <div className="sync-loading">{t("Verileriniz getiriliyor…")}</div>;
   }
 
   // Silinmiş bir sekme etkin kalmasın
@@ -342,6 +434,17 @@ export default function App() {
             settings={settings}
             backupText={backupText}
             onChange={setSettings}
+            account={
+              session
+                ? {
+                    email: session.email,
+                    status: sync.status,
+                    lastSync: sync.lastSync,
+                    onSync: sync.syncNow,
+                    onSignOut: logout,
+                  }
+                : undefined
+            }
             onRestore={restore}
             onReset={resetAll}
             onBack={toHome}

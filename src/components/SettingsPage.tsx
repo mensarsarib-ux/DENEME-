@@ -1,9 +1,11 @@
 import { useState } from "react";
 import type { Settings } from "../data/mock";
+import { locale } from "../lib/i18n";
 import { CURRENCIES, currencyOf } from "../lib/currencies";
 import { LANGUAGES, t } from "../lib/i18n";
 import { haptic } from "../lib/haptics";
 import { MENU_ITEMS } from "../lib/menu";
+import type { SyncStatus } from "../lib/useCloudSync";
 import PageHeader from "./PageHeader";
 
 const ICON = MENU_ITEMS[6].icon;
@@ -44,6 +46,7 @@ export default function SettingsPage({
   settings,
   backupText,
   onChange,
+  account,
   onRestore,
   onReset,
   onBack,
@@ -52,6 +55,14 @@ export default function SettingsPage({
   /** Tüm verilerin JSON yedeği */
   backupText: string;
   onChange: (settings: Settings) => void;
+  /** Giriş yapılmışsa hesap bilgisi ve eşitleme durumu; yerel kullanımda yok */
+  account?: {
+    email: string;
+    status: SyncStatus;
+    lastSync: Date | null;
+    onSync: () => void;
+    onSignOut: () => void;
+  };
   /** Hata varsa mesajını, başarılıysa null döndürür */
   onRestore: (text: string) => string | null;
   onReset: () => void;
@@ -62,6 +73,7 @@ export default function SettingsPage({
   const [restoreText, setRestoreText] = useState("");
   const [restoreMsg, setRestoreMsg] = useState<{ ok: boolean; text: string } | null>(null);
   const [confirmReset, setConfirmReset] = useState(false);
+  const [confirmSignOut, setConfirmSignOut] = useState(false);
   const [pickingCurrency, setPickingCurrency] = useState(false);
   const current = currencyOf(settings.currency);
   const set = <K extends keyof Settings>(key: K, value: Settings[K]) =>
@@ -94,6 +106,26 @@ export default function SettingsPage({
     <div className="cust-page">
       <PageHeader title={t("Ayarlar")} subtitle={t("Tercihleriniz bu cihazda saklanır")} icon={ICON} onBack={onBack} />
       <div className="stack">
+        {account && (
+          <section className="card" aria-label={t("Hesap")}>
+            <h2 className="card-title">{t("Hesap")}</h2>
+            <p className="account-email">{account.email}</p>
+            <p className="card-empty" role="status">
+              {account.status === "error"
+                ? t("Eşitlenemedi; internet gelince yeniden denenecek.")
+                : account.status === "syncing" || account.status === "loading"
+                  ? t("Eşitleniyor…")
+                  : account.lastSync
+                    ? t("Son eşitleme: {time}", { time: account.lastSync.toLocaleTimeString(locale(), { hour: "2-digit", minute: "2-digit" }) })
+                    : t("Verileriniz hesabınızla eşitlenir; aynı e-posta ve şifreyle başka telefondan da girebilirsiniz.")}
+            </p>
+            <div className="card-actions">
+              <button type="button" className="action-btn" onClick={account.onSync}>{t("Şimdi eşitle")}</button>
+              <button type="button" className="action-btn is-danger" onClick={() => setConfirmSignOut(true)}>{t("Çıkış yap")}</button>
+            </div>
+          </section>
+        )}
+
         <section className="card" aria-label={t("Genel")}>
           <h2 className="card-title">{t("Genel")}</h2>
           <Switch
@@ -219,6 +251,20 @@ export default function SettingsPage({
                 </li>
               ))}
             </ul>
+          </div>
+        </div>
+      )}
+
+      {confirmSignOut && account && (
+        <div className="action-backdrop" onClick={() => setConfirmSignOut(false)}>
+          <div className="action-sheet is-centered" role="alertdialog" aria-label={t("Çıkış yap")} onClick={(e) => e.stopPropagation()}>
+            <div className="action-handle" aria-hidden="true" />
+            <h2 className="sheet-title">{t("Çıkış yapmak istediğinize emin misiniz?")}</h2>
+            <p className="sheet-note">{t("Verileriniz hesabınızda saklanır; tekrar giriş yapınca geri gelir.")}</p>
+            <button className="danger-btn" type="button" onClick={() => { haptic("warning"); setConfirmSignOut(false); account.onSignOut(); }}>
+              {t("EVET, ÇIKIŞ YAP")}
+            </button>
+            <button className="action-btn is-cancel" type="button" autoFocus onClick={() => setConfirmSignOut(false)}>{t("Vazgeç")}</button>
           </div>
         </div>
       )}
