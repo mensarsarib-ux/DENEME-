@@ -58,6 +58,18 @@ export default function CustomerPage({
   const newRowRef = useRef<HTMLLIElement>(null);
   const entryRef = useRef<HTMLDivElement>(null);
 
+  // Giriş panelinin dışında (işlem listesi, başlık, boş alan) bir yere dokunulunca tuş takımı kapanır.
+  // "click" kullanılır: liste kaydırılırken tetiklenmez.
+  useEffect(() => {
+    if (!keypadOpen) return;
+    const closeOnOutsideTap = (event: MouseEvent) => {
+      const dock = entryRef.current;
+      if (dock && !dock.contains(event.target as Node)) setKeypadOpen(false);
+    };
+    document.addEventListener("click", closeOnOutsideTap);
+    return () => document.removeEventListener("click", closeOnOutsideTap);
+  }, [keypadOpen]);
+
   const history = transactionsOf(transactions, customer.id);
   const value = parseAmount(amount);
   const canSave = value !== null && value > 0;
