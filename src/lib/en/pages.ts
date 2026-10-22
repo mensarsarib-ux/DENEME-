@@ -209,3 +209,7 @@ export const pages: Record<string, string> = {
   "Mısır Lirası": "Egyptian Pound",
   "Güney Afrika Randı": "South African Rand",
 };
+
+pages["Fotoğraf seç"] = "Choose photo";
+pages["Fotoğrafı kaldır"] = "Remove photo";
+pages["Bu dosya okunamadı; başka bir fotoğraf deneyin."] = "This file could not be read; try another photo.";

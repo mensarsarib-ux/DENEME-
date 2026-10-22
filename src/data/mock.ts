@@ -1,3 +1,4 @@
+import { SAMPLE_LOGO } from "../lib/logo";
 // Geçici örnek veriler. Gerçek veri katmanı eklendiğinde bu dosya değiştirilecek.
 
 export type Period = "daily" | "weekly" | "monthly" | "yearly";
@@ -258,15 +259,18 @@ export interface Profile {
   email: string;
   address: string;
   taxNo: string;
+  /** Profil fotoğrafı / logo (küçültülmüş veri adresi); boşsa firma adının baş harfleri görünür */
+  logo?: string;
 }
 
 export const DEFAULT_PROFILE: Profile = {
-  name: "",
-  owner: "",
+  name: "Örnek Ticaret A.Ş.",
+  owner: "Mehmet Yıldız",
   phone: "",
   email: "",
   address: "",
   taxNo: "",
+  logo: SAMPLE_LOGO,
 };
 
 export interface Note {

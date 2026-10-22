@@ -3,6 +3,8 @@ import type { Profile } from "../data/mock";
 import { haptic } from "../lib/haptics";
 import { t } from "../lib/i18n";
 import { MENU_ITEMS } from "../lib/menu";
+import { resizeImage } from "../lib/logo";
+import CompanyLogo from "./CompanyLogo";
 import PageHeader from "./PageHeader";
 
 const ICON = MENU_ITEMS[0].icon;
@@ -35,6 +37,21 @@ export default function ProfilePage({
     (k) => profile[k] !== draft[k],
   );
 
+  const [photoError, setPhotoError] = useState(false);
+
+  async function pickPhoto(file: File | undefined) {
+    if (!file) return;
+    try {
+      const logo = await resizeImage(file);
+      setDraft((d) => ({ ...d, logo }));
+      setSaved(false);
+      setPhotoError(false);
+      haptic("light");
+    } catch {
+      setPhotoError(true);
+    }
+  }
+
   function submit(event: FormEvent) {
     event.preventDefault();
     if (!dirty) return;
@@ -46,6 +63,7 @@ export default function ProfilePage({
       email: draft.email.trim(),
       address: draft.address.trim(),
       taxNo: draft.taxNo.trim(),
+      logo: draft.logo,
     });
     setSaved(true);
   }
@@ -66,15 +84,47 @@ export default function ProfilePage({
 
       <form id="profile-form" className="form" onSubmit={submit} noValidate>
         <div className="profile-preview" aria-live="polite">
-          <span className="company-logo" aria-hidden="true">
-            <img src="/logo.svg" alt="" />
-          </span>
+          <CompanyLogo logo={draft.logo} name={draft.name} size={44} />
           <span className="company-text">
             <strong>{draft.name.trim() || t("Hesabım")}</strong>
             <small>{draft.owner.trim() || draft.email.trim() || t("Şirket adınız")}</small>
           </span>
         </div>
         <p className="field-hint">{t("Üst çubukta bu şekilde görünür.")}</p>
+
+        <div className="photo-picker">
+          <CompanyLogo logo={draft.logo} name={draft.name} size={88} />
+          <div className="photo-actions">
+            <label className="action-btn photo-btn">
+              {t("Fotoğraf seç")}
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  void pickPhoto(e.target.files?.[0]);
+                  e.target.value = "";
+                }}
+              />
+            </label>
+            {draft.logo && (
+              <button
+                type="button"
+                className="action-btn is-danger"
+                onClick={() => {
+                  setDraft((d) => ({ ...d, logo: "" }));
+                  setSaved(false);
+                }}
+              >
+                {t("Fotoğrafı kaldır")}
+              </button>
+            )}
+          </div>
+          {photoError && (
+            <p className="form-error" role="alert">
+              {t("Bu dosya okunamadı; başka bir fotoğraf deneyin.")}
+            </p>
+          )}
+        </div>
 
         <div className="field">
           <label htmlFor="pf-name">{t("İşletme adı")}</label>

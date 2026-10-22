@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import type { Profile } from "../data/mock";
 import { haptic } from "../lib/haptics";
 import { MENU_ITEMS, SUPPORT_ICON, type MenuPage } from "../lib/menu";
+import CompanyLogo from "./CompanyLogo";
 import { Svg } from "./Icon";
 import { t } from "../lib/i18n";
 
@@ -49,9 +50,7 @@ export default function MenuDrawer({
         onClick={(e) => e.stopPropagation()}
       >
         <div className="drawer-head">
-          <span className="company-logo" aria-hidden="true">
-            <img src="/logo.svg" alt="" />
-          </span>
+          <CompanyLogo logo={profile.logo} name={profile.name} size={44} />
           <span className="drawer-company">
             <strong>{profile.name || t("Hesabım")}</strong>
             <small>{profile.owner || profile.email || t("Şirket adınız")}</small>

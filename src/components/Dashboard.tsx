@@ -10,6 +10,7 @@ import {
 import { money } from "../lib/format";
 import { findMatch, type MatchRange } from "../lib/search";
 import { locale, t } from "../lib/i18n";
+import CompanyLogo from "./CompanyLogo";
 import FlowChart from "./FlowChart";
 import Highlight from "./Highlight";
 import PartyTabs, { type TabInfo } from "./PartyTabs";
@@ -204,9 +205,7 @@ export default function Dashboard({
               {t("Menü")}
             </button>
             <div className="company-pill">
-              <span className="company-logo" aria-hidden="true">
-                <img src="/logo.svg" alt="" />
-              </span>
+              <CompanyLogo logo={profile.logo} name={profile.name} />
               <span className="company-text">
                 <strong>{profile.name || t("Hesabım")}</strong>
                 <small>{profile.owner || profile.email || t("Şirket adınız")}</small>
