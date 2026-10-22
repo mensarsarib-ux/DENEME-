@@ -28,3 +28,6 @@ export const statement: Record<string, string> = {
   "Paylaşım bu cihazda açılamadı; ekstre panoya kopyalandı.": "Sharing could not open on this device; the statement was copied to the clipboard.",
   "Paylaşım bu cihazda kullanılamıyor.": "Sharing is not available on this device.",
 };
+statement["Miktar"] = "Amount";
+statement["Toplam"] = "Total";
+statement["TOPLAM"] = "TOTAL";

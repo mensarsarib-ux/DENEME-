@@ -27,6 +27,9 @@ export function setCurrency(code: string) {
 }
 
 /** Etkin para biriminin sembolü (form etiketlerinde kullanılır) */
+/** Etkin para biriminin ISO kodu (TRY, USD…) */
+export const currencyCode = () => currency;
+
 export const currencySymbol = () => currencyOf(currency).symbol;
 
 export const money = { format: (value: number) => fullFormat.format(value) };

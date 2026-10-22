@@ -1,6 +1,6 @@
 import type { Account, Customer, Profile, Transaction } from "../data/mock";
 import { signOf, transactionsOf } from "../data/mock";
-import { money } from "./format";
+import { currencyCode, money } from "./format";
 import { locale, t } from "./i18n";
 
 /** A4, 150 dpi */
@@ -9,10 +9,11 @@ const H = 1754;
 const M = 80;
 const FONT = '-apple-system, "Segoe UI", Helvetica, Arial, sans-serif';
 
-const INK = "#1b2430";
+const INK = "#1f2933";
 const MUTED = "#6b7683";
 const LINE = "#d9dee5";
-const HEAD = "#1e3a5f";
+const RULE = "#2b3440";
+const GREEN = "#2f6f55";
 
 export interface StatementInput {
   party: Customer;
@@ -38,8 +39,17 @@ export interface StatementData {
   balance: number;
 }
 
-const dateText = (iso: string) =>
-  new Date(iso).toLocaleDateString(locale(), { day: "2-digit", month: "2-digit", year: "numeric" });
+const two = (n: number) => String(n).padStart(2, "0");
+
+/** "22.10.26 13:15" */
+const dateText = (iso: string) => {
+  const d = new Date(iso);
+  return `${two(d.getDate())}.${two(d.getMonth() + 1)}.${two(d.getFullYear() % 100)} ${two(d.getHours())}:${two(d.getMinutes())}`;
+};
+
+/** Para simgesiz tutar: "24.525,00" */
+const plain = (value: number) =>
+  new Intl.NumberFormat(locale(), { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value);
 
 /** Hareketleri tarih sırasıyla, yürüyen bakiyeyle hesaplar. Borç: satış ve ödeme (+), alacak: tahsilat ve alış (−). */
 export function buildStatement({ party, accounts, transactions }: StatementInput): StatementData {
@@ -77,7 +87,6 @@ export function statementText(input: StatementInput): string {
   const lines = [
     `${t("Cari hesap ekstresi")} — ${input.party.name}`,
     input.profile.name,
-    `${t("Düzenlenme tarihi: {date}", { date: dateText(new Date().toISOString()) })}`,
     "",
     ...data.rows.slice(-25).map((r) => {
       const amount = r.debit ?? r.credit ?? 0;
@@ -122,21 +131,19 @@ function wrap(ctx: CanvasRenderingContext2D, text: string, width: number, maxLin
   return lines;
 }
 
-/** Ekstreyi A4 sayfalar halinde çizer (canvas); bir sayfa = bir tuval */
+/**
+ * Ekstreyi A4 sayfalar halinde çizer (canvas); bir sayfa = bir tuval.
+ * Düzen: üstte logo + firma adı kartı, altında kişi adı, sonra TARİH / AÇIKLAMA / MİKTAR / TOPLAM tablosu.
+ */
 export async function renderStatement(input: StatementInput): Promise<HTMLCanvasElement[]> {
   const data = buildStatement(input);
   const { party, profile } = input;
   const logo = profile.logo ? await loadImage(profile.logo) : null;
 
-  // Sütunlar (x konumu ve genişlik)
-  const col = {
-    date: { x: M, w: 130 },
-    type: { x: M + 148, w: 120 },
-    desc: { x: M + 280, w: 215 },
-    debit: { x: M + 500, w: 165 },
-    credit: { x: M + 685, w: 165 },
-  };
-  const right = (c: { x: number; w: number }) => c.x + c.w;
+  const miktarR = W - M - 200;
+  const toplamR = W - M - 14;
+  const col = { date: M + 14, type: M + 236, desc: M + 400 };
+  const descW = miktarR - 190 - col.desc;
 
   const pages: HTMLCanvasElement[] = [];
   let y = 0;
@@ -153,10 +160,6 @@ export async function renderStatement(input: StatementInput): Promise<HTMLCanvas
     return context;
   };
   let ctx = create();
-  const newPage = () => {
-    ctx = create();
-    y = M;
-  };
 
   const text = (s: string, x: number, yy: number, size: number, color = INK, weight = "400", align: CanvasTextAlign = "left") => {
     ctx.font = `${weight} ${size}px ${FONT}`;
@@ -165,110 +168,124 @@ export async function renderStatement(input: StatementInput): Promise<HTMLCanvas
     ctx.fillText(s, x, yy);
   };
 
+  const rule = (yy: number, thick: number, color: string) => {
+    ctx.fillStyle = color;
+    ctx.fillRect(M, yy, W - 2 * M, thick);
+  };
+
   const tableHeader = () => {
-    ctx.fillStyle = HEAD;
-    ctx.fillRect(M, y, W - 2 * M, 54);
-    const ty = y + 35;
-    text(t("Tarih"), col.date.x + 8, ty, 22, "#fff", "600");
-    text(t("Tür"), col.type.x, ty, 22, "#fff", "600");
-    text(t("Açıklama"), col.desc.x, ty, 22, "#fff", "600");
-    text(t("Borç"), right(col.debit), ty, 22, "#fff", "600", "right");
-    text(t("Alacak"), right(col.credit), ty, 22, "#fff", "600", "right");
-    text(t("Bakiye"), W - M - 12, ty, 22, "#fff", "600", "right");
-    y += 54;
+    const ty = y + 30;
+    const up = (s: string) => s.toLocaleUpperCase(locale());
+    text(up(t("Tarih")), col.date, ty, 26, INK, "700");
+    text(up(t("Açıklama")), col.desc, ty, 26, INK, "700");
+    text(up(t("Miktar")), miktarR, ty, 26, INK, "700", "right");
+    text(up(t("Toplam")), toplamR, ty, 26, INK, "700", "right");
+    y += 50;
+    rule(y, 4, RULE);
+    y += 4;
   };
 
   y = M;
 
-  // Üst bilgi: logo + firma
-  let hx = M;
+  // Üst kart: logo + firma adı
+  const cardH = 150;
+  ctx.fillStyle = "#f7f9f8";
+  ctx.strokeStyle = "#cfd8d3";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.roundRect(M, y, W - 2 * M, cardH, 28);
+  ctx.fill();
+  ctx.stroke();
+  const cx = M + 28 + 55;
+  const cy = y + cardH / 2;
   if (logo) {
     ctx.save();
     ctx.beginPath();
-    ctx.arc(M + 45, y + 45, 45, 0, Math.PI * 2);
+    ctx.arc(cx, cy, 55, 0, Math.PI * 2);
     ctx.clip();
-    ctx.drawImage(logo, M, y, 90, 90);
+    ctx.drawImage(logo, cx - 55, cy - 55, 110, 110);
     ctx.restore();
-    hx = M + 112;
+  } else {
+    const initials = profile.name
+      .trim()
+      .split(/\s+/)
+      .slice(0, 2)
+      .map((w) => w[0])
+      .join("")
+      .toLocaleUpperCase(locale());
+    ctx.fillStyle = "#fff";
+    ctx.beginPath();
+    ctx.arc(cx, cy, 55, 0, Math.PI * 2);
+    ctx.fill();
+    text(initials || "H", cx, cy + 17, 48, GREEN, "700", "center");
   }
-  text(profile.name || "Hesabım", hx, y + 40, 38, INK, "700");
-  const contact = [profile.phone, profile.email].filter(Boolean).join("  ·  ");
-  if (contact) text(contact, hx, y + 72, 22, MUTED);
-  if (profile.address) text(profile.address, hx, y + 100, 22, MUTED);
-  if (profile.taxNo) text(`${t("Vergi numarası")}: ${profile.taxNo}`, hx, y + 128, 22, MUTED);
-  y += 160;
+  ctx.strokeStyle = GREEN;
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.arc(cx, cy, 55, 0, Math.PI * 2);
+  ctx.stroke();
+  text(profile.name || "Hesabım", cx + 55 + 28, cy + 14, 42, INK, "700");
+  y += cardH + 56;
 
-  ctx.fillStyle = HEAD;
-  ctx.fillRect(M, y, W - 2 * M, 4);
-  y += 50;
-  text(t("CARİ HESAP EKSTRESİ"), M, y, 34, HEAD, "700");
-  text(t("Düzenlenme tarihi: {date}", { date: dateText(new Date().toISOString()) }), W - M, y, 22, MUTED, "400", "right");
-  y += 36;
-
-  // Müşteri kutusu
-  const info = [
-    party.phone && `${t("Telefon")}: ${party.phone}`,
-    party.email && `${t("E-posta")}: ${party.email}`,
-    party.address && `${t("Adres")}: ${party.address}`,
-  ].filter(Boolean) as string[];
-  const boxH = 70 + info.length * 32;
-  ctx.fillStyle = "#f3f6f9";
-  ctx.fillRect(M, y, W - 2 * M, boxH);
-  text(party.name, M + 24, y + 44, 30, INK, "700");
-  info.forEach((line, i) => text(line, M + 24, y + 80 + i * 32, 22, MUTED));
-  y += boxH + 40;
+  // Kişi adı
+  text(party.name.toLocaleUpperCase(locale()), M + 4, y + 36, 48, INK, "700");
+  y += 100;
 
   tableHeader();
 
-  const rowFont = 22;
   if (data.rows.length === 0) {
-    text(t("Henüz hareket yok."), M + 12, y + 50, 24, MUTED);
+    text(t("Henüz hareket yok."), col.date, y + 56, 26, MUTED);
     y += 90;
   }
 
   for (const r of data.rows) {
-    ctx.font = `400 ${rowFont}px ${FONT}`;
-    const desc = wrap(ctx, r.description, col.desc.w, 2);
-    const rowH = Math.max(60, 26 + Math.max(desc.length, r.account ? 2 : 1) * 28);
-    if (y + rowH > H - M - 40) {
-      newPage();
+    ctx.font = `400 26px ${FONT}`;
+    const desc = wrap(ctx, r.description, descW, 2);
+    const rowH = Math.max(76, 36 + Math.max(desc.length, r.account ? 2 : 1) * 32);
+    if (y + rowH > H - M - 220) {
+      newPageFn();
       tableHeader();
     }
-    const base = y + 38;
-    text(r.date, col.date.x + 8, base, rowFont);
-    text(r.type, col.type.x, base, rowFont, INK, "600");
-    if (r.account) text(r.account, col.type.x, base + 28, 19, MUTED);
-    desc.forEach((line, i) => text(line, col.desc.x, base + i * 28, rowFont));
-    if (r.debit !== null) text(money.format(r.debit), right(col.debit), base, rowFont, INK, "400", "right");
-    if (r.credit !== null) text(money.format(r.credit), right(col.credit), base, rowFont, INK, "400", "right");
-    text(money.format(r.balance), W - M - 12, base, rowFont, r.balance < 0 ? "#c0392b" : INK, "600", "right");
+    const base = y + 44;
+    const amount = r.debit ?? r.credit ?? 0;
+    text(r.date, col.date, base, 26);
+    text(r.type, col.type, base, 26);
+    if (r.account) text(r.account, col.type, base + 30, 20, MUTED);
+    desc.forEach((line, i) => text(line, col.desc, base + i * 32, 26));
+    text(`${r.credit !== null ? "-" : ""}${plain(amount)}`, miktarR, base, 26, INK, "400", "right");
+    text(plain(r.balance), toplamR, base, 26, r.balance < 0 ? "#c0392b" : INK, "400", "right");
     y += rowH;
-    ctx.fillStyle = LINE;
-    ctx.fillRect(M, y, W - 2 * M, 1);
+    rule(y, 1, LINE);
+    y += 1;
   }
 
-  // Toplamlar
-  if (y + 190 > H - M - 40) newPage();
-  y += 40;
-  const label = (s: string, v: string, color = INK, bold = false) => {
-    text(s, W - M - 360, y, 24, MUTED);
-    text(v, W - M - 12, y, bold ? 30 : 24, color, bold ? "700" : "400", "right");
-    y += bold ? 52 : 40;
-  };
-  label(t("Toplam borç"), money.format(data.totalDebit));
-  label(t("Toplam alacak"), money.format(data.totalCredit));
-  ctx.fillStyle = LINE;
-  ctx.fillRect(W - M - 360, y - 22, 360, 2);
-  y += 12;
-  text(balanceText(data.balance), W - M - 12, y, 30, data.balance < 0 ? "#c0392b" : HEAD, "700", "right");
-  pages.forEach((p, i) => {
-    const c = p.getContext("2d")!;
-    c.font = `400 19px ${FONT}`;
-    c.fillStyle = MUTED;
-    c.textAlign = "center";
-    c.fillText(t("Sayfa {n} / {total}", { n: i + 1, total: pages.length }), W / 2, H - 50);
-  });
+  // Toplam satırı
+  if (y + 150 > H - M - 40) {
+    newPageFn();
+  }
+  rule(y + 4, 4, RULE);
+  y += 8;
+  const baseT = y + 68;
+  text(`${t("TOPLAM")} ${currencyCode()}`, col.date, baseT, 26, INK, "700");
+  text(`${plain(data.totalDebit)}  ${data.totalCredit ? "-" : ""}${plain(data.totalCredit)}`, miktarR, baseT, 26, INK, "700", "right");
+  text(plain(data.balance), toplamR, baseT + 2, 34, data.balance < 0 ? "#c0392b" : INK, "700", "right");
+  y += 110;
+  // Sayfa numarası yalnızca birden fazla sayfa varsa
+  if (pages.length > 1) {
+    pages.forEach((p, i) => {
+      const c = p.getContext("2d")!;
+      c.font = `400 19px ${FONT}`;
+      c.fillStyle = MUTED;
+      c.textAlign = "center";
+      c.fillText(t("Sayfa {n} / {total}", { n: i + 1, total: pages.length }), W / 2, H - 50);
+    });
+  }
   return pages;
+
+  function newPageFn() {
+    ctx = create();
+    y = M;
+  }
 }
 
 const enc = new TextEncoder();
