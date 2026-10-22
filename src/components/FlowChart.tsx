@@ -212,7 +212,7 @@ export default function FlowChart({
         >
           {sheet === "menu" && (
             <div
-              className="action-sheet"
+              className="action-sheet is-centered"
               role="dialog"
               aria-label="Dönem seç"
               onClick={(e) => e.stopPropagation()}
@@ -235,9 +235,12 @@ export default function FlowChart({
                   </button>
                 ))}
               </div>
+              <div className="sheet-divider" aria-hidden="true">
+                <span>veya</span>
+              </div>
               <button
                 type="button"
-                className={`action-btn ${mode === "custom" ? "is-active" : ""}`}
+                className={`action-btn custom-option ${mode === "custom" ? "is-active" : ""}`}
                 aria-pressed={mode === "custom"}
                 onClick={openCustom}
               >
@@ -256,7 +259,7 @@ export default function FlowChart({
 
           {sheet === "custom" && (
             <form
-              className="action-sheet"
+              className="action-sheet is-centered"
               role="dialog"
               aria-label="Özel tarih aralığı"
               onClick={(e) => e.stopPropagation()}

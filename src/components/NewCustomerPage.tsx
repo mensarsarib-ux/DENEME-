@@ -103,9 +103,19 @@ export default function NewCustomerPage({
             <small>{text.subtitle}</small>
           </div>
         </div>
+        {/* Sağ üstte: firma adı yazılınca aktifleşir; form dışında olduğu için "form" ile bağlanır */}
+        <button
+          className="header-add"
+          type="submit"
+          form="party-form"
+          aria-label={text.submit}
+          disabled={!canSave}
+        >
+          EKLE
+        </button>
       </header>
 
-      <form className="form" onSubmit={submit} noValidate>
+      <form id="party-form" className="form" onSubmit={submit} noValidate>
         <div className="field">
           <label htmlFor="customer-name">Firma adı *</label>
           <input
@@ -122,6 +132,7 @@ export default function NewCustomerPage({
               {text.duplicate}
             </p>
           )}
+          {!trimmed && <p className="field-hint">{text.hint}</p>}
         </div>
 
         <h2 className="form-section-title">EK BİLGİLER (İSTEĞE BAĞLI)</h2>
@@ -170,12 +181,6 @@ export default function NewCustomerPage({
           />
         </div>
 
-        <div className="form-actions">
-          {!trimmed && <p className="form-hint">{text.hint}</p>}
-          <button className="primary-btn" type="submit" disabled={!canSave}>
-            {text.submit}
-          </button>
-        </div>
       </form>
     </div>
   );

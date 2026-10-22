@@ -1348,6 +1348,80 @@ button {
   }
 }
 
+/* ---------- Dönem ekranı: ortalı yazılar ve ayrı duran özel seçim ---------- */
+
+.action-sheet.is-centered .sheet-title,
+.action-sheet.is-centered .sheet-note {
+  text-align: center;
+}
+
+.action-sheet.is-centered .action-btn {
+  justify-content: center;
+}
+
+.sheet-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 8px 0 2px;
+  color: var(--muted);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.sheet-divider::before,
+.sheet-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+
+.action-btn.custom-option {
+  border: 1px dashed var(--blue);
+  background: rgba(60, 143, 217, 0.08);
+}
+
+.action-btn.custom-option.is-active {
+  background: rgba(60, 143, 217, 0.22);
+}
+
+/* ---------- Basma geri bildirimi: düğme küçülür ve parlar ---------- */
+
+.keypad button,
+.save-btn,
+.entry-tabs button,
+.action-btn,
+.header-add,
+.party-tab {
+  transition:
+    transform 0.08s ease,
+    background 0.15s ease,
+    box-shadow 0.15s ease,
+    filter 0.15s ease;
+}
+
+.keypad button:active {
+  transform: scale(0.94);
+  box-shadow: 0 0 14px rgba(255, 255, 255, 0.28);
+}
+
+.save-btn:not(:disabled):active,
+.header-add:not(:disabled):active {
+  transform: scale(0.95);
+  filter: brightness(1.2);
+}
+
+.entry-tabs button:active {
+  transform: scale(0.94);
+}
+
+.action-btn:active {
+  transform: scale(0.98);
+  filter: brightness(1.2);
+}
+
 /* ---------- Yeni müşteri formu ---------- */
 
 .form {
@@ -1401,11 +1475,28 @@ button {
   letter-spacing: 0.06em;
 }
 
-.form-hint {
-  margin: 0 0 8px;
+.field-hint {
+  margin: 0;
   color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.header-add {
+  flex-shrink: 0;
+  padding: 9px 18px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--blue);
+  color: #fff;
   font-size: 0.85rem;
-  text-align: center;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.header-add:disabled {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--muted);
+  cursor: not-allowed;
 }
 
 .primary-btn:disabled {
@@ -1435,14 +1526,6 @@ button {
   font-size: 0.85rem;
 }
 
-.form-actions {
-  position: sticky;
-  bottom: 0;
-  margin-top: auto;
-  padding: 12px 0 8px;
-  background: linear-gradient(180deg, transparent, #1f252d 30%);
-}
-
 .primary-btn {
   width: 100%;
   padding: 14px;
@@ -1461,6 +1544,14 @@ button {
   }
 
   .entry-tabs button,
+  .keypad button:active,
+  .save-btn:active,
+  .header-add:active,
+  .entry-tabs button:active,
+  .action-btn:active {
+    transform: none;
+  }
+
   .month-card,
   .flow-fill {
     transition: none;
