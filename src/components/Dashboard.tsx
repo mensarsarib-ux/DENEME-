@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
   accounts,
   balanceOf,
@@ -79,13 +79,28 @@ export default function Dashboard({
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
   const highlightRef = useRef<HTMLButtonElement>(null);
-  /** Kendi içinde kayan liste alanı; sayfanın geri kalanı sabit durur */
-  const listRef = useRef<HTMLDivElement>(null);
+  /**
+   * Kayan alan: üstteki grafik sabit durur, alt bölüm (kasa, sekmeler, liste) kayarak
+   * grafiğin üzerini kapatır. Üst çubuk bu alanın dışındadır ve yerinde kalır.
+   */
+  const scrollRef = useRef<HTMLDivElement>(null);
+  // Alt bölüm en az kayan alanın yüksekliği kadar olur; böylece grafiği tamamen kapatacak kadar kayabilir
+  const [sheetMin, setSheetMin] = useState(0);
 
-  // Sekme ya da arama değişince liste en üstten başlar
+  useLayoutEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const update = () => setSheetMin(el.clientHeight);
+    update();
+    const observer = new ResizeObserver(update);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  // Arama değişince sonuçlar en üstten başlar
   useEffect(() => {
-    listRef.current?.scrollTo({ top: 0 });
-  }, [activeTab, query]);
+    scrollRef.current?.scrollTo({ top: 0 });
+  }, [query]);
 
   // Az önce eklenen kayıt listede görünür alana kaydırılır
   useEffect(() => {
@@ -199,16 +214,21 @@ export default function Dashboard({
               <span className="badge">1</span>
             </button>
           </div>
-
-          {/* Özet bölümü: gelir ve gider grafiği; basılı tutunca dönem seçilir */}
-          <section className="summary">
-            <FlowChart transactions={transactions} />
-          </section>
         </>
       )}
 
-      {/* Alt sayfa: kasa ve etkin sekmenin kayıtları (aramada yalnızca etkin sekmede arama yapılır) */}
-      <section className="sheet">
+      <div className="scroll-wrap">
+        <div className="scroll" ref={scrollRef}>
+          {/* Özet bölümü: gelir ve gider grafiği (basılı tutunca dönem seçilir). Yukarıda sabit
+              durur, alt bölüm kayarak üzerini kapatır. */}
+          {!searchOpen && (
+            <section className="summary">
+              <FlowChart transactions={transactions} />
+            </section>
+          )}
+
+          {/* Alt bölüm: kasa ve etkin sekmenin kayıtları (aramada yalnızca etkin sekmede arama yapılır) */}
+      <section className="sheet" style={{ minHeight: sheetMin || undefined }}>
         <div className="sheet-handle" aria-hidden="true" />
 
         {!searchOpen && (
@@ -244,7 +264,7 @@ export default function Dashboard({
           />
         )}
 
-        <div className="party-list" ref={listRef}>
+        <div className="party-list">
         {rows.length === 0 ? (
           <div className="search-empty">
             <p>
@@ -280,6 +300,8 @@ export default function Dashboard({
         )}
         </div>
       </section>
+        </div>
+      </div>
     </div>
   );
 }

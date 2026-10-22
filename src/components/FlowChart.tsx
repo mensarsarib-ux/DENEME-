@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
+import { createPortal } from "react-dom";
 import { totalsBetween, type Period, type Transaction } from "../data/mock";
 import { money } from "../lib/format";
 import { haptic } from "../lib/haptics";
@@ -198,7 +199,9 @@ export default function FlowChart({
         <p className="month-note">{note}</p>
       </div>
 
-      {sheet && (
+      {/* Pencere doğrudan sayfaya çizilir; kayan alanın içinde sıkışıp altta kalmaz */}
+      {sheet &&
+        createPortal(
         <div
           className="action-backdrop"
           onClickCapture={(e) => {
@@ -312,7 +315,8 @@ export default function FlowChart({
               </button>
             </form>
           )}
-        </div>
+        </div>,
+        document.body,
       )}
     </>
   );
