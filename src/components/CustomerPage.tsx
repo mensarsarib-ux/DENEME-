@@ -19,15 +19,18 @@ const ACCENT: Record<TxType, { color: string; fill: string }> = {
   TAHSİLAT: { color: "#3fbf82", fill: "#3fbf82" },
 };
 
+/** Geri al seçeneğinin ekranda kalma süresi (ms) */
+const UNDO_DURATION = 5000;
+
 /** Ekrandaki metinden tutar üretir; geçersizse null */
 function parseAmount(text: string): number | null {
   const value = Number(text.replace(",", "."));
   return text && Number.isFinite(value) ? value : null;
 }
 
-/** datetime-local alanı için yerel "şimdi" değeri */
-function localNow(): string {
-  const d = new Date();
+/** ISO tarihi datetime-local alanının yerel biçimine çevirir */
+function toLocalInput(iso: string): string {
+  const d = new Date(iso);
   d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
   return d.toISOString().slice(0, 16);
 }
@@ -36,11 +39,15 @@ export default function CustomerPage({
   customer,
   transactions,
   onAdd,
+  onUpdate,
+  onDelete,
   onBack,
 }: {
   customer: Customer;
   transactions: Transaction[];
   onAdd: (tx: Transaction) => void;
+  onUpdate: (tx: Transaction) => void;
+  onDelete: (id: string) => void;
   onBack: () => void;
 }) {
   const [txType, setTxType] = useState<TxType>("SATIŞ");
@@ -53,6 +60,11 @@ export default function CustomerPage({
   }, []);
   const [dateValue, setDateValue] = useState<string | null>(null);
   const [description, setDescription] = useState("");
+  // Seçenek penceresi açık işlem ve düzenlenmekte olan işlem
+  const [selected, setSelected] = useState<Transaction | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  // Silinen son işlem: kısa süre "Geri al" ile döndürülebilir
+  const [undoTx, setUndoTx] = useState<Transaction | null>(null);
   // Az önce kaydedilen işlemler: listede kaydırılıp kısa süre vurgulanır
   const [justAdded, setJustAdded] = useState<string[]>([]);
   const newRowRef = useRef<HTMLLIElement>(null);
@@ -63,12 +75,31 @@ export default function CustomerPage({
   useEffect(() => {
     if (!keypadOpen) return;
     const closeOnOutsideTap = (event: MouseEvent) => {
+      const target = event.target as Element;
+      if (target.closest("[data-keep-keypad]")) return;
       const dock = entryRef.current;
-      if (dock && !dock.contains(event.target as Node)) setKeypadOpen(false);
+      if (dock && !dock.contains(target)) setKeypadOpen(false);
     };
     document.addEventListener("click", closeOnOutsideTap);
     return () => document.removeEventListener("click", closeOnOutsideTap);
   }, [keypadOpen]);
+
+  // Seçenek penceresi Esc ile kapanır
+  useEffect(() => {
+    if (!selected) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setSelected(null);
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [selected]);
+
+  // "Geri al" bir süre sonra kaybolur
+  useEffect(() => {
+    if (!undoTx) return;
+    const timer = window.setTimeout(() => setUndoTx(null), UNDO_DURATION);
+    return () => window.clearTimeout(timer);
+  }, [undoTx]);
 
   const history = transactionsOf(transactions, customer.id);
   const value = parseAmount(amount);
@@ -97,7 +128,7 @@ export default function CustomerPage({
     setDateValue(null);
   }
 
-  /** Formdaki mevcut değerlerden işlem üretir; tutar geçersizse null */
+  /** Formdaki değerlerden işlem üretir; tutar geçersizse null */
   function buildCurrent(): Transaction | null {
     if (value === null || value <= 0) return null;
     return {
@@ -110,13 +141,50 @@ export default function CustomerPage({
     };
   }
 
-  /** Formdaki işlemi kaydet */
+  /** Formdaki işlemi kaydet; düzenleme modundaysa mevcut işlemi günceller */
   function save() {
     const tx = buildCurrent();
     if (!tx) return;
-    onAdd(tx);
-    setJustAdded([tx.id]);
+    if (editingId) {
+      onUpdate({ ...tx, id: editingId });
+      setJustAdded([editingId]);
+      setEditingId(null);
+    } else {
+      onAdd(tx);
+      setJustAdded([tx.id]);
+    }
     resetFields();
+  }
+
+  /** Seçenek penceresinden "Düzenle": işlemi giriş paneline yükler */
+  function startEdit(tx: Transaction) {
+    setEditingId(tx.id);
+    setTxType(tx.type);
+    setAmount(String(tx.amount).replace(".", ","));
+    setDescription(tx.description);
+    setDateValue(toLocalInput(tx.date));
+    setSelected(null);
+    setKeypadOpen(true);
+  }
+
+  function cancelEdit() {
+    setEditingId(null);
+    resetFields();
+  }
+
+  /** Seçenek penceresinden "Sil": işlemi siler, kısa süre geri alınabilir */
+  function remove(tx: Transaction) {
+    onDelete(tx.id);
+    if (editingId === tx.id) cancelEdit();
+    setSelected(null);
+    setUndoTx(tx);
+  }
+
+  function undoDelete() {
+    if (!undoTx) return;
+    onAdd(undoTx);
+    setJustAdded([undoTx.id]);
+    setUndoTx(null);
   }
 
   return (
@@ -158,21 +226,28 @@ export default function CustomerPage({
             <li
               key={t.id}
               ref={t.id === lastNewId ? newRowRef : undefined}
-              className={`tx ${justAdded.includes(t.id) ? "is-new" : ""}`}
+              className={`tx ${justAdded.includes(t.id) ? "is-new" : ""} ${editingId === t.id ? "is-editing" : ""}`}
             >
-              <div className="tx-info">
-                <div className="tx-meta">
-                  <strong style={{ color: ACCENT[t.type].color }}>
-                    {t.type}
-                  </strong>
-                  <span>{formatDateTime(t.date)}</span>
+              <button
+                className="tx-hit"
+                type="button"
+                aria-label={`${t.type} işlemi için seçenekler`}
+                onClick={() => setSelected(t)}
+              >
+                <div className="tx-info">
+                  <div className="tx-meta">
+                    <strong style={{ color: ACCENT[t.type].color }}>
+                      {t.type}
+                    </strong>
+                    <span>{formatDateTime(t.date)}</span>
+                  </div>
+                  {t.description && <p>{t.description}</p>}
                 </div>
-                {t.description && <p>{t.description}</p>}
-              </div>
-              <span className={`tx-amount ${outflow ? "is-debt" : ""}`}>
-                {outflow ? "-" : ""}
-                {money.format(t.amount)}
-              </span>
+                <span className={`tx-amount ${outflow ? "is-debt" : ""}`}>
+                  {outflow ? "-" : ""}
+                  {money.format(t.amount)}
+                </span>
+              </button>
             </li>
           );
         })}
@@ -187,106 +262,182 @@ export default function CustomerPage({
 
       {/* Alt bölüm: işlem girişi ve tuş takımı */}
       <div ref={entryRef} className="entry-dock">
-      <section
-        className="entry"
-        style={
-          {
-            "--accent": ACCENT[txType].color,
-            "--accent-fill": ACCENT[txType].fill,
-          } as CSSProperties
-        }
-      >
-        <div className="entry-field">
-          {dateValue ? (
-            <input
-              type="datetime-local"
-              aria-label="Tarih"
-              value={dateValue}
-              onChange={(e) => setDateValue(e.target.value)}
-            />
-          ) : (
-            <button
-              className="entry-placeholder"
-              type="button"
-              onClick={() => setDateValue(localNow())}
-            >
-              Tarih: şimdi
+        {undoTx && (
+          <div className="toast" role="status">
+            <span>İşlem silindi</span>
+            <button type="button" onClick={undoDelete}>
+              Geri al
             </button>
+          </div>
+        )}
+
+        <section
+          className="entry"
+          style={
+            {
+              "--accent": ACCENT[txType].color,
+              "--accent-fill": ACCENT[txType].fill,
+            } as CSSProperties
+          }
+        >
+          {editingId && (
+            <div className="entry-editing">
+              <span>İŞLEMİ DÜZENLE</span>
+              <button type="button" onClick={cancelEdit}>
+                Vazgeç
+              </button>
+            </div>
           )}
-          <button
-            className="entry-icon"
-            type="button"
-            aria-label="Tarih seç"
-            onClick={() => setDateValue(dateValue ?? localNow())}
-          >
-            <Svg d="M4 5h16v15H4zM4 10h16M8 3v4M16 3v4" />
-          </button>
-        </div>
 
-        <div className="entry-desc">
-          <textarea
-            placeholder="Açıklama"
-            aria-label="Açıklama"
-            rows={2}
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-          />
-          <button className="entry-icon entry-attach" type="button" aria-label="Görsel ekle">
-            <Svg d="M4 5h16v14H4zM4 16l5-5 4 4 2-2 5 5M15 9h.01" />
-          </button>
-        </div>
+          <div className="entry-field">
+            {dateValue ? (
+              <input
+                type="datetime-local"
+                aria-label="Tarih"
+                value={dateValue}
+                onChange={(e) => setDateValue(e.target.value)}
+              />
+            ) : (
+              <button
+                className="entry-placeholder"
+                type="button"
+                onClick={() => setDateValue(toLocalInput(new Date().toISOString()))}
+              >
+                Tarih: şimdi
+              </button>
+            )}
+            {/* Tarih seçiliyse tarayıcının kendi takvim ikonu yeterli */}
+            {!dateValue && (
+              <button
+                className="entry-icon"
+                type="button"
+                aria-label="Tarih seç"
+                onClick={() => setDateValue(toLocalInput(new Date().toISOString()))}
+              >
+                <Svg d="M4 5h16v15H4zM4 10h16M8 3v4M16 3v4" />
+              </button>
+            )}
+          </div>
 
-        <div className="entry-amount">
-          <button
-            className="entry-icon"
-            type="button"
-            aria-label="Tuş takımını aç"
-            onClick={() => setKeypadOpen((open) => !open)}
-          >
-            <Svg d="M6 3h12v18H6zM9 7h6M9 11h1M12 11h1M15 11h1M9 15h1M12 15h1M15 15h1" />
-          </button>
-          <button
-            className={`amount-field ${amount ? "" : "is-empty"}`}
-            type="button"
-            aria-label="Tutar"
-            onClick={() => setKeypadOpen(true)}
-          >
-            {amount || "0"}
-          </button>
-          <button
-            className="save-btn"
-            type="button"
-            disabled={!canSave}
-            onClick={save}
-          >
-            {txType}
-          </button>
-        </div>
-
-        <div className="entry-tabs" role="tablist" aria-label="İşlem türü">
-          {TX_TYPES.map((type) => (
-            <button
-              key={type}
-              role="tab"
-              aria-selected={txType === type}
-              className={txType === type ? "is-active" : ""}
-              onClick={() => setTxType(type)}
-            >
-              {type}
+          <div className="entry-desc">
+            <textarea
+              placeholder="Açıklama"
+              aria-label="Açıklama"
+              rows={2}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
+            <button className="entry-icon entry-attach" type="button" aria-label="Görsel ekle">
+              <Svg d="M4 5h16v14H4zM4 16l5-5 4 4 2-2 5 5M15 9h.01" />
             </button>
-          ))}
-        </div>
-      </section>
+          </div>
 
-      <div
-        className={`keypad-wrap ${keypadOpen ? "is-open" : ""}`}
-        aria-hidden={!keypadOpen}
-      >
-        <div className="keypad-inner">
-          <Keypad value={amount} onChange={setAmount} />
+          <div className="entry-amount">
+            <button
+              className="entry-icon"
+              type="button"
+              aria-label="Tuş takımını aç"
+              onClick={() => setKeypadOpen((open) => !open)}
+            >
+              <Svg d="M6 3h12v18H6zM9 7h6M9 11h1M12 11h1M15 11h1M9 15h1M12 15h1M15 15h1" />
+            </button>
+            <button
+              className={`amount-field ${amount ? "" : "is-empty"}`}
+              type="button"
+              aria-label="Tutar"
+              onClick={() => setKeypadOpen(true)}
+            >
+              {amount || "0"}
+            </button>
+            <button
+              className="save-btn"
+              type="button"
+              disabled={!canSave}
+              onClick={save}
+            >
+              {editingId ? "GÜNCELLE" : txType}
+            </button>
+          </div>
+
+          <div className="entry-tabs" role="tablist" aria-label="İşlem türü">
+            {TX_TYPES.map((type) => (
+              <button
+                key={type}
+                role="tab"
+                aria-selected={txType === type}
+                className={txType === type ? "is-active" : ""}
+                onClick={() => setTxType(type)}
+              >
+                {type}
+              </button>
+            ))}
+          </div>
+        </section>
+
+        <div
+          className={`keypad-wrap ${keypadOpen ? "is-open" : ""}`}
+          aria-hidden={!keypadOpen}
+        >
+          <div className="keypad-inner">
+            <Keypad value={amount} onChange={setAmount} />
+          </div>
         </div>
       </div>
-      </div>
+
+      {/* İşleme dokununca açılan seçenekler */}
+      {selected && (
+        <div
+          className="action-backdrop"
+          data-keep-keypad
+          onClick={() => setSelected(null)}
+        >
+          <div
+            className="action-sheet"
+            role="dialog"
+            aria-label="İşlem seçenekleri"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="action-handle" aria-hidden="true" />
+            <div className="action-summary">
+              <div className="tx-meta">
+                <strong style={{ color: ACCENT[selected.type].color }}>
+                  {selected.type}
+                </strong>
+                <span>{formatDateTime(selected.date)}</span>
+              </div>
+              <span
+                className={`tx-amount ${signOf(selected.type) < 0 ? "is-debt" : ""}`}
+              >
+                {signOf(selected.type) < 0 ? "-" : ""}
+                {money.format(selected.amount)}
+              </span>
+            </div>
+            <button
+              className="action-btn"
+              type="button"
+              onClick={() => startEdit(selected)}
+            >
+              <Svg d="M4 20h4L19 9l-4-4L4 16zM13 7l4 4" />
+              Düzenle
+            </button>
+            <button
+              className="action-btn is-danger"
+              type="button"
+              onClick={() => remove(selected)}
+            >
+              <Svg d="M5 7h14M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3" />
+              Sil
+            </button>
+            <button
+              className="action-btn is-cancel"
+              type="button"
+              onClick={() => setSelected(null)}
+            >
+              Vazgeç
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

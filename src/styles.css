@@ -647,13 +647,31 @@ button {
 }
 
 .tx {
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.tx-hit {
+  width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   gap: 12px;
   padding: 14px 16px;
-  border-bottom: 1px solid var(--line);
-  background: var(--surface);
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+}
+
+.tx-hit:active {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.tx.is-editing {
+  box-shadow: inset 3px 0 0 var(--blue);
+  background: rgba(60, 143, 217, 0.12);
 }
 
 /* Az önce eklenen işlem satırı kısa süre vurgulanır */
@@ -986,6 +1004,156 @@ button {
   font-size: 1.6rem;
 }
 
+/* ---------- İşlem seçenekleri, düzenleme ve geri al ---------- */
+
+.action-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.5);
+  animation: fade-in 0.2s ease-out;
+}
+
+.action-sheet {
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px 12px calc(14px + env(safe-area-inset-bottom, 0px));
+  border-radius: 20px 20px 0 0;
+  background: #1b222b;
+  animation: sheet-up 0.3s cubic-bezier(0.22, 0.8, 0.24, 1);
+}
+
+.action-handle {
+  align-self: center;
+  width: 44px;
+  height: 4px;
+  margin: 2px 0 6px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.action-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 4px 6px 10px;
+  border-bottom: 1px solid var(--line);
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  border: 0;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.06);
+  font-size: 1rem;
+  text-align: left;
+}
+
+.action-btn svg {
+  color: var(--blue);
+}
+
+.action-btn.is-danger {
+  color: var(--red);
+}
+
+.action-btn.is-danger svg {
+  color: var(--red);
+}
+
+.action-btn.is-cancel {
+  justify-content: center;
+  background: transparent;
+  color: var(--muted);
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes sheet-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: none;
+  }
+}
+
+.entry-editing {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--line);
+  background: rgba(60, 143, 217, 0.14);
+  color: var(--blue);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.entry-editing button {
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  font-size: 0.85rem;
+}
+
+/* Silme sonrası kısa süre görünen "Geri al" bildirimi, giriş panelinin hemen üstünde */
+.entry-dock {
+  position: sticky;
+}
+
+.toast {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  bottom: calc(100% + 8px);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: #2a323d;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+  animation: toast-in 0.25s ease-out;
+}
+
+.toast button {
+  border: 0;
+  background: transparent;
+  color: var(--blue);
+  font-weight: 700;
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 /* ---------- Yeni müşteri formu ---------- */
 
 .form {
@@ -1112,6 +1280,12 @@ button {
   }
 
   .cust-page {
+    animation: none;
+  }
+
+  .action-backdrop,
+  .action-sheet,
+  .toast {
     animation: none;
   }
 

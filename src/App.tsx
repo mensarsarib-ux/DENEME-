@@ -58,6 +58,12 @@ export default function App() {
           customer={customer}
           transactions={transactions}
           onAdd={(tx) => setTransactions((prev) => [...prev, tx])}
+          onUpdate={(tx) =>
+            setTransactions((prev) => prev.map((t) => (t.id === tx.id ? tx : t)))
+          }
+          onDelete={(id) =>
+            setTransactions((prev) => prev.filter((t) => t.id !== id))
+          }
           onBack={() => setCustomerId(null)}
         />
       );
