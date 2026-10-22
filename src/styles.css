@@ -1,0 +1,277 @@
+:root {
+  --bg: #f5f7fa;
+  --surface: #ffffff;
+  --text: #1a2433;
+  --muted: #6b7889;
+  --brand: #1e3a5f;
+  --income: #1f8a5b;
+  --expense: #c0392b;
+  --border: #e3e8ef;
+  --radius: 14px;
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1722;
+    --surface: #18222f;
+    --text: #e8edf4;
+    --muted: #8d9bb0;
+    --brand: #6f9fd6;
+    --income: #3fbf82;
+    --expense: #ef6b5e;
+    --border: #263447;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #0f1722;
+  --surface: #18222f;
+  --text: #e8edf4;
+  --muted: #8d9bb0;
+  --brand: #6f9fd6;
+  --income: #3fbf82;
+  --expense: #ef6b5e;
+  --border: #263447;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+/* ---------- Açılış ekranı ---------- */
+
+.splash-wrap {
+  position: fixed;
+  inset: 0;
+  background: var(--brand);
+  transition: opacity 0.4s ease;
+}
+
+.splash-wrap.is-exiting {
+  opacity: 0;
+}
+
+.splash {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  color: #f5f7fa;
+}
+
+.splash-logo {
+  width: 120px;
+  height: 120px;
+  animation: logo-in 0.9s ease-out both;
+}
+
+.splash-title {
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  animation: fade-up 0.9s ease-out 0.25s both;
+}
+
+@keyframes logo-in {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .splash-logo,
+  .splash-title {
+    animation: none;
+  }
+}
+
+/* ---------- Ana ekran ---------- */
+
+.dashboard {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-height: 100vh;
+}
+
+.stats {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.stats-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.app-name {
+  margin: 0;
+  font-size: 1.25rem;
+  color: var(--brand);
+}
+
+.segmented {
+  display: inline-flex;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 4px;
+}
+
+.segmented button {
+  border: 0;
+  background: transparent;
+  padding: 6px 14px;
+  border-radius: 999px;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.segmented button.is-active {
+  background: var(--brand);
+  color: #ffffff;
+}
+
+.stat-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+}
+
+.stat-card {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-card span {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.stat-card strong {
+  font-size: 1.1rem;
+  overflow-wrap: anywhere;
+}
+
+.stat-card.is-income strong {
+  color: var(--income);
+}
+
+.stat-card.is-expense strong {
+  color: var(--expense);
+}
+
+.chart-placeholder {
+  height: 200px;
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.customers {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+}
+
+.customers h2 {
+  margin: 0 0 8px;
+  font-size: 1rem;
+}
+
+.customer-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.customer-list li + li {
+  border-top: 1px solid var(--border);
+}
+
+.customer-row {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 4px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+}
+
+.customer-row:hover {
+  background: var(--bg);
+}
+
+.customer-name {
+  overflow-wrap: anywhere;
+}
+
+.customer-balance {
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.customer-balance.is-credit {
+  color: var(--income);
+}
+
+.customer-balance.is-debt {
+  color: var(--expense);
+}
