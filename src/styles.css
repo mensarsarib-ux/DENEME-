@@ -1198,16 +1198,8 @@ button {
   box-shadow: 0 1px 0 rgba(0, 0, 0, 0.35);
 }
 
-.keypad button:active {
-  background: #85888c;
-}
-
 .keypad .key-fn {
   background: #3d4044;
-}
-
-.keypad .key-fn:active {
-  background: #55585c;
 }
 
 .key-num {
@@ -1452,9 +1444,20 @@ button {
     filter 0.15s ease;
 }
 
-.keypad button:active {
-  transform: scale(0.94);
-  box-shadow: 0 0 14px rgba(255, 255, 255, 0.28);
+/* Tuş takımı (iOS gibi): basınca renk anında değişir, bırakınca yumuşakça söner; büyüme/parlama yok */
+.keypad button {
+  transition: background-color 0.32s ease-out;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.keypad button.is-down {
+  transition: none;
+  background: #9a9da2;
+}
+
+.keypad .key-fn.is-down {
+  background: #6a6d72;
 }
 
 .save-btn:not(:disabled):active,
@@ -1594,7 +1597,6 @@ button {
   }
 
   .entry-tabs button,
-  .keypad button:active,
   .save-btn:active,
   .header-add:active,
   .entry-tabs button:active,
