@@ -9,6 +9,7 @@ import {
   type Account,
   type AccountId,
   type Customer,
+  type Profile,
   type Transaction,
   type TxType,
 } from "../data/mock";
@@ -18,6 +19,8 @@ import { haptic } from "../lib/haptics";
 import { t } from "../lib/i18n";
 import { Svg } from "./Icon";
 import { parseAmount } from "../lib/amount";
+import StatementSheet from "./StatementSheet";
+import { statementText } from "../lib/statement";
 import Keypad from "./Keypad";
 
 /** Nakit ve banka simgeleri */
@@ -41,10 +44,13 @@ export default function CustomerPage({
   onAdd,
   onUpdate,
   onDelete,
+  profile,
   onEdit,
   onDeleteParty,
   onBack,
 }: {
+  /** İşletme bilgileri: ekstrenin başlığında kullanılır */
+  profile: Profile;
   /** Düzenle menüsünden "Düzenle": firma bilgileri sayfasını açar */
   onEdit: () => void;
   /** Düzenle menüsünden "Sil": kişiyi ve işlemlerini siler (onaydan sonra) */
@@ -76,7 +82,17 @@ export default function CustomerPage({
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   useEffect(() => setConfirmingDelete(false), [selected]);
   // Kalem düğmesinin altında açılan Düzenle / Sil menüsü ve kişiyi silme onayı
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [menu, setMenu] = useState<"edit" | "share" | null>(null);
+  const menuOpen = menu !== null;
+  const setMenuOpen = (open: boolean) => !open && setMenu(null);
+  const [statementOpen, setStatementOpen] = useState(false);
+  // Gönder sonrası kısa bilgi (ör. panoya kopyalandı)
+  const [shareNote, setShareNote] = useState<string | null>(null);
+  useEffect(() => {
+    if (!shareNote) return;
+    const timer = window.setTimeout(() => setShareNote(null), 3000);
+    return () => window.clearTimeout(timer);
+  }, [shareNote]);
   const [confirmParty, setConfirmParty] = useState(false);
   const toolsRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -236,6 +252,29 @@ export default function CustomerPage({
     setUndoTx(tx);
   }
 
+  const statementInput = { party: customer, profile, accounts, transactions };
+
+  /** Paylaş > Gönder: ekstre özetini telefonun paylaşım penceresine verir; yoksa panoya kopyalar */
+  async function sendStatement() {
+    setMenu(null);
+    haptic("light");
+    const text = statementText(statementInput);
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: `${t("Cari hesap ekstresi")} — ${customer.name}`, text });
+        return;
+      }
+    } catch (error) {
+      if ((error as DOMException)?.name === "AbortError") return;
+    }
+    try {
+      await navigator.clipboard.writeText(text);
+      setShareNote(t("Paylaşım bu cihazda açılamadı; ekstre panoya kopyalandı."));
+    } catch {
+      setShareNote(t("Paylaşım bu cihazda kullanılamıyor."));
+    }
+  }
+
   function undoDelete() {
     if (!undoTx) return;
     haptic("light");
@@ -267,21 +306,48 @@ export default function CustomerPage({
         </div>
 
         <div className="cust-tools" ref={toolsRef}>
-          <button aria-label={t("Paylaş")}>
+          <button
+            aria-label={t("Paylaş")}
+            aria-haspopup="menu"
+            aria-expanded={menu === "share"}
+            onClick={() => {
+              haptic("light");
+              setMenu((m) => (m === "share" ? null : "share"));
+            }}
+          >
             <Svg d="M12 3v12M8 7l4-4 4 4M5 13v6h14v-6" />
           </button>
           <button
             aria-label={t("Düzenle menüsü")}
             aria-haspopup="menu"
-            aria-expanded={menuOpen}
+            aria-expanded={menu === "edit"}
             onClick={() => {
               haptic("light");
-              setMenuOpen((open) => !open);
+              setMenu((m) => (m === "edit" ? null : "edit"));
             }}
           >
             <Svg d="M4 20h4L19 9l-4-4L4 16zM13 7l4 4" />
           </button>
-          {menuOpen && (
+          {menu === "share" && (
+            <div className="tools-menu" role="menu">
+              <button type="button" role="menuitem" onClick={() => void sendStatement()}>
+                <Svg d="M12 3v12M8 7l4-4 4 4M5 13v6h14v-6" />
+                {t("Gönder")}
+              </button>
+              <button
+                type="button"
+                role="menuitem"
+                onClick={() => {
+                  setMenu(null);
+                  setStatementOpen(true);
+                }}
+              >
+                <Svg d="M6 3h9l4 4v14H6zM14 3v5h5M9 13h6M9 17h6" />
+                {t("PDF oluştur")}
+              </button>
+            </div>
+          )}
+          {menu === "edit" && (
             <div className="tools-menu" role="menu">
               <button
                 type="button"
@@ -497,6 +563,15 @@ export default function CustomerPage({
           </div>
         </div>
       </div>
+
+      {statementOpen && (
+        <StatementSheet input={statementInput} onClose={() => setStatementOpen(false)} />
+      )}
+      {shareNote && (
+        <div className="toast" role="status">
+          <span>{shareNote}</span>
+        </div>
+      )}
 
       {confirmParty && (
         <div className="action-backdrop" data-keep-keypad onClick={() => setConfirmParty(false)}>

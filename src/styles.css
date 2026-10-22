@@ -2341,3 +2341,20 @@ a.action-btn {
   box-shadow: 0 8px 22px rgba(0, 0, 0, 0.5);
 }
 .toast button { border: 0; background: transparent; color: var(--blue); font: inherit; font-weight: 700; cursor: pointer; }
+
+/* Ekstre PDF penceresi */
+.statement-sheet { max-height: 90dvh; display: flex; flex-direction: column; gap: 10px; }
+.statement-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 46dvh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 8px;
+  border-radius: 12px;
+  background: #0d1117;
+}
+.statement-preview img { width: 100%; height: auto; border-radius: 4px; background: #fff; }
+.statement-actions { display: flex; gap: 8px; }
+.statement-actions .action-btn { flex: 1; justify-content: center; }

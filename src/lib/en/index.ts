@@ -1,7 +1,8 @@
 import { app } from "./app";
 import { parties } from "./parties";
+import { statement } from "./statement";
 import { voice } from "./voice";
 import { pages } from "./pages";
 
 /** Türkçe metin → İngilizce karşılığı. Her alan kendi dosyasında tutulur. */
-export const EN: Record<string, string> = { ...app, ...parties, ...pages, ...voice };
+export const EN: Record<string, string> = { ...app, ...parties, ...pages, ...voice, ...statement };

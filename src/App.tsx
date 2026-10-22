@@ -366,6 +366,7 @@ export default function App() {
       return (
         <CustomerPage
           customer={party}
+          profile={profile}
           accounts={accounts}
           transactions={transactions}
           onAdd={(tx) => setTransactions((prev) => [...prev, tx])}
