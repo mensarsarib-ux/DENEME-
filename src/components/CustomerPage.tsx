@@ -1,4 +1,4 @@
-import { useState, type CSSProperties } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import {
   CATEGORIES,
   TX_TYPES,
@@ -52,10 +52,20 @@ export default function CustomerPage({
   const [description, setDescription] = useState("");
   // "+" ile bekleyen listeye alınan, henüz kaydedilmemiş işlemler
   const [drafts, setDrafts] = useState<Transaction[]>([]);
+  // Az önce kaydedilen işlemler: listede kaydırılıp kısa süre vurgulanır
+  const [justAdded, setJustAdded] = useState<string[]>([]);
+  const newRowRef = useRef<HTMLLIElement>(null);
 
   const history = transactionsOf(transactions, customer.id);
   const value = parseAmount(amount);
   const canSave = value !== null && value > 0;
+  const lastNewId = [...history]
+    .reverse()
+    .find((t) => justAdded.includes(t.id))?.id;
+
+  useEffect(() => {
+    newRowRef.current?.scrollIntoView({ block: "center", behavior: "smooth" });
+  }, [justAdded]);
 
   function changeType(type: TxType) {
     setTxType(type);
@@ -97,6 +107,7 @@ export default function CustomerPage({
     const all = current ? [...drafts, current] : drafts;
     if (all.length === 0) return;
     all.forEach(onAdd);
+    setJustAdded(all.map((t) => t.id));
     setDrafts([]);
     resetFields();
     setKeypadOpen(false);
@@ -140,7 +151,11 @@ export default function CustomerPage({
         {history.map((t) => {
           const outflow = signOf(t.type) < 0;
           return (
-            <li key={t.id} className="tx">
+            <li
+              key={t.id}
+              ref={t.id === lastNewId ? newRowRef : undefined}
+              className={`tx ${justAdded.includes(t.id) ? "is-new" : ""}`}
+            >
               <div className="tx-info">
                 <div className="tx-meta">
                   <strong style={{ color: ACCENT[t.type].color }}>

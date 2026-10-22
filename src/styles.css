@@ -655,6 +655,21 @@ button {
   background: var(--surface);
 }
 
+/* Az önce eklenen işlem satırı kısa süre vurgulanır */
+.tx.is-new {
+  animation: tx-new 2.6s ease-out;
+}
+
+@keyframes tx-new {
+  0%,
+  40% {
+    background: rgba(60, 143, 217, 0.3);
+  }
+  100% {
+    background: var(--surface);
+  }
+}
+
 .tx-info {
   min-width: 0;
   display: flex;
@@ -1083,5 +1098,9 @@ button {
   .row.is-new {
     animation: none;
     background: rgba(60, 143, 217, 0.18);
+  }
+
+  .tx.is-new {
+    animation: none;
   }
 }

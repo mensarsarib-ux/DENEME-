@@ -91,13 +91,14 @@ export function signOf(type: TxType): number {
   return SIGN[type];
 }
 
+/** Müşterinin işlemleri tarih sırasıyla: en eski üstte, en yeni altta */
 export function transactionsOf(
   list: Transaction[],
   customerId: string,
 ): Transaction[] {
   return list
     .filter((t) => t.customerId === customerId)
-    .sort((a, b) => b.date.localeCompare(a.date));
+    .sort((a, b) => a.date.localeCompare(b.date));
 }
 
 /** Pozitif: alacak, negatif: borç */
