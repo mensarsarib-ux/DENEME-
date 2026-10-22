@@ -43,6 +43,9 @@ import { clearStored, usePersistedState } from "./lib/storage";
 const SPLASH_DURATION = 2200;
 const SPLASH_EXIT = 400;
 
+/** Sesli komut düğmesi şimdilik gizli; kod hazır, true yapınca geri gelir */
+const VOICE_ENABLED = false;
+
 /** Açık olan ekran. Tüm sekmeler (müşteriler, tedarikçiler, özel sekmeler) ana ekranda açılır. */
 type View =
   | { name: "home" }
@@ -403,7 +406,7 @@ export default function App() {
       onDeleteTab={deleteTab}
       onOpenKasa={() => go({ name: "kasa" })}
     />
-    {!drawerOpen && (
+    {VOICE_ENABLED && !drawerOpen && (
       <VoiceAssistant
         parties={parties}
         accounts={accounts}
