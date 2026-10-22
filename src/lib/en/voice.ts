@@ -1,8 +1,8 @@
 export const voice: Record<string, string> = {
-  "Bu tarayıcıda ses tanıma yok; komutu yazabilirsiniz.": "Speech recognition is not available in this browser; you can type the command.",
-  "Mikrofon izni verilmedi; komutu yazabilirsiniz.": "Microphone permission was not granted; you can type the command.",
-  "Ses tanıma çalışmadı; komutu yazabilirsiniz.": "Speech recognition did not work; you can type the command.",
-  "Ses tanıma başlatılamadı; komutu yazabilirsiniz.": "Speech recognition could not start; you can type the command.",
+  "Bu tarayıcıda ses tanıma yok. Komutu yazabilir ya da klavyedeki mikrofonla söyleyebilirsiniz.": "Speech recognition is not available in this browser. You can type the command or dictate with the keyboard microphone.",
+  "Mikrofon izni verilmedi ({code}). Komutu yazabilir ya da klavyedeki mikrofonla söyleyebilirsiniz.": "Microphone permission was not granted ({code}). You can type the command or dictate with the keyboard microphone.",
+  "Ses tanıma çalışmadı ({code}). Komutu yazabilir ya da klavyedeki mikrofonla söyleyebilirsiniz.": "Speech recognition did not work ({code}). You can type the command or dictate with the keyboard microphone.",
+  "Ses tanıma başlatılamadı. Komutu yazabilir ya da klavyedeki mikrofonla söyleyebilirsiniz.": "Speech recognition could not start. You can type the command or dictate with the keyboard microphone.",
   "Sesli komut: basılı tutarak konuşun": "Voice command: hold and speak",
   "Dinliyorum… konuşun, bitince parmağınızı kaldırın": "Listening… speak, then lift your finger",
   "Düğmeye basılı tutarak konuşun. Örnek: “Ahmet Yılmaz’a 10.000 TL ekle”": "Hold the button and speak. Example: “Add 10,000 to Ahmet Yilmaz”",

@@ -57,6 +57,9 @@ export default function VoiceAssistant({
   const transcriptRef = useRef("");
   const pressedAt = useRef(0);
   const failed = useRef<string | null>(null);
+  // Parmak hâlâ basılı mı; tarayıcı sessizlikte dinlemeyi kendiliğinden bitirirse yeniden başlatılır
+  const holding = useRef(false);
+  const base = useRef("");
 
   useEffect(() => {
     if (!hint) return;
@@ -67,14 +70,17 @@ export default function VoiceAssistant({
   useEffect(() => () => recRef.current?.abort(), []);
 
   function press() {
+    // Basar basmaz titreşim: dinleme başladı
     haptic("medium");
     pressedAt.current = performance.now();
+    holding.current = true;
     failed.current = null;
+    base.current = "";
     transcriptRef.current = "";
     setLive("");
     const rec = createRecognition();
     if (!rec) {
-      setSheet({ text: "", notice: t("Bu tarayıcıda ses tanıma yok; komutu yazabilirsiniz.") });
+      setSheet({ text: "", notice: t("Bu tarayıcıda ses tanıma yok. Komutu yazabilir ya da klavyedeki mikrofonla söyleyebilirsiniz.") });
       return;
     }
     rec.lang = getLanguage() === "en" ? "en-US" : "tr-TR";
@@ -83,23 +89,39 @@ export default function VoiceAssistant({
     rec.onresult = (e) => {
       let text = "";
       for (let i = 0; i < e.results.length; i++) text += e.results[i][0].transcript + " ";
-      transcriptRef.current = text.trim();
+      transcriptRef.current = `${base.current} ${text}`.trim();
       setLive(transcriptRef.current);
     };
     rec.onerror = (e) => {
       failed.current = e.error;
     };
     rec.onend = () => {
-      setListening(false);
-      recRef.current = null;
       const text = transcriptRef.current;
       const error = failed.current;
+      // Parmak hâlâ basılıyken tarayıcı dinlemeyi bitirdiyse (sessizlik) kaldığı yerden sürdür
+      if (holding.current && !error) {
+        base.current = text;
+        try {
+          rec.start();
+          return;
+        } catch {
+          /* aşağıda normal bitiş olarak ele alınır */
+        }
+      }
+      setListening(false);
+      recRef.current = null;
       if (error === "not-allowed" || error === "service-not-allowed") {
-        setSheet({ text: "", notice: t("Mikrofon izni verilmedi; komutu yazabilirsiniz.") });
+        setSheet({
+          text: "",
+          notice: t("Mikrofon izni verilmedi ({code}). Komutu yazabilir ya da klavyedeki mikrofonla söyleyebilirsiniz.", { code: error }),
+        });
       } else if (text) {
         setSheet({ text });
       } else if (error && error !== "aborted" && error !== "no-speech") {
-        setSheet({ text: "", notice: t("Ses tanıma çalışmadı; komutu yazabilirsiniz.") });
+        setSheet({
+          text: "",
+          notice: t("Ses tanıma çalışmadı ({code}). Komutu yazabilir ya da klavyedeki mikrofonla söyleyebilirsiniz.", { code: error }),
+        });
       } else if (performance.now() - pressedAt.current >= TAP_MS) {
         setHint(true);
         setLive("");
@@ -111,12 +133,16 @@ export default function VoiceAssistant({
       setListening(true);
     } catch {
       recRef.current = null;
-      setSheet({ text: "", notice: t("Ses tanıma başlatılamadı; komutu yazabilirsiniz.") });
+      setSheet({ text: "", notice: t("Ses tanıma başlatılamadı. Komutu yazabilir ya da klavyedeki mikrofonla söyleyebilirsiniz.") });
     }
   }
 
   function release() {
+    if (!holding.current) return;
+    holding.current = false;
     const rec = recRef.current;
+    // Bırakınca ikinci titreşim: kayıt bitti
+    haptic("success");
     if (!rec) return;
     if (performance.now() - pressedAt.current < TAP_MS) {
       // Kısa dokunuş: dinlemeyi iptal et ve nasıl kullanılacağını göster
@@ -241,6 +267,7 @@ function VoiceSheet({
           <label htmlFor="voice-text">{t("Söylediğiniz")}</label>
           <input
             id="voice-text"
+            autoFocus={initial === ""}
             autoComplete="off"
             placeholder={t("Örn. Ahmet Yılmaz’a 10.000 TL ekle")}
             value={text}
