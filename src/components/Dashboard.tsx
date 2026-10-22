@@ -1,4 +1,10 @@
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import {
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+} from "react";
 import {
   accounts,
   balanceOf,
@@ -40,6 +46,32 @@ function periodTitle(period: Period): string {
   return String(now.getFullYear());
 }
 
+/** Etkin sekmeye göre değişen metinler */
+function labelsFor(kind: string) {
+  if (kind === "customer") {
+    return {
+      singular: "müşteri",
+      add: "Yeni müşteri ekle",
+      empty: "Henüz müşteri yok.",
+      search: "Müşteri ara",
+    };
+  }
+  if (kind === "supplier") {
+    return {
+      singular: "tedarikçi",
+      add: "Yeni tedarikçi ekle",
+      empty: "Henüz tedarikçi yok.",
+      search: "Tedarikçi ara",
+    };
+  }
+  return {
+    singular: "kayıt",
+    add: "Yeni kayıt ekle",
+    empty: "Bu sekmede henüz kayıt yok.",
+    search: "Kayıt ara",
+  };
+}
+
 interface Row {
   id: string;
   name: string;
@@ -49,26 +81,30 @@ interface Row {
 }
 
 export default function Dashboard({
-  customers,
+  members,
+  activeTab,
   tabs,
   transactions,
   highlightId,
-  onSelectCustomer,
-  onNewCustomer,
+  onSelectParty,
+  onNewParty,
   onSelectTab,
   onCreateTab,
   onRenameTab,
   onDeleteTab,
 }: {
-  customers: Customer[];
+  /** Etkin sekmedeki kayıtlar (müşteriler, tedarikçiler veya özel sekme) */
+  members: Customer[];
+  activeTab: string;
   /** Müşteriler, Tedarikçiler ve kullanıcının sekmeleri */
   tabs: TabInfo[];
   transactions: Transaction[];
-  /** Az önce eklenen müşteri: listede kaydırılıp vurgulanır */
+  /** Az önce eklenen kayıt: listede kaydırılıp vurgulanır */
   highlightId?: string | null;
-  onSelectCustomer: (id: string) => void;
-  onNewCustomer: () => void;
-  /** Müşteriler dışındaki bir sekmeye geçer */
+  onSelectParty: (id: string) => void;
+  /** Etkin sekmeye yeni kayıt ekler */
+  onNewParty: () => void;
+  /** Sekme değişince üstteki istatistikler yerinde kalır, yalnızca alttaki liste değişir */
   onSelectTab: (id: string) => void;
   onCreateTab: (name: string) => void;
   onRenameTab: (id: string, name: string) => void;
@@ -78,7 +114,16 @@ export default function Dashboard({
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
   const highlightRef = useRef<HTMLButtonElement>(null);
-  const sheetRef = useRef<HTMLElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
+  // Liste alanı gördüğü en büyük yüksekliğin altına inmez; böylece daha kısa bir sekmeye
+  // geçince sayfa kısalıp yukarı kaymaz
+  const [listMin, setListMin] = useState(0);
+
+  useLayoutEffect(() => {
+    if (searchOpen) return;
+    const height = listRef.current?.getBoundingClientRect().height ?? 0;
+    if (height > listMin) setListMin(Math.ceil(height));
+  });
 
   useEffect(() => {
     highlightRef.current?.scrollIntoView({ block: "center" });
@@ -87,7 +132,11 @@ export default function Dashboard({
   const totals = totalsFor(transactions, period);
   const maxFlow = Math.max(totals.alis, totals.satis, totals.tahsilat, 1);
 
-  const allRows: Row[] = customers
+  const labels = labelsFor(activeTab);
+  const activeName =
+    tabs.find((t) => t.id === activeTab)?.name.toLocaleUpperCase("tr-TR") ?? "";
+
+  const allRows: Row[] = members
     .map((c) => ({
       id: c.id,
       name: c.name,
@@ -124,14 +173,14 @@ export default function Dashboard({
               type="search"
               autoFocus
               autoComplete="off"
-              placeholder="Müşteri ara"
-              aria-label="Müşteri ara"
+              placeholder={labels.search}
+              aria-label={labels.search}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === "Escape") closeSearch();
                 if (e.key === "Enter" && searching && rows[0]) {
-                  onSelectCustomer(rows[0].id);
+                  onSelectParty(rows[0].id);
                 }
               }}
             />
@@ -176,8 +225,8 @@ export default function Dashboard({
               </button>
               <button
                 className="icon-btn"
-                aria-label="Yeni müşteri ekle"
-                onClick={onNewCustomer}
+                aria-label={labels.add}
+                onClick={onNewParty}
               >
                 <Svg d="M12 5v14M5 12h14" />
               </button>
@@ -235,8 +284,8 @@ export default function Dashboard({
         </>
       )}
 
-      {/* Alt sayfa: kasa ve cariler (aramada yalnızca müşteri sonuçları) */}
-      <section className="sheet" ref={sheetRef}>
+      {/* Alt sayfa: kasa ve etkin sekmenin kayıtları (aramada yalnızca etkin sekmede arama yapılır) */}
+      <section className="sheet">
         <div className="sheet-handle" aria-hidden="true" />
 
         {!searchOpen && (
@@ -254,40 +303,38 @@ export default function Dashboard({
 
         {searchOpen ? (
           <div className="group-head">
-            <span>{searching ? "ARAMA SONUÇLARI" : "MÜŞTERİLER"}</span>
+            <span>{searching ? "ARAMA SONUÇLARI" : activeName}</span>
             <span className="group-total" aria-live="polite">
               {searching
                 ? `${rows.length} sonuç`
-                : `${rows.length} müşteri`}
+                : `${rows.length} ${labels.singular}`}
             </span>
           </div>
         ) : (
           <PartyTabs
             tabs={tabs}
-            active="customer"
+            active={activeTab}
             onCreate={onCreateTab}
             onRename={onRenameTab}
             onDelete={onDeleteTab}
-            onSelect={(id) => {
-              if (id !== "customer") onSelectTab(id);
-              else
-                sheetRef.current?.scrollIntoView({
-                  behavior: "smooth",
-                  block: "start",
-                });
-            }}
+            onSelect={onSelectTab}
           />
         )}
 
+        <div
+          className="party-list"
+          ref={listRef}
+          style={{ minHeight: searchOpen ? undefined : listMin || undefined }}
+        >
         {rows.length === 0 ? (
           <div className="search-empty">
             <p>
               {searching
-                ? `“${query.trim()}” ile eşleşen müşteri yok.`
-                : "Henüz müşteri yok."}
+                ? `“${query.trim()}” ile eşleşen ${labels.singular} yok.`
+                : labels.empty}
             </p>
-            <button type="button" className="help-link" onClick={onNewCustomer}>
-              Yeni müşteri ekle
+            <button type="button" className="help-link" onClick={onNewParty}>
+              {labels.add}
             </button>
           </div>
         ) : (
@@ -297,7 +344,7 @@ export default function Dashboard({
                 <button
                   ref={r.id === highlightId ? highlightRef : undefined}
                   className={`row ${searching ? "is-match" : ""} ${searching && i === 0 ? "is-top" : ""} ${r.id === highlightId ? "is-new" : ""}`}
-                  onClick={() => onSelectCustomer(r.id)}
+                  onClick={() => onSelectParty(r.id)}
                 >
                   <span className="row-name">
                     <Highlight text={r.name} range={r.range} />
@@ -312,6 +359,7 @@ export default function Dashboard({
             ))}
           </ul>
         )}
+        </div>
       </section>
     </div>
   );

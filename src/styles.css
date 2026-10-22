@@ -626,11 +626,6 @@ button {
   white-space: nowrap;
 }
 
-.supplier-list {
-  background: var(--surface);
-  min-height: 40dvh;
-}
-
 /* ---------- Müşteri sayfası ---------- */
 
 .cust-page {

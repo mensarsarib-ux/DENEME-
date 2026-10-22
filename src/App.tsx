@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import Splash from "./components/Splash";
 import Dashboard from "./components/Dashboard";
 import CustomerPage from "./components/CustomerPage";
-import GroupPage from "./components/GroupPage";
 import NewCustomerPage from "./components/NewCustomerPage";
 import type { TabInfo } from "./components/PartyTabs";
 import {
@@ -21,11 +20,10 @@ import {
 const SPLASH_DURATION = 2200;
 const SPLASH_EXIT = 400;
 
-/** Açık olan ekran. Müşteriler ana ekranda, diğer sekmeler kendi sayfalarında açılır. */
+/** Açık olan ekran. Tüm sekmeler (müşteriler, tedarikçiler, özel sekmeler) ana ekranda açılır. */
 type View =
   | { name: "home" }
-  | { name: "group"; id: PartyKind }
-  | { name: "party"; id: string; fromGroup: PartyKind }
+  | { name: "party"; id: string }
   | { name: "new"; kind: PartyKind };
 
 export default function App() {
@@ -33,6 +31,8 @@ export default function App() {
   const [view, setView] = useState<View>({ name: "home" });
   // Sekmeler: Müşteriler, Tedarikçiler ve kullanıcının açtıkları
   const [groups, setGroups] = useState<Group[]>(BUILTIN_GROUPS);
+  // Ana ekranda hangi sekmenin listesi gösteriliyor; sayfalar arası gidip gelince korunur
+  const [activeTab, setActiveTab] = useState<PartyKind>("customer");
   // Tüm kayıtlar tek listede tutulur; "kind" hangi sekmeye ait olduğunu belirtir
   const [parties, setParties] = useState<Customer[]>([
     ...initialCustomers,
@@ -40,7 +40,7 @@ export default function App() {
   ]);
   const [transactions, setTransactions] =
     useState<Transaction[]>(initialTransactions);
-  // Az önce eklenen kayıt; kendi listesinde vurgulanır
+  // Az önce eklenen kayıt; listede vurgulanır
   const [addedId, setAddedId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -63,6 +63,10 @@ export default function App() {
     );
   }
 
+  // Silinmiş bir sekme etkin kalmasın
+  const currentTab = groups.some((g) => g.id === activeTab)
+    ? activeTab
+    : "customer";
   const membersOf = (kind: PartyKind) => parties.filter((p) => p.kind === kind);
   const tabs: TabInfo[] = groups.map((g) => {
     const members = membersOf(g.id);
@@ -74,16 +78,22 @@ export default function App() {
     };
   });
 
-  /** Sekmeye geç: Müşteriler ana ekrandır, diğerleri kendi sayfasında açılır */
-  function openTab(id: PartyKind) {
-    go(id === "customer" ? { name: "home" } : { name: "group", id });
+  function go(next: View) {
+    setAddedId(null);
+    setView(next);
   }
 
-  /** Yeni sekme oluştur ve doğrudan o sekmenin sayfasını aç */
+  /** Sekme değişince ekran aynı kalır; yalnızca alttaki liste değişir */
+  function openTab(id: PartyKind) {
+    setAddedId(null);
+    setActiveTab(id);
+  }
+
+  /** Yeni sekme oluştur ve listesini göster */
   function createTab(name: string) {
     const group: Group = { id: `g${Date.now()}`, name };
     setGroups((prev) => [...prev, group]);
-    go({ name: "group", id: group.id });
+    openTab(group.id);
   }
 
   function renameTab(id: PartyKind, name: string) {
@@ -100,29 +110,23 @@ export default function App() {
     setTransactions((prev) => prev.filter((t) => !doomed.has(t.customerId)));
     if (id === "customer") return;
     setGroups((prev) => prev.filter((g) => g.id !== id));
-    if (view.name === "group" && view.id === id) setView({ name: "home" });
-  }
-
-  function go(next: View) {
-    setAddedId(null);
-    setView(next);
+    if (activeTab === id) setActiveTab("customer");
   }
 
   if (view.name === "new") {
     const kind = view.kind;
     const group = groups.find((g) => g.id === kind);
-    const returnTo: View =
-      kind === "customer" ? { name: "home" } : { name: "group", id: kind };
     return (
       <NewCustomerPage
         kind={kind}
         groupName={group?.name ?? ""}
         existingNames={membersOf(kind).map((p) => p.name)}
-        onBack={() => setView(returnTo)}
+        onBack={() => setView({ name: "home" })}
         onSave={(party) => {
           setParties((prev) => [...prev, party]);
           setAddedId(party.id);
-          setView(returnTo);
+          setActiveTab(kind);
+          setView({ name: "home" });
         }}
       />
     );
@@ -131,7 +135,6 @@ export default function App() {
   if (view.name === "party") {
     const party = parties.find((p) => p.id === view.id);
     if (party) {
-      const fromGroup = view.fromGroup;
       return (
         <CustomerPage
           customer={party}
@@ -143,28 +146,6 @@ export default function App() {
           onDelete={(id) =>
             setTransactions((prev) => prev.filter((t) => t.id !== id))
           }
-          onBack={() => openTab(fromGroup)}
-        />
-      );
-    }
-  }
-
-  if (view.name === "group") {
-    const group = groups.find((g) => g.id === view.id);
-    if (group) {
-      return (
-        <GroupPage
-          group={group}
-          members={membersOf(group.id)}
-          tabs={tabs}
-          transactions={transactions}
-          highlightId={addedId}
-          onSelect={(id) => go({ name: "party", id, fromGroup: group.id })}
-          onNew={() => go({ name: "new", kind: group.id })}
-          onSelectTab={openTab}
-          onCreateTab={createTab}
-          onRenameTab={renameTab}
-          onDeleteTab={deleteTab}
           onBack={() => go({ name: "home" })}
         />
       );
@@ -173,14 +154,13 @@ export default function App() {
 
   return (
     <Dashboard
-      customers={membersOf("customer")}
+      members={membersOf(currentTab)}
+      activeTab={currentTab}
       tabs={tabs}
       transactions={transactions}
       highlightId={addedId}
-      onSelectCustomer={(id) =>
-        go({ name: "party", id, fromGroup: "customer" })
-      }
-      onNewCustomer={() => go({ name: "new", kind: "customer" })}
+      onSelectParty={(id) => go({ name: "party", id })}
+      onNewParty={() => go({ name: "new", kind: currentTab })}
       onSelectTab={openTab}
       onCreateTab={createTab}
       onRenameTab={renameTab}
