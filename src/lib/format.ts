@@ -10,6 +10,7 @@ function make(min: number, max: number) {
   return new Intl.NumberFormat(locale(), {
     style: "currency",
     currency,
+    currencyDisplay: "narrowSymbol",
     minimumFractionDigits: min,
     maximumFractionDigits: max,
   });

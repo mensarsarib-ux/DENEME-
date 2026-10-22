@@ -1,7 +1,6 @@
 /** Ana ekran, sekmeler, grafik, yan menü ve açılış ekranı */
 export const app: Record<string, string> = {
   // Genel
-  "Hesabım": "My Accounts",
   "Hesabım logosu": "My Accounts logo",
   "Şirket adınız": "Your company name",
   "Geri": "Back",
@@ -105,3 +104,5 @@ export const app: Record<string, string> = {
   "Bu bir Hesabım yedeği gibi görünmüyor.": "This does not look like a My Accounts backup.",
   "Hesabım • {p} kişi, {x} işlem, {n} not • {ua}": "My Accounts • {p} contacts, {x} transactions, {n} notes • {ua}",
 };
+
+app["{p} kişi, {t} işlem, {n} not"] = "{p} contacts, {t} transactions, {n} notes";

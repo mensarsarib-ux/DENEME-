@@ -9,7 +9,6 @@ export const pages: Record<string, string> = {
   "Telefon": "Phone",
   "E-posta": "Email",
   "Adres": "Address",
-  "Hesabım": "My Account",
   "Nakit": "Cash",
   "Banka": "Bank",
   "Tahsilat": "Collection",
