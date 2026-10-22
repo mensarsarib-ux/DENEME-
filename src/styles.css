@@ -217,6 +217,105 @@ button {
   text-align: center;
 }
 
+/* ---------- Arama ---------- */
+
+.topbar-search {
+  padding-bottom: 4px;
+}
+
+.topbar-search + .sheet {
+  margin-top: 12px;
+}
+
+.search-field {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 8px 0 14px;
+  border-radius: 999px;
+  background: rgba(10, 22, 30, 0.7);
+  box-shadow: 0 0 0 1px rgba(60, 143, 217, 0.5);
+  color: var(--muted);
+}
+
+.search-field svg {
+  flex-shrink: 0;
+}
+
+.search-field input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.search-field input::-webkit-search-cancel-button {
+  display: none;
+}
+
+.search-clear {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--text);
+  line-height: 1;
+}
+
+.search-cancel {
+  border: 0;
+  background: transparent;
+  padding: 8px 4px;
+  color: var(--text);
+}
+
+.row mark {
+  padding: 0 2px;
+  border-radius: 4px;
+  background: rgba(60, 143, 217, 0.45);
+  color: #fff;
+  font-weight: 700;
+}
+
+.row.is-match {
+  background: rgba(60, 143, 217, 0.08);
+}
+
+.row.is-top {
+  background: rgba(60, 143, 217, 0.18);
+  box-shadow: inset 3px 0 0 var(--blue);
+}
+
+.search-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 28px 16px;
+  color: var(--muted);
+  text-align: center;
+}
+
+.search-empty p {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.search-empty .help-link {
+  align-self: center;
+  margin: 0;
+}
+
 /* ---------- Özet ve grafik ---------- */
 
 .summary {

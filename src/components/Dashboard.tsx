@@ -9,6 +9,8 @@ import {
   type Transaction,
 } from "../data/mock";
 import { money, moneyRound } from "../lib/format";
+import { findMatch, type MatchRange } from "../lib/search";
+import Highlight from "./Highlight";
 import { Svg } from "./Icon";
 
 const PERIODS: { value: Period; label: string }[] = [
@@ -37,6 +39,14 @@ function periodTitle(period: Period): string {
   return String(now.getFullYear());
 }
 
+interface Row {
+  id: string;
+  name: string;
+  balance: number;
+  /** Aramada eşleşen kısım; arama yoksa null */
+  range: MatchRange | null;
+}
+
 export default function Dashboard({
   customers,
   transactions,
@@ -49,146 +59,245 @@ export default function Dashboard({
   onNewCustomer: () => void;
 }) {
   const [period, setPeriod] = useState<Period>("monthly");
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [query, setQuery] = useState("");
+
   const totals = totalsFor(transactions, period);
   const maxFlow = Math.max(totals.alis, totals.satis, totals.tahsilat, 1);
   // Ciro: dönemdeki satış toplamı. Kar: satıştan alışın çıkarılmasıyla bulunur.
   const ciro = totals.satis;
   const kar = totals.satis - totals.alis;
 
-  const customerRows = customers
-    .map((c) => ({ ...c, balance: balanceOf(transactions, c.id) }))
+  const allRows: Row[] = customers
+    .map((c) => ({
+      id: c.id,
+      name: c.name,
+      balance: balanceOf(transactions, c.id),
+      range: null,
+    }))
     .sort((a, b) => a.name.localeCompare(b.name, "tr"));
-  const customersTotal = customerRows.reduce((sum, c) => sum + c.balance, 0);
+  const customersTotal = allRows.reduce((sum, r) => sum + r.balance, 0);
+
+  const searching = searchOpen && query.trim() !== "";
+  // Aramada isim başında eşleşenler öne gelir, sonra alfabetik sıra
+  const rows: Row[] = searching
+    ? allRows
+        .map((r) => ({ ...r, range: findMatch(r.name, query) }))
+        .filter((r) => r.range !== null)
+        .sort(
+          (a, b) =>
+            a.range![0] - b.range![0] || a.name.localeCompare(b.name, "tr"),
+        )
+    : allRows;
+
+  function closeSearch() {
+    setSearchOpen(false);
+    setQuery("");
+  }
 
   return (
     <div className="app">
-      {/* Üst çubuk */}
-      <header className="topbar">
-        <button className="topbar-menu" aria-label="Menü">
-          Menü
-        </button>
-        <div className="company-pill">
-          <span className="company-logo" aria-hidden="true">
-            <img src="/logo.svg" alt="" />
-          </span>
-          <span className="company-text">
-            <strong>Hesabım</strong>
-            <small>Şirket adınız</small>
-          </span>
-        </div>
-        <div className="topbar-actions">
-          <button className="icon-btn" aria-label="Ara">
+      {searchOpen ? (
+        <header className="topbar topbar-search">
+          <div className="search-field" role="search">
             <Svg d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM20 20l-4.3-4.3" />
+            <input
+              id="customer-search"
+              type="search"
+              autoFocus
+              autoComplete="off"
+              placeholder="Müşteri ara"
+              aria-label="Müşteri ara"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Escape") closeSearch();
+                if (e.key === "Enter" && searching && rows[0]) {
+                  onSelectCustomer(rows[0].id);
+                }
+              }}
+            />
+            {query && (
+              <button
+                className="search-clear"
+                type="button"
+                aria-label="Aramayı temizle"
+                onClick={() => setQuery("")}
+              >
+                ×
+              </button>
+            )}
+          </div>
+          <button className="search-cancel" type="button" onClick={closeSearch}>
+            Vazgeç
           </button>
-          <button
-            className="icon-btn"
-            aria-label="Yeni müşteri ekle"
-            onClick={onNewCustomer}
-          >
-            <Svg d="M12 5v14M5 12h14" />
-          </button>
-        </div>
-      </header>
-
-      <div className="notice-row">
-        <button className="bell" aria-label="Bildirimler">
-          <Svg d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4zM10 21h4" />
-          <span className="badge">1</span>
-        </button>
-      </div>
-
-      {/* Özet bölümü: dönem seçici + grafik */}
-      <section className="summary">
-        <div className="segmented" role="tablist" aria-label="Dönem">
-          {PERIODS.map((p) => (
-            <button
-              key={p.value}
-              role="tab"
-              aria-selected={period === p.value}
-              className={period === p.value ? "is-active" : ""}
-              onClick={() => setPeriod(p.value)}
-            >
-              {p.label}
+        </header>
+      ) : (
+        <>
+          {/* Üst çubuk */}
+          <header className="topbar">
+            <button className="topbar-menu" aria-label="Menü">
+              Menü
             </button>
-          ))}
-        </div>
+            <div className="company-pill">
+              <span className="company-logo" aria-hidden="true">
+                <img src="/logo.svg" alt="" />
+              </span>
+              <span className="company-text">
+                <strong>Hesabım</strong>
+                <small>Şirket adınız</small>
+              </span>
+            </div>
+            <div className="topbar-actions">
+              <button
+                className="icon-btn"
+                aria-label="Ara"
+                onClick={() => setSearchOpen(true)}
+              >
+                <Svg d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM20 20l-4.3-4.3" />
+              </button>
+              <button
+                className="icon-btn"
+                aria-label="Yeni müşteri ekle"
+                onClick={onNewCustomer}
+              >
+                <Svg d="M12 5v14M5 12h14" />
+              </button>
+            </div>
+          </header>
 
-        <div className="chart-card">
-          <div className="chart-title">{periodTitle(period)}</div>
+          <div className="notice-row">
+            <button className="bell" aria-label="Bildirimler">
+              <Svg d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4zM10 21h4" />
+              <span className="badge">1</span>
+            </button>
+          </div>
 
-          <div className="chart">
-            {COLUMNS.map((col) => (
-              <div key={col.key} className={`col col-${col.key}`}>
-                <span className="col-value">
-                  {moneyRound.format(totals[col.key])}
-                </span>
-                <div className="col-track">
-                  <div
-                    className="col-bar"
-                    style={
-                      {
-                        "--h": `${Math.max((totals[col.key] / maxFlow) * 100, 3)}%`,
-                      } as CSSProperties
-                    }
-                  />
-                </div>
-                <span className="col-label">{col.label}</span>
+          {/* Özet bölümü: dönem seçici + grafik */}
+          <section className="summary">
+            <div className="segmented" role="tablist" aria-label="Dönem">
+              {PERIODS.map((p) => (
+                <button
+                  key={p.value}
+                  role="tab"
+                  aria-selected={period === p.value}
+                  className={period === p.value ? "is-active" : ""}
+                  onClick={() => setPeriod(p.value)}
+                >
+                  {p.label}
+                </button>
+              ))}
+            </div>
+
+            <div className="chart-card">
+              <div className="chart-title">{periodTitle(period)}</div>
+
+              <div className="chart">
+                {COLUMNS.map((col) => (
+                  <div key={col.key} className={`col col-${col.key}`}>
+                    <span className="col-value">
+                      {moneyRound.format(totals[col.key])}
+                    </span>
+                    <div className="col-track">
+                      <div
+                        className="col-bar"
+                        style={
+                          {
+                            "--h": `${Math.max((totals[col.key] / maxFlow) * 100, 3)}%`,
+                          } as CSSProperties
+                        }
+                      />
+                    </div>
+                    <span className="col-label">{col.label}</span>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
 
-          <div className="result">
-            <div className="result-block">
-              <span className="result-label">CİRO</span>
-              <span className="result-value">{money.format(ciro)}</span>
-              <span className="equation">Satış toplamı</span>
+              <div className="result">
+                <div className="result-block">
+                  <span className="result-label">CİRO</span>
+                  <span className="result-value">{money.format(ciro)}</span>
+                  <span className="equation">Satış toplamı</span>
+                </div>
+                <div className="result-block">
+                  <span className="result-label">KAR</span>
+                  <span
+                    className={`result-value ${kar < 0 ? "is-loss" : ""}`}
+                  >
+                    {money.format(kar)}
+                  </span>
+                  <span className="equation">
+                    Satış <b>−</b> Alış
+                  </span>
+                </div>
+              </div>
             </div>
-            <div className="result-block">
-              <span className="result-label">KAR</span>
-              <span className={`result-value ${kar < 0 ? "is-loss" : ""}`}>
-                {money.format(kar)}
-              </span>
-              <span className="equation">
-                Satış <b>−</b> Alış
-              </span>
-            </div>
-          </div>
-        </div>
-      </section>
+          </section>
+        </>
+      )}
 
-      {/* Alt sayfa: hesaplar ve cariler */}
+      {/* Alt sayfa: kasa ve cariler (aramada yalnızca müşteri sonuçları) */}
       <section className="sheet">
         <div className="sheet-handle" aria-hidden="true" />
 
-        <ul className="list">
-          {accounts.map((a) => (
-            <li key={a.id}>
-              <button className="row row-big">
-                <span className="row-name">{a.name}</span>
-                <span className="row-amount">{money.format(a.balance)}</span>
-              </button>
-            </li>
-          ))}
-        </ul>
+        {!searchOpen && (
+          <ul className="list">
+            {accounts.map((a) => (
+              <li key={a.id}>
+                <button className="row row-big">
+                  <span className="row-name">{a.name}</span>
+                  <span className="row-amount">{money.format(a.balance)}</span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
 
         <div className="group-head">
-          <span>CARİ (BORÇ / ALACAK)</span>
-          <span className="group-total">{money.format(customersTotal)}</span>
+          <span>
+            {searching
+              ? "ARAMA SONUÇLARI"
+              : searchOpen
+                ? "MÜŞTERİLER"
+                : "CARİ (BORÇ / ALACAK)"}
+          </span>
+          <span className="group-total" aria-live="polite">
+            {searching
+              ? `${rows.length} sonuç`
+              : searchOpen
+                ? `${rows.length} müşteri`
+                : money.format(customersTotal)}
+          </span>
         </div>
-        <ul className="list">
-          {customerRows.map((c) => (
-            <li key={c.id}>
-              <button className="row" onClick={() => onSelectCustomer(c.id)}>
-                <span className="row-name">{c.name}</span>
-                <span
-                  className={`row-amount ${c.balance < 0 ? "is-debt" : ""}`}
+
+        {searching && rows.length === 0 ? (
+          <div className="search-empty">
+            <p>“{query.trim()}” ile eşleşen müşteri yok.</p>
+            <button type="button" className="help-link" onClick={onNewCustomer}>
+              Yeni müşteri ekle
+            </button>
+          </div>
+        ) : (
+          <ul className="list">
+            {rows.map((r, i) => (
+              <li key={r.id}>
+                <button
+                  className={`row ${searching ? "is-match" : ""} ${searching && i === 0 ? "is-top" : ""}`}
+                  onClick={() => onSelectCustomer(r.id)}
                 >
-                  {money.format(c.balance)}
-                </span>
-              </button>
-            </li>
-          ))}
-        </ul>
+                  <span className="row-name">
+                    <Highlight text={r.name} range={r.range} />
+                  </span>
+                  <span
+                    className={`row-amount ${r.balance < 0 ? "is-debt" : ""}`}
+                  >
+                    {money.format(r.balance)}
+                  </span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
       </section>
     </div>
   );
