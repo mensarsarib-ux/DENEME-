@@ -17,6 +17,7 @@ import { ACCENT } from "../lib/accents";
 import { haptic } from "../lib/haptics";
 import { t } from "../lib/i18n";
 import { Svg } from "./Icon";
+import { parseAmount } from "../lib/amount";
 import Keypad from "./Keypad";
 
 /** Nakit ve banka simgeleri */
@@ -25,12 +26,6 @@ const BANK_ICON = "M3 9l9-5 9 5v1H3zM5 11v7M9 11v7M15 11v7M19 11v7M3 20h18";
 
 /** Geri al seçeneğinin ekranda kalma süresi (ms) */
 const UNDO_DURATION = 5000;
-
-/** Ekrandaki metinden tutar üretir; geçersizse null */
-function parseAmount(text: string): number | null {
-  const value = Number(text.replace(",", "."));
-  return text && Number.isFinite(value) ? value : null;
-}
 
 /** ISO tarihi datetime-local alanının yerel biçimine çevirir */
 function toLocalInput(iso: string): string {

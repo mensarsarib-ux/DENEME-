@@ -4,6 +4,7 @@ import Dashboard from "./components/Dashboard";
 import CustomerPage from "./components/CustomerPage";
 import KasaPage from "./components/KasaPage";
 import NewCustomerPage from "./components/NewCustomerPage";
+import VoiceAssistant from "./components/VoiceAssistant";
 import MenuDrawer from "./components/MenuDrawer";
 import ProfilePage from "./components/ProfilePage";
 import AccountsPage from "./components/AccountsPage";
@@ -34,7 +35,7 @@ import { setHapticsEnabled } from "./lib/haptics";
 import type { MenuPage } from "./lib/menu";
 import { buildNotifications } from "./lib/notifications";
 import { useSwipeBack } from "./lib/useSwipeBack";
-import { setCurrency } from "./lib/format";
+import { money, setCurrency } from "./lib/format";
 import { setLanguage, t } from "./lib/i18n";
 import { clearStored, usePersistedState } from "./lib/storage";
 
@@ -78,6 +79,13 @@ export default function App() {
   setCurrency(settings.currency);
   setLanguage(settings.language);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  // Sesli komutla eklenen işlem için kısa süre görünen bildirim ve geri alma
+  const [toast, setToast] = useState<{ text: string; txId: string } | null>(null);
+  useEffect(() => {
+    if (!toast) return;
+    const timer = window.setTimeout(() => setToast(null), 5000);
+    return () => window.clearTimeout(timer);
+  }, [toast]);
   // Az önce eklenen kayıt; listede vurgulanır
   const [addedId, setAddedId] = useState<string | null>(null);
 
@@ -395,6 +403,34 @@ export default function App() {
       onDeleteTab={deleteTab}
       onOpenKasa={() => go({ name: "kasa" })}
     />
+    {!drawerOpen && (
+      <VoiceAssistant
+        parties={parties}
+        accounts={accounts}
+        onCommit={(tx) => {
+          setTransactions((prev) => [...prev, tx]);
+          const name = parties.find((p) => p.id === tx.customerId)?.name ?? "";
+          setToast({
+            text: t("{name}: {type} {amount} eklendi", { name, type: t(tx.type), amount: money.format(tx.amount) }),
+            txId: tx.id,
+          });
+        }}
+      />
+    )}
+    {toast && (
+      <div className="toast" role="status">
+        <span>{toast.text}</span>
+        <button
+          type="button"
+          onClick={() => {
+            setTransactions((prev) => prev.filter((x) => x.id !== toast.txId));
+            setToast(null);
+          }}
+        >
+          {t("Geri al")}
+        </button>
+      </div>
+    )}
     {drawerOpen && (
       <MenuDrawer
         profile={profile}
