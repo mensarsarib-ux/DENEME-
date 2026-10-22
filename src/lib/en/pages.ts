@@ -213,3 +213,7 @@ export const pages: Record<string, string> = {
 pages["Fotoğraf seç"] = "Choose photo";
 pages["Fotoğrafı kaldır"] = "Remove photo";
 pages["Bu dosya okunamadı; başka bir fotoğraf deneyin."] = "This file could not be read; try another photo.";
+pages["Fotoğrafı yerleştir"] = "Position photo";
+pages["Fotoğrafı sürükleyip daireye tam ortalayın."] = "Drag the photo to center it in the circle.";
+pages["Yakınlaştır"] = "Zoom";
+pages["UYGULA"] = "APPLY";

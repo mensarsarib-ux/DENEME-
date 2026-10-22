@@ -2206,3 +2206,42 @@ a.action-btn {
 .currency-option:active { background: var(--line); }
 .currency-option.is-active { border-color: var(--green); }
 .currency-check { color: var(--green); font-weight: 700; font-size: 1.2rem; }
+
+/* Profil fotoğrafı yerleştirme */
+.crop-view {
+  position: relative;
+  margin: 8px auto 12px;
+  overflow: hidden;
+  border-radius: 16px;
+  background: #000;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.crop-view img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  max-width: none;
+  transform-origin: 0 0;
+  pointer-events: none;
+}
+
+.crop-circle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 400px rgba(0, 0, 0, 0.6);
+  pointer-events: none;
+}
+
+.crop-cross { position: absolute; background: rgba(255, 255, 255, 0.55); }
+.crop-cross-h { left: calc(50% - 10px); top: 50%; width: 20px; height: 1px; }
+.crop-cross-v { top: calc(50% - 10px); left: 50%; height: 20px; width: 1px; }
+
+.crop-zoom { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; color: var(--muted); font-size: 0.9rem; }
+.crop-zoom input { flex: 1; accent-color: var(--blue); }

@@ -3,7 +3,7 @@ import type { Profile } from "../data/mock";
 import { haptic } from "../lib/haptics";
 import { t } from "../lib/i18n";
 import { MENU_ITEMS } from "../lib/menu";
-import { resizeImage } from "../lib/logo";
+import CropSheet from "./CropSheet";
 import CompanyLogo from "./CompanyLogo";
 import PageHeader from "./PageHeader";
 
@@ -33,24 +33,13 @@ export default function ProfilePage({
     setSaved(false);
   };
 
-  const dirty = (Object.keys(profile) as (keyof Profile)[]).some(
-    (k) => profile[k] !== draft[k],
-  );
+  // "logo" eski kayıtlarda hiç bulunmayabilir; bu yüzden anahtarlar elle sayılır
+  const FIELDS: (keyof Profile)[] = ["name", "owner", "phone", "email", "address", "taxNo", "logo"];
+  const dirty = FIELDS.some((k) => (profile[k] ?? "") !== (draft[k] ?? ""));
 
-  const [photoError, setPhotoError] = useState(false);
 
-  async function pickPhoto(file: File | undefined) {
-    if (!file) return;
-    try {
-      const logo = await resizeImage(file);
-      setDraft((d) => ({ ...d, logo }));
-      setSaved(false);
-      setPhotoError(false);
-      haptic("light");
-    } catch {
-      setPhotoError(true);
-    }
-  }
+  // Seçilen fotoğraf, daireye yerleştirilmesi için kırpma penceresinde açılır
+  const [cropFile, setCropFile] = useState<File | null>(null);
 
   function submit(event: FormEvent) {
     event.preventDefault();
@@ -101,7 +90,7 @@ export default function ProfilePage({
                 type="file"
                 accept="image/*"
                 onChange={(e) => {
-                  void pickPhoto(e.target.files?.[0]);
+                  setCropFile(e.target.files?.[0] ?? null);
                   e.target.value = "";
                 }}
               />
@@ -119,11 +108,6 @@ export default function ProfilePage({
               </button>
             )}
           </div>
-          {photoError && (
-            <p className="form-error" role="alert">
-              {t("Bu dosya okunamadı; başka bir fotoğraf deneyin.")}
-            </p>
-          )}
         </div>
 
         <div className="field">
@@ -157,6 +141,18 @@ export default function ProfilePage({
           </p>
         )}
       </form>
+
+      {cropFile && (
+        <CropSheet
+          file={cropFile}
+          onCancel={() => setCropFile(null)}
+          onApply={(logo) => {
+            setDraft((d) => ({ ...d, logo }));
+            setSaved(false);
+            setCropFile(null);
+          }}
+        />
+      )}
     </div>
   );
 }
