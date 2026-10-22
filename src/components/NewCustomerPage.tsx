@@ -2,18 +2,30 @@ import { useState, type FormEvent } from "react";
 import type { Customer, PartyKind } from "../data/mock";
 import { Svg } from "./Icon";
 
-/** Müşteri ve tedarikçi formunda değişen metinler */
-const TEXT: Record<
-  PartyKind,
-  {
-    title: string;
-    subtitle: string;
-    duplicate: string;
-    hint: string;
-    submit: string;
-    idPrefix: string;
-  }
-> = {
+interface FormText {
+  title: string;
+  subtitle: string;
+  duplicate: string;
+  hint: string;
+  submit: string;
+  idPrefix: string;
+}
+
+/** Müşteri, tedarikçi ve kullanıcının açtığı sekmelerde değişen metinler */
+function textFor(kind: PartyKind, groupName: string): FormText {
+  if (kind === "customer") return TEXT.customer;
+  if (kind === "supplier") return TEXT.supplier;
+  return {
+    title: "Yeni kayıt",
+    subtitle: groupName,
+    duplicate: "Bu isimde bir kayıt zaten var.",
+    hint: "Kaydı eklemek için firma adını yazın.",
+    submit: "KAYIT EKLE",
+    idPrefix: "p",
+  };
+}
+
+const TEXT: Record<"customer" | "supplier", FormText> = {
   customer: {
     title: "Yeni müşteri",
     subtitle: "Cari hesap oluştur",
@@ -34,17 +46,20 @@ const TEXT: Record<
 
 export default function NewCustomerPage({
   kind,
+  groupName,
   existingNames,
   onSave,
   onBack,
 }: {
   kind: PartyKind;
+  /** Kayıt eklenen sekmenin adı */
+  groupName: string;
   /** Aynı türdeki mevcut kayıtların isimleri (tekrar kontrolü için) */
   existingNames: string[];
   onSave: (customer: Customer) => void;
   onBack: () => void;
 }) {
-  const text = TEXT[kind];
+  const text = textFor(kind, groupName);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");

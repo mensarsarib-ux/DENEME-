@@ -555,15 +555,30 @@ button {
 
 /* ---------- Müşteriler / Tedarikçiler seçenekleri ---------- */
 
-.party-tabs {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+.party-bar {
+  display: flex;
+  align-items: stretch;
   gap: 8px;
   padding: 12px;
 }
 
-.party-tab {
+.party-tabs {
+  flex: 1;
   min-width: 0;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.party-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.party-tab {
+  flex: 1 0 auto;
+  min-width: 148px;
+  max-width: 260px;
   display: flex;
   flex-direction: column;
   gap: 3px;
@@ -572,6 +587,41 @@ button {
   border-radius: 14px;
   background: var(--surface-head);
   text-align: left;
+}
+
+.party-add {
+  flex-shrink: 0;
+  width: 44px;
+  border: 1px dashed var(--blue);
+  border-radius: 14px;
+  background: transparent;
+  color: var(--blue);
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.party-add:hover {
+  background: rgba(60, 143, 217, 0.12);
+}
+
+.party-tab-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sheet-title {
+  margin: 0;
+  padding: 0 6px;
+  font-size: 1.05rem;
+}
+
+.sheet-note {
+  margin: 0;
+  padding: 0 6px 6px;
+  color: var(--muted);
+  font-size: 0.85rem;
 }
 
 .party-tab.is-active {
@@ -596,7 +646,7 @@ button {
   color: var(--muted);
   font-size: 0.75rem;
   font-variant-numeric: tabular-nums;
-  overflow-wrap: anywhere;
+  white-space: nowrap;
 }
 
 .supplier-list {

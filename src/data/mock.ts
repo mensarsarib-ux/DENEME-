@@ -12,7 +12,19 @@ export const accounts: Account[] = [
   { id: "cash", name: "Kasa", balance: 117866 },
 ];
 
-export type PartyKind = "customer" | "supplier";
+/** Cari grubunun kimliği: "customer", "supplier" veya kullanıcının açtığı sekmenin kimliği */
+export type PartyKind = string;
+
+/** Müşteriler, tedarikçiler gibi sekme. Kullanıcı kendi sekmelerini de ekleyebilir. */
+export interface Group {
+  id: PartyKind;
+  name: string;
+}
+
+export const BUILTIN_GROUPS: Group[] = [
+  { id: "customer", name: "Müşteriler" },
+  { id: "supplier", name: "Tedarikçiler" },
+];
 
 /** Cari hesap: müşteri veya tedarikçi */
 export interface Customer {
@@ -39,11 +51,10 @@ export const initialCustomers: Customer[] = [
 export const TX_TYPES = ["SATIŞ", "ALIŞ", "TAHSİLAT", "ÖDEME"] as const;
 export type TxType = (typeof TX_TYPES)[number];
 
-/** Cari türüne göre girilebilen işlem türleri */
-export const TX_TYPES_BY_KIND: Record<PartyKind, TxType[]> = {
-  customer: ["SATIŞ", "ALIŞ", "TAHSİLAT"],
-  supplier: ["ALIŞ", "ÖDEME"],
-};
+/** Gruba göre girilebilen işlem türleri: müşteride satış/alış/tahsilat, diğer gruplarda alış/ödeme */
+export function txTypesFor(kind: PartyKind): TxType[] {
+  return kind === "customer" ? ["SATIŞ", "ALIŞ", "TAHSİLAT"] : ["ALIŞ", "ÖDEME"];
+}
 
 export interface Transaction {
   id: string;

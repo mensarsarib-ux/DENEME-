@@ -11,7 +11,7 @@ import {
 import { money, moneyRound } from "../lib/format";
 import { findMatch, type MatchRange } from "../lib/search";
 import Highlight from "./Highlight";
-import PartyTabs from "./PartyTabs";
+import PartyTabs, { type TabInfo } from "./PartyTabs";
 import { Svg } from "./Icon";
 
 const PERIODS: { value: Period; label: string }[] = [
@@ -50,22 +50,25 @@ interface Row {
 
 export default function Dashboard({
   customers,
-  suppliers,
+  tabs,
   transactions,
   highlightId,
   onSelectCustomer,
   onNewCustomer,
-  onOpenSuppliers,
+  onSelectTab,
+  onCreateTab,
 }: {
   customers: Customer[];
-  suppliers: Customer[];
+  /** Müşteriler, Tedarikçiler ve kullanıcının sekmeleri */
+  tabs: TabInfo[];
   transactions: Transaction[];
   /** Az önce eklenen müşteri: listede kaydırılıp vurgulanır */
   highlightId?: string | null;
   onSelectCustomer: (id: string) => void;
   onNewCustomer: () => void;
-  /** Tedarikçiler seçeneği: tedarikçi sayfasını açar */
-  onOpenSuppliers: () => void;
+  /** Müşteriler dışındaki bir sekmeye geçer */
+  onSelectTab: (id: string) => void;
+  onCreateTab: (name: string) => void;
 }) {
   const [period, setPeriod] = useState<Period>("monthly");
   const [searchOpen, setSearchOpen] = useState(false);
@@ -91,11 +94,6 @@ export default function Dashboard({
       range: null,
     }))
     .sort((a, b) => a.name.localeCompare(b.name, "tr"));
-  const customersTotal = allRows.reduce((sum, r) => sum + r.balance, 0);
-  const suppliersTotal = suppliers.reduce(
-    (sum, s) => sum + balanceOf(transactions, s.id),
-    0,
-  );
 
   const searching = searchOpen && query.trim() !== "";
   // Aramada isim başında eşleşenler öne gelir, sonra alfabetik sıra
@@ -283,11 +281,11 @@ export default function Dashboard({
           </div>
         ) : (
           <PartyTabs
+            tabs={tabs}
             active="customer"
-            customers={{ count: customers.length, total: customersTotal }}
-            suppliers={{ count: suppliers.length, total: suppliersTotal }}
-            onSelect={(kind) => {
-              if (kind === "supplier") onOpenSuppliers();
+            onCreate={onCreateTab}
+            onSelect={(id) => {
+              if (id !== "customer") onSelectTab(id);
               else
                 sheetRef.current?.scrollIntoView({
                   behavior: "smooth",

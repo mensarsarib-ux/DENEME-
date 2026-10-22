@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import {
-  TX_TYPES_BY_KIND,
+  txTypesFor,
   balanceOf,
   signOf,
   transactionsOf,
@@ -51,8 +51,8 @@ export default function CustomerPage({
   onDelete: (id: string) => void;
   onBack: () => void;
 }) {
-  // Müşteride SATIŞ / ALIŞ / TAHSİLAT, tedarikçide ALIŞ / ÖDEME girilebilir
-  const types = TX_TYPES_BY_KIND[customer.kind];
+  // Müşteride SATIŞ / ALIŞ / TAHSİLAT, diğer gruplarda ALIŞ / ÖDEME girilebilir
+  const types = txTypesFor(customer.kind);
   const [txType, setTxType] = useState<TxType>(types[0]);
   const [amount, setAmount] = useState("");
   // Tuş takımı sayfa yerleştikten kısa süre sonra yumuşakça açılır; kayıttan sonra kapanmaz
