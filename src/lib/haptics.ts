@@ -87,7 +87,15 @@ function iosTick() {
   }
 }
 
+/** Ayarlardan açılıp kapatılır */
+let hapticsEnabled = true;
+
+export function setHapticsEnabled(enabled: boolean): void {
+  hapticsEnabled = enabled;
+}
+
 export function haptic(kind: Haptic = "light"): void {
+  if (!hapticsEnabled) return;
   playSound(kind);
   try {
     if (typeof navigator.vibrate === "function") {

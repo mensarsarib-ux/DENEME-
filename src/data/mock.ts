@@ -12,7 +12,8 @@ export interface Account {
   opening: number;
 }
 
-export const accounts: Account[] = [
+/** Varsayılan hesaplar; açılış bakiyeleri uygulamada düzenlenebilir */
+export const initialAccounts: Account[] = [
   { id: "cash", name: "Nakit", opening: 80000 },
   { id: "bank", name: "Banka", opening: 60000 },
 ];
@@ -229,8 +230,12 @@ export function movementsOf(list: Transaction[], accountId: AccountId): Transact
 }
 
 /** Hesap bakiyesi: açılış + tahsilatlar − ödemeler */
-export function accountBalance(list: Transaction[], accountId: AccountId): number {
-  const opening = accounts.find((a) => a.id === accountId)?.opening ?? 0;
+export function accountBalance(
+  list: Transaction[],
+  accountList: Account[],
+  accountId: AccountId,
+): number {
+  const opening = accountList.find((a) => a.id === accountId)?.opening ?? 0;
   return movementsOf(list, accountId).reduce(
     (sum, t) => sum + (t.type === "TAHSİLAT" ? t.amount : -t.amount),
     opening,
@@ -238,6 +243,80 @@ export function accountBalance(list: Transaction[], accountId: AccountId): numbe
 }
 
 /** Nakit ve bankanın toplamı: ana ekrandaki Kasa tutarı */
-export function cashTotal(list: Transaction[]): number {
-  return accounts.reduce((sum, a) => sum + accountBalance(list, a.id), 0);
+export function cashTotal(list: Transaction[], accountList: Account[]): number {
+  return accountList.reduce(
+    (sum, a) => sum + accountBalance(list, accountList, a.id),
+    0,
+  );
 }
+
+/** İşletme profili: üst çubukta ve menüde görünür */
+export interface Profile {
+  name: string;
+  owner: string;
+  phone: string;
+  email: string;
+  address: string;
+  taxNo: string;
+}
+
+export const DEFAULT_PROFILE: Profile = {
+  name: "",
+  owner: "",
+  phone: "",
+  email: "",
+  address: "",
+  taxNo: "",
+};
+
+export interface Note {
+  id: string;
+  title: string;
+  text: string;
+  pinned: boolean;
+  /** ISO tarih-saat */
+  updated: string;
+}
+
+export const initialNotes: Note[] = [
+  {
+    id: "n1",
+    title: "Vergi beyannamesi",
+    text: "KDV beyannamesini ayın 26'sından önce muhasebeciye ilet.",
+    pinned: true,
+    updated: ago(1, 9, 30),
+  },
+  {
+    id: "n2",
+    title: "Kumaş siparişi",
+    text: "Kaya Kumaş'tan 30 top pamuklu kumaş için fiyat teklifi iste.",
+    pinned: false,
+    updated: ago(3, 15, 10),
+  },
+];
+
+export interface Settings {
+  haptics: boolean;
+  notifyReceivable: boolean;
+  /** Bir kişinin alacağı bu tutarı geçince bildirim üretilir */
+  receivableLimit: number;
+  notifyPayable: boolean;
+  /** Bir kişiye borcunuz bu tutarı geçince bildirim üretilir */
+  payableLimit: number;
+  notifyLowCash: boolean;
+  /** Nakit ve banka toplamı bu tutarın altına inince bildirim üretilir */
+  lowCashLimit: number;
+  /** Destek mesajının gönderileceği e-posta adresi (boşsa yalnızca kopyalanır) */
+  supportEmail: string;
+}
+
+export const DEFAULT_SETTINGS: Settings = {
+  haptics: true,
+  notifyReceivable: true,
+  receivableLimit: 100000,
+  notifyPayable: true,
+  payableLimit: 25000,
+  notifyLowCash: true,
+  lowCashLimit: 50000,
+  supportEmail: "",
+};

@@ -2,7 +2,9 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
   balanceOf,
   cashTotal,
+  type Account,
   type Customer,
+  type Profile,
   type Transaction,
 } from "../data/mock";
 import { money } from "../lib/format";
@@ -47,6 +49,8 @@ interface Row {
 }
 
 export default function Dashboard({
+  profile,
+  accounts,
   members,
   activeTab,
   tabs,
@@ -59,7 +63,11 @@ export default function Dashboard({
   onRenameTab,
   onDeleteTab,
   onOpenKasa,
+  onOpenMenu,
 }: {
+  /** İşletme profili: üst çubukta ad olarak görünür */
+  profile: Profile;
+  accounts: Account[];
   /** Etkin sekmedeki kayıtlar (müşteriler, tedarikçiler veya özel sekme) */
   members: Customer[];
   activeTab: string;
@@ -78,6 +86,8 @@ export default function Dashboard({
   onDeleteTab: (id: string) => void;
   /** Kasa satırına dokununca nakit ve banka sayfası açılır */
   onOpenKasa: () => void;
+  /** Sol üstteki Menü: yan menü penceresini açar */
+  onOpenMenu: () => void;
 }) {
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -181,7 +191,12 @@ export default function Dashboard({
         <>
           {/* Üst çubuk */}
           <header className="topbar">
-            <button className="topbar-menu" aria-label="Menü">
+            <button
+              className="topbar-menu"
+              aria-label="Menüyü aç"
+              aria-haspopup="dialog"
+              onClick={onOpenMenu}
+            >
               Menü
             </button>
             <div className="company-pill">
@@ -189,8 +204,8 @@ export default function Dashboard({
                 <img src="/logo.svg" alt="" />
               </span>
               <span className="company-text">
-                <strong>Hesabım</strong>
-                <small>Şirket adınız</small>
+                <strong>{profile.name || "Hesabım"}</strong>
+                <small>{profile.owner || profile.email || "Şirket adınız"}</small>
               </span>
             </div>
             <div className="topbar-actions">
@@ -238,7 +253,7 @@ export default function Dashboard({
               >
                 <span className="row-name">Kasa</span>
                 <span className="row-amount">
-                  {money.format(cashTotal(transactions))}
+                  {money.format(cashTotal(transactions, accounts))}
                   <span className="row-chevron" aria-hidden="true">
                     ›
                   </span>

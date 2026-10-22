@@ -1,0 +1,205 @@
+import { useState } from "react";
+import type { Settings } from "../data/mock";
+import { haptic } from "../lib/haptics";
+import { MENU_ITEMS } from "../lib/menu";
+import PageHeader from "./PageHeader";
+
+const ICON = MENU_ITEMS[6].icon;
+
+function Switch({
+  label,
+  hint,
+  checked,
+  onChange,
+}: {
+  label: string;
+  hint?: string;
+  checked: boolean;
+  onChange: (value: boolean) => void;
+}) {
+  return (
+    <label className="setting-row">
+      <span className="setting-text">
+        <strong>{label}</strong>
+        {hint && <small>{hint}</small>}
+      </span>
+      <input
+        className="switch"
+        type="checkbox"
+        role="switch"
+        checked={checked}
+        onChange={(e) => {
+          haptic("light");
+          onChange(e.target.checked);
+        }}
+      />
+    </label>
+  );
+}
+
+function Limit({
+  id,
+  label,
+  value,
+  disabled,
+  onChange,
+}: {
+  id: string;
+  label: string;
+  value: number;
+  disabled: boolean;
+  onChange: (value: number) => void;
+}) {
+  return (
+    <div className="field limit-field">
+      <label htmlFor={id}>{label}</label>
+      <input
+        id={id}
+        inputMode="numeric"
+        autoComplete="off"
+        disabled={disabled}
+        value={value ? String(value) : ""}
+        onChange={(e) => onChange(Number(e.target.value.replace(/\D/g, "")) || 0)}
+      />
+    </div>
+  );
+}
+
+/** Ayarlar: titreşim, bildirim limitleri, destek e-postası, yedekleme ve sıfırlama */
+export default function SettingsPage({
+  settings,
+  backupText,
+  onChange,
+  onRestore,
+  onReset,
+  onBack,
+}: {
+  settings: Settings;
+  /** Tüm verilerin JSON yedeği */
+  backupText: string;
+  onChange: (settings: Settings) => void;
+  /** Hata varsa mesajını, başarılıysa null döndürür */
+  onRestore: (text: string) => string | null;
+  onReset: () => void;
+  onBack: () => void;
+}) {
+  const [copied, setCopied] = useState<"ok" | "fail" | null>(null);
+  const [restoring, setRestoring] = useState(false);
+  const [restoreText, setRestoreText] = useState("");
+  const [restoreMsg, setRestoreMsg] = useState<{ ok: boolean; text: string } | null>(null);
+  const [confirmReset, setConfirmReset] = useState(false);
+  const set = <K extends keyof Settings>(key: K, value: Settings[K]) =>
+    onChange({ ...settings, [key]: value });
+
+  async function copyBackup() {
+    try {
+      await navigator.clipboard.writeText(backupText);
+      setCopied("ok");
+      haptic("success");
+    } catch {
+      setCopied("fail");
+    }
+  }
+
+  function restore() {
+    const error = onRestore(restoreText);
+    if (error) {
+      haptic("warning");
+      setRestoreMsg({ ok: false, text: error });
+    } else {
+      haptic("success");
+      setRestoreMsg({ ok: true, text: "Yedek geri yüklendi." });
+      setRestoreText("");
+      setRestoring(false);
+    }
+  }
+
+  return (
+    <div className="cust-page">
+      <PageHeader title="Ayarlar" subtitle="Tercihleriniz bu cihazda saklanır" icon={ICON} onBack={onBack} />
+      <div className="stack">
+        <section className="card" aria-label="Genel">
+          <h2 className="card-title">Genel</h2>
+          <Switch
+            label="Titreşim"
+            hint="Düğmelere ve işlemlere dokununca hafif titreşim (iPhone desteklemeyebilir)"
+            checked={settings.haptics}
+            onChange={(v) => set("haptics", v)}
+          />
+        </section>
+
+        <section className="card" aria-label="Bildirimler">
+          <h2 className="card-title">Bildirim limitleri</h2>
+          <Switch label="Yüksek alacak" hint="Bir kişinin alacağı limiti aşınca" checked={settings.notifyReceivable} onChange={(v) => set("notifyReceivable", v)} />
+          <Limit id="lim-rec" label="Alacak limiti (₺)" value={settings.receivableLimit} disabled={!settings.notifyReceivable} onChange={(v) => set("receivableLimit", v)} />
+          <Switch label="Yüksek borç" hint="Bir kişiye borcunuz limiti aşınca" checked={settings.notifyPayable} onChange={(v) => set("notifyPayable", v)} />
+          <Limit id="lim-pay" label="Borç limiti (₺)" value={settings.payableLimit} disabled={!settings.notifyPayable} onChange={(v) => set("payableLimit", v)} />
+          <Switch label="Düşük kasa" hint="Nakit ve banka toplamı limitin altına inince" checked={settings.notifyLowCash} onChange={(v) => set("notifyLowCash", v)} />
+          <Limit id="lim-cash" label="Kasa limiti (₺)" value={settings.lowCashLimit} disabled={!settings.notifyLowCash} onChange={(v) => set("lowCashLimit", v)} />
+        </section>
+
+        <section className="card" aria-label="Destek">
+          <h2 className="card-title">Destek e-postası</h2>
+          <div className="field">
+            <label htmlFor="support-email">Destek mesajları bu adrese gönderilir</label>
+            <input
+              id="support-email"
+              type="email"
+              autoComplete="off"
+              placeholder="destek@sirketiniz.com"
+              value={settings.supportEmail}
+              onChange={(e) => set("supportEmail", e.target.value)}
+            />
+          </div>
+        </section>
+
+        <section className="card" aria-label="Veriler">
+          <h2 className="card-title">Veriler</h2>
+          <p className="card-empty">Veriler yalnızca bu tarayıcıda saklanır. Yedek alıp başka cihaza taşıyabilirsiniz.</p>
+          <div className="card-actions">
+            <button type="button" className="action-btn" onClick={copyBackup}>Yedeği kopyala</button>
+            <button type="button" className="action-btn" onClick={() => { setRestoring((r) => !r); setRestoreMsg(null); }}>
+              Yedekten yükle
+            </button>
+          </div>
+          {copied === "ok" && <p className="form-success">Yedek panoya kopyalandı.</p>}
+          {copied === "fail" && (
+            <>
+              <p className="field-hint">Kopyalanamadı; metni elle kopyalayın:</p>
+              <textarea className="copy-box" readOnly rows={5} value={backupText} onFocus={(e) => e.currentTarget.select()} />
+            </>
+          )}
+          {restoring && (
+            <div className="field">
+              <label htmlFor="restore-text">Yedek metnini yapıştırın</label>
+              <textarea id="restore-text" rows={5} value={restoreText} onChange={(e) => setRestoreText(e.target.value)} />
+              <button type="button" className="primary-btn" disabled={!restoreText.trim()} onClick={restore}>
+                GERİ YÜKLE
+              </button>
+            </div>
+          )}
+          {restoreMsg && (
+            <p className={restoreMsg.ok ? "form-success" : "field-hint"} role="status">{restoreMsg.text}</p>
+          )}
+          <button type="button" className="action-btn is-danger" onClick={() => setConfirmReset(true)}>
+            Tüm verileri sıfırla
+          </button>
+        </section>
+      </div>
+
+      {confirmReset && (
+        <div className="action-backdrop" onClick={() => setConfirmReset(false)}>
+          <div className="action-sheet is-centered" role="alertdialog" aria-label="Sıfırlama onayı" onClick={(e) => e.stopPropagation()}>
+            <div className="action-handle" aria-hidden="true" />
+            <h2 className="sheet-title">Tüm verileri sıfırlamak istediğinize emin misiniz?</h2>
+            <p className="sheet-note">Kayıtlar, notlar ve ayarlar örnek verilere döner. Bu işlem geri alınamaz.</p>
+            <button className="danger-btn" type="button" onClick={() => { haptic("warning"); setConfirmReset(false); onReset(); }}>
+              EVET, SIFIRLA
+            </button>
+            <button className="action-btn is-cancel" type="button" autoFocus onClick={() => setConfirmReset(false)}>Vazgeç</button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

@@ -1,9 +1,9 @@
 import { useState } from "react";
 import {
   accountBalance,
-  accounts,
   cashTotal,
   movementsOf,
+  type Account,
   type AccountId,
   type Customer,
   type Transaction,
@@ -14,15 +14,20 @@ import { Svg } from "./Icon";
 
 /** Kasa: nakit ve banka seçenekleri; her birinin bakiyesi ve tahsilat/ödeme hareketleri */
 export default function KasaPage({
+  accounts,
+  initialAccount = "cash",
   parties,
   transactions,
   onBack,
 }: {
+  accounts: Account[];
+  /** Hesaplarım sayfasından gelirken açılacak hesap */
+  initialAccount?: AccountId;
   parties: Customer[];
   transactions: Transaction[];
   onBack: () => void;
 }) {
-  const [active, setActive] = useState<AccountId>("cash");
+  const [active, setActive] = useState<AccountId>(initialAccount);
   const account = accounts.find((a) => a.id === active) ?? accounts[0];
   const movements = movementsOf(transactions, active);
   const nameOf = (id: string) => parties.find((p) => p.id === id)?.name ?? "—";
@@ -39,7 +44,7 @@ export default function KasaPage({
           </span>
           <div className="cust-name">
             <strong>Kasa</strong>
-            <small>Toplam {money.format(cashTotal(transactions))}</small>
+            <small>Toplam {money.format(cashTotal(transactions, accounts))}</small>
           </div>
         </div>
       </header>
@@ -59,7 +64,7 @@ export default function KasaPage({
                 <span className="party-tab-name">{a.name}</span>
               </span>
               <span className="party-tab-meta">
-                {money.format(accountBalance(transactions, a.id))}
+                {money.format(accountBalance(transactions, accounts, a.id))}
               </span>
             </button>
           ))}
@@ -108,7 +113,7 @@ export default function KasaPage({
 
       <div className="tx-total">
         <span>{account.name.toLocaleUpperCase("tr-TR")} BAKİYESİ</span>
-        <strong>{money.format(accountBalance(transactions, active))}</strong>
+        <strong>{money.format(accountBalance(transactions, accounts, active))}</strong>
       </div>
     </div>
   );

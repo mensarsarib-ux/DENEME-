@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import {
   TX_TYPES,
-  accounts,
   defaultTxType,
   balanceOf,
   needsAccount,
   signOf,
   transactionsOf,
+  type Account,
   type AccountId,
   type Customer,
   type Transaction,
@@ -40,6 +40,7 @@ function toLocalInput(iso: string): string {
 
 export default function CustomerPage({
   customer,
+  accounts,
   transactions,
   onAdd,
   onUpdate,
@@ -47,6 +48,7 @@ export default function CustomerPage({
   onBack,
 }: {
   customer: Customer;
+  accounts: Account[];
   transactions: Transaction[];
   onAdd: (tx: Transaction) => void;
   onUpdate: (tx: Transaction) => void;
