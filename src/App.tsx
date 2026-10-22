@@ -33,6 +33,7 @@ import {
 import { setHapticsEnabled } from "./lib/haptics";
 import type { MenuPage } from "./lib/menu";
 import { buildNotifications } from "./lib/notifications";
+import { useSwipeBack } from "./lib/useSwipeBack";
 import { clearStored, usePersistedState } from "./lib/storage";
 
 // Açılış ekranı ne kadar görünsün (ms) ve çıkış animasyonunun süresi
@@ -71,6 +72,8 @@ export default function App() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   // Az önce eklenen kayıt; listede vurgulanır
   const [addedId, setAddedId] = useState<string | null>(null);
+
+  useSwipeBack(phase === "home");
 
   useEffect(() => setHapticsEnabled(settings.haptics), [settings.haptics]);
 
