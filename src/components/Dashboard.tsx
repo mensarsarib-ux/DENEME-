@@ -7,10 +7,8 @@ import {
 } from "../data/mock";
 import { money } from "../lib/format";
 import { findMatch, type MatchRange } from "../lib/search";
-import ChartCarousel from "./ChartCarousel";
+import FlowChart from "./FlowChart";
 import Highlight from "./Highlight";
-import MonthlyChart from "./MonthlyChart";
-import PeriodChart from "./PeriodChart";
 import PartyTabs, { type TabInfo } from "./PartyTabs";
 import { Svg } from "./Icon";
 
@@ -204,13 +202,9 @@ export default function Dashboard({
             </button>
           </div>
 
-          {/* Özet bölümü: yana kaydırılan grafikler */}
+          {/* Özet bölümü: gelir ve gider grafiği; basılı tutunca dönem seçilir */}
           <section className="summary">
-            <ChartCarousel labels={["Aylık gelir ve gider", "Dönemlere göre gelir ve gider"]}>
-              <MonthlyChart transactions={transactions} />
-
-              <PeriodChart transactions={transactions} />
-            </ChartCarousel>
+            <FlowChart transactions={transactions} />
           </section>
         </>
       )}
