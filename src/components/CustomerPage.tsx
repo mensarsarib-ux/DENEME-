@@ -15,9 +15,9 @@ import Keypad from "./Keypad";
 
 /** İşlem türüne göre vurgu rengi */
 const ACCENT: Record<TxType, { color: string; fill: string }> = {
-  SATIŞ: { color: "#22c55e", fill: "#15803d" },
-  ALIŞ: { color: "#f5f5f5", fill: "#4b5563" },
-  TAHSİLAT: { color: "#86efac", fill: "#166534" },
+  SATIŞ: { color: "#3c8fd9", fill: "#3c8fd9" },
+  ALIŞ: { color: "#e4574a", fill: "#e4574a" },
+  TAHSİLAT: { color: "#3fbf82", fill: "#3fbf82" },
 };
 
 /** Ekrandaki metinden tutar üretir; geçersizse null */

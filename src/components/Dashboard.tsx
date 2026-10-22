@@ -8,8 +8,7 @@ import {
   type Totals,
   type Transaction,
 } from "../data/mock";
-import { money } from "../lib/format";
-import AnimatedMoney from "./AnimatedMoney";
+import { money, moneyRound } from "../lib/format";
 import { Svg } from "./Icon";
 
 const PERIODS: { value: Period; label: string }[] = [
@@ -117,18 +116,18 @@ export default function Dashboard({
         <div className="chart-card">
           <div className="chart-title">{periodTitle(period)}</div>
 
-          {/* key: dönem değişince sütun animasyonu yeniden başlar */}
-          <div className="chart" key={period}>
-            {COLUMNS.map((col, i) => (
+          <div className="chart">
+            {COLUMNS.map((col) => (
               <div key={col.key} className={`col col-${col.key}`}>
-                <AnimatedMoney className="col-value" value={totals[col.key]} />
+                <span className="col-value">
+                  {moneyRound.format(totals[col.key])}
+                </span>
                 <div className="col-track">
                   <div
                     className="col-bar"
                     style={
                       {
                         "--h": `${Math.max((totals[col.key] / maxFlow) * 100, 3)}%`,
-                        "--d": `${i * 130}ms`,
                       } as CSSProperties
                     }
                   />
@@ -141,16 +140,14 @@ export default function Dashboard({
           <div className="result">
             <div className="result-block">
               <span className="result-label">CİRO</span>
-              <AnimatedMoney className="result-value" value={ciro} precise />
+              <span className="result-value">{money.format(ciro)}</span>
               <span className="equation">Satış toplamı</span>
             </div>
             <div className="result-block">
               <span className="result-label">KAR</span>
-              <AnimatedMoney
-                className={`result-value ${kar < 0 ? "is-loss" : ""}`}
-                value={kar}
-                precise
-              />
+              <span className={`result-value ${kar < 0 ? "is-loss" : ""}`}>
+                {money.format(kar)}
+              </span>
               <span className="equation">
                 Satış <b>−</b> Alış
               </span>
