@@ -1,15 +1,19 @@
 import { createBus, scheduleSound, type SoundKind } from "./sounds";
 
 /**
- * Dokunma geri bildirimi: kısa bir ses ve titreşim. Görsel kısım (basılan düğmenin parlaması
+ * Dokunma geri bildirimi: titreşim ve (kapalı) ses. Görsel kısım (basılan düğmenin parlaması
  * ve küçülmesi) stil dosyasındaki :active kurallarıyla verilir.
- * - Ses: Web Audio ile üretilen tok tuş sesleri ve kaydetme çanı (bkz. sounds.ts). Tarayıcılar sesi ilk dokunuştan sonra açar.
+ * - Ses: Şimdilik KAPALI (SOUND_ENABLED). Kod sounds.ts içinde duruyor; true yapılınca tuş sesleri
+ *   ve kaydetme çanı geri gelir.
  * - Titreşim: Android ve masaüstü Chrome'da Titreşim API'si. iPhone Safari bu API'yi desteklemez;
  *   iOS 17.4+ için gizli bir "switch" anahtarı en iyi çabayla denenir ve çerçeve ya da uygulama
  *   içi tarayıcıda çalışmayabilir.
  * Hiçbiri desteklenmiyorsa hiçbir şey olmaz, uygulama normal çalışır.
  */
 export type Haptic = SoundKind;
+
+/** Sesler şimdilik kapalı; yalnızca titreşim çalışır. Tekrar açmak için true yapın. */
+const SOUND_ENABLED = false;
 
 let audio: AudioContext | null = null;
 
@@ -31,7 +35,7 @@ function getAudio(): AudioContext | null {
 }
 
 // Tarayıcılar sesi yalnızca bir dokunuştan sonra açar; ilk dokunuşta ses motoru hazırlanır
-if (typeof document !== "undefined") {
+if (SOUND_ENABLED && typeof document !== "undefined") {
   document.addEventListener("pointerdown", () => getAudio(), {
     capture: true,
     passive: true,
@@ -42,6 +46,7 @@ if (typeof document !== "undefined") {
 let bus: AudioNode | null = null;
 
 function playSound(kind: Haptic) {
+  if (!SOUND_ENABLED) return;
   const ctx = getAudio();
   if (!ctx) return;
   if (!bus) bus = createBus(ctx);
