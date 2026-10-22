@@ -2,7 +2,13 @@ import { useEffect, useState } from "react";
 import Splash from "./components/Splash";
 import Dashboard from "./components/Dashboard";
 import CustomerPage from "./components/CustomerPage";
-import { customers, initialTransactions, type Transaction } from "./data/mock";
+import NewCustomerPage from "./components/NewCustomerPage";
+import {
+  initialCustomers,
+  initialTransactions,
+  type Customer,
+  type Transaction,
+} from "./data/mock";
 
 // Açılış ekranı ne kadar görünsün (ms) ve çıkış animasyonunun süresi
 const SPLASH_DURATION = 2200;
@@ -10,7 +16,9 @@ const SPLASH_EXIT = 400;
 
 export default function App() {
   const [phase, setPhase] = useState<"splash" | "exiting" | "home">("splash");
+  const [customers, setCustomers] = useState<Customer[]>(initialCustomers);
   const [customerId, setCustomerId] = useState<string | null>(null);
+  const [creating, setCreating] = useState(false);
   const [transactions, setTransactions] =
     useState<Transaction[]>(initialTransactions);
 
@@ -27,6 +35,20 @@ export default function App() {
   }, []);
 
   if (phase === "home") {
+    if (creating) {
+      return (
+        <NewCustomerPage
+          existingNames={customers.map((c) => c.name)}
+          onBack={() => setCreating(false)}
+          onSave={(customer) => {
+            setCustomers((prev) => [...prev, customer]);
+            setCreating(false);
+            setCustomerId(customer.id);
+          }}
+        />
+      );
+    }
+
     const customer = customers.find((c) => c.id === customerId);
     if (customer) {
       return (
@@ -38,10 +60,13 @@ export default function App() {
         />
       );
     }
+
     return (
       <Dashboard
+        customers={customers}
         transactions={transactions}
         onSelectCustomer={setCustomerId}
+        onNewCustomer={() => setCreating(true)}
       />
     );
   }

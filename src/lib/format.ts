@@ -4,6 +4,13 @@ export const money = new Intl.NumberFormat("tr-TR", {
   minimumFractionDigits: 2,
 });
 
+/** Grafik sütunları gibi dar alanlar için kuruşsuz biçim */
+export const moneyRound = new Intl.NumberFormat("tr-TR", {
+  style: "currency",
+  currency: "TRY",
+  maximumFractionDigits: 0,
+});
+
 /** Örn. "30 EYLÜL, 14:32" */
 export function formatDateTime(iso: string): string {
   return new Date(iso)

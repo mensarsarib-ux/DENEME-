@@ -1,57 +1,64 @@
-import { useState } from "react";
+import { useState, type CSSProperties } from "react";
 import {
   accounts,
   balanceOf,
-  customers,
-  summaryByPeriod,
+  totalsFor,
+  type Customer,
   type Period,
+  type Totals,
   type Transaction,
 } from "../data/mock";
 import { money } from "../lib/format";
+import AnimatedMoney from "./AnimatedMoney";
 import { Svg } from "./Icon";
 
 const PERIODS: { value: Period; label: string }[] = [
-  { value: "monthly", label: "Aylık" },
+  { value: "daily", label: "Günlük" },
   { value: "weekly", label: "Haftalık" },
+  { value: "monthly", label: "Aylık" },
   { value: "yearly", label: "Yıllık" },
+];
+
+const COLUMNS: { key: keyof Totals; label: string }[] = [
+  { key: "alis", label: "ALIŞ" },
+  { key: "satis", label: "SATIŞ" },
+  { key: "tahsilat", label: "TAHSİLAT" },
 ];
 
 const now = new Date();
 
 function periodTitle(period: Period): string {
+  if (period === "daily") return "BUGÜN";
+  if (period === "weekly") return "BU HAFTA";
   if (period === "monthly") {
     return now
       .toLocaleDateString("tr-TR", { month: "long" })
       .toLocaleUpperCase("tr-TR");
   }
-  if (period === "weekly") return "BU HAFTA";
   return String(now.getFullYear());
 }
 
-/** Sol kenar çubuğu. Şimdilik yalnızca görsel; işlevleri sonraki adımlarda eklenecek. */
-const NAV_ICONS = [
-  { label: "Takvim", path: "M4 6h16v14H4zM4 10h16M8 3v4M16 3v4" },
-  { label: "Defter", path: "M6 3h12v18H6zM9 8h6M9 12h6M9 16h4" },
-  { label: "Grafik", path: "M5 20V12M12 20V5M19 20v-9" },
-  { label: "Pasta", path: "M12 3v9h9a9 9 0 1 1-9-9z" },
-];
-
 export default function Dashboard({
+  customers,
   transactions,
   onSelectCustomer,
+  onNewCustomer,
 }: {
+  customers: Customer[];
   transactions: Transaction[];
   onSelectCustomer: (id: string) => void;
+  onNewCustomer: () => void;
 }) {
   const [period, setPeriod] = useState<Period>("monthly");
-  const summary = summaryByPeriod[period];
-  const net = summary.income - summary.expense;
-  const maxFlow = Math.max(summary.income, summary.expense, 1);
+  const totals = totalsFor(transactions, period);
+  const maxFlow = Math.max(totals.alis, totals.satis, totals.tahsilat, 1);
+  // Ciro: dönemdeki satış toplamı. Kar: satıştan alışın çıkarılmasıyla bulunur.
+  const ciro = totals.satis;
+  const kar = totals.satis - totals.alis;
 
-  const customerRows = customers.map((c) => ({
-    ...c,
-    balance: balanceOf(transactions, c.id),
-  }));
+  const customerRows = customers
+    .map((c) => ({ ...c, balance: balanceOf(transactions, c.id) }))
+    .sort((a, b) => a.name.localeCompare(b.name, "tr"));
   const customersTotal = customerRows.reduce((sum, c) => sum + c.balance, 0);
 
   return (
@@ -74,7 +81,11 @@ export default function Dashboard({
           <button className="icon-btn" aria-label="Ara">
             <Svg d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM20 20l-4.3-4.3" />
           </button>
-          <button className="icon-btn" aria-label="Yeni ekle">
+          <button
+            className="icon-btn"
+            aria-label="Yeni müşteri ekle"
+            onClick={onNewCustomer}
+          >
             <Svg d="M12 5v14M5 12h14" />
           </button>
         </div>
@@ -87,58 +98,62 @@ export default function Dashboard({
         </button>
       </div>
 
-      {/* Özet bölümü: dönem seçici + ay kartı */}
+      {/* Özet bölümü: dönem seçici + grafik */}
       <section className="summary">
-        <nav className="side-nav" aria-label="Bölümler">
-          {NAV_ICONS.map((item) => (
-            <button key={item.label} className="side-btn" aria-label={item.label}>
-              <Svg d={item.path} />
+        <div className="segmented" role="tablist" aria-label="Dönem">
+          {PERIODS.map((p) => (
+            <button
+              key={p.value}
+              role="tab"
+              aria-selected={period === p.value}
+              className={period === p.value ? "is-active" : ""}
+              onClick={() => setPeriod(p.value)}
+            >
+              {p.label}
             </button>
           ))}
-        </nav>
+        </div>
 
-        <div className="summary-main">
-          <div className="segmented" role="tablist" aria-label="Dönem">
-            {PERIODS.map((p) => (
-              <button
-                key={p.value}
-                role="tab"
-                aria-selected={period === p.value}
-                className={period === p.value ? "is-active" : ""}
-                onClick={() => setPeriod(p.value)}
-              >
-                {p.label}
-              </button>
+        <div className="chart-card">
+          <div className="chart-title">{periodTitle(period)}</div>
+
+          {/* key: dönem değişince sütun animasyonu yeniden başlar */}
+          <div className="chart" key={period}>
+            {COLUMNS.map((col, i) => (
+              <div key={col.key} className={`col col-${col.key}`}>
+                <AnimatedMoney className="col-value" value={totals[col.key]} />
+                <div className="col-track">
+                  <div
+                    className="col-bar"
+                    style={
+                      {
+                        "--h": `${Math.max((totals[col.key] / maxFlow) * 100, 3)}%`,
+                        "--d": `${i * 130}ms`,
+                      } as CSSProperties
+                    }
+                  />
+                </div>
+                <span className="col-label">{col.label}</span>
+              </div>
             ))}
           </div>
 
-          <div className="summary-card">
-            <div className="summary-head">
-              <span className="summary-title">{periodTitle(period)}</span>
-              <span className="summary-net">{money.format(net)}</span>
+          <div className="result">
+            <div className="result-block">
+              <span className="result-label">CİRO</span>
+              <AnimatedMoney className="result-value" value={ciro} precise />
+              <span className="equation">Satış toplamı</span>
             </div>
-
-            <div className="summary-body">
-              <div className="flow flow-in">
-                <span>ALINAN</span>
-                <strong>{money.format(summary.income)}</strong>
-              </div>
-
-              <div className="bars" aria-hidden="true">
-                <div
-                  className="bar bar-in"
-                  style={{ height: `${(summary.income / maxFlow) * 100}%` }}
-                />
-                <div
-                  className="bar bar-out"
-                  style={{ height: `${(summary.expense / maxFlow) * 100}%` }}
-                />
-              </div>
-
-              <div className="flow flow-out">
-                <span>ÖDENEN</span>
-                <strong>{money.format(summary.expense)}</strong>
-              </div>
+            <div className="result-block">
+              <span className="result-label">KAR</span>
+              <AnimatedMoney
+                className={`result-value ${kar < 0 ? "is-loss" : ""}`}
+                value={kar}
+                precise
+              />
+              <span className="equation">
+                Satış <b>−</b> Alış
+              </span>
             </div>
           </div>
         </div>

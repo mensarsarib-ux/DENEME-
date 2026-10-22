@@ -14,10 +14,10 @@ import { Svg } from "./Icon";
 import Keypad from "./Keypad";
 
 /** İşlem türüne göre vurgu rengi */
-const ACCENT: Record<TxType, string> = {
-  SATIŞ: "#3c8fd9",
-  ALIŞ: "#e4574a",
-  TAHSİLAT: "#3fbf82",
+const ACCENT: Record<TxType, { color: string; fill: string }> = {
+  SATIŞ: { color: "#22c55e", fill: "#15803d" },
+  ALIŞ: { color: "#f5f5f5", fill: "#4b5563" },
+  TAHSİLAT: { color: "#86efac", fill: "#166534" },
 };
 
 /** Ekrandaki metinden tutar üretir; geçersizse null */
@@ -117,7 +117,9 @@ export default function CustomerPage({
           </span>
           <div className="cust-name">
             <strong>{customer.name}</strong>
-            <small>İletişim bilgisi ekle</small>
+            <small>
+              {customer.phone || customer.email || "İletişim bilgisi ekle"}
+            </small>
           </div>
         </div>
 
@@ -138,7 +140,7 @@ export default function CustomerPage({
             <li key={t.id} className="tx">
               <div className="tx-info">
                 <div className="tx-meta">
-                  <strong style={{ color: ACCENT[t.type] }}>
+                  <strong style={{ color: ACCENT[t.type].color }}>
                     {t.type}
                   </strong>
                   <span>{formatDateTime(t.date)}</span>
@@ -170,7 +172,12 @@ export default function CustomerPage({
       {/* Alt bölüm: işlem girişi */}
       <section
         className="entry"
-        style={{ "--accent": ACCENT[txType] } as CSSProperties}
+        style={
+          {
+            "--accent": ACCENT[txType].color,
+            "--accent-fill": ACCENT[txType].fill,
+          } as CSSProperties
+        }
       >
         <div className="entry-field">
           {dateValue ? (
@@ -270,7 +277,7 @@ export default function CustomerPage({
                 key={d.id}
                 role="listitem"
                 className="draft-chip"
-                style={{ "--chip": ACCENT[d.type] } as CSSProperties}
+                style={{ "--chip": ACCENT[d.type].color } as CSSProperties}
               >
                 <strong>{d.type}</strong> {money.format(d.amount)}
                 <button
