@@ -358,6 +358,11 @@ export default function App() {
             setTransactions((prev) => prev.filter((t) => t.id !== id))
           }
           onEdit={() => go({ name: "edit", id: party.id, back: view })}
+          onDeleteParty={() => {
+            setParties((prev) => prev.filter((p) => p.id !== party.id));
+            setTransactions((prev) => prev.filter((t) => t.customerId !== party.id));
+            go(view.back?.name === "menu" ? view.back : { name: "home" });
+          }}
           onBack={() => go(view.back ?? { name: "home" })}
         />
       );

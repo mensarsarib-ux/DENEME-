@@ -2106,3 +2106,46 @@ a.action-btn {
 .faq summary { cursor: pointer; font-weight: 600; list-style: none; }
 .faq summary::-webkit-details-marker { display: none; }
 .faq p { margin: 8px 0 0; color: var(--muted); font-size: 0.92rem; line-height: 1.45; }
+
+/* Kalem düğmesinin altında açılan Düzenle / Sil menüsü */
+.cust-tools { position: relative; }
+
+.tools-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 30;
+  min-width: 170px;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  background: var(--surface-head);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5);
+  transform-origin: top right;
+  animation: tools-menu-in 0.16s ease-out;
+}
+
+.cust-tools .tools-menu button {
+  width: 100%;
+  height: auto;
+  padding: 12px 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-radius: 10px;
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+}
+
+.cust-tools .tools-menu button:active { background: var(--line); }
+.cust-tools .tools-menu button.is-danger { color: var(--red); }
+.tools-menu svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+@keyframes tools-menu-in {
+  from { opacity: 0; transform: scale(0.92) translateY(-4px); }
+  to { opacity: 1; transform: none; }
+}

@@ -46,10 +46,13 @@ export default function CustomerPage({
   onUpdate,
   onDelete,
   onEdit,
+  onDeleteParty,
   onBack,
 }: {
-  /** Sağ üstteki düzenle düğmesi: firma bilgileri sayfasını açar */
+  /** Düzenle menüsünden "Düzenle": firma bilgileri sayfasını açar */
   onEdit: () => void;
+  /** Düzenle menüsünden "Sil": kişiyi ve işlemlerini siler (onaydan sonra) */
+  onDeleteParty: () => void;
   customer: Customer;
   accounts: Account[];
   transactions: Transaction[];
@@ -76,6 +79,24 @@ export default function CustomerPage({
   // "Sil"e basılınca açılan "emin misiniz?" adımı
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   useEffect(() => setConfirmingDelete(false), [selected]);
+  // Kalem düğmesinin altında açılan Düzenle / Sil menüsü ve kişiyi silme onayı
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [confirmParty, setConfirmParty] = useState(false);
+  const toolsRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!menuOpen) return;
+    const close = (event: Event) => {
+      if (event instanceof KeyboardEvent ? event.key === "Escape" : !toolsRef.current?.contains(event.target as Node)) {
+        setMenuOpen(false);
+      }
+    };
+    document.addEventListener("click", close);
+    document.addEventListener("keydown", close);
+    return () => {
+      document.removeEventListener("click", close);
+      document.removeEventListener("keydown", close);
+    };
+  }, [menuOpen]);
   const [editingId, setEditingId] = useState<string | null>(null);
   // Silinen son işlem: kısa süre "Geri al" ile döndürülebilir
   const [undoTx, setUndoTx] = useState<Transaction | null>(null);
@@ -249,13 +270,48 @@ export default function CustomerPage({
           </div>
         </div>
 
-        <div className="cust-tools">
+        <div className="cust-tools" ref={toolsRef}>
           <button aria-label="Paylaş">
             <Svg d="M12 3v12M8 7l4-4 4 4M5 13v6h14v-6" />
           </button>
-          <button aria-label="Bilgileri düzenle" onClick={onEdit}>
+          <button
+            aria-label="Düzenle menüsü"
+            aria-haspopup="menu"
+            aria-expanded={menuOpen}
+            onClick={() => {
+              haptic("light");
+              setMenuOpen((open) => !open);
+            }}
+          >
             <Svg d="M4 20h4L19 9l-4-4L4 16zM13 7l4 4" />
           </button>
+          {menuOpen && (
+            <div className="tools-menu" role="menu">
+              <button
+                type="button"
+                role="menuitem"
+                onClick={() => {
+                  setMenuOpen(false);
+                  onEdit();
+                }}
+              >
+                <Svg d="M4 20h4L19 9l-4-4L4 16zM13 7l4 4" />
+                Düzenle
+              </button>
+              <button
+                type="button"
+                role="menuitem"
+                className="is-danger"
+                onClick={() => {
+                  setMenuOpen(false);
+                  setConfirmParty(true);
+                }}
+              >
+                <Svg d="M5 7h14M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3" />
+                Sil
+              </button>
+            </div>
+          )}
         </div>
       </header>
 
@@ -445,6 +501,41 @@ export default function CustomerPage({
           </div>
         </div>
       </div>
+
+      {confirmParty && (
+        <div className="action-backdrop" data-keep-keypad onClick={() => setConfirmParty(false)}>
+          <div
+            className="action-sheet is-centered"
+            role="alertdialog"
+            aria-label="Silme onayı"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="action-handle" aria-hidden="true" />
+            <h2 className="sheet-title">{customer.name}</h2>
+            <p className="sheet-note">
+              Bu kaydı ve tüm işlemlerini silmek istediğinize emin misiniz? Bu işlem geri alınamaz.
+            </p>
+            <button
+              className="danger-btn"
+              type="button"
+              onClick={() => {
+                haptic("warning");
+                onDeleteParty();
+              }}
+            >
+              EVET, SİL
+            </button>
+            <button
+              className="action-btn is-cancel"
+              type="button"
+              autoFocus
+              onClick={() => setConfirmParty(false)}
+            >
+              Vazgeç
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* İşleme dokununca açılan seçenekler */}
       {selected && (
