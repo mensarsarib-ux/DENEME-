@@ -174,21 +174,21 @@ export async function renderStatement(input: StatementInput): Promise<HTMLCanvas
   };
 
   const tableHeader = () => {
-    const ty = y + 30;
+    const ty = y + 28;
     const up = (s: string) => s.toLocaleUpperCase(locale());
     text(up(t("Tarih")), col.date, ty, 26, INK, "700");
     text(up(t("Açıklama")), col.desc, ty, 26, INK, "700");
     text(up(t("Miktar")), miktarR, ty, 26, INK, "700", "right");
     text(up(t("Toplam")), toplamR, ty, 26, INK, "700", "right");
-    y += 50;
-    rule(y, 4, RULE);
+    y += 42;
+    rule(y, 3, RULE);
     y += 4;
   };
 
   y = M;
 
   // Üst kart: logo + firma adı
-  const cardH = 150;
+  const cardH = 116;
   ctx.fillStyle = "#f7f9f8";
   ctx.strokeStyle = "#cfd8d3";
   ctx.lineWidth = 2;
@@ -196,14 +196,14 @@ export async function renderStatement(input: StatementInput): Promise<HTMLCanvas
   ctx.roundRect(M, y, W - 2 * M, cardH, 28);
   ctx.fill();
   ctx.stroke();
-  const cx = M + 28 + 55;
+  const cx = M + 24 + 46;
   const cy = y + cardH / 2;
   if (logo) {
     ctx.save();
     ctx.beginPath();
-    ctx.arc(cx, cy, 55, 0, Math.PI * 2);
+    ctx.arc(cx, cy, 46, 0, Math.PI * 2);
     ctx.clip();
-    ctx.drawImage(logo, cx - 55, cy - 55, 110, 110);
+    ctx.drawImage(logo, cx - 46, cy - 46, 92, 92);
     ctx.restore();
   } else {
     const initials = profile.name
@@ -213,23 +213,14 @@ export async function renderStatement(input: StatementInput): Promise<HTMLCanvas
       .map((w) => w[0])
       .join("")
       .toLocaleUpperCase(locale());
-    ctx.fillStyle = "#fff";
-    ctx.beginPath();
-    ctx.arc(cx, cy, 55, 0, Math.PI * 2);
-    ctx.fill();
-    text(initials || "H", cx, cy + 17, 48, GREEN, "700", "center");
+    text(initials || "H", cx, cy + 16, 46, GREEN, "700", "center");
   }
-  ctx.strokeStyle = GREEN;
-  ctx.lineWidth = 3;
-  ctx.beginPath();
-  ctx.arc(cx, cy, 55, 0, Math.PI * 2);
-  ctx.stroke();
-  text(profile.name || "Hesabım", cx + 55 + 28, cy + 14, 42, INK, "700");
-  y += cardH + 56;
+  text(profile.name || "Hesabım", cx + 46 + 24, cy + 14, 40, INK, "700");
+  y += cardH + 44;
 
   // Kişi adı
-  text(party.name.toLocaleUpperCase(locale()), M + 4, y + 36, 48, INK, "700");
-  y += 100;
+  text(party.name.toLocaleUpperCase(locale()), M + 4, y + 34, 46, INK, "700");
+  y += 74;
 
   tableHeader();
 
@@ -241,17 +232,17 @@ export async function renderStatement(input: StatementInput): Promise<HTMLCanvas
   for (const r of data.rows) {
     ctx.font = `400 26px ${FONT}`;
     const desc = wrap(ctx, r.description, descW, 2);
-    const rowH = Math.max(76, 36 + Math.max(desc.length, r.account ? 2 : 1) * 32);
+    const rowH = Math.max(66, 32 + Math.max(desc.length, r.account ? 2 : 1) * 30);
     if (y + rowH > H - M - 220) {
       newPageFn();
       tableHeader();
     }
-    const base = y + 44;
+    const base = y + 40;
     const amount = r.debit ?? r.credit ?? 0;
     text(r.date, col.date, base, 26);
     text(r.type, col.type, base, 26);
-    if (r.account) text(r.account, col.type, base + 30, 20, MUTED);
-    desc.forEach((line, i) => text(line, col.desc, base + i * 32, 26));
+    if (r.account) text(r.account, col.type, base + 28, 20, MUTED);
+    desc.forEach((line, i) => text(line, col.desc, base + i * 30, 26));
     text(`${r.credit !== null ? "-" : ""}${plain(amount)}`, miktarR, base, 26, INK, "400", "right");
     text(plain(r.balance), toplamR, base, 26, r.balance < 0 ? "#c0392b" : INK, "400", "right");
     y += rowH;
@@ -260,16 +251,16 @@ export async function renderStatement(input: StatementInput): Promise<HTMLCanvas
   }
 
   // Toplam satırı
-  if (y + 150 > H - M - 40) {
+  if (y + 110 > H - M - 40) {
     newPageFn();
   }
-  rule(y + 4, 4, RULE);
-  y += 8;
-  const baseT = y + 68;
+  rule(y + 2, 3, RULE);
+  y += 5;
+  const baseT = y + 52;
   text(`${t("TOPLAM")} ${currencyCode()}`, col.date, baseT, 26, INK, "700");
   text(`${plain(data.totalDebit)}  ${data.totalCredit ? "-" : ""}${plain(data.totalCredit)}`, miktarR, baseT, 26, INK, "700", "right");
   text(plain(data.balance), toplamR, baseT + 2, 34, data.balance < 0 ? "#c0392b" : INK, "700", "right");
-  y += 110;
+  y += 80;
   // Sayfa numarası yalnızca birden fazla sayfa varsa
   if (pages.length > 1) {
     pages.forEach((p, i) => {
