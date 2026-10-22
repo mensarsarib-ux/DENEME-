@@ -70,6 +70,9 @@ export default function CustomerPage({
   const [selected, setSelected] = useState<Transaction | null>(null);
   // Tahsilat ya da ödeme kaydedilirken "nakit mi, banka mı?" sorusunu bekleyen işlem
   const [asking, setAsking] = useState<Transaction | null>(null);
+  // "Sil"e basılınca açılan "emin misiniz?" adımı
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
+  useEffect(() => setConfirmingDelete(false), [selected]);
   const [editingId, setEditingId] = useState<string | null>(null);
   // Silinen son işlem: kısa süre "Geri al" ile döndürülebilir
   const [undoTx, setUndoTx] = useState<Transaction | null>(null);
@@ -266,7 +269,14 @@ export default function CustomerPage({
                 className="tx-hit"
                 type="button"
                 aria-label={`${t.type} işlemi için seçenekler`}
-                onClick={() => setSelected(t)}
+                onClick={() => {
+                  // Tuş takımı açıksa ilk dokunuş yalnızca onu kapatır; seçenekler ikinci dokunuşta çıkar
+                  if (keypadOpen) {
+                    setKeypadOpen(false);
+                    return;
+                  }
+                  setSelected(t);
+                }}
               >
                 <div className="tx-info">
                   <div className="tx-meta">
@@ -461,29 +471,57 @@ export default function CustomerPage({
                 {money.format(selected.amount)}
               </span>
             </div>
-            <button
-              className="action-btn"
-              type="button"
-              onClick={() => startEdit(selected)}
-            >
-              <Svg d="M4 20h4L19 9l-4-4L4 16zM13 7l4 4" />
-              Düzenle
-            </button>
-            <button
-              className="action-btn is-danger"
-              type="button"
-              onClick={() => remove(selected)}
-            >
-              <Svg d="M5 7h14M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3" />
-              Sil
-            </button>
-            <button
-              className="action-btn is-cancel"
-              type="button"
-              onClick={() => setSelected(null)}
-            >
-              Vazgeç
-            </button>
+            {confirmingDelete ? (
+              <>
+                <p className="sheet-note">
+                  Bu işlemi silmek istediğinize emin misiniz?
+                </p>
+                <button
+                  className="danger-btn"
+                  type="button"
+                  onClick={() => remove(selected)}
+                >
+                  EVET, SİL
+                </button>
+                <button
+                  className="action-btn is-cancel"
+                  type="button"
+                  autoFocus
+                  onClick={() => setConfirmingDelete(false)}
+                >
+                  Vazgeç
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  className="action-btn"
+                  type="button"
+                  onClick={() => startEdit(selected)}
+                >
+                  <Svg d="M4 20h4L19 9l-4-4L4 16zM13 7l4 4" />
+                  Düzenle
+                </button>
+                <button
+                  className="action-btn is-danger"
+                  type="button"
+                  onClick={() => {
+                    haptic("warning");
+                    setConfirmingDelete(true);
+                  }}
+                >
+                  <Svg d="M5 7h14M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3" />
+                  Sil
+                </button>
+                <button
+                  className="action-btn is-cancel"
+                  type="button"
+                  onClick={() => setSelected(null)}
+                >
+                  Vazgeç
+                </button>
+              </>
+            )}
           </div>
         </div>
       )}
