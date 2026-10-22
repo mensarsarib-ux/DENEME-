@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import {
-  CATEGORIES,
   TX_TYPES,
   balanceOf,
   signOf,
@@ -49,14 +48,13 @@ export default function CustomerPage({
   // Sayfa tuş takımı açık gelir; kayıttan sonra da kapanmaz
   const [keypadOpen, setKeypadOpen] = useState(true);
   const [dateValue, setDateValue] = useState<string | null>(null);
-  const [category, setCategory] = useState("");
   const [description, setDescription] = useState("");
   // "+" ile bekleyen listeye alınan, henüz kaydedilmemiş işlemler
   const [drafts, setDrafts] = useState<Transaction[]>([]);
   // Az önce kaydedilen işlemler: listede kaydırılıp kısa süre vurgulanır
   const [justAdded, setJustAdded] = useState<string[]>([]);
   const newRowRef = useRef<HTMLLIElement>(null);
-  const entryRef = useRef<HTMLElement>(null);
+  const entryRef = useRef<HTMLDivElement>(null);
 
   const history = transactionsOf(transactions, customer.id);
   const value = parseAmount(amount);
@@ -79,15 +77,9 @@ export default function CustomerPage({
     }
   }, [justAdded]);
 
-  function changeType(type: TxType) {
-    setTxType(type);
-    setCategory("");
-  }
-
   function resetFields() {
     setAmount("");
     setDescription("");
-    setCategory("");
     setDateValue(null);
   }
 
@@ -99,7 +91,6 @@ export default function CustomerPage({
       customerId: customer.id,
       type: txType,
       date: dateValue ? new Date(dateValue).toISOString() : new Date().toISOString(),
-      category: category || undefined,
       description,
       amount: value,
     };
@@ -174,7 +165,6 @@ export default function CustomerPage({
                   </strong>
                   <span>{formatDateTime(t.date)}</span>
                 </div>
-                {t.category && <p className="tx-category">{t.category}</p>}
                 {t.description && <p>{t.description}</p>}
               </div>
               <span className={`tx-amount ${outflow ? "is-debt" : ""}`}>
@@ -198,9 +188,9 @@ export default function CustomerPage({
         Yardım &amp; Öneri
       </button>
 
-      {/* Alt bölüm: işlem girişi */}
+      {/* Alt bölüm: işlem girişi ve tuş takımı */}
+      <div ref={entryRef} className="entry-dock">
       <section
-        ref={entryRef}
         className="entry"
         style={
           {
@@ -234,21 +224,6 @@ export default function CustomerPage({
           >
             <Svg d="M4 5h16v15H4zM4 10h16M8 3v4M16 3v4" />
           </button>
-        </div>
-
-        <div className="entry-field">
-          <select
-            aria-label="Kategori"
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-          >
-            <option value="">Kategori seçin</option>
-            {CATEGORIES[txType].map((c) => (
-              <option key={c} value={c}>
-                {c}
-              </option>
-            ))}
-          </select>
         </div>
 
         <div className="entry-desc">
@@ -331,17 +306,16 @@ export default function CustomerPage({
               role="tab"
               aria-selected={txType === type}
               className={txType === type ? "is-active" : ""}
-              onClick={() => changeType(type)}
+              onClick={() => setTxType(type)}
             >
               {type}
             </button>
           ))}
         </div>
-
-        {keypadOpen && (
-          <Keypad value={amount} onChange={setAmount} />
-        )}
       </section>
+
+      {keypadOpen && <Keypad value={amount} onChange={setAmount} />}
+      </div>
     </div>
   );
 }

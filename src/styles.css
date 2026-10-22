@@ -697,11 +697,6 @@ button {
   overflow-wrap: anywhere;
 }
 
-.tx-info .tx-category {
-  color: var(--muted);
-  font-size: 0.8rem;
-}
-
 .tx-amount {
   white-space: nowrap;
   font-size: 1.1rem;
@@ -751,10 +746,16 @@ button {
 
 /* ---------- Tutar girişi paneli (vurgu rengi işlem türüne göre) ---------- */
 
-.entry {
+.entry-dock {
   position: sticky;
   bottom: 0;
-  margin: auto 8px 8px;
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.entry {
+  margin: 0 8px 8px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -777,8 +778,7 @@ button {
   padding: 10px 14px;
 }
 
-.entry-field input,
-.entry-field select {
+.entry-field input {
   flex: 1;
   min-width: 0;
   border: 0;
@@ -787,10 +787,6 @@ button {
   font: inherit;
   outline: none;
   color-scheme: dark;
-}
-
-.entry-field select option {
-  background: #161d26;
 }
 
 .entry-placeholder {
@@ -955,28 +951,52 @@ button {
   font-weight: 700;
 }
 
+/* iOS sayısal klavyesine benzer tuş takımı */
 .keypad {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-  padding: 10px;
-  border-top: 1px solid var(--line);
-  background: #22292f;
+  gap: 6px;
+  padding: 12px 6px calc(14px + env(safe-area-inset-bottom, 0px));
+  border-radius: 22px 22px 0 0;
+  background: #2a2d31;
 }
 
 .keypad button {
-  height: 52px;
+  height: 54px;
   border: 0;
-  border-radius: 10px;
-  background: #3a424c;
+  border-radius: 8px;
+  background: #6b6e72;
   color: #fff;
-  font-size: 1.4rem;
-  display: grid;
-  place-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.35);
 }
 
 .keypad button:active {
-  background: #4a535e;
+  background: #85888c;
+}
+
+.keypad .key-fn {
+  background: #3d4044;
+}
+
+.keypad .key-fn:active {
+  background: #55585c;
+}
+
+.key-num {
+  font-size: 1.6rem;
+}
+
+.key-letters {
+  margin-top: 3px;
+  font-size: 0.58rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  padding-left: 0.2em;
 }
 
 /* ---------- Yeni müşteri formu ---------- */

@@ -35,20 +35,12 @@ export const initialCustomers: Customer[] = [
 export const TX_TYPES = ["SATIŞ", "ALIŞ", "TAHSİLAT"] as const;
 export type TxType = (typeof TX_TYPES)[number];
 
-/** Her işlem türü için seçilebilecek kategoriler */
-export const CATEGORIES: Record<TxType, string[]> = {
-  SATIŞ: ["Ürün satışı", "Hizmet", "Toplu sipariş"],
-  ALIŞ: ["Hammadde", "Malzeme", "Aksesuar", "Hizmet alımı"],
-  TAHSİLAT: ["Nakit", "Havale / EFT", "Çek"],
-};
-
 export interface Transaction {
   id: string;
   customerId: string;
   type: TxType;
   /** ISO tarih-saat (UTC) */
   date: string;
-  category?: string;
   description: string;
   amount: number;
 }
@@ -63,21 +55,21 @@ function ago(days: number, hour: number, minute = 0): string {
 
 // Örnek işlemler bugüne göre üretilir; böylece her dönemde veri görünür.
 export const initialTransactions: Transaction[] = [
-  { id: "t1", customerId: "1", type: "SATIŞ", date: ago(0, 9, 30), category: "Ürün satışı", description: "Kumaş satışı", amount: 9175 },
-  { id: "t2", customerId: "2", type: "ALIŞ", date: ago(0, 10, 15), category: "Aksesuar", description: "Aksesuar alımı", amount: 2990 },
-  { id: "t3", customerId: "3", type: "SATIŞ", date: ago(0, 11, 0), category: "Ürün satışı", description: "Takım satışı, 30 ve 20 cm", amount: 4880 },
-  { id: "t4", customerId: "1", type: "TAHSİLAT", date: ago(0, 12, 0), category: "Nakit", description: "Kısmi ödeme", amount: 3000 },
-  { id: "t5", customerId: "4", type: "ALIŞ", date: ago(2, 11, 5), category: "Hammadde", description: "Hammadde alımı", amount: 25000 },
-  { id: "t6", customerId: "5", type: "SATIŞ", date: ago(3, 16, 20), category: "Toplu sipariş", description: "Toplu sipariş", amount: 40200 },
-  { id: "t7", customerId: "6", type: "ALIŞ", date: ago(4, 13, 10), category: "Malzeme", description: "Malzeme alımı", amount: 3360 },
-  { id: "t8", customerId: "7", type: "SATIŞ", date: ago(5, 8, 50), category: "Ürün satışı", description: "Ürün satışı", amount: 13310 },
-  { id: "t9", customerId: "5", type: "TAHSİLAT", date: ago(6, 14, 0), category: "Havale / EFT", description: "Sipariş ödemesi", amount: 20000 },
-  { id: "t10", customerId: "8", type: "SATIŞ", date: ago(12, 15, 45), category: "Ürün satışı", description: "Kırtasiye siparişi", amount: 62760 },
-  { id: "t11", customerId: "7", type: "TAHSİLAT", date: ago(15, 10, 0), category: "Nakit", description: "Ödeme", amount: 8000 },
-  { id: "t12", customerId: "3", type: "ALIŞ", date: ago(25, 9, 0), category: "Hammadde", description: "Hammadde alımı", amount: 12000 },
-  { id: "t13", customerId: "2", type: "SATIŞ", date: ago(60, 14, 30), category: "Hizmet", description: "Montaj hizmeti", amount: 18000 },
-  { id: "t14", customerId: "4", type: "SATIŞ", date: ago(90, 13, 0), category: "Ürün satışı", description: "Ürün satışı", amount: 54000 },
-  { id: "t15", customerId: "6", type: "TAHSİLAT", date: ago(120, 11, 0), category: "Çek", description: "Çek tahsilatı", amount: 5000 },
+  { id: "t1", customerId: "1", type: "SATIŞ", date: ago(0, 9, 30), description: "Kumaş satışı", amount: 9175 },
+  { id: "t2", customerId: "2", type: "ALIŞ", date: ago(0, 10, 15), description: "Aksesuar alımı", amount: 2990 },
+  { id: "t3", customerId: "3", type: "SATIŞ", date: ago(0, 11, 0), description: "Takım satışı, 30 ve 20 cm", amount: 4880 },
+  { id: "t4", customerId: "1", type: "TAHSİLAT", date: ago(0, 12, 0), description: "Kısmi ödeme", amount: 3000 },
+  { id: "t5", customerId: "4", type: "ALIŞ", date: ago(2, 11, 5), description: "Hammadde alımı", amount: 25000 },
+  { id: "t6", customerId: "5", type: "SATIŞ", date: ago(3, 16, 20), description: "Toplu sipariş", amount: 40200 },
+  { id: "t7", customerId: "6", type: "ALIŞ", date: ago(4, 13, 10), description: "Malzeme alımı", amount: 3360 },
+  { id: "t8", customerId: "7", type: "SATIŞ", date: ago(5, 8, 50), description: "Ürün satışı", amount: 13310 },
+  { id: "t9", customerId: "5", type: "TAHSİLAT", date: ago(6, 14, 0), description: "Sipariş ödemesi", amount: 20000 },
+  { id: "t10", customerId: "8", type: "SATIŞ", date: ago(12, 15, 45), description: "Kırtasiye siparişi", amount: 62760 },
+  { id: "t11", customerId: "7", type: "TAHSİLAT", date: ago(15, 10, 0), description: "Ödeme", amount: 8000 },
+  { id: "t12", customerId: "3", type: "ALIŞ", date: ago(25, 9, 0), description: "Hammadde alımı", amount: 12000 },
+  { id: "t13", customerId: "2", type: "SATIŞ", date: ago(60, 14, 30), description: "Montaj hizmeti", amount: 18000 },
+  { id: "t14", customerId: "4", type: "SATIŞ", date: ago(90, 13, 0), description: "Ürün satışı", amount: 54000 },
+  { id: "t15", customerId: "6", type: "TAHSİLAT", date: ago(120, 11, 0), description: "Çek tahsilatı", amount: 5000 },
 ];
 
 /** Alacak yönü: satış bakiyeyi artırır; alış ve tahsilat azaltır. */
