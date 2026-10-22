@@ -98,9 +98,12 @@ button {
 
 /* ---------- Ana ekran ---------- */
 
+/* Ana ekran tek ekran boyundadır ve kaymaz; yalnızca alttaki liste kendi içinde kayar */
 .app {
   max-width: 480px;
-  min-height: 100dvh;
+  height: 100vh;
+  height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+  overflow: hidden;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -524,14 +527,43 @@ button {
 
 /* ---------- Alt sayfa ---------- */
 
+.topbar,
+.notice-row,
+.summary {
+  flex-shrink: 0;
+}
+
 .sheet {
-  flex: 1;
+  flex: 1 1 0;
+  min-height: 0;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   background: var(--surface);
   border-radius: 24px 24px 0 0;
-  padding-bottom: 32px;
   box-shadow: 0 -6px 24px rgba(0, 0, 0, 0.3);
+}
+
+/* Alttaki liste: yalnızca bu alan kayar, üstteki her şey sabit kalır */
+.sheet > :not(.party-list) {
+  flex-shrink: 0;
+}
+
+.party-list {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  /* Alt kenarda daha fazla kayıt olduğunu gösteren hafif solma; son satır solmanın üstünde biter */
+  padding-bottom: 32px;
+  -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 28px), transparent);
+  mask-image: linear-gradient(to bottom, #000 calc(100% - 28px), transparent);
+}
+
+.party-list::-webkit-scrollbar {
+  display: none;
 }
 
 .sheet-handle {

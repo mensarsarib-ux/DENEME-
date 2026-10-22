@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   accounts,
   balanceOf,
@@ -79,17 +79,15 @@ export default function Dashboard({
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
   const highlightRef = useRef<HTMLButtonElement>(null);
+  /** Kendi içinde kayan liste alanı; sayfanın geri kalanı sabit durur */
   const listRef = useRef<HTMLDivElement>(null);
-  // Liste alanı gördüğü en büyük yüksekliğin altına inmez; böylece daha kısa bir sekmeye
-  // geçince sayfa kısalıp yukarı kaymaz
-  const [listMin, setListMin] = useState(0);
 
-  useLayoutEffect(() => {
-    if (searchOpen) return;
-    const height = listRef.current?.getBoundingClientRect().height ?? 0;
-    if (height > listMin) setListMin(Math.ceil(height));
-  });
+  // Sekme ya da arama değişince liste en üstten başlar
+  useEffect(() => {
+    listRef.current?.scrollTo({ top: 0 });
+  }, [activeTab, query]);
 
+  // Az önce eklenen kayıt listede görünür alana kaydırılır
   useEffect(() => {
     highlightRef.current?.scrollIntoView({ block: "center" });
   }, []);
@@ -246,11 +244,7 @@ export default function Dashboard({
           />
         )}
 
-        <div
-          className="party-list"
-          ref={listRef}
-          style={{ minHeight: searchOpen ? undefined : listMin || undefined }}
-        >
+        <div className="party-list" ref={listRef}>
         {rows.length === 0 ? (
           <div className="search-empty">
             <p>
