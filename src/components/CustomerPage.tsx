@@ -1,26 +1,26 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import {
   TX_TYPES,
+  accounts,
   defaultTxType,
   balanceOf,
+  needsAccount,
   signOf,
   transactionsOf,
+  type AccountId,
   type Customer,
   type Transaction,
   type TxType,
 } from "../data/mock";
 import { formatDateTime, money } from "../lib/format";
+import { ACCENT } from "../lib/accents";
 import { haptic } from "../lib/haptics";
 import { Svg } from "./Icon";
 import Keypad from "./Keypad";
 
-/** İşlem türüne göre vurgu rengi */
-const ACCENT: Record<TxType, { color: string; fill: string; glow: string }> = {
-  SATIŞ: { color: "#3c8fd9", fill: "#3c8fd9", glow: "rgba(60, 143, 217, 0.55)" },
-  ALIŞ: { color: "#e4574a", fill: "#e4574a", glow: "rgba(228, 87, 74, 0.55)" },
-  TAHSİLAT: { color: "#3fbf82", fill: "#3fbf82", glow: "rgba(63, 191, 130, 0.55)" },
-  ÖDEME: { color: "#e8c547", fill: "#c9a227", glow: "rgba(232, 197, 71, 0.55)" },
-};
+/** Nakit ve banka simgeleri */
+const CASH_ICON = "M3 7h18v10H3zM12 9.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM6 10v.01M18 14v.01";
+const BANK_ICON = "M3 9l9-5 9 5v1H3zM5 11v7M9 11v7M15 11v7M19 11v7M3 20h18";
 
 /** Geri al seçeneğinin ekranda kalma süresi (ms) */
 const UNDO_DURATION = 5000;
@@ -66,6 +66,8 @@ export default function CustomerPage({
   const [description, setDescription] = useState("");
   // Seçenek penceresi açık işlem ve düzenlenmekte olan işlem
   const [selected, setSelected] = useState<Transaction | null>(null);
+  // Tahsilat ya da ödeme kaydedilirken "nakit mi, banka mı?" sorusunu bekleyen işlem
+  const [asking, setAsking] = useState<Transaction | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   // Silinen son işlem: kısa süre "Geri al" ile döndürülebilir
   const [undoTx, setUndoTx] = useState<Transaction | null>(null);
@@ -88,15 +90,18 @@ export default function CustomerPage({
     return () => document.removeEventListener("click", closeOnOutsideTap);
   }, [keypadOpen]);
 
-  // Seçenek penceresi Esc ile kapanır
+  // Seçenek penceresi ve hesap sorusu Esc ile kapanır
   useEffect(() => {
-    if (!selected) return;
+    if (!selected && !asking) return;
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setSelected(null);
+      if (event.key === "Escape") {
+        setSelected(null);
+        setAsking(null);
+      }
     };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
-  }, [selected]);
+  }, [selected, asking]);
 
   // "Geri al" bir süre sonra kaybolur
   useEffect(() => {
@@ -145,10 +150,30 @@ export default function CustomerPage({
     };
   }
 
-  /** Formdaki işlemi kaydet; düzenleme modundaysa mevcut işlemi günceller */
+  /**
+   * EKLE: tahsilat ve ödemede önce "nakit mi, banka mı?" sorulur; satış ve alış
+   * kasayı etkilemediği için doğrudan kaydedilir.
+   */
   function save() {
     const tx = buildCurrent();
     if (!tx) return;
+    if (needsAccount(tx.type)) {
+      setAsking(tx);
+      return;
+    }
+    commit(tx);
+  }
+
+  /** Sorulan hesap seçilince işlem o hesaba işlenerek kaydedilir */
+  function chooseAccount(account: AccountId) {
+    if (!asking) return;
+    const tx: Transaction = { ...asking, account };
+    setAsking(null);
+    commit(tx);
+  }
+
+  /** İşlemi kaydeder; düzenleme modundaysa mevcut işlemi günceller */
+  function commit(tx: Transaction) {
     haptic("success");
     if (editingId) {
       onUpdate({ ...tx, id: editingId });
@@ -247,6 +272,11 @@ export default function CustomerPage({
                       {t.type}
                     </strong>
                     <span>{formatDateTime(t.date)}</span>
+                    {t.account && (
+                      <span className="tx-account">
+                        {accounts.find((a) => a.id === t.account)?.name}
+                      </span>
+                    )}
                   </div>
                   {t.description && <p>{t.description}</p>}
                 </div>
@@ -449,6 +479,59 @@ export default function CustomerPage({
               className="action-btn is-cancel"
               type="button"
               onClick={() => setSelected(null)}
+            >
+              Vazgeç
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Tahsilat ve ödemede: nakit mi, banka mı? */}
+      {asking && (
+        <div
+          className="action-backdrop"
+          data-keep-keypad
+          onClick={() => setAsking(null)}
+        >
+          <div
+            className="action-sheet is-centered"
+            role="dialog"
+            aria-label="Hesap seç"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="action-handle" aria-hidden="true" />
+            <h2 className="sheet-title">
+              {asking.type === "TAHSİLAT"
+                ? "Tahsilat nereye girsin?"
+                : "Ödeme nereden yapıldı?"}
+            </h2>
+            <p className="sheet-note">
+              {asking.type === "TAHSİLAT"
+                ? `${money.format(asking.amount)} nakit mi alındı, bankaya mı geldi?`
+                : `${money.format(asking.amount)} nakit mi ödendi, bankadan mı çıktı?`}
+            </p>
+            <div className="period-options">
+              {accounts.map((a) => (
+                <button
+                  key={a.id}
+                  type="button"
+                  className={`action-btn account-btn ${
+                    editingId &&
+                    transactions.find((t) => t.id === editingId)?.account === a.id
+                      ? "is-active"
+                      : ""
+                  }`}
+                  onClick={() => chooseAccount(a.id)}
+                >
+                  <Svg d={a.id === "cash" ? CASH_ICON : BANK_ICON} />
+                  {a.name}
+                </button>
+              ))}
+            </div>
+            <button
+              type="button"
+              className="action-btn is-cancel"
+              onClick={() => setAsking(null)}
             >
               Vazgeç
             </button>

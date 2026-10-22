@@ -2,14 +2,19 @@
 
 export type Period = "daily" | "weekly" | "monthly" | "yearly";
 
+/** Kasanın iki hesabı: tahsilatlar ve ödemeler bunlardan birine işlenir */
+export type AccountId = "cash" | "bank";
+
 export interface Account {
-  id: string;
+  id: AccountId;
   name: string;
-  balance: number;
+  /** Açılış bakiyesi */
+  opening: number;
 }
 
 export const accounts: Account[] = [
-  { id: "cash", name: "Kasa", balance: 117866 },
+  { id: "cash", name: "Nakit", opening: 80000 },
+  { id: "bank", name: "Banka", opening: 60000 },
 ];
 
 /** Cari grubunun kimliği: "customer", "supplier" veya kullanıcının açtığı sekmenin kimliği */
@@ -65,6 +70,8 @@ export interface Transaction {
   date: string;
   description: string;
   amount: number;
+  /** Tahsilat ve ödemenin işlendiği hesap (nakit ya da banka); satış ve alışta boştur */
+  account?: AccountId;
 }
 
 /** Bugünden `days` gün önce, verilen saatte ISO tarih üretir */
@@ -87,23 +94,23 @@ export const initialTransactions: Transaction[] = [
   { id: "t1", customerId: "1", type: "SATIŞ", date: ago(0, 9, 30), description: "Kumaş satışı", amount: 9175 },
   { id: "t2", customerId: "s2", type: "ALIŞ", date: ago(0, 10, 15), description: "Aksesuar alımı", amount: 2990 },
   { id: "t3", customerId: "3", type: "SATIŞ", date: ago(0, 11, 0), description: "Takım satışı, 30 ve 20 cm", amount: 4880 },
-  { id: "t4", customerId: "1", type: "TAHSİLAT", date: ago(0, 12, 0), description: "Kısmi ödeme", amount: 3000 },
+  { id: "t4", customerId: "1", type: "TAHSİLAT", account: "cash", date: ago(0, 12, 0), description: "Kısmi ödeme", amount: 3000 },
   { id: "t5", customerId: "s1", type: "ALIŞ", date: ago(2, 11, 5), description: "Hammadde alımı", amount: 25000 },
   { id: "t6", customerId: "5", type: "SATIŞ", date: ago(3, 16, 20), description: "Toplu sipariş", amount: 40200 },
   { id: "t7", customerId: "s3", type: "ALIŞ", date: ago(4, 13, 10), description: "Malzeme alımı", amount: 3360 },
   { id: "t8", customerId: "7", type: "SATIŞ", date: ago(5, 8, 50), description: "Ürün satışı", amount: 13310 },
-  { id: "t9", customerId: "5", type: "TAHSİLAT", date: ago(6, 14, 0), description: "Sipariş ödemesi", amount: 20000 },
+  { id: "t9", customerId: "5", type: "TAHSİLAT", account: "bank", date: ago(6, 14, 0), description: "Sipariş ödemesi", amount: 20000 },
   { id: "t10", customerId: "8", type: "SATIŞ", date: ago(12, 15, 45), description: "Kırtasiye siparişi", amount: 62760 },
-  { id: "t11", customerId: "7", type: "TAHSİLAT", date: ago(15, 10, 0), description: "Ödeme", amount: 8000 },
+  { id: "t11", customerId: "7", type: "TAHSİLAT", account: "cash", date: ago(15, 10, 0), description: "Ödeme", amount: 8000 },
   { id: "t12", customerId: "s1", type: "ALIŞ", date: ago(25, 9, 0), description: "Hammadde alımı", amount: 12000 },
   { id: "t13", customerId: "2", type: "SATIŞ", date: ago(60, 14, 30), description: "Montaj hizmeti", amount: 18000 },
   { id: "t14", customerId: "4", type: "SATIŞ", date: ago(90, 13, 0), description: "Ürün satışı", amount: 54000 },
-  { id: "t15", customerId: "6", type: "TAHSİLAT", date: ago(120, 11, 0), description: "Çek tahsilatı", amount: 5000 },
+  { id: "t15", customerId: "6", type: "TAHSİLAT", account: "bank", date: ago(120, 11, 0), description: "Çek tahsilatı", amount: 5000 },
   { id: "ts1", customerId: "s1", type: "ALIŞ", date: ago(1, 10, 20), description: "Kumaş alımı", amount: 18000 },
-  { id: "ts2", customerId: "s1", type: "ÖDEME", date: ago(0, 9, 45), description: "Kısmi ödeme", amount: 6000 },
+  { id: "ts2", customerId: "s1", type: "ÖDEME", account: "cash", date: ago(0, 9, 45), description: "Kısmi ödeme", amount: 6000 },
   { id: "ts3", customerId: "s2", type: "ALIŞ", date: ago(8, 14, 10), description: "Fermuar ve düğme", amount: 7400 },
   { id: "ts4", customerId: "s3", type: "ALIŞ", date: ago(20, 11, 30), description: "Ambalaj malzemesi", amount: 3200 },
-  { id: "ts5", customerId: "s3", type: "ÖDEME", date: ago(10, 16, 0), description: "Ödeme", amount: 3200 },
+  { id: "ts5", customerId: "s3", type: "ÖDEME", account: "bank", date: ago(10, 16, 0), description: "Ödeme", amount: 3200 },
   { id: "ts6", customerId: "s4", type: "ALIŞ", date: ago(35, 13, 15), description: "Boya alımı", amount: 9600 },
   { id: "t16", customerId: "1", type: "SATIŞ", date: ago(150, 11, 0), description: "Kumaş satışı", amount: 21000 },
   { id: "t17", customerId: "5", type: "SATIŞ", date: ago(185, 10, 0), description: "Toplu sipariş", amount: 38000 },
@@ -207,4 +214,30 @@ export function totalsBetween(
     else if (t.type === "TAHSİLAT") totals.tahsilat += t.amount;
   }
   return totals;
+}
+
+/** Kasaya dokunan işlemler: tahsilat para girişi, ödeme para çıkışıdır */
+export function needsAccount(type: TxType): boolean {
+  return type === "TAHSİLAT" || type === "ÖDEME";
+}
+
+/** Bir hesaba işlenen tahsilat ve ödemeler, eskiden yeniye */
+export function movementsOf(list: Transaction[], accountId: AccountId): Transaction[] {
+  return list
+    .filter((t) => t.account === accountId && needsAccount(t.type))
+    .sort((a, b) => a.date.localeCompare(b.date));
+}
+
+/** Hesap bakiyesi: açılış + tahsilatlar − ödemeler */
+export function accountBalance(list: Transaction[], accountId: AccountId): number {
+  const opening = accounts.find((a) => a.id === accountId)?.opening ?? 0;
+  return movementsOf(list, accountId).reduce(
+    (sum, t) => sum + (t.type === "TAHSİLAT" ? t.amount : -t.amount),
+    opening,
+  );
+}
+
+/** Nakit ve bankanın toplamı: ana ekrandaki Kasa tutarı */
+export function cashTotal(list: Transaction[]): number {
+  return accounts.reduce((sum, a) => sum + accountBalance(list, a.id), 0);
 }

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Splash from "./components/Splash";
 import Dashboard from "./components/Dashboard";
 import CustomerPage from "./components/CustomerPage";
+import KasaPage from "./components/KasaPage";
 import NewCustomerPage from "./components/NewCustomerPage";
 import type { TabInfo } from "./components/PartyTabs";
 import {
@@ -23,6 +24,7 @@ const SPLASH_EXIT = 400;
 /** Açık olan ekran. Tüm sekmeler (müşteriler, tedarikçiler, özel sekmeler) ana ekranda açılır. */
 type View =
   | { name: "home" }
+  | { name: "kasa" }
   | { name: "party"; id: string }
   | { name: "new"; kind: PartyKind };
 
@@ -132,6 +134,16 @@ export default function App() {
     );
   }
 
+  if (view.name === "kasa") {
+    return (
+      <KasaPage
+        parties={parties}
+        transactions={transactions}
+        onBack={() => go({ name: "home" })}
+      />
+    );
+  }
+
   if (view.name === "party") {
     const party = parties.find((p) => p.id === view.id);
     if (party) {
@@ -165,6 +177,7 @@ export default function App() {
       onCreateTab={createTab}
       onRenameTab={renameTab}
       onDeleteTab={deleteTab}
+      onOpenKasa={() => go({ name: "kasa" })}
     />
   );
 }

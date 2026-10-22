@@ -1364,6 +1364,40 @@ button {
   }
 }
 
+.row-chevron {
+  margin-left: 8px;
+  color: var(--muted);
+}
+
+/* İşlemin hangi hesaba (nakit / banka) işlendiğini gösteren küçük etiket */
+.tx-account {
+  padding: 1px 7px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--muted);
+  font-size: 0.65rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.tx-info .tx-sub {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+/* Nakit / banka seçimi: iki büyük düğme */
+.action-btn.account-btn {
+  flex-direction: column;
+  gap: 8px;
+  padding: 18px 8px;
+  font-weight: 600;
+}
+
+.action-btn.account-btn svg {
+  width: 28px;
+  height: 28px;
+}
+
 /* ---------- Dönem ekranı: ortalı yazılar ve ayrı duran özel seçim ---------- */
 
 .action-sheet.is-centered .sheet-title,

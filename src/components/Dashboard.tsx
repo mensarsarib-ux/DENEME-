@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
-  accounts,
   balanceOf,
+  cashTotal,
   type Customer,
   type Transaction,
 } from "../data/mock";
@@ -58,6 +58,7 @@ export default function Dashboard({
   onCreateTab,
   onRenameTab,
   onDeleteTab,
+  onOpenKasa,
 }: {
   /** Etkin sekmedeki kayıtlar (müşteriler, tedarikçiler veya özel sekme) */
   members: Customer[];
@@ -75,6 +76,8 @@ export default function Dashboard({
   onCreateTab: (name: string) => void;
   onRenameTab: (id: string, name: string) => void;
   onDeleteTab: (id: string) => void;
+  /** Kasa satırına dokununca nakit ve banka sayfası açılır */
+  onOpenKasa: () => void;
 }) {
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -227,14 +230,21 @@ export default function Dashboard({
 
         {!searchOpen && (
           <ul className="list">
-            {accounts.map((a) => (
-              <li key={a.id}>
-                <button className="row row-big">
-                  <span className="row-name">{a.name}</span>
-                  <span className="row-amount">{money.format(a.balance)}</span>
-                </button>
-              </li>
-            ))}
+            <li>
+              <button
+                className="row row-big"
+                aria-label="Kasa: nakit ve banka"
+                onClick={onOpenKasa}
+              >
+                <span className="row-name">Kasa</span>
+                <span className="row-amount">
+                  {money.format(cashTotal(transactions))}
+                  <span className="row-chevron" aria-hidden="true">
+                    ›
+                  </span>
+                </span>
+              </button>
+            </li>
           </ul>
         )}
 
