@@ -333,7 +333,6 @@ export default function App() {
             onRead={(id) => setReadIds((prev) => (prev.includes(id) ? prev : [...prev, id]))}
             onReadAll={() => setReadIds(notifications.map((n) => n.id))}
             onOpenParty={openParty}
-            onOpenSettings={() => go({ name: "menu", page: "settings" })}
             onBack={toHome}
           />
         );

@@ -2,7 +2,6 @@ import { useState } from "react";
 import type { Settings } from "../data/mock";
 import { CURRENCIES, currencyOf } from "../lib/currencies";
 import { LANGUAGES, t } from "../lib/i18n";
-import { currencySymbol } from "../lib/format";
 import { haptic } from "../lib/haptics";
 import { MENU_ITEMS } from "../lib/menu";
 import PageHeader from "./PageHeader";
@@ -40,35 +39,7 @@ function Switch({
   );
 }
 
-function Limit({
-  id,
-  label,
-  value,
-  disabled,
-  onChange,
-}: {
-  id: string;
-  label: string;
-  value: number;
-  disabled: boolean;
-  onChange: (value: number) => void;
-}) {
-  return (
-    <div className="field limit-field">
-      <label htmlFor={id}>{label}</label>
-      <input
-        id={id}
-        inputMode="numeric"
-        autoComplete="off"
-        disabled={disabled}
-        value={value ? String(value) : ""}
-        onChange={(e) => onChange(Number(e.target.value.replace(/\D/g, "")) || 0)}
-      />
-    </div>
-  );
-}
-
-/** Ayarlar: titreşim, bildirim limitleri, destek e-postası, yedekleme ve sıfırlama */
+/** Ayarlar: titreşim, destek e-postası, yedekleme ve sıfırlama */
 export default function SettingsPage({
   settings,
   backupText,
@@ -169,16 +140,6 @@ export default function SettingsPage({
             <span className="drawer-chevron" aria-hidden="true">›</span>
           </button>
           <p className="field-hint">{t("Yalnızca gösterilen simge değişir; mevcut tutarlar başka bir para birimine çevrilmez.")}</p>
-        </section>
-
-        <section className="card" aria-label={t("Bildirimler")}>
-          <h2 className="card-title">{t("Bildirim limitleri")}</h2>
-          <Switch label={t("Yüksek alacak")} hint={t("Bir kişinin alacağı limiti aşınca")} checked={settings.notifyReceivable} onChange={(v) => set("notifyReceivable", v)} />
-          <Limit id="lim-rec" label={`${t("Alacak limiti")} (${currencySymbol()})`} value={settings.receivableLimit} disabled={!settings.notifyReceivable} onChange={(v) => set("receivableLimit", v)} />
-          <Switch label={t("Yüksek borç")} hint={t("Bir kişiye borcunuz limiti aşınca")} checked={settings.notifyPayable} onChange={(v) => set("notifyPayable", v)} />
-          <Limit id="lim-pay" label={`${t("Borç limiti")} (${currencySymbol()})`} value={settings.payableLimit} disabled={!settings.notifyPayable} onChange={(v) => set("payableLimit", v)} />
-          <Switch label={t("Düşük kasa")} hint={t("Nakit ve banka toplamı limitin altına inince")} checked={settings.notifyLowCash} onChange={(v) => set("notifyLowCash", v)} />
-          <Limit id="lim-cash" label={`${t("Kasa limiti")} (${currencySymbol()})`} value={settings.lowCashLimit} disabled={!settings.notifyLowCash} onChange={(v) => set("lowCashLimit", v)} />
         </section>
 
         <section className="card" aria-label={t("Destek")}>

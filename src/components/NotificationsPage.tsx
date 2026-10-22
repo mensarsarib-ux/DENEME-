@@ -8,14 +8,11 @@ import { Svg } from "./Icon";
 const ICON = MENU_ITEMS[5].icon;
 
 const KIND_ICON: Record<AppNotification["kind"], string> = {
-  receivable: "M12 3v14M6 11l6 6 6-6M5 21h14",
-  payable: "M12 21V7M6 13l6-6 6 6M5 3h14",
-  cash: "M3 7h18v10H3zM12 9.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5z",
   activity: "M4 12h4l3-8 4 16 3-8h2",
 };
 
 /**
- * Bildirimler: verilerinizden üretilir (düşük kasa, yüksek alacak/borç, bugünkü işlemler).
+ * Bildirimler: verilerinizden üretilir (şimdilik bugünkü işlemlerin özeti).
  * Okunmamışlar vurgulanır; dokununca okundu olur ve ilgili kişi varsa hesabı açılır.
  */
 export default function NotificationsPage({
@@ -24,7 +21,6 @@ export default function NotificationsPage({
   onRead,
   onReadAll,
   onOpenParty,
-  onOpenSettings,
   onBack,
 }: {
   notifications: AppNotification[];
@@ -32,7 +28,6 @@ export default function NotificationsPage({
   onRead: (id: string) => void;
   onReadAll: () => void;
   onOpenParty: (id: string) => void;
-  onOpenSettings: () => void;
   onBack: () => void;
 }) {
   const unread = notifications.filter((n) => !readIds.includes(n.id)).length;
@@ -62,9 +57,6 @@ export default function NotificationsPage({
       {notifications.length === 0 ? (
         <div className="search-empty">
           <p>{t("Şu an bildirim yok.")}</p>
-          <button type="button" className="help-link" onClick={onOpenSettings}>
-            {t("Bildirim limitlerini düzenle")}
-          </button>
         </div>
       ) : (
         <ul className="list">
@@ -96,9 +88,6 @@ export default function NotificationsPage({
         </ul>
       )}
 
-      <button type="button" className="help-link notif-settings" onClick={onOpenSettings}>
-        {t("Bildirim limitlerini düzenle")}
-      </button>
     </div>
   );
 }
