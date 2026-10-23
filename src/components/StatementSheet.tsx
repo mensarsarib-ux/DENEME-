@@ -18,11 +18,25 @@ export default function StatementSheet({
   const [url, setUrl] = useState<string | null>(null);
   const [failed, setFailed] = useState(false);
   const [note, setNote] = useState<string | null>(null);
+  // Dönem seçimi: önce seçilir, sonra PDF üretilir
+  const [mode, setMode] = useState<"all" | "from" | "between">("all");
+  const [from, setFrom] = useState("");
+  const [to, setTo] = useState("");
+  const [range, setRange] = useState<{ from?: string; to?: string } | null>(null);
+
+  const canBuild =
+    mode === "all" ||
+    (mode === "from" && from !== "") ||
+    (mode === "between" && from !== "" && to !== "" && from <= to);
 
   useEffect(() => {
+    if (!range) return;
     let revoke: string | null = null;
     let cancelled = false;
-    createStatementPdf(input)
+    setPdf(null);
+    setUrl(null);
+    setFailed(false);
+    createStatementPdf({ ...input, range })
       .then((result) => {
         if (cancelled) return;
         revoke = URL.createObjectURL(result.blob);
@@ -35,9 +49,20 @@ export default function StatementSheet({
       cancelled = true;
       if (revoke) URL.revokeObjectURL(revoke);
     };
-    // Ekstre, sayfa açıldığı andaki veriyle bir kez üretilir
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [range]);
+
+  function build() {
+    haptic("light");
+    setNote(null);
+    setRange(
+      mode === "all"
+        ? {}
+        : mode === "from"
+          ? { from }
+          : { from, to },
+    );
+  }
 
   const file = pdf ? new File([pdf.blob], pdf.filename, { type: "application/pdf" }) : null;
   const canShareFile = !!file && typeof navigator.canShare === "function" && navigator.canShare({ files: [file] });
@@ -87,7 +112,48 @@ export default function StatementSheet({
         <h2 className="sheet-title">{t("Cari hesap ekstresi")}</h2>
         <p className="sheet-note">{input.party.name}</p>
 
-        {!pdf && !failed && <p className="sheet-note">{t("PDF hazırlanıyor…")}</p>}
+        {!range && (
+          <>
+            <div className="kasa-options">
+              {(
+                [
+                  ["all", t("Tüm hareketler")],
+                  ["from", t("Belirli bir tarihten itibaren")],
+                  ["between", t("Tarih aralığı")],
+                ] as const
+              ).map(([value, label]) => (
+                <button
+                  key={value}
+                  type="button"
+                  className={`action-btn ${mode === value ? "is-active" : ""}`}
+                  aria-pressed={mode === value}
+                  onClick={() => setMode(value)}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+            {mode !== "all" && (
+              <div className="kasa-range">
+                <label>
+                  {mode === "from" ? t("Başlangıç tarihi") : t("Başlangıç")}
+                  <input type="date" value={from} max={to || undefined} onChange={(e) => setFrom(e.target.value)} />
+                </label>
+                {mode === "between" && (
+                  <label>
+                    {t("Bitiş")}
+                    <input type="date" value={to} min={from || undefined} onChange={(e) => setTo(e.target.value)} />
+                  </label>
+                )}
+              </div>
+            )}
+            <button className="primary-btn" type="button" disabled={!canBuild} onClick={build}>
+              {t("PDF'i oluştur")}
+            </button>
+          </>
+        )}
+
+        {range && !pdf && !failed && <p className="sheet-note">{t("PDF hazırlanıyor…")}</p>}
         {failed && <p className="form-error" role="alert">{t("PDF oluşturulamadı.")}</p>}
 
         {pdf && (
@@ -101,6 +167,9 @@ export default function StatementSheet({
               {t("Paylaş / Kaydet")}
             </button>
             <button className="action-btn" type="button" onClick={open}>{t("PDF'i aç")}</button>
+            <button className="action-btn" type="button" onClick={() => { setRange(null); setPdf(null); setUrl(null); }}>
+              {t("Dönemi değiştir")}
+            </button>
             {note && <p className="field-hint" role="status">{note}</p>}
           </>
         )}

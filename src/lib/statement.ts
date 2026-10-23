@@ -19,6 +19,8 @@ export interface StatementInput {
   profile: Profile;
   accounts: Account[];
   transactions: Transaction[];
+  /** Dönem: YYYY-MM-DD biçiminde; ikisi de boşsa tüm hareketler */
+  range?: { from?: string; to?: string };
 }
 
 export interface StatementRow {
@@ -29,6 +31,8 @@ export interface StatementRow {
   debit: number | null;
   credit: number | null;
   balance: number;
+  /** Seçilen dönemden önceki bakiyeyi taşıyan satır (tutar yazılmaz) */
+  carry?: boolean;
 }
 
 export interface StatementData {
@@ -36,6 +40,8 @@ export interface StatementData {
   totalDebit: number;
   totalCredit: number;
   balance: number;
+  /** Dönem açıklaması: "Tüm hareketler" ya da tarih aralığı */
+  period: string;
 }
 
 const two = (n: number) => String(n).padStart(2, "0");
@@ -51,16 +57,36 @@ const plain = (value: number) =>
   new Intl.NumberFormat(locale(), { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value);
 
 /** Hareketleri tarih sırasıyla, yürüyen bakiyeyle hesaplar. Borç: satış ve ödeme (+), alacak: tahsilat ve alış (−). */
-export function buildStatement({ party, accounts, transactions }: StatementInput): StatementData {
-  let balance = 0;
+const dayText = (day: string) => day.split("-").reverse().join(".");
+
+export function buildStatement({ party, accounts, transactions, range }: StatementInput): StatementData {
+  const from = range?.from ? new Date(`${range.from}T00:00`).getTime() : null;
+  const to = range?.to ? new Date(`${range.to}T00:00`).getTime() + 86_400_000 : null;
+  const all = transactionsOf(transactions, party.id);
+
+  // Dönemden önceki bakiye: dönem başında taşınır
+  let carried = 0;
+  if (from !== null) {
+    for (const tx of all) if (new Date(tx.date).getTime() < from) carried += signOf(tx.type) * tx.amount;
+  }
+  const inRange = all.filter((tx) => {
+    const d = new Date(tx.date).getTime();
+    return (from === null || d >= from) && (to === null || d < to);
+  });
+
+  let balance = carried;
   let totalDebit = 0;
   let totalCredit = 0;
-  const rows = transactionsOf(transactions, party.id).map((tx) => {
+  const rows: StatementRow[] = [];
+  if (from !== null && (carried !== 0 || all.some((tx) => new Date(tx.date).getTime() < from))) {
+    rows.push({ date: "", type: t("Devreden bakiye"), account: "", description: "", debit: null, credit: null, balance, carry: true });
+  }
+  for (const tx of inRange) {
     const sign = signOf(tx.type);
     balance += sign * tx.amount;
     if (sign > 0) totalDebit += tx.amount;
     else totalCredit += tx.amount;
-    return {
+    rows.push({
       date: dateText(tx.date),
       type: t(tx.type),
       account: tx.account ? t(accounts.find((a) => a.id === tx.account)?.name ?? "") : "",
@@ -68,9 +94,19 @@ export function buildStatement({ party, accounts, transactions }: StatementInput
       debit: sign > 0 ? tx.amount : null,
       credit: sign < 0 ? tx.amount : null,
       balance,
-    };
-  });
-  return { rows, totalDebit, totalCredit, balance };
+    });
+  }
+
+  const period =
+    from === null && to === null
+      ? t("Tüm hareketler")
+      : from !== null && to === null
+        ? t("{date} tarihinden itibaren", { date: dayText(range!.from!) })
+        : from === null && to !== null
+          ? t("{date} tarihine kadar", { date: dayText(range!.to!) })
+          : `${dayText(range!.from!)} – ${dayText(range!.to!)}`;
+
+  return { rows, totalDebit, totalCredit, balance, period };
 }
 
 /** "Alacağınız: ₺1.000,00" / "Borcunuz: ₺500,00" */
@@ -87,7 +123,7 @@ export function statementText(input: StatementInput): string {
     `${t("Cari hesap ekstresi")} — ${input.party.name}`,
     input.profile.name,
     "",
-    ...data.rows.slice(-25).map((r) => {
+    ...data.rows.filter((r) => !r.carry).slice(-25).map((r) => {
       const amount = r.debit ?? r.credit ?? 0;
       const sign = r.credit !== null ? "-" : "";
       return `${r.date} · ${r.type}${r.description ? ` · ${r.description}` : ""} · ${sign}${money.format(amount)}`;
@@ -192,6 +228,7 @@ export async function renderStatement(input: StatementInput): Promise<HTMLCanvas
 
   // Kişi adı
   text(party.name.toLocaleUpperCase(locale()), M + 4, y + 28, 30, INK, "600");
+  text(data.period, W - M - 4, y + 28, 19, MUTED, "400", "right");
   y += 52;
 
   tableHeader();
@@ -212,10 +249,10 @@ export async function renderStatement(input: StatementInput): Promise<HTMLCanvas
     const base = y + 32;
     const amount = r.debit ?? r.credit ?? 0;
     text(r.date, col.date, base, 19);
-    text(r.type, col.type, base, 19);
+    text(r.type, col.type, base, 19, INK, r.carry ? "600" : "400");
     if (r.account) text(r.account, col.type, base + 22, 15, MUTED);
     desc.forEach((line, i) => text(line, col.desc, base + i * 24, 19));
-    text(`${r.credit !== null ? "-" : ""}${plain(amount)}`, miktarR, base, 19, INK, "400", "right");
+    if (!r.carry) text(`${r.credit !== null ? "-" : ""}${plain(amount)}`, miktarR, base, 19, INK, "400", "right");
     text(plain(r.balance), toplamR, base, 19, r.balance < 0 ? "#c0392b" : INK, "400", "right");
     y += rowH;
     rule(y, 1, LINE);
@@ -230,7 +267,7 @@ export async function renderStatement(input: StatementInput): Promise<HTMLCanvas
   y += 5;
   const baseT = y + 44;
   text(`${t("TOPLAM")} ${currencyCode()}`, col.date, baseT, 19, INK, "600");
-  text(`${plain(data.totalDebit)}  ${data.totalCredit ? "-" : ""}${plain(data.totalCredit)}`, miktarR, baseT, 19, INK, "600", "right");
+  text(`${plain(data.totalDebit)}${data.totalCredit ? `  -${plain(data.totalCredit)}` : ""}`, miktarR, baseT, 19, INK, "600", "right");
   text(plain(data.balance), toplamR, baseT + 1, 25, data.balance < 0 ? "#c0392b" : INK, "600", "right");
   y += 60;
   // Sayfa numarası yalnızca birden fazla sayfa varsa
