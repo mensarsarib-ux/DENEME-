@@ -102,8 +102,9 @@ button {
 .app {
   max-width: 480px;
   height: 100vh;
-  height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+  height: calc(100dvh - env(safe-area-inset-top, 0px));
   overflow: hidden;
+  overscroll-behavior: none;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -557,8 +558,15 @@ button {
   position: relative;
   z-index: 2;
   background: var(--surface);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
   border-radius: 24px 24px 0 0;
   box-shadow: 0 -6px 24px rgba(0, 0, 0, 0.3);
+}
+
+/* Sayfa esnemesi (iOS) tüm ekranı kaydırmasın */
+html,
+body {
+  overscroll-behavior: none;
 }
 
 /* Son satır alttaki solmanın üstünde biter */

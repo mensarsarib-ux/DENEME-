@@ -102,6 +102,16 @@ export default function Dashboard({
    * grafiğin üzerini kapatır. Üst çubuk bu alanın dışındadır ve yerinde kalır.
    */
   const scrollRef = useRef<HTMLDivElement>(null);
+  // Liste yukarı çıktıkça arkadaki özet (grafik) hafifçe bulanıklaşır ve kararır
+  const summaryRef = useRef<HTMLElement>(null);
+  const onScrollSummary = () => {
+    const el = scrollRef.current;
+    const summary = summaryRef.current;
+    if (!el || !summary) return;
+    const p = Math.min(1, Math.max(0, el.scrollTop / 180));
+    summary.style.opacity = String(1 - p * 0.6);
+    summary.style.filter = p > 0 ? `blur(${(p * 4).toFixed(2)}px)` : "";
+  };
   // Alt bölüm en az kayan alanın yüksekliği kadar olur; böylece grafiği tamamen kapatacak kadar kayabilir
   const [sheetMin, setSheetMin] = useState(0);
 
@@ -232,11 +242,11 @@ export default function Dashboard({
       )}
 
       <div className="scroll-wrap">
-        <div className="scroll" ref={scrollRef}>
+        <div className="scroll" ref={scrollRef} onScroll={onScrollSummary}>
           {/* Özet bölümü: gelir ve gider grafiği (basılı tutunca dönem seçilir). Yukarıda sabit
               durur, alt bölüm kayarak üzerini kapatır. */}
           {!searchOpen && (
-            <section className="summary">
+            <section className="summary" ref={summaryRef}>
               <FlowChart transactions={transactions} />
             </section>
           )}
