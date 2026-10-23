@@ -307,7 +307,9 @@ button {
 /* ---------- Özet ve grafik ---------- */
 
 .summary {
-  flex: none;
+  position: sticky;
+  top: 0;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -525,19 +527,24 @@ button {
   position: relative;
   flex: 1 1 0;
   min-height: 0;
-  display: flex;
-  flex-direction: column;
 }
 
+.scroll {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.scroll::-webkit-scrollbar {
+  display: none;
+}
 
 .sheet {
   position: relative;
   z-index: 2;
-  flex: 1 1 0;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
   background: var(--surface);
   padding-bottom: env(safe-area-inset-bottom, 0px);
   border-radius: 24px 24px 0 0;
@@ -552,18 +559,11 @@ body {
 }
 
 /* Son satır alttaki solmanın üstünde biter */
-/* Yalnızca isim listesi kayar (tekerlek gibi); sekmeler sabit kalır */
-.party-list {
-  flex: 1 1 0;
-  min-height: 0;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-}
-
-.party-list::-webkit-scrollbar {
-  display: none;
+/* Kasa satırı üstte sabit; kaydırma alanı bunun altında başlar */
+.kasa-pin {
+  flex: none;
+  padding: 0 16px;
+  background: transparent;
 }
 
 /* Listenin bittiği yer çizgiyle belli olur; altı boş kalır */
