@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { currentDeviceId, listDevices, type DeviceInfo, type Session } from "../lib/cloud";
 import type { Settings } from "../data/mock";
-import { locale } from "../lib/i18n";
+import { locale, t } from "../lib/i18n";
 import { CURRENCIES, currencyOf } from "../lib/currencies";
-import { LANGUAGES, t } from "../lib/i18n";
 import { haptic } from "../lib/haptics";
 import { MENU_ITEMS } from "../lib/menu";
 import type { SyncStatus } from "../lib/useCloudSync";
@@ -197,26 +196,28 @@ export default function SettingsPage({
           />
         </section>
 
-        <section className="card" aria-label={t("Dil")}>
-          <h2 className="card-title">{t("Dil")}</h2>
-          <div className="currency-list" role="radiogroup" aria-label={t("Dil")}>
-            {LANGUAGES.map((l) => (
+        <section className="card" aria-label={t("Yazı boyutu")}>
+          <h2 className="card-title">{t("Yazı boyutu")}</h2>
+          <div className="kasa-options" role="radiogroup" aria-label={t("Yazı boyutu")}>
+            {(
+              [
+                ["small", t("Küçük")],
+                ["medium", t("Orta")],
+                ["large", t("Büyük")],
+              ] as const
+            ).map(([value, label]) => (
               <button
-                key={l.code}
+                key={value}
                 type="button"
                 role="radio"
-                aria-checked={l.code === settings.language}
-                className={`currency-option ${l.code === settings.language ? "is-active" : ""}`}
+                aria-checked={settings.textSize === value}
+                className={`action-btn ${settings.textSize === value ? "is-active" : ""}`}
                 onClick={() => {
-                  haptic("success");
-                  set("language", l.code);
+                  haptic("light");
+                  set("textSize", value);
                 }}
               >
-                <span className="currency-badge" aria-hidden="true">{l.flag}</span>
-                <span className="setting-text">
-                  <strong>{l.native}</strong>
-                </span>
-                {l.code === settings.language && <span className="currency-check" aria-hidden="true">✓</span>}
+                {label}
               </button>
             ))}
           </div>

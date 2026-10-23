@@ -302,7 +302,8 @@ export interface Settings {
   /** ISO para birimi kodu (TRY, USD, EUR…) */
   currency: string;
   /** Arayüz dili: "tr" veya "en" */
-  language: "tr" | "en";
+  /** Yazı boyutu: küçük, orta, büyük */
+  textSize: "small" | "medium" | "large";
   notifyReceivable: boolean;
   /** Bir kişinin alacağı bu tutarı geçince bildirim üretilir */
   receivableLimit: number;
@@ -319,7 +320,7 @@ export interface Settings {
 export const DEFAULT_SETTINGS: Settings = {
   currency: "TRY",
   /** Arayüz dili */
-  language: "tr",
+  textSize: "medium",
   haptics: true,
   notifyReceivable: true,
   receivableLimit: 100000,

@@ -83,7 +83,10 @@ export default function App() {
   const settings = { ...DEFAULT_SETTINGS, ...storedSettings };
   // Alt bileşenler çizilmeden önce para birimi biçimi güncellenir
   setCurrency(settings.currency);
-  setLanguage(settings.language);
+  // Uygulama yalnızca Türkçe
+  setLanguage("tr");
+  // Yazı boyutu kök yazı boyutunu değiştirir; tüm metinler rem ile ölçeklenir
+  document.documentElement.style.fontSize = { small: "14px", medium: "16px", large: "18px" }[settings.textSize] ?? "16px";
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   // Hesap ve bulut eşitleme: Supabase tanımlıysa giriş gerekir; değilse uygulama yalnızca bu cihazda çalışır
@@ -195,7 +198,7 @@ export default function App() {
   const notifications = useMemo(
     () => buildNotifications(parties, transactions, accounts, settings, new Date()),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [parties, transactions, accounts, settings, today, settings.language],
+    [parties, transactions, accounts, settings, today],
   );
   const unread = notifications.filter((n) => !readIds.includes(n.id)).length;
 
