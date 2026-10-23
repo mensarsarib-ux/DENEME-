@@ -529,18 +529,6 @@ button {
   min-height: 0;
 }
 
-/* Alt kenarda daha fazla kayıt olduğunu gösteren hafif solma */
-.scroll-wrap::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 28px;
-  pointer-events: none;
-  background: linear-gradient(to bottom, transparent, var(--surface));
-}
-
 .scroll {
   position: absolute;
   inset: 0;
