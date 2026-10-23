@@ -36,7 +36,7 @@ import type { MenuPage } from "./lib/menu";
 import { buildNotifications } from "./lib/notifications";
 import { useSwipeBack } from "./lib/useSwipeBack";
 import { money, setCurrency } from "./lib/format";
-import { setLanguage, t } from "./lib/i18n";
+import { t } from "./lib/i18n";
 import AuthScreen from "./components/AuthScreen";
 import { cloudEnabled, heartbeat, loadSession, readRecoveryToken, signOut, type Session } from "./lib/cloud";
 import { useCloudSync } from "./lib/useCloudSync";
@@ -83,8 +83,6 @@ export default function App() {
   const settings = { ...DEFAULT_SETTINGS, ...storedSettings };
   // Alt bileşenler çizilmeden önce para birimi biçimi güncellenir
   setCurrency(settings.currency);
-  // Uygulama yalnızca Türkçe
-  setLanguage("tr");
   // Yazı boyutu kök yazı boyutunu değiştirir; tüm metinler rem ile ölçeklenir
   document.documentElement.style.fontSize = { small: "13px", medium: "16px", large: "20px" }[settings.textSize] ?? "16px";
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -436,18 +434,6 @@ export default function App() {
               setParties((prev) => prev.map((p) => (p.id === id ? { ...p, ...patch } : p)))
             }
             onOpenParty={openParty}
-            onImport={(people) =>
-              setParties((prev) => [
-                ...prev,
-                ...people.map((c, i) => ({
-                  id: `c${Date.now()}${i}`,
-                  name: c.name,
-                  kind: "customer" as const,
-                  phone: c.phone,
-                  email: c.email,
-                })),
-              ])
-            }
             onNewParty={(kind) => {
               setActiveTab(kind);
               go({ name: "new", kind });

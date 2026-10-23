@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { TX_TYPES, needsAccount, type Account, type AccountId, type Customer, type Transaction, type TxType } from "../data/mock";
 import { ACCENT } from "../lib/accents";
 import { haptic } from "../lib/haptics";
-import { getLanguage, t } from "../lib/i18n";
+import { t } from "../lib/i18n";
 import { currencySymbol } from "../lib/format";
 import { parseVoice, resolveIntent } from "../lib/voice";
 import { parseAmount } from "../lib/amount";
@@ -83,7 +83,7 @@ export default function VoiceAssistant({
       setSheet({ text: "", notice: t("Bu tarayıcıda ses tanıma yok. Komutu yazabilir ya da klavyedeki mikrofonla söyleyebilirsiniz.") });
       return;
     }
-    rec.lang = getLanguage() === "en" ? "en-US" : "tr-TR";
+    rec.lang = "tr-TR";
     rec.continuous = true;
     rec.interimResults = true;
     rec.onresult = (e) => {

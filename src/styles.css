@@ -2442,10 +2442,6 @@ a.action-btn {
 .sync-loading { min-height: 100dvh; display: grid; place-items: center; color: var(--muted); background: var(--bg-bottom); }
 .account-email { margin: 0; font-weight: 600; word-break: break-all; }
 
-.header-actions { display: flex; gap: 6px; }
-.contacts-import { padding: 0 16px 8px; }
-.contacts-import .action-btn { width: 100%; justify-content: center; }
-.header-actions .header-add { padding: 8px 10px; font-size: 0.78rem; white-space: nowrap; }
 .cust-name strong { white-space: nowrap; }
 
 /* Bağlı cihazlar */

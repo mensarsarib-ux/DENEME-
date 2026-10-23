@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { contactPicker, inviteFriends } from "../lib/invite";
 import type { Customer, Group, PartyKind } from "../data/mock";
 import { haptic } from "../lib/haptics";
 import { t } from "../lib/i18n";
@@ -18,12 +17,9 @@ export default function ContactsPage({
   onUpdateParty,
   onOpenParty,
   onNewParty,
-  onImport,
   onBack,
 }: {
   parties: Customer[];
-  /** Rehberden seçilen kişileri Kişiler listesine ekler */
-  onImport: (people: { name: string; phone?: string; email?: string }[]) => void;
   groups: Group[];
   onUpdateParty: (id: string, patch: ContactPatch) => void;
   onOpenParty: (id: string) => void;
@@ -34,32 +30,6 @@ export default function ContactsPage({
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState<Customer | null>(null);
   const [choosing, setChoosing] = useState(false);
-  const [notice, setNotice] = useState<string | null>(null);
-  const picker = contactPicker();
-
-  async function invite() {
-    haptic("light");
-    const result = await inviteFriends(t("Hesabım uygulamasını deneyin."));
-    if (result === "copied") setNotice(t("Davet metni panoya kopyalandı."));
-    if (result === "failed") setNotice(t("Paylaşım bu cihazda açılamadı."));
-  }
-
-  async function importContacts() {
-    if (!picker) return;
-    haptic("light");
-    try {
-      const picked = await picker.select(["name", "tel", "email"], { multiple: true });
-      const people = picked
-        .map((c) => ({ name: c.name?.[0]?.trim() ?? "", phone: c.tel?.[0], email: c.email?.[0] }))
-        .filter((c) => c.name !== "");
-      if (people.length === 0) return;
-      onImport(people);
-      haptic("success");
-      setNotice(t("{n} kişi eklendi.", { n: people.length }));
-    } catch {
-      setNotice(t("Rehbere erişim verilmedi."));
-    }
-  }
 
   const groupName = (kind: string) => t(groups.find((g) => g.id === kind)?.name ?? "");
   const rows = parties
@@ -75,14 +45,9 @@ export default function ContactsPage({
         icon={ICON}
         onBack={onBack}
         action={
-          <div className="header-actions">
-            <button className="header-add" type="button" aria-label={t("Davet et")} onClick={invite}>
-              {t("DAVET ET")}
-            </button>
-            <button className="header-add" type="button" aria-label={t("Yeni kişi ekle")} onClick={() => setChoosing(true)}>
-              {t("+ YENİ")}
-            </button>
-          </div>
+          <button className="header-add" type="button" aria-label={t("Yeni kişi ekle")} onClick={() => setChoosing(true)}>
+            {t("+ YENİ")}
+          </button>
         }
       />
       <div className="search-bar">
@@ -95,19 +60,6 @@ export default function ContactsPage({
           onChange={(e) => setQuery(e.target.value)}
         />
       </div>
-
-      {picker && (
-        <div className="contacts-import">
-          <button type="button" className="action-btn" onClick={importContacts}>
-            {t("Telefon rehberinden ekle")}
-          </button>
-        </div>
-      )}
-      {notice && (
-        <p className="field-hint" role="status">
-          {notice}
-        </p>
-      )}
 
       {rows.length === 0 ? (
         <div className="search-empty">

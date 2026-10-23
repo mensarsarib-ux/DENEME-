@@ -301,7 +301,6 @@ export interface Settings {
   haptics: boolean;
   /** ISO para birimi kodu (TRY, USD, EUR…) */
   currency: string;
-  /** Arayüz dili: "tr" veya "en" */
   /** Yazı boyutu: küçük, orta, büyük */
   textSize: "small" | "medium" | "large";
   notifyReceivable: boolean;
@@ -319,7 +318,6 @@ export interface Settings {
 
 export const DEFAULT_SETTINGS: Settings = {
   currency: "TRY",
-  /** Arayüz dili */
   textSize: "medium",
   haptics: true,
   notifyReceivable: true,
