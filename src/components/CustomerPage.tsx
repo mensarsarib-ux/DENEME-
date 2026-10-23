@@ -416,7 +416,7 @@ export default function CustomerPage({
       </div>
 
       {/* Alt bölüm: işlem girişi ve tuş takımı */}
-      <div ref={entryRef} className="entry-dock">
+      <div ref={entryRef} className={`entry-dock ${keypadOpen ? "is-keypad-open" : ""}`}>
         {undoTx && (
           <div className="toast" role="status">
             <span>{t("İşlem silindi")}</span>
