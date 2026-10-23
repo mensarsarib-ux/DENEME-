@@ -3,10 +3,11 @@ import { accountBalance, balanceOf, monthRange, type Account, type Customer, typ
 import { money } from "../lib/format";
 import { t } from "../lib/i18n";
 import FlowChart from "./FlowChart";
+import PieChart from "./PieChart";
 
 /**
- * Özet istatistikler: yana kaydırılabilir üç bölüm.
- * 1) Gelir ve gider grafiği  2) Alacak ve borç özeti  3) Kasa ve bu ayın tahsilat/ödemeleri
+ * Özet istatistikler: yana kaydırılabilir dört bölüm.
+ * 1) Gelir ve gider grafiği  2) Satış dağılımı (pasta)  3) Alacak ve borç  4) Kasa ve bu ayın tahsilat/ödemeleri
  */
 export default function StatsCarousel({
   parties,
@@ -51,6 +52,10 @@ export default function StatsCarousel({
       <div className="stats-track" ref={track} onScroll={onScroll}>
         <div className="stats-slide">
           <FlowChart transactions={transactions} />
+        </div>
+
+        <div className="stats-slide">
+          <PieChart parties={parties} transactions={transactions} />
         </div>
 
         <div className="stats-slide">
@@ -108,7 +113,7 @@ export default function StatsCarousel({
       </div>
 
       <div className="stats-dots" aria-hidden="true">
-        {[0, 1, 2].map((i) => (
+        {[0, 1, 2, 3].map((i) => (
           <span key={i} className={`stats-dot ${i === index ? "is-on" : ""}`} />
         ))}
       </div>

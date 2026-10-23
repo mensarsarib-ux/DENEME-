@@ -2429,3 +2429,12 @@ a.action-btn {
 .stats-dots { display: flex; justify-content: center; gap: 6px; margin-top: 8px; }
 .stats-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--line); transition: background 0.2s; }
 .stats-dot.is-on { background: var(--blue); }
+
+/* Pasta grafiği */
+.pie-body { display: flex; align-items: center; gap: 14px; margin-top: 4px; }
+.pie-svg { width: 130px; height: 130px; flex: none; }
+.pie-legend { list-style: none; margin: 0; padding: 0; flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+.pie-legend li { display: flex; align-items: center; gap: 8px; font-size: 0.88rem; }
+.pie-dot { flex: none; width: 10px; height: 10px; border-radius: 50%; }
+.pie-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pie-share { color: var(--muted); font-variant-numeric: tabular-nums; }
