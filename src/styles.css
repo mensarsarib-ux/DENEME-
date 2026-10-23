@@ -2469,3 +2469,19 @@ a.action-btn {
 .kasa-sheet { max-height: 85dvh; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
 .kasa-sheet .kasa-range { flex-direction: column; padding: 0; }
 .kasa-sheet .kasa-range input { width: 100%; box-sizing: border-box; min-width: 0; }
+
+/* Tekerlekli tarih seçici */
+.wheel-date { display: flex; flex-direction: column; gap: 8px; }
+.wheel-row { display: grid; grid-template-columns: 1fr 1.6fr 1fr; gap: 8px; }
+.wheel-group { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.wheel-label { color: var(--muted); font-size: 0.75rem; text-align: center; letter-spacing: 0.04em; }
+.wheel-wrap { position: relative; height: 200px; border-radius: 12px; background: var(--surface-head); overflow: hidden; }
+.wheel-band { position: absolute; left: 0; right: 0; top: 80px; height: 40px; pointer-events: none; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: rgba(60, 143, 217, 0.08); }
+.wheel-col { position: absolute; inset: 0; overflow-y: auto; scroll-snap-type: y mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
+.wheel-col::-webkit-scrollbar { display: none; }
+.wheel-pad { height: 80px; }
+.wheel-item { height: 40px; display: flex; align-items: center; justify-content: center; scroll-snap-align: center; color: var(--muted); font-size: 0.95rem; opacity: 0.55; transition: opacity 0.15s; text-align: center; padding: 0 4px; }
+.wheel-item.is-sel { color: var(--text); font-weight: 600; opacity: 1; }
+.wheel-shown { margin: 2px 0 0; text-align: center; font-size: 1.05rem; font-weight: 600; color: var(--blue); }
+.wheel-block { display: flex; flex-direction: column; gap: 6px; padding: 0; }
+.wheel-caption { color: var(--muted); font-size: 0.8rem; }

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { haptic } from "../lib/haptics";
 import { t } from "../lib/i18n";
 import { saveViaViewer } from "../lib/saveFile";
+import WheelDate, { todayIso } from "./WheelDate";
 import { createStatementPdf, type StatementInput, type StatementPdf } from "../lib/statement";
 
 /**
@@ -20,14 +21,14 @@ export default function StatementSheet({
   const [note, setNote] = useState<string | null>(null);
   // Dönem seçimi: önce seçilir, sonra PDF üretilir
   const [mode, setMode] = useState<"all" | "from" | "between">("all");
-  const [from, setFrom] = useState("");
-  const [to, setTo] = useState("");
+  const [from, setFrom] = useState(todayIso);
+  const [to, setTo] = useState(todayIso);
   const [range, setRange] = useState<{ from?: string; to?: string } | null>(null);
 
   const canBuild =
     mode === "all" ||
-    (mode === "from" && from !== "") ||
-    (mode === "between" && from !== "" && to !== "" && from <= to);
+    mode === "from" ||
+    (mode === "between" && from <= to);
 
   useEffect(() => {
     if (!range) return;
@@ -134,16 +135,14 @@ export default function StatementSheet({
               ))}
             </div>
             {mode !== "all" && (
-              <div className="kasa-range">
-                <label>
-                  {mode === "from" ? t("Başlangıç tarihi") : t("Başlangıç")}
-                  <input type="date" value={from} max={to || undefined} onChange={(e) => setFrom(e.target.value)} />
-                </label>
+              <div className="kasa-range wheel-block">
+                <span className="wheel-caption">{mode === "from" ? t("Başlangıç tarihi") : t("Başlangıç")}</span>
+                <WheelDate value={from} onChange={setFrom} />
                 {mode === "between" && (
-                  <label>
-                    {t("Bitiş")}
-                    <input type="date" value={to} min={from || undefined} onChange={(e) => setTo(e.target.value)} />
-                  </label>
+                  <>
+                    <span className="wheel-caption">{t("Bitiş")}</span>
+                    <WheelDate value={to} onChange={setTo} />
+                  </>
                 )}
               </div>
             )}
