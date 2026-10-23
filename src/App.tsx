@@ -512,6 +512,7 @@ export default function App() {
       accounts={accounts}
       onOpenMenu={() => setDrawerOpen(true)}
       members={membersOf(currentTab)}
+      parties={parties}
       activeTab={currentTab}
       tabs={tabs}
       transactions={transactions}

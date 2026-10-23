@@ -11,7 +11,7 @@ import { money } from "../lib/format";
 import { findMatch, type MatchRange } from "../lib/search";
 import { locale, t } from "../lib/i18n";
 import CompanyLogo from "./CompanyLogo";
-import FlowChart from "./FlowChart";
+import StatsCarousel from "./StatsCarousel";
 import Highlight from "./Highlight";
 import PartyTabs, { type TabInfo } from "./PartyTabs";
 import { Svg } from "./Icon";
@@ -57,6 +57,7 @@ export default function Dashboard({
   profile,
   accounts,
   members,
+  parties,
   activeTab,
   tabs,
   transactions,
@@ -75,6 +76,8 @@ export default function Dashboard({
   accounts: Account[];
   /** Etkin sekmedeki kayıtlar (müşteriler, tedarikçiler veya özel sekme) */
   members: Customer[];
+  /** Tüm kişiler: alacak ve borç özeti için */
+  parties: Customer[];
   activeTab: string;
   /** Müşteriler, Tedarikçiler ve kullanıcının sekmeleri */
   tabs: TabInfo[];
@@ -247,7 +250,7 @@ export default function Dashboard({
               durur, alt bölüm kayarak üzerini kapatır. */}
           {!searchOpen && (
             <section className="summary" ref={summaryRef}>
-              <FlowChart transactions={transactions} />
+              <StatsCarousel parties={parties} transactions={transactions} accounts={accounts} />
             </section>
           )}
 
