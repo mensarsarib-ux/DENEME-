@@ -69,6 +69,8 @@ export default function CustomerPage({
   const [amount, setAmount] = useState("");
   // Tuş takımı sayfa yerleştikten kısa süre sonra yumuşakça açılır; kayıttan sonra kapanmaz
   const [keypadOpen, setKeypadOpen] = useState(false);
+  // Açıklama yazılırken tuş takımı kapanır ve yazı klavyesi açılır; tarih ve açıklama görünür kalır
+  const [typing, setTyping] = useState(false);
   useEffect(() => {
     const timer = window.setTimeout(() => setKeypadOpen(true), 350);
     return () => window.clearTimeout(timer);
@@ -445,7 +447,7 @@ export default function CustomerPage({
           )}
 
           {/* Tarih ve açıklama yalnızca tuş takımı açıkken görünür; klavye kapalıyken sade kalır */}
-          {keypadOpen && (
+          {(keypadOpen || typing) && (
             <>
             <div className="entry-field">
               {dateValue ? (
@@ -484,6 +486,11 @@ export default function CustomerPage({
                 rows={2}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
+                onFocus={() => {
+                  setTyping(true);
+                  setKeypadOpen(false);
+                }}
+                onBlur={() => setTyping(false)}
               />
             </div>
             </>
