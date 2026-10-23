@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   balanceOf,
   cashTotal,
@@ -100,33 +100,8 @@ export default function Dashboard({
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
   const highlightRef = useRef<HTMLButtonElement>(null);
-  /**
-   * Kayan alan: üstteki grafik sabit durur, alt bölüm (kasa, sekmeler, liste) kayarak
-   * grafiğin üzerini kapatır. Üst çubuk bu alanın dışındadır ve yerinde kalır.
-   */
+  // Liste kapsayıcısı: arama değişince en üste döner
   const scrollRef = useRef<HTMLDivElement>(null);
-  // Liste yukarı çıktıkça arkadaki özet (grafik) hafifçe bulanıklaşır ve kararır
-  const summaryRef = useRef<HTMLElement>(null);
-  const onScrollSummary = () => {
-    const el = scrollRef.current;
-    const summary = summaryRef.current;
-    if (!el || !summary) return;
-    const p = Math.min(1, Math.max(0, el.scrollTop / 180));
-    summary.style.opacity = String(1 - p * 0.6);
-    summary.style.filter = p > 0 ? `blur(${(p * 4).toFixed(2)}px)` : "";
-  };
-  // Alt bölüm en az kayan alanın yüksekliği kadar olur; böylece grafiği tamamen kapatacak kadar kayabilir
-  const [sheetMin, setSheetMin] = useState(0);
-
-  useLayoutEffect(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-    const update = () => setSheetMin(el.clientHeight);
-    update();
-    const observer = new ResizeObserver(update);
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
 
   // Arama değişince sonuçlar en üstten başlar
   useEffect(() => {
@@ -259,21 +234,9 @@ export default function Dashboard({
         </>
       )}
 
-      <div className="scroll-wrap">
-        <div className="scroll" ref={scrollRef} onScroll={onScrollSummary}>
-          {/* Özet bölümü: gelir ve gider grafiği (basılı tutunca dönem seçilir). Yukarıda sabit
-              durur, alt bölüm kayarak üzerini kapatır. */}
-          {!searchOpen && (
-            <section className="summary" ref={summaryRef}>
-              <StatsCarousel parties={parties} transactions={transactions} accounts={accounts} />
-            </section>
-          )}
-
-          {/* Alt bölüm: kasa ve etkin sekmenin kayıtları (aramada yalnızca etkin sekmede arama yapılır) */}
-      <section className="sheet" style={{ minHeight: sheetMin || undefined }}>
-        <div className="sheet-handle" aria-hidden="true" />
-
-        {!searchOpen && (
+      {!searchOpen && (
+        <section className="summary">
+          <StatsCarousel parties={parties} transactions={transactions} accounts={accounts} />
           <ul className="list">
             <li>
               <button
@@ -291,7 +254,12 @@ export default function Dashboard({
               </button>
             </li>
           </ul>
-        )}
+        </section>
+      )}
+
+      <div className="scroll-wrap">
+        <section className="sheet">
+        <div className="sheet-handle" aria-hidden="true" />
 
         {searchOpen ? (
           <div className="group-head">
@@ -313,7 +281,7 @@ export default function Dashboard({
           />
         )}
 
-        <div className="party-list">
+        <div className="party-list" ref={scrollRef}>
         {rows.length === 0 ? (
           <div className="search-empty">
             <p>
@@ -348,8 +316,7 @@ export default function Dashboard({
           </ul>
         )}
         </div>
-      </section>
-        </div>
+        </section>
       </div>
     </div>
   );
