@@ -13,7 +13,6 @@ const INK = "#1f2933";
 const MUTED = "#6b7683";
 const LINE = "#d9dee5";
 const RULE = "#2b3440";
-const GREEN = "#2f6f55";
 
 export interface StatementInput {
   party: Customer;
@@ -101,14 +100,6 @@ export function statementText(input: StatementInput): string {
   return lines.join("\n");
 }
 
-function loadImage(src: string): Promise<HTMLImageElement | null> {
-  return new Promise((resolve) => {
-    const img = new Image();
-    img.onload = () => resolve(img);
-    img.onerror = () => resolve(null);
-    img.src = src;
-  });
-}
 
 function wrap(ctx: CanvasRenderingContext2D, text: string, width: number, maxLines: number): string[] {
   const words = text.split(/\s+/).filter(Boolean);
@@ -138,7 +129,6 @@ function wrap(ctx: CanvasRenderingContext2D, text: string, width: number, maxLin
 export async function renderStatement(input: StatementInput): Promise<HTMLCanvasElement[]> {
   const data = buildStatement(input);
   const { party, profile } = input;
-  const logo = profile.logo ? await loadImage(profile.logo) : null;
 
   const miktarR = W - M - 200;
   const toplamR = W - M - 14;
@@ -196,26 +186,8 @@ export async function renderStatement(input: StatementInput): Promise<HTMLCanvas
   ctx.roundRect(M, y, W - 2 * M, cardH, 28);
   ctx.fill();
   ctx.stroke();
-  const cx = M + 24 + 46;
-  const cy = y + cardH / 2;
-  if (logo) {
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(cx, cy, 46, 0, Math.PI * 2);
-    ctx.clip();
-    ctx.drawImage(logo, cx - 46, cy - 46, 92, 92);
-    ctx.restore();
-  } else {
-    const initials = profile.name
-      .trim()
-      .split(/\s+/)
-      .slice(0, 2)
-      .map((w) => w[0])
-      .join("")
-      .toLocaleUpperCase(locale());
-    text(initials || "H", cx, cy + 16, 46, GREEN, "700", "center");
-  }
-  text(profile.name || "Hesabım", cx + 46 + 24, cy + 14, 40, INK, "700");
+  // Yalnızca firma adı; logo ve baş harfler kullanılmaz
+  text(profile.name || "Hesabım", M + 28, y + cardH / 2 + 14, 40, INK, "700");
   y += cardH + 44;
 
   // Kişi adı
