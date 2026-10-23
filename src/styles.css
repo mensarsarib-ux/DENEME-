@@ -765,7 +765,7 @@ button {
 .cust-page {
   animation: page-in 0.28s ease-out;
   max-width: 480px;
-  min-height: 100dvh;
+  min-height: calc(100dvh - env(safe-area-inset-top, 0px));
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -2314,6 +2314,11 @@ a.action-btn {
 }
 
 /* Giriş / kayıt ekranı */
+/* Durum çubuğu alanı: içerik sayfanın üst kenarına taşmasın (viewport-fit=cover ile) */
+#root {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
 .auth-page {
   min-height: 100dvh;
   display: flex;
@@ -2343,7 +2348,7 @@ a.action-btn {
 .auth-password { position: relative; display: flex; }
 .auth-password input { flex: 1; padding-right: 84px; }
 .auth-password button { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); padding: 6px 10px; border: 0; background: transparent; color: var(--blue); font: inherit; cursor: pointer; }
-.sync-loading { min-height: 100dvh; display: grid; place-items: center; color: var(--muted); background: var(--bg-bottom); }
+.sync-loading { min-height: calc(100dvh - env(safe-area-inset-top, 0px)); display: grid; place-items: center; color: var(--muted); background: var(--bg-bottom); }
 .account-email { margin: 0; font-weight: 600; word-break: break-all; }
 
 .cust-name strong { white-space: nowrap; }
