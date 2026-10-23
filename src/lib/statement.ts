@@ -164,12 +164,12 @@ export async function renderStatement(input: StatementInput): Promise<HTMLCanvas
   };
 
   const tableHeader = () => {
-    const ty = y + 28;
+    const ty = y + 24;
     const up = (s: string) => s.toLocaleUpperCase(locale());
-    text(up(t("Tarih")), col.date, ty, 26, INK, "700");
-    text(up(t("Açıklama")), col.desc, ty, 26, INK, "700");
-    text(up(t("Miktar")), miktarR, ty, 26, INK, "700", "right");
-    text(up(t("Toplam")), toplamR, ty, 26, INK, "700", "right");
+    text(up(t("Tarih")), col.date, ty, 18, INK, "600");
+    text(up(t("Açıklama")), col.desc, ty, 18, INK, "600");
+    text(up(t("Miktar")), miktarR, ty, 18, INK, "600", "right");
+    text(up(t("Toplam")), toplamR, ty, 18, INK, "600", "right");
     y += 42;
     rule(y, 3, RULE);
     y += 4;
@@ -178,7 +178,7 @@ export async function renderStatement(input: StatementInput): Promise<HTMLCanvas
   y = M;
 
   // Üst kart: logo + firma adı
-  const cardH = 116;
+  const cardH = 96;
   ctx.fillStyle = "#f7f9f8";
   ctx.strokeStyle = "#cfd8d3";
   ctx.lineWidth = 2;
@@ -187,36 +187,36 @@ export async function renderStatement(input: StatementInput): Promise<HTMLCanvas
   ctx.fill();
   ctx.stroke();
   // Yalnızca firma adı; logo ve baş harfler kullanılmaz
-  text(profile.name || "Hesabım", M + 28, y + cardH / 2 + 14, 40, INK, "700");
-  y += cardH + 44;
+  text(profile.name || "Hesabım", M + 28, y + cardH / 2 + 11, 30, INK, "600");
+  y += cardH + 28;
 
   // Kişi adı
-  text(party.name.toLocaleUpperCase(locale()), M + 4, y + 34, 46, INK, "700");
-  y += 74;
+  text(party.name.toLocaleUpperCase(locale()), M + 4, y + 28, 30, INK, "600");
+  y += 52;
 
   tableHeader();
 
   if (data.rows.length === 0) {
-    text(t("Henüz hareket yok."), col.date, y + 56, 26, MUTED);
+    text(t("Henüz hareket yok."), col.date, y + 48, 19, MUTED);
     y += 90;
   }
 
   for (const r of data.rows) {
-    ctx.font = `400 26px ${FONT}`;
+    ctx.font = `400 19px ${FONT}`;
     const desc = wrap(ctx, r.description, descW, 2);
-    const rowH = Math.max(66, 32 + Math.max(desc.length, r.account ? 2 : 1) * 30);
+    const rowH = Math.max(50, 22 + Math.max(desc.length, r.account ? 2 : 1) * 24);
     if (y + rowH > H - M - 220) {
       newPageFn();
       tableHeader();
     }
-    const base = y + 40;
+    const base = y + 32;
     const amount = r.debit ?? r.credit ?? 0;
-    text(r.date, col.date, base, 26);
-    text(r.type, col.type, base, 26);
-    if (r.account) text(r.account, col.type, base + 28, 20, MUTED);
-    desc.forEach((line, i) => text(line, col.desc, base + i * 30, 26));
-    text(`${r.credit !== null ? "-" : ""}${plain(amount)}`, miktarR, base, 26, INK, "400", "right");
-    text(plain(r.balance), toplamR, base, 26, r.balance < 0 ? "#c0392b" : INK, "400", "right");
+    text(r.date, col.date, base, 19);
+    text(r.type, col.type, base, 19);
+    if (r.account) text(r.account, col.type, base + 22, 15, MUTED);
+    desc.forEach((line, i) => text(line, col.desc, base + i * 24, 19));
+    text(`${r.credit !== null ? "-" : ""}${plain(amount)}`, miktarR, base, 19, INK, "400", "right");
+    text(plain(r.balance), toplamR, base, 19, r.balance < 0 ? "#c0392b" : INK, "400", "right");
     y += rowH;
     rule(y, 1, LINE);
     y += 1;
@@ -228,11 +228,11 @@ export async function renderStatement(input: StatementInput): Promise<HTMLCanvas
   }
   rule(y + 2, 3, RULE);
   y += 5;
-  const baseT = y + 52;
-  text(`${t("TOPLAM")} ${currencyCode()}`, col.date, baseT, 26, INK, "700");
-  text(`${plain(data.totalDebit)}  ${data.totalCredit ? "-" : ""}${plain(data.totalCredit)}`, miktarR, baseT, 26, INK, "700", "right");
-  text(plain(data.balance), toplamR, baseT + 2, 34, data.balance < 0 ? "#c0392b" : INK, "700", "right");
-  y += 80;
+  const baseT = y + 44;
+  text(`${t("TOPLAM")} ${currencyCode()}`, col.date, baseT, 19, INK, "600");
+  text(`${plain(data.totalDebit)}  ${data.totalCredit ? "-" : ""}${plain(data.totalCredit)}`, miktarR, baseT, 19, INK, "600", "right");
+  text(plain(data.balance), toplamR, baseT + 1, 25, data.balance < 0 ? "#c0392b" : INK, "600", "right");
+  y += 60;
   // Sayfa numarası yalnızca birden fazla sayfa varsa
   if (pages.length > 1) {
     pages.forEach((p, i) => {
