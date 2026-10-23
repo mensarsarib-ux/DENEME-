@@ -36,6 +36,7 @@ export default function KasaPage({
   // Filtre ve sıralama: varsayılan en yeni işlem üstte
   const [kind, setKind] = useState<"all" | "TAHSİLAT" | "ÖDEME">("all");
   const [order, setOrder] = useState<"new" | "old">("new");
+  const [sheetOpen, setSheetOpen] = useState(false);
   // Dönem: tümü, bu hafta, bu ay, geçen ay, bu yıl ya da kendi tarih aralığı
   type Span = "all" | "week" | "month" | "lastMonth" | "year" | "custom";
   const [span, setSpan] = useState<Span>("all");
@@ -98,29 +99,8 @@ export default function KasaPage({
         </div>
       </div>
 
-      {/* Filtre ve sıralama */}
-      <div className="chip-row kasa-filter" role="group" aria-label={t("Filtre")}>
-        {(
-          [
-            ["all", t("Tüm zamanlar")],
-            ["week", t("Bu hafta")],
-            ["month", t("Bu ay")],
-            ["lastMonth", t("Geçen ay")],
-            ["year", t("Bu yıl")],
-            ["custom", t("Tarih aralığı")],
-          ] as const
-        ).map(([value, label]) => (
-          <button
-            key={value}
-            type="button"
-            className={`chip ${span === value ? "is-active" : ""}`}
-            aria-pressed={span === value}
-            onClick={() => setSpan(value)}
-          >
-            {label}
-          </button>
-        ))}
-        <span className="kasa-filter-sep" aria-hidden="true" />
+      {/* Tür filtresi (üç seçenek) ve tarih/sıralama simgesi */}
+      <div className="kasa-filter-row" role="group" aria-label={t("Filtre")}>
         {(
           [
             ["all", t("Tümü")],
@@ -131,42 +111,86 @@ export default function KasaPage({
           <button
             key={value}
             type="button"
-            className={`chip ${kind === value ? "is-active" : ""}`}
+            className={`kasa-seg ${kind === value ? "is-active" : ""}`}
             aria-pressed={kind === value}
             onClick={() => setKind(value)}
           >
             {label}
           </button>
         ))}
-        <span className="kasa-filter-sep" aria-hidden="true" />
-        {(
-          [
-            ["new", t("En yeni")],
-            ["old", t("En eski")],
-          ] as const
-        ).map(([value, label]) => (
-          <button
-            key={value}
-            type="button"
-            className={`chip ${order === value ? "is-active" : ""}`}
-            aria-pressed={order === value}
-            onClick={() => setOrder(value)}
-          >
-            {label}
-          </button>
-        ))}
+        <button
+          type="button"
+          className={`kasa-cal ${span !== "all" || order !== "new" ? "is-on" : ""}`}
+          aria-label={t("Tarih ve sıralama")}
+          aria-haspopup="dialog"
+          onClick={() => setSheetOpen(true)}
+        >
+          <Svg d="M4 5h16v15H4zM4 10h16M8 3v4M16 3v4" />
+        </button>
       </div>
 
-      {span === "custom" && (
-        <div className="kasa-range">
-          <label>
-            {t("Başlangıç")}
-            <input type="date" value={from} max={to || undefined} onChange={(e) => setFrom(e.target.value)} />
-          </label>
-          <label>
-            {t("Bitiş")}
-            <input type="date" value={to} min={from || undefined} onChange={(e) => setTo(e.target.value)} />
-          </label>
+      {sheetOpen && (
+        <div className="action-backdrop" onClick={() => setSheetOpen(false)}>
+          <div className="action-sheet kasa-sheet" role="dialog" aria-label={t("Tarih ve sıralama")} onClick={(e) => e.stopPropagation()}>
+            <div className="action-handle" aria-hidden="true" />
+            <h2 className="sheet-title">{t("Dönem")}</h2>
+            <div className="kasa-options">
+              {(
+                [
+                  ["all", t("Tüm zamanlar")],
+                  ["week", t("Bu hafta")],
+                  ["month", t("Bu ay")],
+                  ["lastMonth", t("Geçen ay")],
+                  ["year", t("Bu yıl")],
+                  ["custom", t("Tarih aralığı")],
+                ] as const
+              ).map(([value, label]) => (
+                <button
+                  key={value}
+                  type="button"
+                  className={`action-btn ${span === value ? "is-active" : ""}`}
+                  aria-pressed={span === value}
+                  onClick={() => setSpan(value)}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+            {span === "custom" && (
+              <div className="kasa-range">
+                <label>
+                  {t("Başlangıç")}
+                  <input type="date" value={from} max={to || undefined} onChange={(e) => setFrom(e.target.value)} />
+                </label>
+                <label>
+                  {t("Bitiş")}
+                  <input type="date" value={to} min={from || undefined} onChange={(e) => setTo(e.target.value)} />
+                </label>
+              </div>
+            )}
+            <h2 className="sheet-title">{t("Sıralama")}</h2>
+            <div className="kasa-options">
+              {(
+                [
+                  ["new", t("En yeni")],
+                  ["old", t("En eski")],
+                ] as const
+              ).map(([value, label]) => (
+                <button
+                  key={value}
+                  type="button"
+                  className={`action-btn ${order === value ? "is-active" : ""}`}
+                  aria-pressed={order === value}
+                  onClick={() => setOrder(value)}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+            <button className="primary-btn" type="button" onClick={() => setSheetOpen(false)}>
+              {t("Tamam")}
+            </button>
+          </div>
         </div>
       )}
 

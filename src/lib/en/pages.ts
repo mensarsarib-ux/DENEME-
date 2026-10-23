@@ -245,3 +245,7 @@ pages["Bu yıl"] = "This year";
 pages["Tarih aralığı"] = "Date range";
 pages["Başlangıç"] = "Start";
 pages["Bitiş"] = "End";
+pages["Tarih ve sıralama"] = "Date and sorting";
+pages["Dönem"] = "Period";
+pages["Sıralama"] = "Sorting";
+pages["Tamam"] = "Done";
