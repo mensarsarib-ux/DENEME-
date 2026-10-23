@@ -1,6 +1,8 @@
 import { useState } from "react";
 import {
   accountBalance,
+  monthRange,
+  periodRange,
   cashTotal,
   movementsOf,
   type Account,
@@ -34,8 +36,26 @@ export default function KasaPage({
   // Filtre ve sıralama: varsayılan en yeni işlem üstte
   const [kind, setKind] = useState<"all" | "TAHSİLAT" | "ÖDEME">("all");
   const [order, setOrder] = useState<"new" | "old">("new");
+  // Dönem: tümü, bu hafta, bu ay, geçen ay, bu yıl ya da kendi tarih aralığı
+  type Span = "all" | "week" | "month" | "lastMonth" | "year" | "custom";
+  const [span, setSpan] = useState<Span>("all");
+  const [from, setFrom] = useState("");
+  const [to, setTo] = useState("");
+  const inSpan = (iso: string): boolean => {
+    const d = new Date(iso).getTime();
+    if (span === "all") return true;
+    if (span === "custom") {
+      if (from && d < new Date(from + "T00:00").getTime()) return false;
+      if (to && d >= new Date(to + "T00:00").getTime() + 86_400_000) return false;
+      return true;
+    }
+    const [start, end] =
+      span === "week" ? periodRange("weekly") : span === "month" ? monthRange(0) : span === "lastMonth" ? monthRange(-1) : periodRange("yearly");
+    return d >= start.getTime() && d < end.getTime();
+  };
   const visible = movements
     .filter((m) => kind === "all" || m.type === kind)
+    .filter((m) => inSpan(m.date))
     .sort((a, b) => (order === "new" ? b.date.localeCompare(a.date) : a.date.localeCompare(b.date)));
   const nameOf = (id: string) => parties.find((p) => p.id === id)?.name ?? "—";
 
@@ -82,6 +102,27 @@ export default function KasaPage({
       <div className="chip-row kasa-filter" role="group" aria-label={t("Filtre")}>
         {(
           [
+            ["all", t("Tüm zamanlar")],
+            ["week", t("Bu hafta")],
+            ["month", t("Bu ay")],
+            ["lastMonth", t("Geçen ay")],
+            ["year", t("Bu yıl")],
+            ["custom", t("Tarih aralığı")],
+          ] as const
+        ).map(([value, label]) => (
+          <button
+            key={value}
+            type="button"
+            className={`chip ${span === value ? "is-active" : ""}`}
+            aria-pressed={span === value}
+            onClick={() => setSpan(value)}
+          >
+            {label}
+          </button>
+        ))}
+        <span className="kasa-filter-sep" aria-hidden="true" />
+        {(
+          [
             ["all", t("Tümü")],
             ["TAHSİLAT", t("TAHSİLAT")],
             ["ÖDEME", t("ÖDEME")],
@@ -115,6 +156,19 @@ export default function KasaPage({
           </button>
         ))}
       </div>
+
+      {span === "custom" && (
+        <div className="kasa-range">
+          <label>
+            {t("Başlangıç")}
+            <input type="date" value={from} max={to || undefined} onChange={(e) => setFrom(e.target.value)} />
+          </label>
+          <label>
+            {t("Bitiş")}
+            <input type="date" value={to} min={from || undefined} onChange={(e) => setTo(e.target.value)} />
+          </label>
+        </div>
+      )}
 
       <ul className="tx-list">
         {kind === "all" && (
