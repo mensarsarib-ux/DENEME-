@@ -4,6 +4,8 @@
  * VITE_SUPABASE_URL ve VITE_SUPABASE_ANON_KEY tanımlı değilse uygulama yalnızca bu cihazda çalışır.
  */
 
+import { t } from "./i18n";
+
 const URL_BASE = (import.meta.env.VITE_SUPABASE_URL as string | undefined)?.replace(/\/+$/, "") ?? "";
 const ANON = (import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined) ?? "";
 
@@ -228,4 +230,87 @@ export async function push(session: Session, data: Record<string, unknown>): Pro
   if (!res.ok) throw new CloudError("unknown", String(res.status));
   const rows = (await res.json()) as { updated_at: string }[];
   return rows[0]?.updated_at ?? new Date().toISOString();
+}
+
+/* ---------- Bağlı cihazlar ---------- */
+
+export interface DeviceInfo {
+  deviceId: string;
+  label: string;
+  lastSeen: string;
+}
+
+const DEVICE_KEY = "hesabim:device";
+
+/** Bu tarayıcıya özgü kimlik; ilk açılışta üretilir */
+export function currentDeviceId(): string {
+  try {
+    let id = localStorage.getItem(DEVICE_KEY);
+    if (!id) {
+      id = crypto.randomUUID();
+      localStorage.setItem(DEVICE_KEY, id);
+    }
+    return id;
+  } catch {
+    return "memory";
+  }
+}
+
+/** "iPhone · Safari", "Android · Chrome" gibi kısa bir cihaz adı */
+export function deviceLabel(): string {
+  const ua = navigator.userAgent;
+  const platform = /iPhone/.test(ua)
+    ? "iPhone"
+    : /iPad/.test(ua)
+      ? "iPad"
+      : /Android/.test(ua)
+        ? "Android"
+        : /Macintosh/.test(ua)
+          ? "Mac"
+          : /Windows/.test(ua)
+            ? "Windows"
+            : t("Bilinmeyen cihaz");
+  const browser = /Edg\//.test(ua)
+    ? "Edge"
+    : /Firefox|FxiOS/.test(ua)
+      ? "Firefox"
+      : /CriOS|Chrome/.test(ua)
+        ? "Chrome"
+        : /Safari/.test(ua)
+          ? "Safari"
+          : "";
+  return browser ? `${platform} · ${browser}` : platform;
+}
+
+/** Bu cihazın açık olduğunu sunucuya bildirir */
+export async function heartbeat(session: Session): Promise<void | "expired"> {
+  const s = await fresh(session);
+  if (!s) return "expired";
+  const res = await call("/rest/v1/user_devices?on_conflict=user_id,device_id", {
+    method: "POST",
+    token: s.accessToken,
+    headers: { Prefer: "resolution=merge-duplicates" },
+    body: JSON.stringify({
+      user_id: s.userId,
+      device_id: currentDeviceId(),
+      label: deviceLabel(),
+      last_seen: new Date().toISOString(),
+    }),
+  });
+  if (res.status === 401) return "expired";
+  if (!res.ok) throw new CloudError("unknown", String(res.status));
+}
+
+/** Hesabın tüm cihazları, en son görülen önce */
+export async function listDevices(session: Session): Promise<DeviceInfo[] | "expired"> {
+  const s = await fresh(session);
+  if (!s) return "expired";
+  const res = await call(
+    `/rest/v1/user_devices?select=device_id,label,last_seen&user_id=eq.${s.userId}&order=last_seen.desc`,
+    { token: s.accessToken },
+  );
+  if (res.status === 401) return "expired";
+  if (!res.ok) throw new CloudError("unknown", String(res.status));
+  const rows = (await res.json()) as { device_id: string; label: string; last_seen: string }[];
+  return rows.map((r) => ({ deviceId: r.device_id, label: r.label, lastSeen: r.last_seen }));
 }

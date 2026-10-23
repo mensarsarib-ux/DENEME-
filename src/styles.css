@@ -2439,3 +2439,12 @@ a.action-btn {
 .contacts-import .action-btn { width: 100%; justify-content: center; }
 .header-actions .header-add { padding: 8px 10px; font-size: 0.78rem; white-space: nowrap; }
 .cust-name strong { white-space: nowrap; }
+
+/* Bağlı cihazlar */
+.device-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.device-row { display: flex; align-items: center; gap: 12px; }
+.device-dot { flex: none; width: 10px; height: 10px; border-radius: 50%; background: var(--muted); opacity: 0.5; }
+.device-dot.is-online { background: var(--green); opacity: 1; box-shadow: 0 0 0 4px rgba(63, 191, 130, 0.2); }
+.device-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.device-text small { color: var(--muted); }
+.device-tag { margin-left: 8px; padding: 2px 8px; border-radius: 999px; background: var(--surface-head); color: var(--blue); font-size: 0.72rem; font-weight: 600; }

@@ -13,3 +13,7 @@
    ```
 
 Değişkenler tanımlı değilse uygulama giriş istemeden yalnızca o cihazda çalışır.
+
+## Bağlı cihazlar
+
+`setup.sql` çalıştırıldıktan sonra `supabase/devices.sql` dosyasının içeriğini de SQL Editor'de bir kez çalıştırın. Bu, Ayarlar'daki "Bağlı cihazlar" listesi için tabloyu oluşturur.

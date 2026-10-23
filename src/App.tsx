@@ -38,7 +38,7 @@ import { useSwipeBack } from "./lib/useSwipeBack";
 import { money, setCurrency } from "./lib/format";
 import { setLanguage, t } from "./lib/i18n";
 import AuthScreen from "./components/AuthScreen";
-import { cloudEnabled, loadSession, readRecoveryToken, signOut, type Session } from "./lib/cloud";
+import { cloudEnabled, heartbeat, loadSession, readRecoveryToken, signOut, type Session } from "./lib/cloud";
 import { useCloudSync } from "./lib/useCloudSync";
 import { clearStored, usePersistedState } from "./lib/storage";
 
@@ -106,6 +106,22 @@ export default function App() {
     readIds,
     settings: syncSettings(settings),
   };
+  // Açık cihazı sunucuya bildirir: açılışta, sonra dakikada bir ve uygulama öne gelince
+  useEffect(() => {
+    if (!session) return;
+    const beat = () => {
+      if (document.visibilityState !== "visible") return;
+      heartbeat(session).then((r) => r === "expired" && setSession(null)).catch(() => undefined);
+    };
+    beat();
+    const timer = window.setInterval(beat, 60_000);
+    document.addEventListener("visibilitychange", beat);
+    return () => {
+      window.clearInterval(timer);
+      document.removeEventListener("visibilitychange", beat);
+    };
+  }, [session]);
+
   const sync = useCloudSync({
     session,
     snapshot,
@@ -457,6 +473,7 @@ export default function App() {
               session
                 ? {
                     email: session.email,
+                    session,
                     status: sync.status,
                     lastSync: sync.lastSync,
                     onSync: sync.syncNow,

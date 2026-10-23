@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { currentDeviceId, listDevices, type DeviceInfo, type Session } from "../lib/cloud";
 import type { Settings } from "../data/mock";
 import { locale } from "../lib/i18n";
 import { CURRENCIES, currencyOf } from "../lib/currencies";
@@ -58,6 +59,7 @@ export default function SettingsPage({
   /** Giriş yapılmışsa hesap bilgisi ve eşitleme durumu; yerel kullanımda yok */
   account?: {
     email: string;
+    session: Session;
     status: SyncStatus;
     lastSync: Date | null;
     onSync: () => void;
@@ -74,6 +76,32 @@ export default function SettingsPage({
   const [restoreMsg, setRestoreMsg] = useState<{ ok: boolean; text: string } | null>(null);
   const [confirmReset, setConfirmReset] = useState(false);
   const [confirmSignOut, setConfirmSignOut] = useState(false);
+  const [devices, setDevices] = useState<DeviceInfo[] | null>(null);
+  const [devicesFailed, setDevicesFailed] = useState(false);
+  const session = account?.session;
+
+  // Bağlı cihazlar: açıkken yarım dakikada bir yenilenir
+  useEffect(() => {
+    if (!session) return;
+    let alive = true;
+    const load = () =>
+      listDevices(session)
+        .then((list) => {
+          if (!alive || list === "expired") return;
+          setDevices(list);
+          setDevicesFailed(false);
+        })
+        .catch(() => alive && setDevicesFailed(true));
+    void load();
+    const timer = window.setInterval(load, 30_000);
+    return () => {
+      alive = false;
+      window.clearInterval(timer);
+    };
+  }, [session]);
+
+  const thisDevice = currentDeviceId();
+  const nowMs = Date.now();
   const [pickingCurrency, setPickingCurrency] = useState(false);
   const current = currencyOf(settings.currency);
   const set = <K extends keyof Settings>(key: K, value: Settings[K]) =>
@@ -123,6 +151,39 @@ export default function SettingsPage({
               <button type="button" className="action-btn" onClick={account.onSync}>{t("Şimdi eşitle")}</button>
               <button type="button" className="action-btn is-danger" onClick={() => setConfirmSignOut(true)}>{t("Çıkış yap")}</button>
             </div>
+          </section>
+        )}
+
+        {account && (
+          <section className="card" aria-label={t("Bağlı cihazlar")}>
+            <h2 className="card-title">{t("Bağlı cihazlar")}</h2>
+            {devicesFailed && <p className="field-hint">{t("Cihazlar yüklenemedi.")}</p>}
+            {!devices && !devicesFailed && <p className="card-empty">{t("Yükleniyor…")}</p>}
+            {devices && (
+              <ul className="device-list">
+                {devices.map((d) => {
+                  const online = nowMs - new Date(d.lastSeen).getTime() < 3 * 60_000;
+                  return (
+                    <li key={d.deviceId} className="device-row">
+                      <span className={`device-dot ${online ? "is-online" : ""}`} aria-hidden="true" />
+                      <span className="device-text">
+                        <strong>
+                          {d.label || t("Bilinmeyen cihaz")}
+                          {d.deviceId === thisDevice && <span className="device-tag">{t("Bu cihaz")}</span>}
+                        </strong>
+                        <small>
+                          {online
+                            ? t("Şu anda açık")
+                            : t("Son görülme: {time}", {
+                                time: new Date(d.lastSeen).toLocaleString(locale(), { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }),
+                              })}
+                        </small>
+                      </span>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
           </section>
         )}
 
