@@ -576,10 +576,10 @@ body {
 }
 
 .sheet-handle {
-  align-self: center;
+  display: block;
   width: 44px;
   height: 4px;
-  margin: 8px 0 4px;
+  margin: 8px auto 4px;
   border-radius: 2px;
   background: rgba(255, 255, 255, 0.2);
 }
