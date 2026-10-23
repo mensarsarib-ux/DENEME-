@@ -5,6 +5,9 @@ import { MENU_ITEMS, SUPPORT_ICON, type MenuPage } from "../lib/menu";
 
 /** Şimdilik menüde gösterilmeyen sayfalar; kodları durur, listeden çıkarılarak tekrar açılabilir */
 const HIDDEN_PAGES: MenuPage[] = ["contacts", "reports", "notifications"];
+
+/** "Destek al" düğmesi şimdilik gizli */
+const SHOW_SUPPORT = false;
 import CompanyLogo from "./CompanyLogo";
 import { Svg } from "./Icon";
 import { t } from "../lib/i18n";
@@ -86,10 +89,13 @@ export default function MenuDrawer({
 
         <div className="drawer-spacer" />
 
-        <button type="button" className="drawer-support" onClick={() => open("support")}>
-          <Svg d={SUPPORT_ICON} />
-          {t("Destek al")}
-        </button>
+        {/* "Destek al" şimdilik gizli; sayfası ve kodu duruyor */}
+        {SHOW_SUPPORT && (
+          <button type="button" className="drawer-support" onClick={() => open("support")}>
+            <Svg d={SUPPORT_ICON} />
+            {t("Destek al")}
+          </button>
+        )}
       </aside>
     </div>
   );
