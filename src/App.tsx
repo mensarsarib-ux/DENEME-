@@ -523,7 +523,6 @@ export default function App() {
       onCreateTab={createTab}
       onRenameTab={renameTab}
       onDeleteTab={deleteTab}
-      onOpenKasa={() => go({ name: "kasa" })}
     />
     {drawerOpen && (
       <MenuDrawer

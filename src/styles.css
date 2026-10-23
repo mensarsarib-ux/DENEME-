@@ -559,13 +559,6 @@ body {
 }
 
 /* Son satır alttaki solmanın üstünde biter */
-/* Kasa satırı üstte sabit; kaydırma alanı bunun altında başlar */
-.kasa-pin {
-  flex: none;
-  padding: 0 16px;
-  background: transparent;
-}
-
 /* Listenin bittiği yer çizgiyle belli olur; altı boş kalır */
 .party-list > .list {
   border-bottom: 1px solid var(--line);

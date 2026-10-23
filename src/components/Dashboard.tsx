@@ -1,7 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
   balanceOf,
-  cashTotal,
   type Account,
   type Customer,
   type Profile,
@@ -68,7 +67,6 @@ export default function Dashboard({
   onCreateTab,
   onRenameTab,
   onDeleteTab,
-  onOpenKasa,
   onOpenMenu,
 }: {
   /** İşletme profili: üst çubukta ad olarak görünür */
@@ -92,8 +90,6 @@ export default function Dashboard({
   onCreateTab: (name: string) => void;
   onRenameTab: (id: string, name: string) => void;
   onDeleteTab: (id: string) => void;
-  /** Kasa satırına dokununca nakit ve banka sayfası açılır */
-  onOpenKasa: () => void;
   /** Sol üstteki Menü: yan menü penceresini açar */
   onOpenMenu: () => void;
 }) {
@@ -257,29 +253,6 @@ export default function Dashboard({
           </header>
 
         </>
-      )}
-
-      {/* Kasa: üstte sabit; altındaki istatistikler ve liste bunun altında kayar */}
-      {!searchOpen && (
-        <div className="kasa-pin">
-            <ul className="list">
-              <li>
-                <button
-                  className="row row-big"
-                  aria-label={t("Kasa: nakit ve banka")}
-                  onClick={onOpenKasa}
-                >
-                  <span className="row-name">{t("Kasa")}</span>
-                  <span className="row-amount">
-                    {money.format(cashTotal(transactions, accounts))}
-                    <span className="row-chevron" aria-hidden="true">
-                      ›
-                    </span>
-                  </span>
-                </button>
-              </li>
-            </ul>
-        </div>
       )}
 
       <div className="scroll-wrap">
