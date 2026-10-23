@@ -61,7 +61,6 @@ export default function ProfilePage({
     <div className="cust-page">
       <PageHeader
         title={t("İşletme profili")}
-        subtitle={t("Adınız ve iletişim bilgileriniz")}
         icon={ICON}
         onBack={onBack}
         action={
@@ -76,7 +75,6 @@ export default function ProfilePage({
           <CompanyLogo logo={draft.logo} name={draft.name} size={44} />
           <span className="company-text">
             <strong>{draft.name.trim() || t("Hesabım")}</strong>
-            <small>{draft.email.trim() || t("Şirket adınız")}</small>
           </span>
         </div>
         <p className="field-hint">{t("Üst çubukta bu şekilde görünür.")}</p>

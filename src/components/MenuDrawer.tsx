@@ -53,7 +53,6 @@ export default function MenuDrawer({
           <CompanyLogo logo={profile.logo} name={profile.name} size={44} />
           <span className="drawer-company">
             <strong>{profile.name || t("Hesabım")}</strong>
-            <small>{profile.email || t("Şirket adınız")}</small>
           </span>
           <button className="drawer-close" aria-label={t("Menüyü kapat")} onClick={onClose}>
             ×
