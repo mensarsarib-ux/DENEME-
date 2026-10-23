@@ -485,9 +485,6 @@ export default function CustomerPage({
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
               />
-              <button className="entry-icon entry-attach" type="button" aria-label={t("Görsel ekle")}>
-                <Svg d="M4 5h16v14H4zM4 16l5-5 4 4 2-2 5 5M15 9h.01" />
-              </button>
             </div>
             </>
           )}
