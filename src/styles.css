@@ -2327,7 +2327,11 @@ a.action-btn {
 /* Kök alan ekranın tamamını sabit kaplar; iOS ana ekran uygulamasında alt boşluk kalmaz */
 #root {
   position: fixed;
-  inset: 0;
+  top: 0;
+  right: 0;
+  left: 0;
+  /* iOS, viewport-fit=cover ile ana ekranda alt güvenli alanı yükseklikten düşürüyor; kök alanı o kadar uzatarak boşluğu kapatır */
+  bottom: calc(-1 * env(safe-area-inset-bottom, 0px));
   box-sizing: border-box;
 }
 
