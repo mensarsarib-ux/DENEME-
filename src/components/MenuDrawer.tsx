@@ -2,6 +2,9 @@ import { useEffect, useRef } from "react";
 import type { Profile } from "../data/mock";
 import { haptic } from "../lib/haptics";
 import { MENU_ITEMS, SUPPORT_ICON, type MenuPage } from "../lib/menu";
+
+/** Şimdilik menüde gösterilmeyen sayfalar; kodları durur, listeden çıkarılarak tekrar açılabilir */
+const HIDDEN_PAGES: MenuPage[] = ["contacts", "reports", "notifications"];
 import CompanyLogo from "./CompanyLogo";
 import { Svg } from "./Icon";
 import { t } from "../lib/i18n";
@@ -60,7 +63,7 @@ export default function MenuDrawer({
         </div>
 
         <nav className="drawer-nav" aria-label={t("Menü seçenekleri")}>
-          {MENU_ITEMS.filter((item) => item.page !== "contacts").map((item) => (
+          {MENU_ITEMS.filter((item) => !HIDDEN_PAGES.includes(item.page)).map((item) => (
             <button
               key={item.page}
               type="button"
