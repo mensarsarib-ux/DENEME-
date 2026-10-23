@@ -2485,3 +2485,9 @@ a.action-btn {
 .wheel-shown { margin: 2px 0 0; text-align: center; font-size: 1.05rem; font-weight: 600; color: var(--blue); }
 .wheel-block { display: flex; flex-direction: column; gap: 6px; padding: 0; }
 .wheel-caption { color: var(--muted); font-size: 0.8rem; }
+
+/* Yazı boyutu: yan yana üç seçenek, altında kayan vurgu */
+.size-picker { position: relative; display: grid; grid-template-columns: repeat(3, 1fr); padding: 4px; border-radius: 999px; background: var(--surface-head); touch-action: pan-y; user-select: none; -webkit-user-select: none; }
+.size-thumb { position: absolute; top: 4px; bottom: 4px; left: 4px; width: calc((100% - 8px) / 3); border-radius: 999px; background: var(--blue); transition: transform 0.28s cubic-bezier(0.22, 0.8, 0.3, 1); }
+.size-option { position: relative; z-index: 1; padding: 10px 6px; border: 0; background: transparent; color: var(--muted); font: inherit; font-weight: 600; cursor: pointer; transition: color 0.2s; }
+.size-option.is-active { color: #fff; }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { currentDeviceId, listDevices, type DeviceInfo, type Session } from "../lib/cloud";
 import type { Settings } from "../data/mock";
 import { locale, t } from "../lib/i18n";
@@ -42,6 +42,63 @@ function Switch({
 }
 
 /** Ayarlar: titreşim, destek e-postası, yedekleme ve sıfırlama */
+const SIZES = ["small", "medium", "large"] as const;
+
+/** Yazı boyutu: üç seçenek yan yana; sağa kaydırınca büyür, sola kaydırınca küçülür */
+function TextSizePicker({
+  value,
+  onChange,
+}: {
+  value: Settings["textSize"];
+  onChange: (size: Settings["textSize"]) => void;
+}) {
+  const start = useRef<number | null>(null);
+  const idx = SIZES.indexOf(value);
+  const labels = { small: t("Küçük"), medium: t("Orta"), large: t("Büyük") };
+
+  const go = (next: number) => {
+    const clamped = Math.min(SIZES.length - 1, Math.max(0, next));
+    if (clamped === idx) return;
+    haptic("light");
+    onChange(SIZES[clamped]);
+  };
+
+  return (
+    <div
+      className="size-picker"
+      role="radiogroup"
+      aria-label={t("Yazı boyutu")}
+      onPointerDown={(e) => {
+        start.current = e.clientX;
+      }}
+      onPointerUp={(e) => {
+        if (start.current === null) return;
+        const dx = e.clientX - start.current;
+        start.current = null;
+        if (Math.abs(dx) > 36) go(idx + (dx > 0 ? 1 : -1));
+      }}
+      onPointerCancel={() => {
+        start.current = null;
+      }}
+    >
+      <span className="size-thumb" style={{ transform: `translateX(${idx * 100}%)` }} aria-hidden="true" />
+      {SIZES.map((s, i) => (
+        <button
+          key={s}
+          type="button"
+          role="radio"
+          aria-checked={i === idx}
+          className={`size-option ${i === idx ? "is-active" : ""}`}
+          style={{ fontSize: s === "small" ? "0.85rem" : s === "large" ? "1.15rem" : "1rem" }}
+          onClick={() => go(i)}
+        >
+          {labels[s]}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 export default function SettingsPage({
   settings,
   backupText,
@@ -198,29 +255,8 @@ export default function SettingsPage({
 
         <section className="card" aria-label={t("Yazı boyutu")}>
           <h2 className="card-title">{t("Yazı boyutu")}</h2>
-          <div className="kasa-options" role="radiogroup" aria-label={t("Yazı boyutu")}>
-            {(
-              [
-                ["small", t("Küçük")],
-                ["medium", t("Orta")],
-                ["large", t("Büyük")],
-              ] as const
-            ).map(([value, label]) => (
-              <button
-                key={value}
-                type="button"
-                role="radio"
-                aria-checked={settings.textSize === value}
-                className={`action-btn ${settings.textSize === value ? "is-active" : ""}`}
-                onClick={() => {
-                  haptic("light");
-                  set("textSize", value);
-                }}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
+          <TextSizePicker value={settings.textSize} onChange={(v) => set("textSize", v)} />
+          <p className="field-hint">{t("Sağa veya sola kaydırın ya da bir seçeneğe dokunun.")}</p>
         </section>
 
         <section className="card" aria-label={t("Para birimi")}>

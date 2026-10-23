@@ -86,7 +86,7 @@ export default function App() {
   // Uygulama yalnızca Türkçe
   setLanguage("tr");
   // Yazı boyutu kök yazı boyutunu değiştirir; tüm metinler rem ile ölçeklenir
-  document.documentElement.style.fontSize = { small: "14px", medium: "16px", large: "18px" }[settings.textSize] ?? "16px";
+  document.documentElement.style.fontSize = { small: "13px", medium: "16px", large: "20px" }[settings.textSize] ?? "16px";
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   // Hesap ve bulut eşitleme: Supabase tanımlıysa giriş gerekir; değilse uygulama yalnızca bu cihazda çalışır
