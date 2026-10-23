@@ -410,6 +410,18 @@ export default function App() {
               setParties((prev) => prev.map((p) => (p.id === id ? { ...p, ...patch } : p)))
             }
             onOpenParty={openParty}
+            onImport={(people) =>
+              setParties((prev) => [
+                ...prev,
+                ...people.map((c, i) => ({
+                  id: `c${Date.now()}${i}`,
+                  name: c.name,
+                  kind: "customer" as const,
+                  phone: c.phone,
+                  email: c.email,
+                })),
+              ])
+            }
             onNewParty={(kind) => {
               setActiveTab(kind);
               go({ name: "new", kind });
