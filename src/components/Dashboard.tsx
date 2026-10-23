@@ -168,8 +168,23 @@ export default function Dashboard({
     setQuery("");
   }
 
+  // GEÇİCİ TANILAMA: ekran yükseklik değerleri (sorun çözülünce kaldırılacak)
+  const [sizes, setSizes] = useState("");
+  useEffect(() => {
+    const show = () =>
+      setSizes(
+        `inner ${window.innerHeight} · screen ${window.screen.height} · vv ${Math.round(window.visualViewport?.height ?? 0)}`,
+      );
+    show();
+    window.addEventListener("resize", show);
+    return () => window.removeEventListener("resize", show);
+  }, []);
+
   return (
     <div className="app">
+      <div style={{ position: "fixed", top: 0, left: 0, zIndex: 999, background: "rgba(0,0,0,0.7)", color: "#ffd54a", font: "11px/1.3 monospace", padding: "2px 4px", pointerEvents: "none" }}>
+        {sizes}
+      </div>
       {searchOpen ? (
         <header className="topbar topbar-search">
           <div className="search-field" role="search">
