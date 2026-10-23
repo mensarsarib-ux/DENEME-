@@ -120,19 +120,15 @@ export async function signUp(email: string, phone: string, password: string): Pr
   return session;
 }
 
-/** Giriş: "@" içeriyorsa e-posta, değilse telefon numarası */
-export async function signIn(identifier: string, password: string): Promise<Session> {
-  const isEmail = identifier.includes("@");
-  const credentials = isEmail
-    ? { email: identifier, password }
-    : { phone: normalizePhone(identifier) ?? identifier, password };
+/** Giriş: e-posta ve şifreyle */
+export async function signIn(email: string, password: string): Promise<Session> {
   const res = await call("/auth/v1/token?grant_type=password", {
     method: "POST",
-    body: JSON.stringify(credentials),
+    body: JSON.stringify({ email, password }),
   });
   const body = (await res.json().catch(() => ({}))) as AuthBody;
   if (!res.ok) throw authError(body);
-  const session = toSession(body, identifier);
+  const session = toSession(body, email);
   if (!session) throw new CloudError("unknown", "no session");
   saveSession(session);
   return session;
@@ -148,23 +144,6 @@ export function signOut() {
 export async function sendResetEmail(email: string): Promise<void> {
   const res = await call("/auth/v1/recover", { method: "POST", body: JSON.stringify({ email }) });
   if (!res.ok) throw authError((await res.json().catch(() => ({}))) as AuthBody);
-}
-
-/** Şifre sıfırlama: telefona SMS kodu gönderir */
-export async function sendResetSms(phone: string): Promise<void> {
-  const res = await call("/auth/v1/otp", { method: "POST", body: JSON.stringify({ phone, channel: "sms" }) });
-  if (!res.ok) throw authError((await res.json().catch(() => ({}))) as AuthBody);
-}
-
-/** SMS kodunu doğrular, geçici oturum açar ve yeni şifreyi kaydeder */
-export async function resetWithSms(phone: string, code: string, password: string): Promise<void> {
-  const res = await call("/auth/v1/verify", {
-    method: "POST",
-    body: JSON.stringify({ type: "sms", phone, token: code }),
-  });
-  const body = (await res.json().catch(() => ({}))) as AuthBody;
-  if (!res.ok || !body.access_token) throw authError(body);
-  await setPassword(body.access_token, password);
 }
 
 /** Geçerli bir oturumla şifreyi değiştirir (kurtarma bağlantısı ya da SMS doğrulaması sonrası) */

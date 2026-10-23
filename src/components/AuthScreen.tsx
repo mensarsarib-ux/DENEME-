@@ -1,24 +1,14 @@
 import { useState, type FormEvent } from "react";
-import {
-  CloudError,
-  normalizePhone,
-  resetWithSms,
-  sendResetEmail,
-  sendResetSms,
-  setPassword,
-  signIn,
-  signUp,
-  type Session,
-} from "../lib/cloud";
+import { CloudError, normalizePhone, sendResetEmail, setPassword, signIn, signUp, type Session } from "../lib/cloud";
 import { haptic } from "../lib/haptics";
 import { t } from "../lib/i18n";
 
-/** Giriş ekranının modları: giriş, kayıt, şifremi unuttum, SMS kodu, e-postadan gelen yeni şifre */
-type Mode = "login" | "register" | "forgot" | "sms" | "recovery";
+/** Giriş ekranının modları: giriş, kayıt, şifremi unuttum, e-postadan gelen yeni şifre */
+type Mode = "login" | "register" | "forgot" | "recovery";
 
 /**
- * Giriş ve kayıt ekranı. Kayıtta e-posta ve telefon zorunlu; doğrulama e-posta ile yapılır.
- * Giriş e-posta ya da telefonla yapılır. Şifre sıfırlama tercih edilen kanala (e-posta ya da SMS) gider.
+ * Giriş ve kayıt ekranı. Giriş yalnızca e-posta ve şifreyle yapılır.
+ * Şifre sıfırlama bağlantısı e-postaya gönderilir.
  */
 export default function AuthScreen({
   recoveryToken,
@@ -35,39 +25,31 @@ export default function AuthScreen({
   const [business, setBusiness] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const [identifier, setIdentifier] = useState("");
-  const [channel, setChannel] = useState<"email" | "sms">("email");
-  const [code, setCode] = useState("");
   const [password, setPassword1] = useState("");
   const [show, setShow] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
-  // Şifre sıfırlamada SMS'e gönderilen telefon
-  const [smsPhone, setSmsPhone] = useState("");
 
   const mail = email.trim();
   const validMail = /^\S+@\S+\.\S+$/.test(mail);
   const validPhone = normalizePhone(phone) !== null;
-  const validIdentifier = identifier.includes("@") ? /^\S+@\S+\.\S+$/.test(identifier.trim()) : normalizePhone(identifier) !== null;
   const strongEnough = password.length >= 6;
 
-  const canSubmit = !busy && (
-    mode === "login"
-      ? identifier.trim() !== "" && password !== ""
+  const canSubmit =
+    !busy &&
+    (mode === "login"
+      ? validMail && password !== ""
       : mode === "register"
         ? business.trim() !== "" && validMail && validPhone && strongEnough
         : mode === "forgot"
-          ? channel === "email" ? validMail : normalizePhone(phone) !== null
-          : mode === "sms"
-            ? code.trim().length >= 4 && strongEnough
-            : strongEnough
-  );
+          ? validMail
+          : strongEnough);
 
   function describe(e: unknown): string {
     const code = e instanceof CloudError ? e.code : "unknown";
     switch (code) {
-      case "invalid_credentials": return t("E-posta/telefon veya şifre hatalı.");
+      case "invalid_credentials": return t("E-posta veya şifre hatalı.");
       case "email_taken": return t("Bu e-posta ile zaten bir hesap var; giriş yapın.");
       case "weak_password": return t("Şifre en az 6 karakter olmalı.");
       case "email_not_confirmed": return t("E-postanızı doğrulayın: size gönderilen bağlantıya dokunun.");
@@ -84,36 +66,20 @@ export default function AuthScreen({
     setInfo(null);
     try {
       if (mode === "login") {
-        onSession(await signIn(identifier.trim(), password));
+        onSession(await signIn(mail, password));
       } else if (mode === "register") {
         const result = await signUp(mail, phone.trim(), password);
         if (result === "pending") {
           haptic("success");
           setMode("login");
-          setIdentifier(mail);
           setInfo(t("Hesabınız oluşturuldu. E-postanıza gelen bağlantıyla doğrulayın, sonra giriş yapın."));
         } else {
           onSession(result, { isNew: true, businessName: business.trim() });
         }
       } else if (mode === "forgot") {
-        if (channel === "email") {
-          await sendResetEmail(mail);
-          haptic("success");
-          setInfo(t("Şifre yenileme bağlantısı e-postanıza gönderildi."));
-        } else {
-          const normalized = normalizePhone(phone) ?? "";
-          await sendResetSms(normalized);
-          haptic("success");
-          setSmsPhone(normalized);
-          setMode("sms");
-          setInfo(t("Doğrulama kodu telefonunuza gönderildi."));
-        }
-      } else if (mode === "sms") {
-        await resetWithSms(smsPhone, code.trim(), password);
+        await sendResetEmail(mail);
         haptic("success");
-        setMode("login");
-        setPassword1("");
-        setInfo(t("Şifreniz yenilendi. Yeni şifrenizle giriş yapın."));
+        setInfo(t("Şifre yenileme bağlantısı e-postanıza gönderildi."));
       } else {
         // E-postadaki bağlantıdan gelindi: geçici belirteçle şifreyi değiştir
         await setPassword(recoveryToken ?? "", password);
@@ -140,8 +106,7 @@ export default function AuthScreen({
   const submitLabel = {
     login: t("GİRİŞ YAP"),
     register: t("KAYIT OL"),
-    forgot: channel === "email" ? t("BAĞLANTI GÖNDER") : t("KOD GÖNDER"),
-    sms: t("ŞİFREYİ YENİLE"),
+    forgot: t("BAĞLANTI GÖNDER"),
     recovery: t("ŞİFREYİ YENİLE"),
   }[mode];
 
@@ -149,7 +114,6 @@ export default function AuthScreen({
     login: t("Hesabınıza giriş yapın"),
     register: t("Yeni hesap oluşturun"),
     forgot: t("Şifrenizi yenileyin"),
-    sms: t("Telefonunuza gelen kodu girin"),
     recovery: t("Yeni şifrenizi belirleyin"),
   }[mode];
 
@@ -168,7 +132,23 @@ export default function AuthScreen({
           {show ? t("Gizle") : t("Göster")}
         </button>
       </div>
-      {(mode === "register" || mode === "sms" || mode === "recovery") && <p className="field-hint">{t("En az 6 karakter.")}</p>}
+      {(mode === "register" || mode === "recovery") && <p className="field-hint">{t("En az 6 karakter.")}</p>}
+    </div>
+  );
+
+  const emailField = (id: string) => (
+    <div className="field">
+      <label htmlFor={id}>{t("E-posta")}</label>
+      <input
+        id={id}
+        type="email"
+        inputMode="email"
+        autoComplete="email"
+        autoCapitalize="none"
+        autoCorrect="off"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+      />
     </div>
   );
 
@@ -194,19 +174,7 @@ export default function AuthScreen({
 
         {mode === "login" && (
           <>
-            <div className="field">
-              <label htmlFor="auth-identifier">{t("E-posta veya telefon")}</label>
-              <input
-                id="auth-identifier"
-                inputMode="email"
-                autoComplete="username"
-                autoCapitalize="none"
-                autoCorrect="off"
-                value={identifier}
-                onChange={(e) => setIdentifier(e.target.value)}
-              />
-              {identifier.trim() !== "" && !validIdentifier && <p className="field-hint">{t("Geçerli bir e-posta ya da telefon yazın.")}</p>}
-            </div>
+            {emailField("auth-email-login")}
             {passwordField}
           </>
         )}
@@ -217,10 +185,7 @@ export default function AuthScreen({
               <label htmlFor="auth-business">{t("İşletme adı")}</label>
               <input id="auth-business" autoComplete="organization" value={business} onChange={(e) => setBusiness(e.target.value)} />
             </div>
-            <div className="field">
-              <label htmlFor="auth-email">{t("E-posta")}</label>
-              <input id="auth-email" type="email" inputMode="email" autoComplete="email" autoCapitalize="none" autoCorrect="off" value={email} onChange={(e) => setEmail(e.target.value)} />
-            </div>
+            {emailField("auth-email")}
             <div className="field">
               <label htmlFor="auth-phone">{t("Telefon")}</label>
               <input id="auth-phone" type="tel" inputMode="tel" autoComplete="tel" value={phone} onChange={(e) => setPhone(e.target.value)} />
@@ -230,39 +195,7 @@ export default function AuthScreen({
           </>
         )}
 
-        {mode === "forgot" && (
-          <>
-            <div className="auth-tabs" role="radiogroup" aria-label={t("Kodu nereye gönderelim?")}>
-              <button type="button" role="radio" aria-checked={channel === "email"} className={channel === "email" ? "is-active" : ""} onClick={() => setChannel("email")}>
-                {t("E-posta")}
-              </button>
-              <button type="button" role="radio" aria-checked={channel === "sms"} className={channel === "sms" ? "is-active" : ""} onClick={() => setChannel("sms")}>
-                {t("Telefon (SMS)")}
-              </button>
-            </div>
-            {channel === "email" ? (
-              <div className="field">
-                <label htmlFor="auth-email-reset">{t("E-posta")}</label>
-                <input id="auth-email-reset" type="email" inputMode="email" autoComplete="email" autoCapitalize="none" value={email} onChange={(e) => setEmail(e.target.value)} />
-              </div>
-            ) : (
-              <div className="field">
-                <label htmlFor="auth-phone-reset">{t("Telefon")}</label>
-                <input id="auth-phone-reset" type="tel" inputMode="tel" autoComplete="tel" value={phone} onChange={(e) => setPhone(e.target.value)} />
-              </div>
-            )}
-          </>
-        )}
-
-        {mode === "sms" && (
-          <>
-            <div className="field">
-              <label htmlFor="auth-code">{t("Doğrulama kodu")}</label>
-              <input id="auth-code" inputMode="numeric" autoComplete="one-time-code" value={code} onChange={(e) => setCode(e.target.value)} />
-            </div>
-            {passwordField}
-          </>
-        )}
+        {mode === "forgot" && emailField("auth-email-reset")}
 
         {mode === "recovery" && passwordField}
 
@@ -278,7 +211,7 @@ export default function AuthScreen({
             {t("Şifremi unuttum")}
           </button>
         )}
-        {(mode === "forgot" || mode === "sms") && (
+        {mode === "forgot" && (
           <button type="button" className="help-link" onClick={() => switchMode("login")}>
             {t("Girişe dön")}
           </button>
