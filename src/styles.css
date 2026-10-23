@@ -2456,3 +2456,8 @@ a.action-btn {
 .device-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .device-text small { color: var(--muted); }
 .device-tag { margin-left: 8px; padding: 2px 8px; border-radius: 999px; background: var(--surface-head); color: var(--blue); font-size: 0.72rem; font-weight: 600; }
+
+/* Kasa filtre ve sıralama satırı */
+.kasa-filter { padding: 8px 16px 4px; }
+.kasa-filter-sep { flex: none; width: 1px; background: var(--line); margin: 4px 2px; }
+.kasa-filter { flex-wrap: wrap; overflow: visible; }

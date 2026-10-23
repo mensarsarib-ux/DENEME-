@@ -31,6 +31,12 @@ export default function KasaPage({
   const [active, setActive] = useState<AccountId>(initialAccount);
   const account = accounts.find((a) => a.id === active) ?? accounts[0];
   const movements = movementsOf(transactions, active);
+  // Filtre ve sıralama: varsayılan en yeni işlem üstte
+  const [kind, setKind] = useState<"all" | "TAHSİLAT" | "ÖDEME">("all");
+  const [order, setOrder] = useState<"new" | "old">("new");
+  const visible = movements
+    .filter((m) => kind === "all" || m.type === kind)
+    .sort((a, b) => (order === "new" ? b.date.localeCompare(a.date) : a.date.localeCompare(b.date)));
   const nameOf = (id: string) => parties.find((p) => p.id === id)?.name ?? "—";
 
   return (
@@ -72,20 +78,60 @@ export default function KasaPage({
         </div>
       </div>
 
-      <ul className="tx-list">
-        <li className="tx">
-          <div className="tx-hit">
-            <div className="tx-info">
-              <div className="tx-meta">
-                <strong>{t("AÇILIŞ BAKİYESİ")}</strong>
-              </div>
-              <p>{t(account.name)}</p>
-            </div>
-            <span className="tx-amount">{money.format(account.opening)}</span>
-          </div>
-        </li>
+      {/* Filtre ve sıralama */}
+      <div className="chip-row kasa-filter" role="group" aria-label={t("Filtre")}>
+        {(
+          [
+            ["all", t("Tümü")],
+            ["TAHSİLAT", t("TAHSİLAT")],
+            ["ÖDEME", t("ÖDEME")],
+          ] as const
+        ).map(([value, label]) => (
+          <button
+            key={value}
+            type="button"
+            className={`chip ${kind === value ? "is-active" : ""}`}
+            aria-pressed={kind === value}
+            onClick={() => setKind(value)}
+          >
+            {label}
+          </button>
+        ))}
+        <span className="kasa-filter-sep" aria-hidden="true" />
+        {(
+          [
+            ["new", t("En yeni")],
+            ["old", t("En eski")],
+          ] as const
+        ).map(([value, label]) => (
+          <button
+            key={value}
+            type="button"
+            className={`chip ${order === value ? "is-active" : ""}`}
+            aria-pressed={order === value}
+            onClick={() => setOrder(value)}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
 
-        {movements.map((m) => {
+      <ul className="tx-list">
+        {kind === "all" && (
+          <li className="tx">
+            <div className="tx-hit">
+              <div className="tx-info">
+                <div className="tx-meta">
+                  <strong>{t("AÇILIŞ BAKİYESİ")}</strong>
+                </div>
+                <p>{t(account.name)}</p>
+              </div>
+              <span className="tx-amount">{money.format(account.opening)}</span>
+            </div>
+          </li>
+        )}
+
+        {visible.map((m) => {
           const out = m.type === "ÖDEME";
           return (
             <li key={m.id} className="tx">
@@ -110,6 +156,9 @@ export default function KasaPage({
 
       {movements.length === 0 && (
         <p className="tx-empty">{t("Bu hesapta henüz tahsilat veya ödeme yok.")}</p>
+      )}
+      {movements.length > 0 && visible.length === 0 && (
+        <p className="tx-empty">{t("Bu filtrede hareket yok.")}</p>
       )}
 
       <div className="tx-total">
