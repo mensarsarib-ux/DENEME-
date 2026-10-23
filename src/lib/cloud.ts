@@ -97,9 +97,19 @@ function authError(body: AuthBody): CloudError {
   return new CloudError("unknown", text);
 }
 
-/** Yeni hesap. E-posta doğrulaması açıksa oturum dönmez ("pending"). */
-export async function signUp(email: string, password: string): Promise<Session | "pending"> {
-  const res = await call("/auth/v1/signup", { method: "POST", body: JSON.stringify({ email, password }) });
+/** Telefon numarasını Supabase'in beklediği biçime (+90…) çevirir; geçersizse null */
+export function normalizePhone(input: string): string | null {
+  const digits = input.replace(/[^\d+]/g, "");
+  const plus = digits.startsWith("+") ? digits : digits.startsWith("0") ? `+90${digits.slice(1)}` : `+90${digits}`;
+  return /^\+\d{10,15}$/.test(plus) ? plus : null;
+}
+
+/** Yeni hesap: e-posta, telefon ve şifre. Doğrulama e-posta ile yapılır; oturum dönmezse "pending". */
+export async function signUp(email: string, phone: string, password: string): Promise<Session | "pending"> {
+  const res = await call("/auth/v1/signup", {
+    method: "POST",
+    body: JSON.stringify({ email, password, data: { phone } }),
+  });
   const body = (await res.json().catch(() => ({}))) as AuthBody;
   if (!res.ok) throw authError(body);
   const session = toSession(body, email);
@@ -108,14 +118,19 @@ export async function signUp(email: string, password: string): Promise<Session |
   return session;
 }
 
-export async function signIn(email: string, password: string): Promise<Session> {
+/** Giriş: "@" içeriyorsa e-posta, değilse telefon numarası */
+export async function signIn(identifier: string, password: string): Promise<Session> {
+  const isEmail = identifier.includes("@");
+  const credentials = isEmail
+    ? { email: identifier, password }
+    : { phone: normalizePhone(identifier) ?? identifier, password };
   const res = await call("/auth/v1/token?grant_type=password", {
     method: "POST",
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify(credentials),
   });
   const body = (await res.json().catch(() => ({}))) as AuthBody;
   if (!res.ok) throw authError(body);
-  const session = toSession(body, email);
+  const session = toSession(body, identifier);
   if (!session) throw new CloudError("unknown", "no session");
   saveSession(session);
   return session;
@@ -127,9 +142,44 @@ export function signOut() {
   if (session) void call("/auth/v1/logout", { method: "POST", token: session.accessToken }).catch(() => undefined);
 }
 
-export async function requestPasswordReset(email: string): Promise<void> {
+/** Şifre sıfırlama: e-posta bağlantısı gönderir (bağlantı uygulamaya geri döner) */
+export async function sendResetEmail(email: string): Promise<void> {
   const res = await call("/auth/v1/recover", { method: "POST", body: JSON.stringify({ email }) });
   if (!res.ok) throw authError((await res.json().catch(() => ({}))) as AuthBody);
+}
+
+/** Şifre sıfırlama: telefona SMS kodu gönderir */
+export async function sendResetSms(phone: string): Promise<void> {
+  const res = await call("/auth/v1/otp", { method: "POST", body: JSON.stringify({ phone, channel: "sms" }) });
+  if (!res.ok) throw authError((await res.json().catch(() => ({}))) as AuthBody);
+}
+
+/** SMS kodunu doğrular, geçici oturum açar ve yeni şifreyi kaydeder */
+export async function resetWithSms(phone: string, code: string, password: string): Promise<void> {
+  const res = await call("/auth/v1/verify", {
+    method: "POST",
+    body: JSON.stringify({ type: "sms", phone, token: code }),
+  });
+  const body = (await res.json().catch(() => ({}))) as AuthBody;
+  if (!res.ok || !body.access_token) throw authError(body);
+  await setPassword(body.access_token, password);
+}
+
+/** Geçerli bir oturumla şifreyi değiştirir (kurtarma bağlantısı ya da SMS doğrulaması sonrası) */
+export async function setPassword(accessToken: string, password: string): Promise<void> {
+  const res = await call("/auth/v1/user", {
+    method: "PUT",
+    token: accessToken,
+    body: JSON.stringify({ password }),
+  });
+  if (!res.ok) throw authError((await res.json().catch(() => ({}))) as AuthBody);
+}
+
+/** E-posta bağlantısıyla dönüldüyse adresteki kurtarma belirtecini okur (#access_token=…&type=recovery) */
+export function readRecoveryToken(): string | null {
+  const hash = new URLSearchParams(window.location.hash.slice(1));
+  if (hash.get("type") !== "recovery") return null;
+  return hash.get("access_token");
 }
 
 /** Süresi dolmak üzere olan oturumu yeniler; yenilenemiyorsa oturumu kapatır (null) */

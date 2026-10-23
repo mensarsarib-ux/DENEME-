@@ -38,7 +38,7 @@ import { useSwipeBack } from "./lib/useSwipeBack";
 import { money, setCurrency } from "./lib/format";
 import { setLanguage, t } from "./lib/i18n";
 import AuthScreen from "./components/AuthScreen";
-import { cloudEnabled, loadSession, signOut, type Session } from "./lib/cloud";
+import { cloudEnabled, loadSession, readRecoveryToken, signOut, type Session } from "./lib/cloud";
 import { useCloudSync } from "./lib/useCloudSync";
 import { clearStored, usePersistedState } from "./lib/storage";
 
@@ -88,6 +88,8 @@ export default function App() {
 
   // Hesap ve bulut eşitleme: Supabase tanımlıysa giriş gerekir; değilse uygulama yalnızca bu cihazda çalışır
   const [session, setSession] = useState<Session | null>(() => (cloudEnabled ? loadSession() : null));
+  // E-postadaki şifre sıfırlama bağlantısından gelindiyse yeni şifre ekranı açılır
+  const [recoveryToken, setRecoveryToken] = useState<string | null>(() => (cloudEnabled ? readRecoveryToken() : null));
   // Titreşim cihaza özgüdür; diğer ayarlar hesapla birlikte eşitlenir
   const syncSettings = (all: typeof settings) => {
     const { haptics: _haptics, ...rest } = all;
@@ -204,6 +206,11 @@ export default function App() {
   if (cloudEnabled && !session) {
     return (
       <AuthScreen
+        recoveryToken={recoveryToken}
+        onRecoveryDone={() => {
+          setRecoveryToken(null);
+          window.history.replaceState(null, "", window.location.pathname);
+        }}
         onSession={(next, info) => {
           if (info?.isNew) emptyWorkspace(info.businessName);
           setSession(next);

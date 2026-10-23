@@ -60,7 +60,7 @@ export default function MenuDrawer({
         </div>
 
         <nav className="drawer-nav" aria-label={t("Menü seçenekleri")}>
-          {MENU_ITEMS.map((item) => (
+          {MENU_ITEMS.filter((item) => item.page !== "contacts").map((item) => (
             <button
               key={item.page}
               type="button"
