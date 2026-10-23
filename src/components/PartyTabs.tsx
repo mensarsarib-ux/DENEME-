@@ -214,7 +214,7 @@ export default function PartyTabs({
 
       {dialog && (
         <div
-          className="action-backdrop"
+          className={`action-backdrop ${dialog.type === "create" || dialog.type === "rename" ? "is-top" : ""}`}
           onClickCapture={(e) => {
             if (Date.now() - dialogOpenedAt.current < OPEN_GUARD_MS) {
               e.stopPropagation();
