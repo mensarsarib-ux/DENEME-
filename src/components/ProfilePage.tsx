@@ -77,7 +77,6 @@ export default function ProfilePage({
             <strong>{draft.name.trim() || t("Hesabım")}</strong>
           </span>
         </div>
-        <p className="field-hint">{t("Üst çubukta bu şekilde görünür.")}</p>
 
         <div className="photo-picker">
           <CompanyLogo logo={draft.logo} name={draft.name} size={88} />
