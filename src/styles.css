@@ -129,8 +129,9 @@ button {
   min-width: 0;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 10px;
-  padding: 6px 14px 6px 6px;
+  padding: 6px 18px;
   border-radius: 999px;
   background: rgba(10, 22, 30, 0.55);
 }
