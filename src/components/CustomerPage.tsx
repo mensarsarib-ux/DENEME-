@@ -444,48 +444,53 @@ export default function CustomerPage({
             </div>
           )}
 
-          <div className="entry-field">
-            {dateValue ? (
-              <input
-                type="datetime-local"
-                aria-label={t("Tarih")}
-                value={dateValue}
-                onChange={(e) => setDateValue(e.target.value)}
-              />
-            ) : (
-              <button
-                className="entry-placeholder"
-                type="button"
-                onClick={() => setDateValue(toLocalInput(new Date().toISOString()))}
-              >
-                {t("Tarih: şimdi")}
-              </button>
-            )}
-            {/* Tarih seçiliyse tarayıcının kendi takvim ikonu yeterli */}
-            {!dateValue && (
-              <button
-                className="entry-icon"
-                type="button"
-                aria-label={t("Tarih seç")}
-                onClick={() => setDateValue(toLocalInput(new Date().toISOString()))}
-              >
-                <Svg d="M4 5h16v15H4zM4 10h16M8 3v4M16 3v4" />
-              </button>
-            )}
-          </div>
+          {/* Tarih ve açıklama yalnızca tuş takımı açıkken görünür; klavye kapalıyken sade kalır */}
+          {keypadOpen && (
+            <>
+            <div className="entry-field">
+              {dateValue ? (
+                <input
+                  type="datetime-local"
+                  aria-label={t("Tarih")}
+                  value={dateValue}
+                  onChange={(e) => setDateValue(e.target.value)}
+                />
+              ) : (
+                <button
+                  className="entry-placeholder"
+                  type="button"
+                  onClick={() => setDateValue(toLocalInput(new Date().toISOString()))}
+                >
+                  {t("Tarih: şimdi")}
+                </button>
+              )}
+              {/* Tarih seçiliyse tarayıcının kendi takvim ikonu yeterli */}
+              {!dateValue && (
+                <button
+                  className="entry-icon"
+                  type="button"
+                  aria-label={t("Tarih seç")}
+                  onClick={() => setDateValue(toLocalInput(new Date().toISOString()))}
+                >
+                  <Svg d="M4 5h16v15H4zM4 10h16M8 3v4M16 3v4" />
+                </button>
+              )}
+            </div>
 
-          <div className="entry-desc">
-            <textarea
-              placeholder={t("Açıklama")}
-              aria-label={t("Açıklama")}
-              rows={2}
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            />
-            <button className="entry-icon entry-attach" type="button" aria-label={t("Görsel ekle")}>
-              <Svg d="M4 5h16v14H4zM4 16l5-5 4 4 2-2 5 5M15 9h.01" />
-            </button>
-          </div>
+            <div className="entry-desc">
+              <textarea
+                placeholder={t("Açıklama")}
+                aria-label={t("Açıklama")}
+                rows={2}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+              />
+              <button className="entry-icon entry-attach" type="button" aria-label={t("Görsel ekle")}>
+                <Svg d="M4 5h16v14H4zM4 16l5-5 4 4 2-2 5 5M15 9h.01" />
+              </button>
+            </div>
+            </>
+          )}
 
           <div className="entry-amount">
             <button
