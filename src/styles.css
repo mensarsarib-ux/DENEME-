@@ -2334,9 +2334,11 @@ a.action-btn {
 
 /* Giriş / kayıt ekranı */
 /* Durum çubuğu alanı: içerik sayfanın üst kenarına taşmasın (viewport-fit=cover ile) */
+/* Kök alan ekranın tamamını sabit kaplar; iOS ana ekran uygulamasında alt boşluk kalmaz */
 #root {
+  position: fixed;
+  inset: 0;
   box-sizing: border-box;
-  height: 100%;
   padding-top: env(safe-area-inset-top, 0px);
 }
 
