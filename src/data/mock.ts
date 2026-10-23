@@ -1,4 +1,3 @@
-import { SAMPLE_LOGO } from "../lib/logo";
 // Geçici örnek veriler. Gerçek veri katmanı eklendiğinde bu dosya değiştirilecek.
 
 export type Period = "daily" | "weekly" | "monthly" | "yearly";
@@ -270,7 +269,6 @@ export const DEFAULT_PROFILE: Profile = {
   email: "",
   address: "",
   taxNo: "",
-  logo: SAMPLE_LOGO,
 };
 
 export interface Note {

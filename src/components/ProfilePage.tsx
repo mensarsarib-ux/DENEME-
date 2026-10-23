@@ -3,7 +3,6 @@ import type { Profile } from "../data/mock";
 import { haptic } from "../lib/haptics";
 import { t } from "../lib/i18n";
 import { MENU_ITEMS } from "../lib/menu";
-import CropSheet from "./CropSheet";
 import CompanyLogo from "./CompanyLogo";
 import PageHeader from "./PageHeader";
 
@@ -34,25 +33,24 @@ export default function ProfilePage({
   };
 
   // "logo" eski kayıtlarda hiç bulunmayabilir; bu yüzden anahtarlar elle sayılır
-  const FIELDS: (keyof Profile)[] = ["name", "phone", "email", "address", "logo"];
+  const FIELDS: (keyof Profile)[] = ["name", "phone", "email", "address"];
   const dirty = FIELDS.some((k) => (profile[k] ?? "") !== (draft[k] ?? ""));
 
 
   // Seçilen fotoğraf, daireye yerleştirilmesi için kırpma penceresinde açılır
-  const [cropFile, setCropFile] = useState<File | null>(null);
 
   function submit(event: FormEvent) {
     event.preventDefault();
     if (!dirty) return;
     haptic("success");
-    // Kaldırılan alanlar (yetkili, vergi no) eski kayıtta kalır, formdan değiştirilmez
+    // Yalnızca firma adı ve iletişim bilgileri; logo artık firma adının baş harflerinden üretilir
     onSave({
       ...draft,
+      logo: undefined,
       name: draft.name.trim(),
       phone: draft.phone.trim(),
       email: draft.email.trim(),
       address: draft.address.trim(),
-      logo: draft.logo,
     });
     setSaved(true);
   }
@@ -76,35 +74,6 @@ export default function ProfilePage({
           <span className="company-text">
             <strong>{draft.name.trim() || t("Hesabım")}</strong>
           </span>
-        </div>
-
-        <div className="photo-picker">
-          <CompanyLogo logo={draft.logo} name={draft.name} size={88} />
-          <div className="photo-actions">
-            <label className="action-btn photo-btn">
-              {t("Fotoğraf seç")}
-              <input
-                type="file"
-                accept="image/*"
-                onChange={(e) => {
-                  setCropFile(e.target.files?.[0] ?? null);
-                  e.target.value = "";
-                }}
-              />
-            </label>
-            {draft.logo && (
-              <button
-                type="button"
-                className="action-btn is-danger"
-                onClick={() => {
-                  setDraft((d) => ({ ...d, logo: "" }));
-                  setSaved(false);
-                }}
-              >
-                {t("Fotoğrafı kaldır")}
-              </button>
-            )}
-          </div>
         </div>
 
         <div className="field">
@@ -131,17 +100,6 @@ export default function ProfilePage({
         )}
       </form>
 
-      {cropFile && (
-        <CropSheet
-          file={cropFile}
-          onCancel={() => setCropFile(null)}
-          onApply={(logo) => {
-            setDraft((d) => ({ ...d, logo }));
-            setSaved(false);
-            setCropFile(null);
-          }}
-        />
-      )}
     </div>
   );
 }
