@@ -564,6 +564,14 @@ body {
   border-bottom: 1px solid var(--line);
 }
 
+/* Müşteriler ve tedarikçiler sekmeleri üstte sabit kalır */
+.sheet-head {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  background: var(--surface);
+}
+
 .sheet-handle {
   display: block;
   width: 44px;

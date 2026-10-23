@@ -117,7 +117,7 @@ export default function Dashboard({
   useLayoutEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
-    const update = () => setSheetMin(el.clientHeight);
+    const update = () => setSheetMin(el.clientHeight + (summaryRef.current?.offsetHeight ?? 0));
     update();
     const observer = new ResizeObserver(update);
     observer.observe(el);
@@ -269,6 +269,8 @@ export default function Dashboard({
       <section className="sheet" style={{ minHeight: sheetMin || undefined }}>
         <div className="sheet-handle" aria-hidden="true" />
 
+        {/* Sekmeler yukarı çıkınca üstte sabit kalır; altındaki liste kaymaya devam eder */}
+        <div className="sheet-head">
         {searchOpen ? (
           <div className="group-head">
             <span>{searching ? t("ARAMA SONUÇLARI") : activeName}</span>
@@ -288,6 +290,8 @@ export default function Dashboard({
             onSelect={onSelectTab}
           />
         )}
+
+        </div>
 
         <div className="party-list">
         {rows.length === 0 ? (
