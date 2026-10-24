@@ -20,7 +20,8 @@
 
 body {
   margin: 0;
-  background: var(--bg-bottom);
+  /* Görünüm alanının dışında kalan alt şerit panelin rengiyle birleşsin */
+  background: var(--surface);
   color: var(--text);
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -2340,7 +2341,7 @@ a.action-btn {
   right: 0;
   left: 0;
   /* iOS, viewport-fit=cover ile ana ekranda alt güvenli alanı yükseklikten düşürüyor; kök alanı o kadar uzatarak boşluğu kapatır */
-  bottom: calc(-1 * var(--extra-bottom, 0px));
+  bottom: 0;
   box-sizing: border-box;
 }
 
