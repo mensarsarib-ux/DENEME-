@@ -511,6 +511,7 @@ export default function App() {
       profile={profile}
       accounts={accounts}
       onOpenMenu={() => setDrawerOpen(true)}
+      onOpenKasa={() => go({ name: "kasa" })}
       members={membersOf(currentTab)}
       parties={parties}
       activeTab={currentTab}

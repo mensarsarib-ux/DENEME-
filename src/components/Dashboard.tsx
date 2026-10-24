@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
   balanceOf,
+  cashTotal,
   type Account,
   type Customer,
   type Profile,
@@ -68,6 +69,7 @@ export default function Dashboard({
   onRenameTab,
   onDeleteTab,
   onOpenMenu,
+  onOpenKasa,
 }: {
   /** İşletme profili: üst çubukta ad olarak görünür */
   profile: Profile;
@@ -90,6 +92,8 @@ export default function Dashboard({
   onCreateTab: (name: string) => void;
   onRenameTab: (id: string, name: string) => void;
   onDeleteTab: (id: string) => void;
+  /** Kasa satırına dokununca nakit ve banka sayfası açılır */
+  onOpenKasa: () => void;
   /** Sol üstteki Menü: yan menü penceresini açar */
   onOpenMenu: () => void;
 }) {
@@ -268,6 +272,27 @@ export default function Dashboard({
           {/* Alt bölüm: kasa ve etkin sekmenin kayıtları (aramada yalnızca etkin sekmede arama yapılır) */}
       <section className="sheet" style={{ minHeight: sheetMin || undefined }}>
         <div className="sheet-handle" aria-hidden="true" />
+
+        {!searchOpen && (
+          <ul className="list">
+            <li>
+              <button
+                className="row row-big"
+                aria-label={t("Kasa: nakit ve banka")}
+                onClick={onOpenKasa}
+              >
+                <span className="row-name">{t("Kasa")}</span>
+                <span className="row-amount">
+                  {money.format(cashTotal(transactions, accounts))}
+                  <span className="row-chevron" aria-hidden="true">
+                    ›
+                  </span>
+                </span>
+              </button>
+            </li>
+          </ul>
+        )}
+
 
         {/* Sekmeler yukarı çıkınca üstte sabit kalır; altındaki liste kaymaya devam eder */}
         <div className="sheet-head">
