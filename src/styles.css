@@ -549,7 +549,8 @@ button {
   background: var(--surface);
   padding-bottom: env(safe-area-inset-bottom, 0px);
   border-radius: 24px 24px 0 0;
-  box-shadow: 0 -6px 24px rgba(0, 0, 0, 0.3);
+  /* İkinci gölge panelin altını aynı renkle ekranın dibine kadar doldurur (kaydırma alanını büyütmez) */
+  box-shadow: 0 -6px 24px rgba(0, 0, 0, 0.3), 0 100vh 0 0 var(--surface);
 }
 
 /* Sayfa esnemesi (iOS) tüm ekranı kaydırmasın */
