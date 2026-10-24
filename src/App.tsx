@@ -513,7 +513,6 @@ export default function App() {
       onOpenMenu={() => setDrawerOpen(true)}
       onOpenKasa={() => go({ name: "kasa" })}
       members={membersOf(currentTab)}
-      parties={parties}
       activeTab={currentTab}
       tabs={tabs}
       transactions={transactions}

@@ -57,7 +57,6 @@ export default function Dashboard({
   profile,
   accounts,
   members,
-  parties,
   activeTab,
   tabs,
   transactions,
@@ -76,8 +75,6 @@ export default function Dashboard({
   accounts: Account[];
   /** Etkin sekmedeki kayıtlar (müşteriler, tedarikçiler veya özel sekme) */
   members: Customer[];
-  /** Tüm kişiler: alacak ve borç özeti için */
-  parties: Customer[];
   activeTab: string;
   /** Müşteriler, Tedarikçiler ve kullanıcının sekmeleri */
   tabs: TabInfo[];
@@ -265,7 +262,7 @@ export default function Dashboard({
               durur, alt bölüm kayarak üzerini kapatır. */}
           {!searchOpen && (
             <section className="summary" ref={summaryRef}>
-              <StatsCarousel parties={parties} transactions={transactions} accounts={accounts} />
+              <StatsCarousel transactions={transactions} />
             </section>
           )}
 
