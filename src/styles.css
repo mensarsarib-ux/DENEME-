@@ -2341,8 +2341,8 @@ a.action-btn {
   top: 0;
   right: 0;
   left: 0;
-  /* iOS, viewport-fit=cover ile ana ekranda alt güvenli alanı yükseklikten düşürüyor; kök alanı o kadar uzatarak boşluğu kapatır */
-  bottom: 0;
+  /* Kök alan cihazın ekran yüksekliğine kadar uzanır */
+  height: var(--screen-h, 100%);
   box-sizing: border-box;
 }
 
