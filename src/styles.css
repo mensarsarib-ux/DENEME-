@@ -2341,8 +2341,7 @@ a.action-btn {
   top: 0;
   right: 0;
   left: 0;
-  /* Kök alan cihazın ekran yüksekliğine kadar uzanır */
-  height: var(--screen-h, 100%);
+  bottom: 0;
   box-sizing: border-box;
 }
 
