@@ -3,13 +3,16 @@ workflows:
     name: Hesabım iOS (TestFlight)
     instance_type: mac_mini_m2
     max_build_duration: 45
+    integrations:
+      # Codemagic'teki App Store Connect anahtarının adı
+      app_store_connect: Codemagic
     environment:
       groups:
         # Codemagic'te "supabase" ortam grubu: VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY
         - supabase
       vars:
         APP_BUNDLE_ID: "com.mensar.hesabim"
-        XCODE_WORKSPACE: "App.xcworkspace"
+        XCODE_WORKSPACE: "ios/App/App.xcworkspace"
         XCODE_SCHEME: "App"
       xcode: latest
       node: 20
@@ -28,6 +31,19 @@ workflows:
         script: npx cap sync ios
       - name: CocoaPods bağımlılıklarını kur
         script: cd ios/App && pod install
-      # İmzalama ve IPA üretimi: Apple Developer hesabı ve App Store Connect bağlantısı hazır olunca tamamlanacak
+      - name: Anahtar zinciri hazırla
+        script: keychain initialize
+      - name: İmzalama dosyalarını App Store Connect'ten al
+        script: app-store-connect fetch-signing-files "$APP_BUNDLE_ID" --type IOS_APP_STORE --create
+      - name: Sertifikaları anahtar zincirine ekle
+        script: keychain add-certificates
+      - name: Xcode projesine profilleri bağla
+        script: xcode-project use-profiles
+      - name: IPA üret
+        script: xcode-project build-ipa --workspace "$XCODE_WORKSPACE" --scheme "$XCODE_SCHEME"
     artifacts:
       - build/ios/ipa/*.ipa
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
