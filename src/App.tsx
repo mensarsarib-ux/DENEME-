@@ -11,7 +11,7 @@ import ReportsPage from "./components/ReportsPage";
 import NotesPage from "./components/NotesPage";
 import ContactsPage from "./components/ContactsPage";
 import BusinessRequestsPage from "./components/BusinessRequestsPage";
-import { listPendingRequests } from "./lib/cloud";
+import { ensureOwnerBusiness, listPendingRequests } from "./lib/cloud";
 import SettingsPage from "./components/SettingsPage";
 import SupportPage from "./components/SupportPage";
 import PrivacyPage from "./components/PrivacyPage";
@@ -187,6 +187,13 @@ export default function App() {
   useSwipeBack(phase === "home");
 
   useEffect(() => setHapticsEnabled(settings.haptics), [settings.haptics]);
+
+  // Hesabın sahibi olduğu işletme sunucuda yoksa oluşturulur; katılma istekleri buna bağlanır
+  useEffect(() => {
+    if (!session || !isMainWorkspace) return;
+    void ensureOwnerBusiness(session, profile.name).catch(() => undefined);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session]);
 
   // Menüdeki Bildirimler rozeti: yetkili olunan işletmelerdeki bekleyen katılma istekleri
   const [pendingCount, setPendingCount] = useState(0);

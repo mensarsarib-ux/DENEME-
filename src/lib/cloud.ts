@@ -392,3 +392,22 @@ export async function decideJoin(session: Session, requestId: string, approve: b
   if (!res.ok) throw new CloudError("unknown", String(res.status));
   return true;
 }
+
+/** Hesabın sahibi olduğu bir işletme yoksa, verilen adla sunucuda bir tane oluşturur */
+export async function ensureOwnerBusiness(session: Session, name: string): Promise<void | "expired"> {
+  const s = await fresh(session);
+  if (!s) return "expired";
+  const list = await call(`/rest/v1/businesses?select=id&owner_id=eq.${s.userId}&limit=1`, { token: s.accessToken });
+  if (list.status === 401) return "expired";
+  if (!list.ok) throw new CloudError("unknown", String(list.status));
+  const rows = (await list.json()) as { id: string }[];
+  if (rows.length > 0) return;
+  const res = await call("/rest/v1/businesses", {
+    method: "POST",
+    token: s.accessToken,
+    headers: { Prefer: "return=minimal" },
+    body: JSON.stringify({ name: name.trim() || "Hesabım", owner_id: s.userId }),
+  });
+  if (res.status === 401) return "expired";
+  if (!res.ok) throw new CloudError("unknown", String(res.status));
+}
