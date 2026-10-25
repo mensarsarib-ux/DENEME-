@@ -165,50 +165,8 @@ export default function Dashboard({
     setQuery("");
   }
 
-  // GEÇİCİ TANILAMA: ekran ve güvenli alan ölçümleri (sorun çözülünce kaldırılacak)
-  const [sizes, setSizes] = useState("");
-  useEffect(() => {
-    const measureSafe = (side: "top" | "bottom") => {
-      const probe = document.createElement("div");
-      probe.style.cssText = `position:fixed;visibility:hidden;pointer-events:none;padding-${side}:env(safe-area-inset-${side},0px);`;
-      document.body.appendChild(probe);
-      const value = parseFloat(getComputedStyle(probe)[`padding${side === "top" ? "Top" : "Bottom"}`]) || 0;
-      probe.remove();
-      return Math.round(value);
-    };
-    const show = () => {
-      const vv = window.visualViewport;
-      const root = document.getElementById("root")?.getBoundingClientRect();
-      const sat = getComputedStyle(document.documentElement).getPropertyValue("--sat").trim() || "(tanımsız)";
-      setSizes(
-        [
-          `innerHeight: ${window.innerHeight}`,
-          `outerHeight: ${window.outerHeight}`,
-          `screen.height: ${window.screen.height}`,
-          `vv.height: ${Math.round(vv?.height ?? 0)}`,
-          `vv.offsetTop: ${Math.round(vv?.offsetTop ?? 0)}`,
-          `docEl.clientHeight: ${document.documentElement.clientHeight}`,
-          `#root bottom: ${Math.round(root?.bottom ?? 0)}`,
-          `--sat: ${sat}`,
-          `safe top: ${measureSafe("top")}`,
-          `safe bottom: ${measureSafe("bottom")}`,
-        ].join("\n"),
-      );
-    };
-    show();
-    window.addEventListener("resize", show);
-    window.visualViewport?.addEventListener("resize", show);
-    return () => {
-      window.removeEventListener("resize", show);
-      window.visualViewport?.removeEventListener("resize", show);
-    };
-  }, []);
-
   return (
     <div className="app">
-      <div style={{ position: "fixed", top: 0, left: 0, zIndex: 999, background: "rgba(0,0,0,0.7)", color: "#ffd54a", font: "10px/1.3 monospace", padding: "2px 4px", whiteSpace: "pre", pointerEvents: "none" }}>
-        {sizes}
-      </div>
       {searchOpen ? (
         <header className="topbar topbar-search">
           <div className="search-field" role="search">
