@@ -1,3 +1,5 @@
+import { Capacitor } from "@capacitor/core";
+import { Haptics, ImpactStyle, NotificationType } from "@capacitor/haptics";
 import { createBus, scheduleSound, type SoundKind } from "./sounds";
 
 /**
@@ -94,9 +96,31 @@ export function setHapticsEnabled(enabled: boolean): void {
   hapticsEnabled = enabled;
 }
 
+/** Uygulama iOS/Android paketi içinde çalışıyorsa gerçek titreşim motorunu kullanır */
+function nativeHaptic(kind: Haptic): void {
+  switch (kind) {
+    case "light":
+      void Haptics.impact({ style: ImpactStyle.Light });
+      return;
+    case "medium":
+      void Haptics.impact({ style: ImpactStyle.Medium });
+      return;
+    case "success":
+      void Haptics.notification({ type: NotificationType.Success });
+      return;
+    case "warning":
+      void Haptics.notification({ type: NotificationType.Warning });
+      return;
+  }
+}
+
 export function haptic(kind: Haptic = "light"): void {
   if (!hapticsEnabled) return;
   playSound(kind);
+  if (Capacitor.isNativePlatform()) {
+    nativeHaptic(kind);
+    return;
+  }
   try {
     if (typeof navigator.vibrate === "function") {
       navigator.vibrate(PATTERNS[kind]);
