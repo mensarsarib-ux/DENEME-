@@ -5,6 +5,7 @@ import { t } from "../lib/i18n";
 import { MENU_ITEMS } from "../lib/menu";
 import CompanyLogo from "./CompanyLogo";
 import PageHeader from "./PageHeader";
+import PhoneField from "./PhoneField";
 
 const ICON = MENU_ITEMS[0].icon;
 
@@ -82,7 +83,7 @@ export default function ProfilePage({
         </div>
         <div className="field">
           <label htmlFor="pf-phone">{t("Telefon")}</label>
-          <input id="pf-phone" type="tel" inputMode="tel" autoComplete="off" value={draft.phone} onChange={(e) => set("phone")(e.target.value)} />
+          <PhoneField id="pf-phone" value={draft.phone} onChange={set("phone")} autoComplete="off" />
         </div>
         <div className="field">
           <label htmlFor="pf-email">{t("E-posta")}</label>

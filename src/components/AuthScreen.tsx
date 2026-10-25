@@ -2,6 +2,7 @@ import { useState, type FormEvent } from "react";
 import { CloudError, normalizePhone, sendResetEmail, setPassword, signIn, signUp, type Session } from "../lib/cloud";
 import { haptic } from "../lib/haptics";
 import { t } from "../lib/i18n";
+import PhoneField from "./PhoneField";
 
 /** Giriş ekranının modları: giriş, kayıt, şifremi unuttum, e-postadan gelen yeni şifre */
 type Mode = "login" | "register" | "forgot" | "recovery";
@@ -188,7 +189,7 @@ export default function AuthScreen({
             {emailField("auth-email")}
             <div className="field">
               <label htmlFor="auth-phone">{t("Telefon")}</label>
-              <input id="auth-phone" type="tel" inputMode="tel" autoComplete="tel" value={phone} onChange={(e) => setPhone(e.target.value)} />
+              <PhoneField id="auth-phone" value={phone} onChange={setPhone} />
               {phone.trim() !== "" && !validPhone && <p className="field-hint">{t("Geçerli bir telefon numarası yazın.")}</p>}
             </div>
             {passwordField}

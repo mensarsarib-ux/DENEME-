@@ -2,6 +2,7 @@ import { useState, type FormEvent } from "react";
 import type { Customer, PartyKind } from "../data/mock";
 import { t } from "../lib/i18n";
 import { Svg } from "./Icon";
+import PhoneField from "./PhoneField";
 
 interface FormText {
   title: string;
@@ -158,14 +159,7 @@ export default function NewCustomerPage({
 
         <div className="field">
           <label htmlFor="customer-phone">{t("Telefon numarası")}</label>
-          <input
-            id="customer-phone"
-            type="tel"
-            inputMode="tel"
-            autoComplete="off"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-          />
+          <PhoneField id="customer-phone" value={phone} onChange={setPhone} autoComplete="off" />
         </div>
 
         <div className="field">

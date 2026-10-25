@@ -2706,3 +2706,21 @@ a.action-btn {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+/* Telefon alanı: solda ülke alan kodu, sağda numara */
+.phone-field {
+  display: grid;
+  grid-template-columns: minmax(0, 0.42fr) minmax(0, 1fr);
+  gap: 8px;
+}
+
+.phone-code {
+  min-width: 0;
+  padding: 12px 10px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface-head);
+  color: var(--text);
+  font-size: 0.95rem;
+  text-overflow: ellipsis;
+}

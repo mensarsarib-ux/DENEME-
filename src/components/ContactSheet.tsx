@@ -2,6 +2,7 @@ import { useState, type FormEvent } from "react";
 import type { Customer } from "../data/mock";
 import { haptic } from "../lib/haptics";
 import { t } from "../lib/i18n";
+import PhoneField from "./PhoneField";
 
 export type ContactPatch = Pick<Customer, "phone" | "email" | "address" | "note">;
 
@@ -53,7 +54,7 @@ export default function ContactSheet({
 
         <div className="field">
           <label htmlFor="ct-phone">{t("Telefon")}</label>
-          <input id="ct-phone" type="tel" inputMode="tel" autoComplete="off" value={phone} onChange={(e) => setPhone(e.target.value)} />
+          <PhoneField id="ct-phone" value={phone} onChange={setPhone} autoComplete="off" />
         </div>
         <div className="field">
           <label htmlFor="ct-email">{t("E-posta")}</label>

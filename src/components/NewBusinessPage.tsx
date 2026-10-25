@@ -4,6 +4,7 @@ import { t } from "../lib/i18n";
 import { createWorkspace } from "../lib/storage";
 import PageHeader from "./PageHeader";
 import { SUPPORT_ICON } from "../lib/menu";
+import PhoneField from "./PhoneField";
 
 /** Yeni işletme formu: işletme profili ile aynı bilgiler; kaydedilince bomboş yeni bir işletme açılır */
 export default function NewBusinessPage({ onBack }: { onBack: () => void }) {
@@ -40,7 +41,7 @@ export default function NewBusinessPage({ onBack }: { onBack: () => void }) {
         </div>
         <div className="field">
           <label htmlFor="nb-phone">{t("Telefon")}</label>
-          <input id="nb-phone" type="tel" inputMode="tel" autoComplete="off" value={phone} onChange={(e) => setPhone(e.target.value)} />
+          <PhoneField id="nb-phone" value={phone} onChange={setPhone} autoComplete="off" />
         </div>
         <div className="field">
           <label htmlFor="nb-email">{t("E-posta")}</label>
