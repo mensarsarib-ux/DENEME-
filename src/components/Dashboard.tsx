@@ -305,7 +305,6 @@ export default function Dashboard({
 
           {/* Alt bölüm: kasa ve etkin sekmenin kayıtları (aramada yalnızca etkin sekmede arama yapılır) */}
       <section className="sheet" style={{ minHeight: sheetMin || undefined }}>
-        <div className="sheet-handle" aria-hidden="true" />
 
         {!searchOpen && (
           <ul className="list">
