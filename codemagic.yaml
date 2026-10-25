@@ -5,7 +5,7 @@ workflows:
     max_build_duration: 45
     integrations:
       # Codemagic'teki Apple Developer Portal anahtarının adı (birebir aynı olmalı)
-      app_store_connect: Codemacig
+      app_store_connect: CodemagicAdmin
     environment:
       groups:
         # Codemagic'te "supabase" ortam grubu: VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY
