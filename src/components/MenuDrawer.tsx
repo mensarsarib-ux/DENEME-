@@ -1,13 +1,10 @@
 import { useEffect, useRef } from "react";
 import type { Profile } from "../data/mock";
 import { haptic } from "../lib/haptics";
-import { MENU_ITEMS, SUPPORT_ICON, type MenuPage } from "../lib/menu";
+import { MENU_ITEMS, PRIVACY_ICON, SUPPORT_ICON, type MenuPage } from "../lib/menu";
 
 /** Şimdilik menüde gösterilmeyen sayfalar; kodları durur, listeden çıkarılarak tekrar açılabilir */
 const HIDDEN_PAGES: MenuPage[] = ["contacts", "reports", "notifications"];
-
-/** "Destek al" düğmesi şimdilik gizli */
-const SHOW_SUPPORT = false;
 import CompanyLogo from "./CompanyLogo";
 import { Svg } from "./Icon";
 import { t } from "../lib/i18n";
@@ -89,13 +86,19 @@ export default function MenuDrawer({
 
         <div className="drawer-spacer" />
 
-        {/* "Destek al" şimdilik gizli; sayfası ve kodu duruyor */}
-        {SHOW_SUPPORT && (
-          <button type="button" className="drawer-support" onClick={() => open("support")}>
+        {/* En altta: destek ve gizlilik; işletme bilgileri gibi aynı satır stilinde */}
+        <nav className="drawer-nav drawer-footer" aria-label={t("Yasal ve destek")}>
+          <button type="button" className="drawer-item" onClick={() => open("support")}>
             <Svg d={SUPPORT_ICON} />
-            {t("Destek al")}
+            <span className="drawer-label">{t("Destek al")}</span>
+            <span className="drawer-chevron" aria-hidden="true">›</span>
           </button>
-        )}
+          <button type="button" className="drawer-item" onClick={() => open("privacy")}>
+            <Svg d={PRIVACY_ICON} />
+            <span className="drawer-label">{t("Gizlilik politikası")}</span>
+            <span className="drawer-chevron" aria-hidden="true">›</span>
+          </button>
+        </nav>
       </aside>
     </div>
   );

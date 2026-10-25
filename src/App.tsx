@@ -13,6 +13,7 @@ import ContactsPage from "./components/ContactsPage";
 import NotificationsPage from "./components/NotificationsPage";
 import SettingsPage from "./components/SettingsPage";
 import SupportPage from "./components/SupportPage";
+import PrivacyPage from "./components/PrivacyPage";
 import type { TabInfo } from "./components/PartyTabs";
 import {
   BUILTIN_GROUPS,
@@ -465,6 +466,8 @@ export default function App() {
             onBack={toHome}
           />
         );
+      case "privacy":
+        return <PrivacyPage onBack={toHome} />;
       case "support":
         return (
           <SupportPage
