@@ -1,15 +1,22 @@
 import { useRef, useState } from "react";
-import type { Transaction } from "../data/mock";
+import type { Customer, Transaction } from "../data/mock";
 import FlowChart from "./FlowChart";
 import ColumnChart from "./ColumnChart";
+import ReceivablePie from "./ReceivablePie";
 
-const PAGES = 2;
+const PAGES = 3;
 
 /**
  * Özet istatistik: yana kaydırılabilir iki sayfa (gelir/gider grafiği ve aylık sütun grafiği).
  * Alanın yüksekliği değişmez; nokta göstergeleri kartın altına, üst üste biner.
  */
-export default function StatsCarousel({ transactions }: { transactions: Transaction[] }) {
+export default function StatsCarousel({
+  transactions,
+  parties,
+}: {
+  transactions: Transaction[];
+  parties: Customer[];
+}) {
   const [index, setIndex] = useState(0);
   const track = useRef<HTMLDivElement>(null);
 
@@ -27,6 +34,9 @@ export default function StatsCarousel({ transactions }: { transactions: Transact
         </div>
         <div className="stats-slide">
           <ColumnChart transactions={transactions} />
+        </div>
+        <div className="stats-slide">
+          <ReceivablePie parties={parties} transactions={transactions} />
         </div>
       </div>
       <div className="stats-dots" aria-hidden="true">

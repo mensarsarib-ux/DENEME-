@@ -2882,3 +2882,80 @@ a.action-btn {
   font-size: 0.72rem;
   color: var(--muted);
 }
+
+/* En çok alacağı olan müşteriler pasta grafiği (alan yüksekliği değişmez) */
+.pie-card {
+  height: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.pie-card .card-title {
+  margin: 0;
+}
+
+.pie-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.pie-svg {
+  flex: none;
+  width: 108px;
+  height: 108px;
+}
+
+.pie-legend {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 2px;
+}
+
+.pie-legend li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.74rem;
+}
+
+.pie-dot {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+}
+
+.pie-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pie-pct {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.pie-note {
+  margin: 0;
+  font-size: 0.7rem;
+  color: var(--muted);
+}
+
+.pie-empty {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+}

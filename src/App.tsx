@@ -526,6 +526,7 @@ export default function App() {
       onOpenMenu={() => setDrawerOpen(true)}
       onOpenKasa={() => go({ name: "kasa" })}
       onOpenPlans={() => go({ name: "menu", page: "newbusiness" })}
+      parties={parties}
       members={membersOf(currentTab)}
       activeTab={currentTab}
       tabs={tabs}
