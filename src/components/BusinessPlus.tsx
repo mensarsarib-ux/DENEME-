@@ -1,9 +1,5 @@
-import { useState } from "react";
 import { t } from "../lib/i18n";
 import { haptic } from "../lib/haptics";
-
-/** İşletme paketleri; ayrıntılı satın alma akışı daha sonra bağlanacak */
-const PLANS = [2, 5, 10];
 
 /**
  * Firma logosuna dokununca açılır: siyah arka plan üzerinde logonun altından kayarak gelen
@@ -13,17 +9,18 @@ export default function BusinessPlus({
   top,
   left,
   onClose,
+  onAdd,
 }: {
   /** Logonun alt kenarı ve sol kenarı (piksel) */
   top: number;
   left: number;
   onClose: () => void;
+  /** + veya "İşletme ekle" ile işletme paketleri sayfasına geçilir */
+  onAdd: () => void;
 }) {
-  const [plansOpen, setPlansOpen] = useState(false);
-
   function open() {
     haptic("medium");
-    setPlansOpen(true);
+    onAdd();
   }
 
   return (
@@ -32,23 +29,11 @@ export default function BusinessPlus({
         <button type="button" className="biz-plus" aria-label={t("İşletme ekle")} onClick={open}>
           +
         </button>
-        {!plansOpen && (
-          <button type="button" className="biz-add" onClick={open}>
-            {t("İşletme ekle")}
-          </button>
-        )}
+        <button type="button" className="biz-add" onClick={open}>
+          {t("İşletme ekle")}
+        </button>
       </div>
 
-      {plansOpen && (
-        <div className="biz-plans" role="dialog" aria-label={t("İşletme paketleri")} style={{ top: top + 80, left }} onClick={(e) => e.stopPropagation()}>
-          {PLANS.map((n) => (
-            <button key={n} type="button" className="biz-plan" disabled>
-              <span>{t("{n} işletme", { n })}</span>
-              <small>{t("Yakında")}</small>
-            </button>
-          ))}
-        </div>
-      )}
     </div>
   );
 }

@@ -14,6 +14,7 @@ import NotificationsPage from "./components/NotificationsPage";
 import SettingsPage from "./components/SettingsPage";
 import SupportPage from "./components/SupportPage";
 import PrivacyPage from "./components/PrivacyPage";
+import PlansPage from "./components/PlansPage";
 import type { TabInfo } from "./components/PartyTabs";
 import {
   BUILTIN_GROUPS,
@@ -468,6 +469,8 @@ export default function App() {
         );
       case "privacy":
         return <PrivacyPage onBack={toHome} />;
+      case "plans":
+        return <PlansPage profile={profile} onBack={toHome} />;
       case "support":
         return (
           <SupportPage
@@ -515,6 +518,7 @@ export default function App() {
       accounts={accounts}
       onOpenMenu={() => setDrawerOpen(true)}
       onOpenKasa={() => go({ name: "kasa" })}
+      onOpenPlans={() => go({ name: "menu", page: "plans" })}
       members={membersOf(currentTab)}
       activeTab={currentTab}
       tabs={tabs}

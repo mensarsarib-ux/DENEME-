@@ -72,6 +72,7 @@ export default function Dashboard({
   onDeleteTab,
   onOpenMenu,
   onOpenKasa,
+  onOpenPlans,
 }: {
   /** İşletme profili: üst çubukta ad olarak görünür */
   profile: Profile;
@@ -94,6 +95,8 @@ export default function Dashboard({
   onDeleteTab: (id: string) => void;
   /** Kasa satırına dokununca nakit ve banka sayfası açılır */
   onOpenKasa: () => void;
+  /** Firma logosundaki + ile işletme paketleri sayfası açılır */
+  onOpenPlans: () => void;
   /** Sol üstteki Menü: yan menü penceresini açar */
   onOpenMenu: () => void;
 }) {
@@ -101,7 +104,7 @@ export default function Dashboard({
   // Firma kutusuna basılı tutunca altında "+" çıkar; konumu bu kutudan alınır
   const markRef = useRef<HTMLButtonElement>(null);
   const [plusAt, setPlusAt] = useState<{ top: number; left: number } | null>(null);
-  // Logoya tek dokunuşla işletme ekleme açılır; konum logonun altından alınır
+  // Logoya dokununca + açılır; konum logonun altından alınır
   function openPlus() {
     const m = markRef.current?.getBoundingClientRect();
     if (m) setPlusAt({ top: m.bottom, left: m.left });
@@ -240,7 +243,17 @@ export default function Dashboard({
                 {profile.email && <small>{profile.email}</small>}
               </span>
             </div>
-            {plusAt && <BusinessPlus top={plusAt.top} left={plusAt.left} onClose={() => setPlusAt(null)} />}
+            {plusAt && (
+              <BusinessPlus
+                top={plusAt.top}
+                left={plusAt.left}
+                onClose={() => setPlusAt(null)}
+                onAdd={() => {
+                  setPlusAt(null);
+                  onOpenPlans();
+                }}
+              />
+            )}
             <div className="topbar-actions">
               <button
                 className="icon-btn"
