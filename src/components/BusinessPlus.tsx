@@ -6,47 +6,41 @@ import { haptic } from "../lib/haptics";
 const PLANS = [2, 5, 10];
 
 /**
- * Firma kutusuna basılı tutunca kutunun hemen altında küçük bir "+" çıkar.
- * "+" dokununca işletme paketleri aynı yerde açılır.
+ * Firma logosuna dokununca açılır: siyah arka plan üzerinde logonun altından kayarak gelen
+ * büyük bir "+" ve yanında "İşletme ekle". Dokununca işletme paketleri aynı yerde açılır.
  */
 export default function BusinessPlus({
   top,
   left,
-  width,
   onClose,
 }: {
-  /** Firma kutusunun ekrandaki konumu (piksel) */
+  /** Logonun alt kenarı ve sol kenarı (piksel) */
   top: number;
   left: number;
-  width: number;
   onClose: () => void;
 }) {
   const [plansOpen, setPlansOpen] = useState(false);
 
+  function open() {
+    haptic("medium");
+    setPlansOpen(true);
+  }
+
   return (
     <div className="biz-layer" onClick={onClose}>
-      {!plansOpen ? (
-        <button
-          type="button"
-          className="biz-plus"
-          style={{ top: top + 8, left: left + width / 2 }}
-          aria-label={t("İşletme paketleri")}
-          onClick={(e) => {
-            e.stopPropagation();
-            haptic("light");
-            setPlansOpen(true);
-          }}
-        >
+      <div className="biz-row" style={{ top: top + 10, left }} onClick={(e) => e.stopPropagation()}>
+        <button type="button" className="biz-plus" aria-label={t("İşletme ekle")} onClick={open}>
           +
         </button>
-      ) : (
-        <div
-          className="biz-plans"
-          role="dialog"
-          aria-label={t("İşletme paketleri")}
-          style={{ top: top + 8, left, width }}
-          onClick={(e) => e.stopPropagation()}
-        >
+        {!plansOpen && (
+          <button type="button" className="biz-add" onClick={open}>
+            {t("İşletme ekle")}
+          </button>
+        )}
+      </div>
+
+      {plansOpen && (
+        <div className="biz-plans" role="dialog" aria-label={t("İşletme paketleri")} style={{ top: top + 80, left }} onClick={(e) => e.stopPropagation()}>
           {PLANS.map((n) => (
             <button key={n} type="button" className="biz-plan" disabled>
               <span>{t("{n} işletme", { n })}</span>

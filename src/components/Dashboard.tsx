@@ -1,6 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import BusinessPlus from "./BusinessPlus";
-import { useLongPress } from "../lib/useLongPress";
 import {
   balanceOf,
   cashTotal,
@@ -18,7 +17,7 @@ import PartyTabs, { type TabInfo } from "./PartyTabs";
 import { Svg } from "./Icon";
 
 /** Logo yoksa firma kutusunda görünen dükkân simgesi */
-const SHOP_ICON = "M4 9l2-5h12l2 5M4 9h16v11H4zM9 20v-6h6v6M4 9c0 1.5 1.3 2.5 3 2.5S10 10.5 10 9c0 1.5 1.3 2.5 3 2.5S16 10.5 16 9c0 1.5 1.3 2.5 3 2.5S22 10.5 22 9";
+const SHOP_ICON = "M5 21V6l7-3 7 3v15M9 21v-5h6v5M9 9h1.5M13.5 9H15M9 13h1.5M13.5 13H15";
 
 /** Etkin sekmeye göre değişen metinler */
 function labelsFor(kind: string) {
@@ -100,14 +99,13 @@ export default function Dashboard({
 }) {
   const [searchOpen, setSearchOpen] = useState(false);
   // Firma kutusuna basılı tutunca altında "+" çıkar; konumu bu kutudan alınır
-  const pillRef = useRef<HTMLDivElement>(null);
-  const markRef = useRef<HTMLSpanElement>(null);
-  const [plusAt, setPlusAt] = useState<{ top: number; left: number; width: number } | null>(null);
-  const { handlers: pillHandlers } = useLongPress(() => {
-    // Konum logonun altından alınır: + ve paketler tam logonun altında açılır
+  const markRef = useRef<HTMLButtonElement>(null);
+  const [plusAt, setPlusAt] = useState<{ top: number; left: number } | null>(null);
+  // Logoya tek dokunuşla işletme ekleme açılır; konum logonun altından alınır
+  function openPlus() {
     const m = markRef.current?.getBoundingClientRect();
-    if (m) setPlusAt({ top: m.bottom, left: m.left, width: 220 });
-  });
+    if (m) setPlusAt({ top: m.bottom, left: m.left });
+  }
   const [query, setQuery] = useState("");
   const highlightRef = useRef<HTMLButtonElement>(null);
   /**
@@ -227,21 +225,22 @@ export default function Dashboard({
             >
               {t("Menü")}
             </button>
-            <div
-              className="company-pill"
-              ref={pillRef}
-              {...pillHandlers}
-              onContextMenu={(e) => e.preventDefault()}
-            >
-              <span className="company-mark" ref={markRef} aria-hidden="true">
+            <div className="company-pill">
+              <button
+                type="button"
+                className="company-mark"
+                ref={markRef}
+                aria-label={t("İşletme ekle")}
+                onClick={openPlus}
+              >
                 {profile.logo ? <img src={profile.logo} alt="" /> : <Svg d={SHOP_ICON} />}
-              </span>
+              </button>
               <span className="company-text">
                 <strong>{profile.name || t("Hesabım")}</strong>
                 {profile.email && <small>{profile.email}</small>}
               </span>
             </div>
-            {plusAt && <BusinessPlus {...plusAt} onClose={() => setPlusAt(null)} />}
+            {plusAt && <BusinessPlus top={plusAt.top} left={plusAt.left} onClose={() => setPlusAt(null)} />}
             <div className="topbar-actions">
               <button
                 className="icon-btn"

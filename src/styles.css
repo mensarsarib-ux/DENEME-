@@ -2497,36 +2497,66 @@ a.action-btn {
 .pie-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .pie-share { color: var(--muted); font-variant-numeric: tabular-nums; }
 
-/* Firma kutusunun altında çıkan "+" ve paket seçenekleri */
+/* Firma logosuna dokununca açılan siyah katman; + aşağı doğru kayarak gelir */
 .biz-layer {
   position: fixed;
   inset: 0;
   z-index: 45;
+  background: rgba(0, 0, 0, 0.82);
+  animation: biz-fade 0.2s ease-out;
+}
+
+@keyframes biz-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.biz-row {
+  position: fixed;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .biz-plus {
-  position: fixed;
-  transform: translateX(-50%);
-  width: 36px;
-  height: 36px;
+  width: 60px;
+  height: 60px;
   border: 0;
   border-radius: 50%;
   background: var(--brand, #2f7fd0);
   color: #fff;
-  font-size: 1.4rem;
+  font-size: 2.2rem;
+  font-weight: 300;
   line-height: 1;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 10px 28px rgba(47, 127, 208, 0.45);
+  animation: biz-drop 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+}
+
+@keyframes biz-drop {
+  from { transform: translateY(-40px) scale(0.5); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+
+.biz-add {
+  border: 0;
+  background: transparent;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  animation: biz-drop 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.2);
 }
 
 .biz-plans {
   position: fixed;
   display: grid;
   gap: 6px;
+  width: 220px;
   padding: 8px;
   border-radius: 16px;
   background: var(--surface-head);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  animation: biz-drop 0.3s ease-out;
 }
 
 .biz-plan {
@@ -2557,4 +2587,11 @@ a.action-btn {
   -webkit-user-select: none;
   user-select: none;
   -webkit-touch-callout: none;
+}
+
+/* Firma logosu artık dokunulabilir düğme */
+.company-mark {
+  border: 0;
+  padding: 0;
+  cursor: pointer;
 }
