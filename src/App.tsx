@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import Splash from "./components/Splash";
 import Dashboard from "./components/Dashboard";
 import CustomerPage from "./components/CustomerPage";
@@ -10,7 +10,8 @@ import AccountsPage from "./components/AccountsPage";
 import ReportsPage from "./components/ReportsPage";
 import NotesPage from "./components/NotesPage";
 import ContactsPage from "./components/ContactsPage";
-import NotificationsPage from "./components/NotificationsPage";
+import BusinessRequestsPage from "./components/BusinessRequestsPage";
+import { listPendingRequests } from "./lib/cloud";
 import SettingsPage from "./components/SettingsPage";
 import SupportPage from "./components/SupportPage";
 import PrivacyPage from "./components/PrivacyPage";
@@ -37,7 +38,6 @@ import {
 } from "./data/mock";
 import { setHapticsEnabled } from "./lib/haptics";
 import type { MenuPage } from "./lib/menu";
-import { buildNotifications } from "./lib/notifications";
 import { useSwipeBack } from "./lib/useSwipeBack";
 import { setCurrency } from "./lib/format";
 import { t } from "./lib/i18n";
@@ -188,14 +188,22 @@ export default function App() {
 
   useEffect(() => setHapticsEnabled(settings.haptics), [settings.haptics]);
 
-  // Bildirimler verilerden ve limitlerden üretilir; gün değişince yenilenir
-  const today = new Date().toDateString();
-  const notifications = useMemo(
-    () => buildNotifications(parties, transactions, accounts, settings, new Date()),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [parties, transactions, accounts, settings, today],
-  );
-  const unread = notifications.filter((n) => !readIds.includes(n.id)).length;
+  // Menüdeki Bildirimler rozeti: yetkili olunan işletmelerdeki bekleyen katılma istekleri
+  const [pendingCount, setPendingCount] = useState(0);
+  useEffect(() => {
+    if (!session) return;
+    let alive = true;
+    const check = () =>
+      listPendingRequests(session)
+        .then((res) => alive && Array.isArray(res) && setPendingCount(res.length))
+        .catch(() => undefined);
+    void check();
+    const timer = window.setInterval(check, 60_000);
+    return () => {
+      alive = false;
+      window.clearInterval(timer);
+    };
+  }, [session]);
 
   useEffect(() => {
     const exit = window.setTimeout(() => setPhase("exiting"), SPLASH_DURATION);
@@ -441,14 +449,7 @@ export default function App() {
         );
       case "notifications":
         return (
-          <NotificationsPage
-            notifications={notifications}
-            readIds={readIds}
-            onRead={(id) => setReadIds((prev) => (prev.includes(id) ? prev : [...prev, id]))}
-            onReadAll={() => setReadIds(notifications.map((n) => n.id))}
-            onOpenParty={openParty}
-            onBack={toHome}
-          />
+          <BusinessRequestsPage onBack={toHome} />
         );
       case "settings":
         return (
@@ -545,7 +546,7 @@ export default function App() {
     {drawerOpen && (
       <MenuDrawer
         profile={profile}
-        unread={unread}
+        unread={pendingCount}
         onNavigate={(page) => {
           setDrawerOpen(false);
           go({ name: "menu", page });

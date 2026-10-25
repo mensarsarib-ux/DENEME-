@@ -2999,3 +2999,51 @@ a.action-btn {
 .auth-tabs-3 button {
   font-size: 0.9rem;
 }
+
+/* Bildirimler: katılma istekleri */
+.request-row {
+  display: grid;
+  gap: 10px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.request-text {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.request-text small {
+  color: var(--muted);
+}
+
+.request-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.request-approve,
+.request-reject {
+  flex: 1;
+  padding: 10px;
+  border: 0;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.request-approve {
+  background: var(--green);
+  color: #0d1a14;
+}
+
+.request-reject {
+  background: rgba(228, 87, 74, 0.2);
+  color: var(--red);
+}
+
+.request-approve:disabled,
+.request-reject:disabled {
+  opacity: 0.5;
+}

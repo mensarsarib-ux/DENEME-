@@ -356,3 +356,39 @@ export async function findBusinessAnon(email: string): Promise<FoundBusiness[] |
   if (!res.ok) return null;
   return (await res.json()) as FoundBusiness[];
 }
+
+export interface PendingRequest {
+  request_id: string;
+  business_id: string;
+  business_name: string;
+  requester_email: string;
+  created_at: string;
+}
+
+/** Yetkili olunan işletmelere gelen bekleyen katılma istekleri */
+export async function listPendingRequests(session: Session): Promise<PendingRequest[] | "expired"> {
+  const s = await fresh(session);
+  if (!s) return "expired";
+  const res = await call("/rest/v1/rpc/pending_requests", {
+    method: "POST",
+    token: s.accessToken,
+    body: "{}",
+  });
+  if (res.status === 401) return "expired";
+  if (!res.ok) throw new CloudError("unknown", String(res.status));
+  return (await res.json()) as PendingRequest[];
+}
+
+/** İsteği onaylar ya da reddeder */
+export async function decideJoin(session: Session, requestId: string, approve: boolean): Promise<true | "expired"> {
+  const s = await fresh(session);
+  if (!s) return "expired";
+  const res = await call("/rest/v1/rpc/decide_join", {
+    method: "POST",
+    token: s.accessToken,
+    body: JSON.stringify({ req: requestId, approve }),
+  });
+  if (res.status === 401) return "expired";
+  if (!res.ok) throw new CloudError("unknown", String(res.status));
+  return true;
+}

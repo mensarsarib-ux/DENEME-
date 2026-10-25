@@ -4,7 +4,7 @@ import { haptic } from "../lib/haptics";
 import { MENU_ITEMS, PRIVACY_ICON, SUPPORT_ICON, type MenuPage } from "../lib/menu";
 
 /** Şimdilik menüde gösterilmeyen sayfalar; kodları durur, listeden çıkarılarak tekrar açılabilir */
-const HIDDEN_PAGES: MenuPage[] = ["contacts", "reports", "notifications"];
+const HIDDEN_PAGES: MenuPage[] = ["contacts", "reports"];
 import CompanyLogo from "./CompanyLogo";
 import { Svg } from "./Icon";
 import { t } from "../lib/i18n";
