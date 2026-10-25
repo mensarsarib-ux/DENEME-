@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import BusinessSheet from "./BusinessSheet";
+import BusinessPlus from "./BusinessPlus";
 import { useLongPress } from "../lib/useLongPress";
 import {
   balanceOf,
@@ -99,9 +99,13 @@ export default function Dashboard({
   onOpenMenu: () => void;
 }) {
   const [searchOpen, setSearchOpen] = useState(false);
-  // Firma kutusuna basılı tutunca işletme seçimi açılır
-  const [bizOpen, setBizOpen] = useState(false);
-  const { handlers: pillHandlers } = useLongPress(() => setBizOpen(true));
+  // Firma kutusuna basılı tutunca altında "+" çıkar; konumu bu kutudan alınır
+  const pillRef = useRef<HTMLDivElement>(null);
+  const [plusAt, setPlusAt] = useState<{ top: number; left: number; width: number } | null>(null);
+  const { handlers: pillHandlers } = useLongPress(() => {
+    const r = pillRef.current?.getBoundingClientRect();
+    if (r) setPlusAt({ top: r.bottom, left: r.left, width: r.width });
+  });
   const [query, setQuery] = useState("");
   const highlightRef = useRef<HTMLButtonElement>(null);
   /**
@@ -221,7 +225,7 @@ export default function Dashboard({
             >
               {t("Menü")}
             </button>
-            <div className="company-pill" {...pillHandlers}>
+            <div className="company-pill" ref={pillRef} {...pillHandlers}>
               <span className="company-mark" aria-hidden="true">
                 {profile.logo ? <img src={profile.logo} alt="" /> : <Svg d={SHOP_ICON} />}
               </span>
@@ -230,14 +234,7 @@ export default function Dashboard({
                 {profile.email && <small>{profile.email}</small>}
               </span>
             </div>
-            {bizOpen && (
-              <BusinessSheet
-                businesses={[{ id: "main", name: profile.name || t("Hesabım") }]}
-                currentName={profile.name || t("Hesabım")}
-                onChoose={() => setBizOpen(false)}
-                onClose={() => setBizOpen(false)}
-              />
-            )}
+            {plusAt && <BusinessPlus {...plusAt} onClose={() => setPlusAt(null)} />}
             <div className="topbar-actions">
               <button
                 className="icon-btn"

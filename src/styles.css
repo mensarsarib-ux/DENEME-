@@ -2497,14 +2497,50 @@ a.action-btn {
 .pie-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .pie-share { color: var(--muted); font-variant-numeric: tabular-nums; }
 
-/* İşletme seçim penceresinde düğmeler tam genişlikte ve sola yaslı */
-.business-sheet .action-list {
-  display: grid;
-  gap: 8px;
-  margin-bottom: 12px;
+/* Firma kutusunun altında çıkan "+" ve paket seçenekleri */
+.biz-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 45;
 }
 
-.business-sheet .action-list .action-btn {
-  width: 100%;
+.biz-plus {
+  position: fixed;
+  transform: translateX(-50%);
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--brand, #2f7fd0);
+  color: #fff;
+  font-size: 1.4rem;
+  line-height: 1;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+}
+
+.biz-plans {
+  position: fixed;
+  display: grid;
+  gap: 6px;
+  padding: 8px;
+  border-radius: 16px;
+  background: var(--surface-head);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+.biz-plan {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text);
   text-align: left;
+}
+
+.biz-plan small {
+  color: var(--muted);
 }
