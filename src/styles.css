@@ -2773,3 +2773,112 @@ a.action-btn {
   -webkit-touch-callout: none;
   -webkit-tap-highlight-color: transparent;
 }
+
+/* Aylık sütun grafiği: gelir/gider grafiğiyle aynı yükseklik ve renk tonları (yarı saydam) */
+.stats-carousel .stats-dots {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 4px;
+  margin: 0;
+  pointer-events: none;
+}
+
+.col-chart {
+  height: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.col-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.col-head .card-title {
+  margin: 0;
+}
+
+.col-legend {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.7rem;
+  color: var(--muted);
+}
+
+.col-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  margin-left: 6px;
+}
+
+.col-dot.in {
+  background: linear-gradient(180deg, rgba(95, 176, 245, 0.95), rgba(47, 120, 189, 0.6));
+}
+
+.col-dot.out {
+  background: linear-gradient(180deg, rgba(240, 138, 126, 0.95), rgba(196, 70, 58, 0.6));
+}
+
+.col-plot {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 6px;
+  border-bottom: 1px solid var(--line);
+}
+
+.col-group {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.col-bars {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 3px;
+}
+
+.col-bar {
+  width: min(10px, 36%);
+  min-height: 2px;
+  border-radius: 4px 4px 0 0;
+  transition: height 0.4s ease;
+}
+
+.col-bar.in {
+  background: linear-gradient(180deg, rgba(95, 176, 245, 0.9), rgba(47, 120, 189, 0.5));
+}
+
+.col-bar.out {
+  background: linear-gradient(180deg, rgba(240, 138, 126, 0.9), rgba(196, 70, 58, 0.5));
+}
+
+.col-label {
+  font-size: 0.66rem;
+  color: var(--muted);
+  padding-top: 3px;
+}
+
+.col-note {
+  margin: 0;
+  font-size: 0.72rem;
+  color: var(--muted);
+}
