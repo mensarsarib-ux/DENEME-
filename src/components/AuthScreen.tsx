@@ -1,11 +1,21 @@
 import { useState, type FormEvent } from "react";
-import { CloudError, normalizePhone, sendResetEmail, setPassword, signIn, signUp, type Session } from "../lib/cloud";
+import {
+  CloudError,
+  findBusinessAnon,
+  normalizePhone,
+  requestJoin,
+  sendResetEmail,
+  setPassword,
+  signIn,
+  signUp,
+  type Session,
+} from "../lib/cloud";
 import { haptic } from "../lib/haptics";
 import { t } from "../lib/i18n";
 import PhoneField from "./PhoneField";
 
 /** Giriş ekranının modları: giriş, kayıt, şifremi unuttum, e-postadan gelen yeni şifre */
-type Mode = "login" | "register" | "forgot" | "recovery";
+type Mode = "login" | "register" | "join" | "forgot" | "recovery";
 
 /**
  * Giriş ve kayıt ekranı. Giriş yalnızca e-posta ve şifreyle yapılır.
@@ -24,6 +34,7 @@ export default function AuthScreen({
 }) {
   const [mode, setMode] = useState<Mode>(recoveryToken ? "recovery" : "login");
   const [business, setBusiness] = useState("");
+  const [ownerEmail, setOwnerEmail] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword1] = useState("");
@@ -36,6 +47,8 @@ export default function AuthScreen({
   const validMail = /^\S+@\S+\.\S+$/.test(mail);
   const validPhone = normalizePhone(phone) !== null;
   const strongEnough = password.length >= 6;
+  const ownerMail = ownerEmail.trim();
+  const validOwner = /^\S+@\S+\.\S+$/.test(ownerMail);
 
   const canSubmit =
     !busy &&
@@ -43,9 +56,11 @@ export default function AuthScreen({
       ? validMail && password !== ""
       : mode === "register"
         ? business.trim() !== "" && validMail && validPhone && strongEnough
-        : mode === "forgot"
-          ? validMail
-          : strongEnough);
+        : mode === "join"
+          ? validMail && validPhone && strongEnough && validOwner
+          : mode === "forgot"
+            ? validMail
+            : strongEnough);
 
   function describe(e: unknown): string {
     const code = e instanceof CloudError ? e.code : "unknown";
@@ -77,6 +92,25 @@ export default function AuthScreen({
         } else {
           onSession(result, { isNew: true, businessName: business.trim() });
         }
+      } else if (mode === "join") {
+        // Önce yetkilinin işletmesi bulunur; bulunamazsa hesap açılmaz
+        const found = await findBusinessAnon(ownerMail);
+        if (!found || found.length === 0) {
+          haptic("warning");
+          setError(t("Bu e-postaya ait bir işletme bulunamadı."));
+          return;
+        }
+        const result = await signUp(mail, phone.trim(), password);
+        if (result === "pending") {
+          haptic("success");
+          setMode("login");
+          setInfo(t("Hesabınız oluşturuldu. E-postanızı doğrulayıp giriş yapın; sonra Var olan işletmeye katıl ekranından isteği gönderin."));
+          return;
+        }
+        // Oturum açıldı: katılma isteği gönderilir, yetkili onaylayınca erişim açılır
+        await requestJoin(result, found[0].id);
+        haptic("success");
+        onSession(result);
       } else if (mode === "forgot") {
         await sendResetEmail(mail);
         haptic("success");
@@ -107,6 +141,7 @@ export default function AuthScreen({
   const submitLabel = {
     login: t("GİRİŞ YAP"),
     register: t("KAYIT OL"),
+    join: t("KAYIT OL VE KATIL"),
     forgot: t("BAĞLANTI GÖNDER"),
     recovery: t("ŞİFREYİ YENİLE"),
   }[mode];
@@ -114,6 +149,7 @@ export default function AuthScreen({
   const subtitle = {
     login: t("Hesabınıza giriş yapın"),
     register: t("Yeni hesap oluşturun"),
+    join: t("Var olan işletmeye katılın"),
     forgot: t("Şifrenizi yenileyin"),
     recovery: t("Yeni şifrenizi belirleyin"),
   }[mode];
@@ -162,13 +198,16 @@ export default function AuthScreen({
         <h1>Hesabım</h1>
         <p className="auth-sub">{subtitle}</p>
 
-        {(mode === "login" || mode === "register") && (
-          <div className="auth-tabs" role="tablist">
+        {(mode === "login" || mode === "register" || mode === "join") && (
+          <div className="auth-tabs auth-tabs-3" role="tablist">
             <button type="button" role="tab" aria-selected={mode === "login"} className={mode === "login" ? "is-active" : ""} onClick={() => switchMode("login")}>
               {t("Giriş yap")}
             </button>
             <button type="button" role="tab" aria-selected={mode === "register"} className={mode === "register" ? "is-active" : ""} onClick={() => switchMode("register")}>
-              {t("Kayıt ol")}
+              {t("Üye ol")}
+            </button>
+            <button type="button" role="tab" aria-selected={mode === "join"} className={mode === "join" ? "is-active" : ""} onClick={() => switchMode("join")}>
+              {t("Katıl")}
             </button>
           </div>
         )}
@@ -190,6 +229,30 @@ export default function AuthScreen({
             <div className="field">
               <label htmlFor="auth-phone">{t("Telefon")}</label>
               <PhoneField id="auth-phone" value={phone} onChange={setPhone} />
+              {phone.trim() !== "" && !validPhone && <p className="field-hint">{t("Geçerli bir telefon numarası yazın.")}</p>}
+            </div>
+            {passwordField}
+          </>
+        )}
+
+        {mode === "join" && (
+          <>
+            {emailField("auth-email-join")}
+            <div className="field">
+              <label htmlFor="auth-owner">{t("Yetkilinin e-postası")}</label>
+              <input
+                id="auth-owner"
+                type="email"
+                inputMode="email"
+                autoCapitalize="none"
+                autoCorrect="off"
+                value={ownerEmail}
+                onChange={(e) => setOwnerEmail(e.target.value)}
+              />
+            </div>
+            <div className="field">
+              <label htmlFor="auth-phone-join">{t("Telefon")}</label>
+              <PhoneField id="auth-phone-join" value={phone} onChange={setPhone} />
               {phone.trim() !== "" && !validPhone && <p className="field-hint">{t("Geçerli bir telefon numarası yazın.")}</p>}
             </div>
             {passwordField}

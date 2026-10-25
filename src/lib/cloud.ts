@@ -346,3 +346,13 @@ export async function requestJoin(session: Session, businessId: string): Promise
   if (!res.ok) throw new CloudError("unknown", String(res.status));
   return true;
 }
+
+/** Giriş gerekmeden, yetkilinin e-postasıyla işletmeyi bulur (kayıt öncesi kontrol) */
+export async function findBusinessAnon(email: string): Promise<FoundBusiness[] | null> {
+  const res = await call("/rest/v1/rpc/find_business_by_owner_email", {
+    method: "POST",
+    body: JSON.stringify({ owner_email: email.trim() }),
+  });
+  if (!res.ok) return null;
+  return (await res.json()) as FoundBusiness[];
+}

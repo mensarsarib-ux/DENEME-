@@ -2989,3 +2989,13 @@ a.action-btn {
   white-space: nowrap;
   font-weight: 600;
 }
+
+/* Giriş ekranında üç sekme: Giriş yap, Üye ol, Katıl */
+.auth-tabs-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.auth-tabs-3 button {
+  font-size: 0.9rem;
+}
