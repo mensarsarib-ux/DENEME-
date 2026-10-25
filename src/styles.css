@@ -2352,7 +2352,8 @@ a.action-btn {
 
 /* Her sayfa güvenli alanın altına kadar kendi rengiyle uzanır; durum çubuğu sayfa rengiyle birleşir */
 #root > * {
-  padding-top: env(safe-area-inset-top, 0px);
+  /* Güvenli üst alan adanın altında kalır; firma satırı birkaç piksel yukarı çekilir */
+  padding-top: max(0px, calc(env(safe-area-inset-top, 0px) - 6px));
 }
 
 .auth-page {
