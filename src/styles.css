@@ -2754,3 +2754,12 @@ a.action-btn {
   background: rgba(255, 255, 255, 0.12);
   color: #fff;
 }
+
+/* İşletme listesinde basılı tutunca metin seçimi ve kopyala/yapıştır menüsü çıkmasın */
+.biz-col,
+.biz-col * {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
