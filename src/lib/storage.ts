@@ -144,3 +144,18 @@ function mainName(): string {
 export function businessList(): Workspace[] {
   return [{ id: MAIN_WORKSPACE, name: mainName() }, ...listWorkspaces()];
 }
+
+/** Bir işletmeyi ve tüm verilerini siler. Ana işletme silinemez. Çağıran, kimlik doğrulamasını önceden yapmalı. */
+export function deleteWorkspace(id: string) {
+  if (id === MAIN_WORKSPACE) return;
+  try {
+    const head = `${BASE}ws:${id}:`;
+    for (const key of Object.keys(localStorage)) {
+      if (key.startsWith(head)) localStorage.removeItem(key);
+    }
+    localStorage.setItem(WORKSPACES_KEY, JSON.stringify(listWorkspaces().filter((w) => w.id !== id)));
+    if (activeWorkspace() === id) localStorage.removeItem(WORKSPACE_KEY);
+  } catch {
+    /* sessizce geç */
+  }
+}

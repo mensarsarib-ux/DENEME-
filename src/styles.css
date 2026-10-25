@@ -2724,3 +2724,33 @@ a.action-btn {
   font-size: 0.95rem;
   text-overflow: ellipsis;
 }
+
+/* İşletme silme: basılı tutunca çıkan Sil ve Vazgeç */
+.biz-group {
+  display: grid;
+  gap: 6px;
+}
+
+.biz-delete {
+  display: flex;
+  gap: 8px;
+}
+
+.biz-delete-btn,
+.biz-cancel-btn {
+  flex: 1;
+  padding: 10px 12px;
+  border: 0;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.biz-delete-btn {
+  background: #e4574a;
+  color: #fff;
+}
+
+.biz-cancel-btn {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+}

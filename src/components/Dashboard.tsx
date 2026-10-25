@@ -2,6 +2,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import BusinessPlus from "./BusinessPlus";
 import { activeWorkspace, businessList, switchWorkspace } from "../lib/storage";
 import { businessColor } from "../lib/business-colors";
+import DeleteBusinessDialog from "./DeleteBusinessDialog";
 import {
   balanceOf,
   cashTotal,
@@ -106,6 +107,8 @@ export default function Dashboard({
   // Firma kutusuna basılı tutunca altında "+" çıkar; konumu bu kutudan alınır
   const markRef = useRef<HTMLButtonElement>(null);
   const [plusAt, setPlusAt] = useState<{ top: number; left: number } | null>(null);
+  // Silinmek üzere seçilen işletme (e-posta ve şifre onayı açılır)
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
   // Logoya dokununca + açılır; konum logonun altından alınır
   function openPlus() {
     const m = markRef.current?.getBoundingClientRect();
@@ -244,6 +247,9 @@ export default function Dashboard({
                 {profile.email && <small>{profile.email}</small>}
               </span>
             </div>
+            {deleteTarget && (
+              <DeleteBusinessDialog id={deleteTarget.id} name={deleteTarget.name} onClose={() => setDeleteTarget(null)} />
+            )}
             {plusAt && (
               <BusinessPlus
                 top={plusAt.top}
@@ -251,6 +257,11 @@ export default function Dashboard({
                 businesses={businessList().map((b, i) => ({ ...b, color: businessColor(i) }))}
                 activeId={activeWorkspace()}
                 onSwitch={(id) => switchWorkspace(id)}
+                onDelete={(id) => {
+                  const b = businessList().find((x) => x.id === id);
+                  setPlusAt(null);
+                  setDeleteTarget({ id, name: b?.name ?? "" });
+                }}
                 onClose={() => setPlusAt(null)}
                 onAdd={() => {
                   setPlusAt(null);
