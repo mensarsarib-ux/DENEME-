@@ -101,10 +101,12 @@ export default function Dashboard({
   const [searchOpen, setSearchOpen] = useState(false);
   // Firma kutusuna basılı tutunca altında "+" çıkar; konumu bu kutudan alınır
   const pillRef = useRef<HTMLDivElement>(null);
+  const markRef = useRef<HTMLSpanElement>(null);
   const [plusAt, setPlusAt] = useState<{ top: number; left: number; width: number } | null>(null);
   const { handlers: pillHandlers } = useLongPress(() => {
-    const r = pillRef.current?.getBoundingClientRect();
-    if (r) setPlusAt({ top: r.bottom, left: r.left, width: r.width });
+    // Konum logonun altından alınır: + ve paketler tam logonun altında açılır
+    const m = markRef.current?.getBoundingClientRect();
+    if (m) setPlusAt({ top: m.bottom, left: m.left, width: 220 });
   });
   const [query, setQuery] = useState("");
   const highlightRef = useRef<HTMLButtonElement>(null);
@@ -231,7 +233,7 @@ export default function Dashboard({
               {...pillHandlers}
               onContextMenu={(e) => e.preventDefault()}
             >
-              <span className="company-mark" aria-hidden="true">
+              <span className="company-mark" ref={markRef} aria-hidden="true">
                 {profile.logo ? <img src={profile.logo} alt="" /> : <Svg d={SHOP_ICON} />}
               </span>
               <span className="company-text">

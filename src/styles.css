@@ -2541,7 +2541,13 @@ a.action-btn {
   text-align: left;
 }
 
+.biz-plan span {
+  white-space: nowrap;
+}
+
 .biz-plan small {
+  margin-left: 14px;
+  white-space: nowrap;
   color: var(--muted);
 }
 
