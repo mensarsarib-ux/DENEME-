@@ -22,6 +22,9 @@ workflows:
       branch_patterns:
         - pattern: "claude/hesabim-splash-dashboard"
           include: true
+    ios_signing:
+      distribution_type: app_store
+      bundle_identifier: com.mensar.hesabim
     scripts:
       - name: Paketleri kur
         script: npm ci
@@ -31,14 +34,6 @@ workflows:
         script: npx cap sync ios
       - name: CocoaPods bağımlılıklarını kur
         script: cd ios/App && pod install
-      - name: Anahtar zinciri hazırla
-        script: keychain initialize
-      - name: İmzalama dosyalarını App Store Connect'ten al
-        script: app-store-connect fetch-signing-files "$APP_BUNDLE_ID" --type IOS_APP_STORE --create
-      - name: Sertifikaları anahtar zincirine ekle
-        script: keychain add-certificates
-      - name: Xcode projesine profilleri bağla
-        script: xcode-project use-profiles
       - name: IPA üret
         script: xcode-project build-ipa --workspace "$XCODE_WORKSPACE" --scheme "$XCODE_SCHEME"
     artifacts:
