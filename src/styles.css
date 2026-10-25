@@ -2544,3 +2544,11 @@ a.action-btn {
 .biz-plan small {
   color: var(--muted);
 }
+
+/* Firma kutusunda basılı tutunca metin seçimi ve kopyala menüsü çıkmasın */
+.company-pill,
+.company-pill * {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}

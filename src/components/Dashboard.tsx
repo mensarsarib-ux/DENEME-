@@ -225,7 +225,12 @@ export default function Dashboard({
             >
               {t("Menü")}
             </button>
-            <div className="company-pill" ref={pillRef} {...pillHandlers}>
+            <div
+              className="company-pill"
+              ref={pillRef}
+              {...pillHandlers}
+              onContextMenu={(e) => e.preventDefault()}
+            >
               <span className="company-mark" aria-hidden="true">
                 {profile.logo ? <img src={profile.logo} alt="" /> : <Svg d={SHOP_ICON} />}
               </span>
