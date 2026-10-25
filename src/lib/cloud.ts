@@ -312,3 +312,37 @@ export async function listDevices(session: Session): Promise<DeviceInfo[] | "exp
   const rows = (await res.json()) as { device_id: string; label: string; last_seen: string }[];
   return rows.map((r) => ({ deviceId: r.device_id, label: r.label, lastSeen: r.last_seen }));
 }
+
+export interface FoundBusiness {
+  id: string;
+  name: string;
+}
+
+/** Yetkilinin e-postasıyla işletmeyi bulur (şifre gerekmez) */
+export async function findBusinessByOwnerEmail(session: Session, email: string): Promise<FoundBusiness[] | "expired"> {
+  const s = await fresh(session);
+  if (!s) return "expired";
+  const res = await call("/rest/v1/rpc/find_business_by_owner_email", {
+    method: "POST",
+    token: s.accessToken,
+    body: JSON.stringify({ owner_email: email.trim() }),
+  });
+  if (res.status === 401) return "expired";
+  if (!res.ok) throw new CloudError("unknown", String(res.status));
+  return (await res.json()) as FoundBusiness[];
+}
+
+/** Bu işletmeye katılma isteği gönderir; yetkili onaylayana kadar bekler */
+export async function requestJoin(session: Session, businessId: string): Promise<true | "expired"> {
+  const s = await fresh(session);
+  if (!s) return "expired";
+  const res = await call("/rest/v1/join_requests", {
+    method: "POST",
+    token: s.accessToken,
+    headers: { Prefer: "return=minimal" },
+    body: JSON.stringify({ business_id: businessId, requester_id: s.userId }),
+  });
+  if (res.status === 401) return "expired";
+  if (!res.ok) throw new CloudError("unknown", String(res.status));
+  return true;
+}

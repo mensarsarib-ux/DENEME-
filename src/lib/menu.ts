@@ -10,7 +10,8 @@ export type MenuPage =
   | "support"
   | "privacy"
   | "plans"
-  | "newbusiness";
+  | "newbusiness"
+  | "join";
 
 export const MENU_ITEMS: { page: MenuPage; label: string; icon: string }[] = [
   { page: "profile", label: "İşletme profili", icon: "M4 21V8l8-5 8 5v13M9 21v-6h6v6M8 11h.01M12 11h.01M16 11h.01" },

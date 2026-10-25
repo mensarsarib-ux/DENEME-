@@ -7,7 +7,7 @@ import { SUPPORT_ICON } from "../lib/menu";
 import PhoneField from "./PhoneField";
 
 /** Yeni işletme formu: işletme profili ile aynı bilgiler; kaydedilince bomboş yeni bir işletme açılır */
-export default function NewBusinessPage({ onBack }: { onBack: () => void }) {
+export default function NewBusinessPage({ onBack, onJoin }: { onBack: () => void; onJoin: () => void }) {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
@@ -53,6 +53,9 @@ export default function NewBusinessPage({ onBack }: { onBack: () => void }) {
         </div>
         <button className="primary-btn" type="submit" disabled={!ready}>
           {t("İŞLETMEYİ OLUŞTUR")}
+        </button>
+        <button type="button" className="help-link" onClick={onJoin}>
+          {t("Var olan işletmeye katıl")}
         </button>
       </form>
     </div>

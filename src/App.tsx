@@ -16,6 +16,7 @@ import SupportPage from "./components/SupportPage";
 import PrivacyPage from "./components/PrivacyPage";
 import PlansPage from "./components/PlansPage";
 import NewBusinessPage from "./components/NewBusinessPage";
+import JoinBusinessPage from "./components/JoinBusinessPage";
 import { activeWorkspace, MAIN_WORKSPACE } from "./lib/storage";
 import type { TabInfo } from "./components/PartyTabs";
 import {
@@ -477,7 +478,9 @@ export default function App() {
       case "plans":
         return <PlansPage profile={profile} onBack={toHome} />;
       case "newbusiness":
-        return <NewBusinessPage onBack={toHome} />;
+        return <NewBusinessPage onBack={toHome} onJoin={() => go({ name: "menu", page: "join" })} />;
+      case "join":
+        return <JoinBusinessPage onBack={toHome} />;
       case "support":
         return (
           <SupportPage

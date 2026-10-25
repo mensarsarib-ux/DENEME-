@@ -2971,3 +2971,21 @@ a.action-btn {
   color: var(--red);
   font-size: 0.8rem;
 }
+
+/* Katılma sayfası: bulunan işletme satırı */
+.join-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+}
+
+.join-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 600;
+}
