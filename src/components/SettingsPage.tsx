@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { currentDeviceId, listDevices, type DeviceInfo, type Session } from "../lib/cloud";
+import { currentDeviceId, listDevices, removeDevice, type DeviceInfo, type Session } from "../lib/cloud";
 import type { Settings } from "../data/mock";
 import { locale, t } from "../lib/i18n";
 import { CURRENCIES, currencyOf } from "../lib/currencies";
@@ -235,6 +235,18 @@ export default function SettingsPage({
                               })}
                         </small>
                       </span>
+                      {d.deviceId !== thisDevice && account?.session && (
+                        <button
+                          type="button"
+                          className="device-remove"
+                          onClick={async () => {
+                            const r = await removeDevice(account.session!, d.deviceId);
+                            if (r === true) setDevices((list) => (list ? list.filter((x) => x.deviceId !== d.deviceId) : list));
+                          }}
+                        >
+                          {t("Kaldır")}
+                        </button>
+                      )}
                     </li>
                   );
                 })}

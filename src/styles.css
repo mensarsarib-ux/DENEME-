@@ -2959,3 +2959,15 @@ a.action-btn {
   color: var(--muted);
   font-size: 0.85rem;
 }
+
+/* Bağlı cihaz satırında Kaldır düğmesi */
+.device-remove {
+  flex: none;
+  margin-left: auto;
+  padding: 6px 10px;
+  border: 1px solid rgba(228, 87, 74, 0.5);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--red);
+  font-size: 0.8rem;
+}

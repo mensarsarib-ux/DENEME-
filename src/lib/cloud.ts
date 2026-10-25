@@ -4,6 +4,7 @@
  * VITE_SUPABASE_URL ve VITE_SUPABASE_ANON_KEY tanımlı değilse uygulama yalnızca bu cihazda çalışır.
  */
 
+import { Capacitor } from "@capacitor/core";
 import { t } from "./i18n";
 
 const URL_BASE = (import.meta.env.VITE_SUPABASE_URL as string | undefined)?.replace(/\/+$/, "") ?? "";
@@ -258,7 +259,25 @@ export function deviceLabel(): string {
         : /Safari/.test(ua)
           ? "Safari"
           : "";
-  return browser ? `${platform} · ${browser}` : platform;
+  // Paket içi uygulama, ana ekran uygulaması ve tarayıcı birbirinden ayrılır
+  const mode = Capacitor.isNativePlatform()
+    ? t("Uygulama")
+    : (navigator as Navigator & { standalone?: boolean }).standalone
+      ? t("Ana ekran")
+      : browser;
+  return mode ? `${platform} · ${mode}` : platform;
+}
+
+/** Hesabın bir cihazını listeden kaldırır (kendi cihazı dışındakiler için) */
+export async function removeDevice(session: Session, deviceId: string): Promise<boolean | "expired"> {
+  const s = await fresh(session);
+  if (!s) return "expired";
+  const res = await call(
+    `/rest/v1/user_devices?user_id=eq.${s.userId}&device_id=eq.${encodeURIComponent(deviceId)}`,
+    { method: "DELETE", token: s.accessToken },
+  );
+  if (res.status === 401) return "expired";
+  return res.ok;
 }
 
 /** Bu cihazın açık olduğunu sunucuya bildirir */
