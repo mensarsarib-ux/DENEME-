@@ -15,6 +15,8 @@ import SettingsPage from "./components/SettingsPage";
 import SupportPage from "./components/SupportPage";
 import PrivacyPage from "./components/PrivacyPage";
 import PlansPage from "./components/PlansPage";
+import NewBusinessPage from "./components/NewBusinessPage";
+import { activeWorkspace, MAIN_WORKSPACE } from "./lib/storage";
 import type { TabInfo } from "./components/PartyTabs";
 import {
   BUILTIN_GROUPS,
@@ -122,8 +124,10 @@ export default function App() {
     };
   }, [session]);
 
+  // Bulut eşitlemesi yalnızca ana işletmede çalışır; yeni işletmenin verisi ana verinin üzerine yazılmaz
+  const isMainWorkspace = activeWorkspace() === MAIN_WORKSPACE;
   const sync = useCloudSync({
-    session,
+    session: isMainWorkspace ? session : null,
     snapshot,
     onExpired: () => setSession(null),
     apply: (d) => {
@@ -471,6 +475,8 @@ export default function App() {
         return <PrivacyPage onBack={toHome} />;
       case "plans":
         return <PlansPage profile={profile} onBack={toHome} />;
+      case "newbusiness":
+        return <NewBusinessPage onBack={toHome} />;
       case "support":
         return (
           <SupportPage
@@ -518,7 +524,7 @@ export default function App() {
       accounts={accounts}
       onOpenMenu={() => setDrawerOpen(true)}
       onOpenKasa={() => go({ name: "kasa" })}
-      onOpenPlans={() => go({ name: "menu", page: "plans" })}
+      onOpenPlans={() => go({ name: "menu", page: "newbusiness" })}
       members={membersOf(currentTab)}
       activeTab={currentTab}
       tabs={tabs}

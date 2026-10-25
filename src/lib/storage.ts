@@ -1,7 +1,80 @@
 import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
 
 /** Saklanan verilerin sürümü; veri yapısı değişirse artırılır ve eski kayıtlar yok sayılır */
-const PREFIX = "hesabim:v1:";
+const BASE = "hesabim:v1:";
+const WORKSPACE_KEY = "hesabim:workspace";
+const WORKSPACES_KEY = "hesabim:workspaces";
+
+/** Ana işletme (ilk kurulumdaki veriler) */
+export const MAIN_WORKSPACE = "main";
+
+export interface Workspace {
+  id: string;
+  name: string;
+}
+
+/** Aktif işletme; değişince uygulama yeniden yüklenir ve o işletmenin verisi açılır */
+export function activeWorkspace(): string {
+  try {
+    return localStorage.getItem(WORKSPACE_KEY) || MAIN_WORKSPACE;
+  } catch {
+    return MAIN_WORKSPACE;
+  }
+}
+
+function prefix(): string {
+  const ws = activeWorkspace();
+  return ws === MAIN_WORKSPACE ? BASE : `${BASE}ws:${ws}:`;
+}
+
+/** Kayıtlı işletmeler (ana işletme dahil değil) */
+export function listWorkspaces(): Workspace[] {
+  try {
+    const raw = localStorage.getItem(WORKSPACES_KEY);
+    return raw ? (JSON.parse(raw) as Workspace[]) : [];
+  } catch {
+    return [];
+  }
+}
+
+/** Yeni işletme oluşturur, verilen profille başlatır ve ona geçer (sayfa yeniden yüklenmeli) */
+export function createWorkspace(name: string, profile: object): string {
+  const id = Math.random().toString(36).slice(2, 10);
+  try {
+    localStorage.setItem(WORKSPACES_KEY, JSON.stringify([...listWorkspaces(), { id, name }]));
+    // Yeni işletme bomboş açılır: örnek kayıtlar yerine boş listeler yazılır
+    const empty: Record<string, unknown> = {
+      profile,
+      parties: [],
+      transactions: [],
+      notes: [],
+      readIds: [],
+      // Kasa hesapları sıfır açılış bakiyesiyle başlar
+      accounts: [
+        { id: "cash", name: "Nakit", opening: 0 },
+        { id: "bank", name: "Banka", opening: 0 },
+      ],
+    };
+    for (const [key, value] of Object.entries(empty)) {
+      localStorage.setItem(`${BASE}ws:${id}:${key}`, JSON.stringify(value));
+    }
+    localStorage.setItem(WORKSPACE_KEY, id);
+  } catch {
+    /* depolama kapalıysa işletme oluşturulamaz */
+  }
+  return id;
+}
+
+/** Bir işletmeye geçer; sayfa yeniden yüklenerek o işletmenin verisi açılır */
+export function switchWorkspace(id: string) {
+  try {
+    if (id === MAIN_WORKSPACE) localStorage.removeItem(WORKSPACE_KEY);
+    else localStorage.setItem(WORKSPACE_KEY, id);
+  } catch {
+    /* sessizce geç */
+  }
+  window.location.reload();
+}
 
 /** Tarayıcıda saklanan kayıtların anahtarları (yedek alma ve sıfırlama için) */
 export const STORAGE_KEYS = [
@@ -17,7 +90,7 @@ export const STORAGE_KEYS = [
 
 function read<T>(key: string): T | undefined {
   try {
-    const raw = localStorage.getItem(PREFIX + key);
+    const raw = localStorage.getItem(prefix() + key);
     return raw ? (JSON.parse(raw) as T) : undefined;
   } catch {
     return undefined;
@@ -26,7 +99,7 @@ function read<T>(key: string): T | undefined {
 
 function write(key: string, value: unknown) {
   try {
-    localStorage.setItem(PREFIX + key, JSON.stringify(value));
+    localStorage.setItem(prefix() + key, JSON.stringify(value));
   } catch {
     /* depolama kapalıysa uygulama bellekte çalışmaya devam eder */
   }
@@ -35,7 +108,7 @@ function write(key: string, value: unknown) {
 /** Tüm saklanan kayıtları siler (ayarlardaki sıfırlama) */
 export function clearStored() {
   try {
-    for (const key of STORAGE_KEYS) localStorage.removeItem(PREFIX + key);
+    for (const key of STORAGE_KEYS) localStorage.removeItem(prefix() + key);
   } catch {
     /* sessizce geç */
   }

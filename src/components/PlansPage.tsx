@@ -1,6 +1,7 @@
 import type { Profile } from "../data/mock";
 import { t } from "../lib/i18n";
 import { haptic } from "../lib/haptics";
+import { activeWorkspace, listWorkspaces, MAIN_WORKSPACE, switchWorkspace } from "../lib/storage";
 import { SUPPORT_ICON } from "../lib/menu";
 import CompanyLogo from "./CompanyLogo";
 import PageHeader from "./PageHeader";
@@ -11,6 +12,8 @@ const PLANS = [2, 5, 10];
 /** İşletme paketleri sayfası: mevcut işletme ve üst pakete geçiş seçenekleri */
 export default function PlansPage({ profile, onBack }: { profile: Profile; onBack: () => void }) {
   const name = profile.name || t("Hesabım");
+  const active = activeWorkspace();
+  const others = listWorkspaces();
 
   return (
     <div className="cust-page">
@@ -21,6 +24,25 @@ export default function PlansPage({ profile, onBack }: { profile: Profile; onBac
           <div className="plans-current">
             <CompanyLogo logo={profile.logo} name={name} size={40} />
             <span className="plans-current-name">{name}</span>
+          </div>
+        </section>
+
+        <section className="card" aria-label={t("İşletmelerim")}>
+          <h2 className="card-title">{t("İŞLETMELERİM")}</h2>
+          <div className="plans-list">
+            {active !== MAIN_WORKSPACE && (
+              <button type="button" className="plans-item" onClick={() => switchWorkspace(MAIN_WORKSPACE)}>
+                <span>{t("Ana işletme")}</span>
+              </button>
+            )}
+            {others
+              .filter((w) => w.id !== active)
+              .map((w) => (
+                <button key={w.id} type="button" className="plans-item" onClick={() => switchWorkspace(w.id)}>
+                  <span>{w.name}</span>
+                </button>
+              ))}
+            {active !== MAIN_WORKSPACE && <small className="plans-note">{t("Şu an bu işletmedesiniz: {n}", { n: name })}</small>}
           </div>
         </section>
 
