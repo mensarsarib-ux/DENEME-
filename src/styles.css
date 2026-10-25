@@ -2670,5 +2670,6 @@ a.action-btn {
 }
 
 .biz-col .biz-row {
+  position: relative;
   margin-top: 6px;
 }
