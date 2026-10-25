@@ -233,7 +233,8 @@ export default function App() {
     );
   }
 
-  if (session && !sync.ready) {
+  // Yükleme ekranı yalnızca ana işletmede, bulut verisi beklenirken gösterilir
+  if (session && isMainWorkspace && !sync.ready) {
     return <div className="sync-loading">{t("Verileriniz getiriliyor…")}</div>;
   }
 
