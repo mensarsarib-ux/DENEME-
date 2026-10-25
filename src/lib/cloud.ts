@@ -411,3 +411,25 @@ export async function ensureOwnerBusiness(session: Session, name: string): Promi
   if (res.status === 401) return "expired";
   if (!res.ok) throw new CloudError("unknown", String(res.status));
 }
+
+/** Kayıt sonrası e-postaya gelen kodu doğrular; başarılıysa oturum döner */
+export async function verifySignupCode(email: string, code: string): Promise<Session | "invalid"> {
+  const res = await call("/auth/v1/verify", {
+    method: "POST",
+    body: JSON.stringify({ type: "signup", email: email.trim(), token: code.trim() }),
+  });
+  const body = (await res.json().catch(() => ({}))) as AuthBody;
+  if (!res.ok) return "invalid";
+  const session = toSession(body, email);
+  if (!session) return "invalid";
+  saveSession(session);
+  return session;
+}
+
+/** Doğrulama kodunu yeniden gönderir */
+export async function resendSignupCode(email: string): Promise<void> {
+  await call("/auth/v1/resend", {
+    method: "POST",
+    body: JSON.stringify({ type: "signup", email: email.trim() }),
+  });
+}

@@ -4,18 +4,23 @@ import {
   findBusinessAnon,
   normalizePhone,
   requestJoin,
+  resendSignupCode,
   sendResetEmail,
   setPassword,
   signIn,
   signUp,
   type Session,
+  verifySignupCode,
 } from "../lib/cloud";
 import { haptic } from "../lib/haptics";
 import { t } from "../lib/i18n";
 import PhoneField from "./PhoneField";
 
 /** Giriş ekranının modları: giriş, kayıt, şifremi unuttum, e-postadan gelen yeni şifre */
-type Mode = "login" | "register" | "join" | "forgot" | "recovery";
+type Mode = "login" | "register" | "join" | "verify" | "forgot" | "recovery";
+
+/** Kod bekleyen kayıt: e-posta, katılınacak işletme ve (varsa) yeni işletme adı */
+type Pending = { email: string; joinId: string | null; business: string | null };
 
 /**
  * Giriş ve kayıt ekranı. Giriş yalnızca e-posta ve şifreyle yapılır.
@@ -35,6 +40,8 @@ export default function AuthScreen({
   const [mode, setMode] = useState<Mode>(recoveryToken ? "recovery" : "login");
   const [business, setBusiness] = useState("");
   const [ownerEmail, setOwnerEmail] = useState("");
+  const [pending, setPending] = useState<Pending | null>(null);
+  const [code, setCode] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword1] = useState("");
@@ -52,7 +59,9 @@ export default function AuthScreen({
 
   const canSubmit =
     !busy &&
-    (mode === "login"
+    (mode === "verify"
+      ? code.trim().length >= 6
+      : mode === "login"
       ? validMail && password !== ""
       : mode === "register"
         ? business.trim() !== "" && validMail && validPhone && strongEnough
@@ -87,8 +96,8 @@ export default function AuthScreen({
         const result = await signUp(mail, phone.trim(), password);
         if (result === "pending") {
           haptic("success");
-          setMode("login");
-          setInfo(t("Hesabınız oluşturuldu. E-postanıza gelen bağlantıyla doğrulayın, sonra giriş yapın."));
+          setPending({ email: mail, joinId: null, business: business.trim() });
+          setMode("verify");
         } else {
           onSession(result, { isNew: true, businessName: business.trim() });
         }
@@ -103,8 +112,8 @@ export default function AuthScreen({
         const result = await signUp(mail, phone.trim(), password);
         if (result === "pending") {
           haptic("success");
-          setMode("login");
-          setInfo(t("Hesabınız oluşturuldu. E-postanızı doğrulayıp giriş yapın; sonra Var olan işletmeye katıl ekranından isteği gönderin."));
+          setPending({ email: mail, joinId: found[0].id, business: null });
+          setMode("verify");
           return;
         }
         // Oturum açıldı: katılma isteği gönderilir, yetkili onaylayınca erişim açılır
@@ -132,6 +141,44 @@ export default function AuthScreen({
     }
   }
 
+  /** E-postaya gelen kodu doğrular; katılma ise isteği gönderir */
+  async function verify(event: FormEvent) {
+    event.preventDefault();
+    if (!pending || busy) return;
+    setBusy(true);
+    setError(null);
+    try {
+      const session = await verifySignupCode(pending.email, code);
+      if (session === "invalid") {
+        haptic("warning");
+        setError(t("Kod hatalı ya da süresi dolmuş. Yeni kod isteyin."));
+        return;
+      }
+      if (pending.joinId) {
+        await requestJoin(session, pending.joinId);
+        haptic("success");
+        onSession(session);
+      } else {
+        haptic("success");
+        onSession(session, { isNew: true, businessName: pending.business ?? "" });
+      }
+    } catch {
+      setError(t("Doğrulanamadı; bağlantınızı kontrol edin."));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function resend() {
+    if (!pending) return;
+    try {
+      await resendSignupCode(pending.email);
+      setInfo(t("Yeni kod gönderildi."));
+    } catch {
+      setError(t("Kod gönderilemedi; tekrar deneyin."));
+    }
+  }
+
   const switchMode = (next: Mode) => {
     setMode(next);
     setError(null);
@@ -142,6 +189,7 @@ export default function AuthScreen({
     login: t("GİRİŞ YAP"),
     register: t("KAYIT OL"),
     join: t("KAYIT OL VE KATIL"),
+    verify: t("DOĞRULA"),
     forgot: t("BAĞLANTI GÖNDER"),
     recovery: t("ŞİFREYİ YENİLE"),
   }[mode];
@@ -150,6 +198,7 @@ export default function AuthScreen({
     login: t("Hesabınıza giriş yapın"),
     register: t("Yeni hesap oluşturun"),
     join: t("Var olan işletmeye katılın"),
+    verify: t("E-postanıza gelen kodu girin"),
     forgot: t("Şifrenizi yenileyin"),
     recovery: t("Yeni şifrenizi belirleyin"),
   }[mode];
@@ -191,7 +240,7 @@ export default function AuthScreen({
 
   return (
     <div className="auth-page">
-      <form className="auth-card" onSubmit={submit} noValidate>
+      <form className="auth-card" onSubmit={mode === "verify" ? verify : submit} noValidate>
         <div className="auth-brand" aria-hidden="true">
           <img src="/logo.svg" alt="" />
         </div>
@@ -256,6 +305,27 @@ export default function AuthScreen({
               {phone.trim() !== "" && !validPhone && <p className="field-hint">{t("Geçerli bir telefon numarası yazın.")}</p>}
             </div>
             {passwordField}
+          </>
+        )}
+
+        {mode === "verify" && pending && (
+          <>
+            <p className="field-hint">{t("{email} adresine 6 haneli bir kod gönderdik.", { email: pending.email })}</p>
+            <div className="field">
+              <label htmlFor="auth-code">{t("Doğrulama kodu")}</label>
+              <input
+                id="auth-code"
+                type="text"
+                inputMode="numeric"
+                autoComplete="one-time-code"
+                maxLength={6}
+                value={code}
+                onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
+              />
+            </div>
+            <button type="button" className="help-link" onClick={resend}>
+              {t("Kodu yeniden gönder")}
+            </button>
           </>
         )}
 
