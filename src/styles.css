@@ -672,7 +672,17 @@ body {
 }
 
 .row-big .row-amount {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   font-size: 1.2rem;
+  line-height: 1;
+}
+
+.row-big .row-chevron {
+  margin-left: 0;
+  font-size: 1.3rem;
+  line-height: 1;
 }
 
 .row-amount.is-debt {
