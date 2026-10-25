@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import {
   TX_TYPES,
-  defaultTxType,
   balanceOf,
   needsAccount,
   signOf,
@@ -65,7 +64,8 @@ export default function CustomerPage({
   onBack: () => void;
 }) {
   // Her sekmede dört işlem türü de girilebilir; müşteride SATIŞ, diğerlerinde ALIŞ seçili başlar
-  const [txType, setTxType] = useState<TxType>(defaultTxType(customer.kind));
+  // Her müşteri açılışında işlem türü önce SATIŞ; kullanıcı isterse değiştirir
+  const [txType, setTxType] = useState<TxType>("SATIŞ");
   const [amount, setAmount] = useState("");
   // Tuş takımı sayfa yerleştikten kısa süre sonra yumuşakça açılır; kayıttan sonra kapanmaz
   const [keypadOpen, setKeypadOpen] = useState(false);
@@ -418,7 +418,7 @@ export default function CustomerPage({
       </div>
 
       {/* Alt bölüm: işlem girişi ve tuş takımı */}
-      <div ref={entryRef} className={`entry-dock ${keypadOpen ? "is-keypad-open" : ""}`}>
+      <div ref={entryRef} className={`entry-dock ${keypadOpen ? "is-keypad-open" : ""} ${typing ? "is-typing" : ""}`}>
         {undoTx && (
           <div className="toast" role="status">
             <span>{t("İşlem silindi")}</span>

@@ -1132,6 +1132,11 @@ body {
   cursor: not-allowed;
 }
 
+/* Açıklama yazılırken işlem türü sekmeleri gizlenir; yazı klavyesinin üstünde tarih ve açıklama kalır */
+.entry-dock.is-typing .entry-tabs {
+  display: none;
+}
+
 .entry-tabs {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
