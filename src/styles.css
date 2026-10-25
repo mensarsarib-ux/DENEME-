@@ -132,8 +132,8 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  padding: 6px 18px;
+  gap: 8px;
+  padding: 4px 14px 4px 5px;
   border-radius: 999px;
   background: rgba(10, 22, 30, 0.55);
 }
@@ -182,9 +182,14 @@ button {
   white-space: nowrap;
 }
 
+.company-text strong {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
 .company-text small {
   color: var(--muted);
-  font-size: 0.8rem;
+  font-size: 0.7rem;
 }
 
 .topbar-actions {
