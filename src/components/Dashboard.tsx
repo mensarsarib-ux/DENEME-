@@ -107,7 +107,7 @@ export default function Dashboard({
   // Logoya dokununca + açılır; konum logonun altından alınır
   function openPlus() {
     const m = markRef.current?.getBoundingClientRect();
-    if (m) setPlusAt({ top: m.bottom, left: m.left });
+    if (m) setPlusAt({ top: m.bottom, left: m.left + 14 });
   }
   const [query, setQuery] = useState("");
   const highlightRef = useRef<HTMLButtonElement>(null);
@@ -228,16 +228,10 @@ export default function Dashboard({
             >
               {t("Menü")}
             </button>
-            <div className="company-pill">
-              <button
-                type="button"
-                className="company-mark"
-                ref={markRef}
-                aria-label={t("İşletme ekle")}
-                onClick={openPlus}
-              >
+            <div className="company-pill" onClick={openPlus}>
+              <span className="company-mark" ref={markRef} aria-hidden="true">
                 {profile.logo ? <img src={profile.logo} alt="" /> : <Svg d={SHOP_ICON} />}
-              </button>
+              </span>
               <span className="company-text">
                 <strong>{profile.name || t("Hesabım")}</strong>
                 {profile.email && <small>{profile.email}</small>}
