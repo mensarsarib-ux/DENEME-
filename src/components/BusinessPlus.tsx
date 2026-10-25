@@ -1,6 +1,10 @@
 import { t } from "../lib/i18n";
 import { haptic } from "../lib/haptics";
 import type { Workspace } from "../lib/storage";
+import { Svg } from "./Icon";
+
+/** Mağaza simgesi (firma kutusunda ve listede aynı) */
+export const STORE_ICON = "M5 21V6l7-3 7 3v15M9 21v-5h6v5M9 9h1.5M13.5 9H15M9 13h1.5M13.5 13H15";
 
 /**
  * Firma kutusuna dokununca açılır: siyah katmanda mevcut işletmeler listelenir,
@@ -18,7 +22,7 @@ export default function BusinessPlus({
   /** Firma kutusunun alt kenarı ve sol kenarı (piksel) */
   top: number;
   left: number;
-  businesses: Workspace[];
+  businesses: (Workspace & { color: string })[];
   activeId: string;
   onSwitch: (id: string) => void;
   onAdd: () => void;
@@ -37,7 +41,10 @@ export default function BusinessPlus({
               onSwitch(b.id);
             }}
           >
-            <span>{b.name}</span>
+            <span className="biz-item-mark" style={{ color: b.color }} aria-hidden="true">
+              <Svg d={STORE_ICON} />
+            </span>
+            <span className="biz-item-name">{b.name}</span>
             {b.id === activeId && <small aria-hidden="true">✓</small>}
           </button>
         ))}

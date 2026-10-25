@@ -183,7 +183,7 @@ button {
   width: 20px;
   height: 20px;
   fill: none;
-  stroke: #f08a72;
+  stroke: currentColor;
   stroke-width: 1.8;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -2672,4 +2672,37 @@ a.action-btn {
 .biz-col .biz-row {
   position: relative;
   margin-top: 6px;
+}
+
+/* İşletme listesi satırları: renkli mağaza simgesi ve ad */
+.biz-item {
+  gap: 12px;
+}
+
+.biz-item-mark {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.biz-item-mark svg {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.biz-item-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }

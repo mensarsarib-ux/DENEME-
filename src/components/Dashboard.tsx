@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import BusinessPlus from "./BusinessPlus";
 import { activeWorkspace, businessList, switchWorkspace } from "../lib/storage";
+import { businessColor } from "../lib/business-colors";
 import {
   balanceOf,
   cashTotal,
@@ -230,7 +231,12 @@ export default function Dashboard({
               {t("Menü")}
             </button>
             <div className="company-pill" onClick={openPlus}>
-              <span className="company-mark" ref={markRef} aria-hidden="true">
+              <span
+                className="company-mark"
+                ref={markRef}
+                aria-hidden="true"
+                style={{ color: businessColor(Math.max(0, businessList().findIndex((b) => b.id === activeWorkspace()))) }}
+              >
                 {profile.logo ? <img src={profile.logo} alt="" /> : <Svg d={SHOP_ICON} />}
               </span>
               <span className="company-text">
@@ -242,7 +248,7 @@ export default function Dashboard({
               <BusinessPlus
                 top={plusAt.top}
                 left={plusAt.left}
-                businesses={businessList()}
+                businesses={businessList().map((b, i) => ({ ...b, color: businessColor(i) }))}
                 activeId={activeWorkspace()}
                 onSwitch={(id) => switchWorkspace(id)}
                 onClose={() => setPlusAt(null)}
