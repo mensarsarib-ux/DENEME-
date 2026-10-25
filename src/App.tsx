@@ -11,7 +11,8 @@ import ReportsPage from "./components/ReportsPage";
 import NotesPage from "./components/NotesPage";
 import ContactsPage from "./components/ContactsPage";
 import BusinessRequestsPage from "./components/BusinessRequestsPage";
-import { ensureOwnerBusiness, listPendingRequests } from "./lib/cloud";
+import { ensureOwnerBusiness, listPendingRequests, myMembership, myRequestStatus, type Membership } from "./lib/cloud";
+import WaitingScreen from "./components/WaitingScreen";
 import SettingsPage from "./components/SettingsPage";
 import SupportPage from "./components/SupportPage";
 import PrivacyPage from "./components/PrivacyPage";
@@ -127,8 +128,15 @@ export default function App() {
 
   // Bulut eşitlemesi yalnızca ana işletmede çalışır; yeni işletmenin verisi ana verinin üzerine yazılmaz
   const isMainWorkspace = activeWorkspace() === MAIN_WORKSPACE;
+  // Üyelik: undefined = henüz kontrol edilmedi, null = işletmesi yok
+  const [membership, setMembership] = useState<Membership | null | undefined>(undefined);
+  const [requestStatus, setRequestStatus] = useState<string | null>(null);
+  const [recheck, setRecheck] = useState(0);
+  const memberReady = !isMainWorkspace || membership !== undefined;
+  const waiting = isMainWorkspace && !!session && membership === null && requestStatus !== null;
   const sync = useCloudSync({
-    session: isMainWorkspace ? session : null,
+    session: isMainWorkspace && memberReady && !waiting ? session : null,
+    businessId: membership?.businessId ?? null,
     snapshot,
     onExpired: () => setSession(null),
     apply: (d) => {
@@ -188,12 +196,27 @@ export default function App() {
 
   useEffect(() => setHapticsEnabled(settings.haptics), [settings.haptics]);
 
-  // Hesabın sahibi olduğu işletme sunucuda yoksa oluşturulur; katılma istekleri buna bağlanır
+  // Sahibin işletmesi sunucuda yoksa oluşturulur; ardından üyelik ve istek durumu okunur
   useEffect(() => {
     if (!session || !isMainWorkspace) return;
-    void ensureOwnerBusiness(session, profile.name).catch(() => undefined);
+    let alive = true;
+    (async () => {
+      await ensureOwnerBusiness(session, profile.name).catch(() => undefined);
+      const m = await myMembership(session).catch(() => null);
+      if (m === "expired") {
+        setSession(null);
+        return;
+      }
+      const st = m ? null : await myRequestStatus(session).catch(() => null);
+      if (!alive) return;
+      setMembership(m);
+      setRequestStatus(st === "expired" ? null : st);
+    })();
+    return () => {
+      alive = false;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [session]);
+  }, [session, recheck]);
 
   // Menüdeki Bildirimler rozeti: yetkili olunan işletmelerdeki bekleyen katılma istekleri
   const [pendingCount, setPendingCount] = useState(0);
@@ -250,6 +273,14 @@ export default function App() {
   }
 
   // Yükleme ekranı yalnızca ana işletmede, bulut verisi beklenirken gösterilir
+  if (session && isMainWorkspace && waiting) {
+    return <WaitingScreen status={requestStatus} onRecheck={() => setRecheck((n) => n + 1)} onLogout={logout} />;
+  }
+
+  if (session && isMainWorkspace && !memberReady) {
+    return <div className="sync-loading">{t("Verileriniz getiriliyor…")}</div>;
+  }
+
   if (session && isMainWorkspace && !sync.ready) {
     return <div className="sync-loading">{t("Verileriniz getiriliyor…")}</div>;
   }

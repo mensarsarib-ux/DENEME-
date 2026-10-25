@@ -185,11 +185,15 @@ export interface RemoteData {
   updatedAt: string;
 }
 
-/** Sunucudaki veriyi getirir; hiç kaydedilmemişse null. Oturum bittiyse "expired". */
-export async function pull(session: Session): Promise<RemoteData | null | "expired"> {
+/** Sunucudaki veriyi getirir; hiç kaydedilmemişse null. Oturum bittiyse "expired".
+ *  businessId verilirse kişinin kendi verisi yerine ortak işletme verisi okunur. */
+export async function pull(session: Session, businessId?: string | null): Promise<RemoteData | null | "expired"> {
   const s = await fresh(session);
   if (!s) return "expired";
-  const res = await call(`/rest/v1/user_data?select=data,updated_at&user_id=eq.${s.userId}`, { token: s.accessToken });
+  const path = businessId
+    ? `/rest/v1/business_data?select=data,updated_at&business_id=eq.${businessId}`
+    : `/rest/v1/user_data?select=data,updated_at&user_id=eq.${s.userId}`;
+  const res = await call(path, { token: s.accessToken });
   if (res.status === 401) return "expired";
   if (!res.ok) throw new CloudError("unknown", String(res.status));
   const rows = (await res.json()) as { data: Record<string, unknown>; updated_at: string }[];
@@ -197,14 +201,17 @@ export async function pull(session: Session): Promise<RemoteData | null | "expir
 }
 
 /** Veriyi sunucuya yazar; sunucunun verdiği güncelleme zamanını döndürür */
-export async function push(session: Session, data: Record<string, unknown>): Promise<string | "expired"> {
+export async function push(session: Session, data: Record<string, unknown>, businessId?: string | null): Promise<string | "expired"> {
   const s = await fresh(session);
   if (!s) return "expired";
-  const res = await call("/rest/v1/user_data?on_conflict=user_id", {
+  const body = businessId
+    ? { path: "/rest/v1/business_data?on_conflict=business_id", row: { business_id: businessId, data, updated_at: new Date().toISOString() } }
+    : { path: "/rest/v1/user_data?on_conflict=user_id", row: { user_id: s.userId, data, updated_at: new Date().toISOString() } };
+  const res = await call(body.path, {
     method: "POST",
     token: s.accessToken,
     headers: { Prefer: "resolution=merge-duplicates,return=representation" },
-    body: JSON.stringify({ user_id: s.userId, data, updated_at: new Date().toISOString() }),
+    body: JSON.stringify(body.row),
   });
   if (res.status === 401) return "expired";
   if (!res.ok) throw new CloudError("unknown", String(res.status));
@@ -432,4 +439,30 @@ export async function resendSignupCode(email: string): Promise<void> {
     method: "POST",
     body: JSON.stringify({ type: "signup", email: email.trim() }),
   });
+}
+
+export interface Membership {
+  businessId: string;
+  role: "owner" | "member";
+}
+
+/** Giriş yapan kişinin işletme üyeliği; yoksa null */
+export async function myMembership(session: Session): Promise<Membership | null | "expired"> {
+  const s = await fresh(session);
+  if (!s) return "expired";
+  const res = await call("/rest/v1/rpc/my_membership", { method: "POST", token: s.accessToken, body: "{}" });
+  if (res.status === 401) return "expired";
+  if (!res.ok) throw new CloudError("unknown", String(res.status));
+  const rows = (await res.json()) as { business_id: string; role: "owner" | "member" }[];
+  return rows[0] ? { businessId: rows[0].business_id, role: rows[0].role } : null;
+}
+
+/** Son katılma isteğinin durumu: pending, approved, rejected ya da hiç yoksa null */
+export async function myRequestStatus(session: Session): Promise<string | null | "expired"> {
+  const s = await fresh(session);
+  if (!s) return "expired";
+  const res = await call("/rest/v1/rpc/my_request_status", { method: "POST", token: s.accessToken, body: "{}" });
+  if (res.status === 401) return "expired";
+  if (!res.ok) throw new CloudError("unknown", String(res.status));
+  return ((await res.json()) as string | null) ?? null;
 }

@@ -17,8 +17,11 @@ export function useCloudSync({
   snapshot,
   apply,
   onExpired,
+  businessId = null,
 }: {
   session: Session | null;
+  /** Veri ortak işletmeden okunur/yazılır; boşsa kişinin kendi verisi kullanılır */
+  businessId?: string | null;
   /** Sunucuya yazılacak veri; anahtar sırası her zaman aynı olmalı */
   snapshot: Record<string, unknown>;
   /** Sunucudan gelen veriyi uygular; uygulanan verinin aynı biçimdeki halini döndürür */
@@ -30,8 +33,8 @@ export function useCloudSync({
   const [ready, setReady] = useState(false);
 
   const json = JSON.stringify(snapshot);
-  const latest = useRef({ json, snapshot, apply, onExpired, session });
-  latest.current = { json, snapshot, apply, onExpired, session };
+  const latest = useRef({ json, snapshot, apply, onExpired, session, businessId });
+  latest.current = { json, snapshot, apply, onExpired, session, businessId };
   // Sunucuyla aynı olduğu bilinen son veri ve sunucudaki güncelleme zamanı
   const syncedJson = useRef<string | null>(null);
   const syncedAt = useRef<string | null>(null);
@@ -49,11 +52,11 @@ export function useCloudSync({
     if (!cur.session || busy.current) return;
     busy.current = true;
     try {
-      const remote = await pull(cur.session);
+      const remote = await pull(cur.session, cur.businessId);
       if (remote === "expired") return latest.current.onExpired();
       if (remote === null) {
         if (first) {
-          const at = await push(cur.session, cur.snapshot);
+          const at = await push(cur.session, cur.snapshot, cur.businessId);
           if (at === "expired") return latest.current.onExpired();
           syncedJson.current = cur.json;
           markSynced(at);
@@ -97,7 +100,7 @@ export function useCloudSync({
       busy.current = true;
       setStatus("syncing");
       try {
-        const at = await push(cur.session, cur.snapshot);
+        const at = await push(cur.session, cur.snapshot, cur.businessId);
         if (at === "expired") return cur.onExpired();
         syncedJson.current = cur.json;
         markSynced(at);
