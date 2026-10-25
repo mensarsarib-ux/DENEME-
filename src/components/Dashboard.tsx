@@ -215,10 +215,9 @@ export default function Dashboard({
               {t("Menü")}
             </button>
             <div className="company-pill">
-              <CompanyLogo logo={profile.logo} name={profile.name} size={30} />
+              <CompanyLogo logo={profile.logo} name={profile.name} size={26} />
               <span className="company-text">
                 <strong>{profile.name || t("Hesabım")}</strong>
-                {profile.email && <small>{profile.email}</small>}
               </span>
             </div>
             <div className="topbar-actions">
