@@ -132,10 +132,10 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 4px 14px 4px 5px;
+  gap: 10px;
+  padding: 4px 16px 4px 4px;
   border-radius: 999px;
-  background: rgba(10, 22, 30, 0.55);
+  background: rgba(10, 22, 30, 0.72);
 }
 
 .company-logo {
@@ -168,6 +168,33 @@ button {
 .photo-btn { position: relative; cursor: pointer; width: auto; padding-inline: 18px; }
 .photo-btn input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; }
 
+.company-mark {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.company-mark svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: #f08a72;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.company-mark img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .company-text {
   display: flex;
   flex-direction: column;
@@ -183,8 +210,8 @@ button {
 }
 
 .company-text strong {
-  font-size: 0.9rem;
-  font-weight: 600;
+  font-size: 0.92rem;
+  font-weight: 700;
 }
 
 .company-text small {
@@ -2469,3 +2496,15 @@ a.action-btn {
 .pie-dot { flex: none; width: 10px; height: 10px; border-radius: 50%; }
 .pie-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .pie-share { color: var(--muted); font-variant-numeric: tabular-nums; }
+
+/* İşletme seçim penceresinde düğmeler tam genişlikte ve sola yaslı */
+.business-sheet .action-list {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.business-sheet .action-list .action-btn {
+  width: 100%;
+  text-align: left;
+}

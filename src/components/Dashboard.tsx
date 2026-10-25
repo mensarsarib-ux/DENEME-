@@ -1,4 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import BusinessSheet from "./BusinessSheet";
+import { useLongPress } from "../lib/useLongPress";
 import {
   balanceOf,
   cashTotal,
@@ -10,11 +12,13 @@ import {
 import { money } from "../lib/format";
 import { findMatch, type MatchRange } from "../lib/search";
 import { locale, t } from "../lib/i18n";
-import CompanyLogo from "./CompanyLogo";
 import StatsCarousel from "./StatsCarousel";
 import Highlight from "./Highlight";
 import PartyTabs, { type TabInfo } from "./PartyTabs";
 import { Svg } from "./Icon";
+
+/** Logo yoksa firma kutusunda görünen dükkân simgesi */
+const SHOP_ICON = "M4 9l2-5h12l2 5M4 9h16v11H4zM9 20v-6h6v6M4 9c0 1.5 1.3 2.5 3 2.5S10 10.5 10 9c0 1.5 1.3 2.5 3 2.5S16 10.5 16 9c0 1.5 1.3 2.5 3 2.5S22 10.5 22 9";
 
 /** Etkin sekmeye göre değişen metinler */
 function labelsFor(kind: string) {
@@ -95,6 +99,9 @@ export default function Dashboard({
   onOpenMenu: () => void;
 }) {
   const [searchOpen, setSearchOpen] = useState(false);
+  // Firma kutusuna basılı tutunca işletme seçimi açılır
+  const [bizOpen, setBizOpen] = useState(false);
+  const { handlers: pillHandlers } = useLongPress(() => setBizOpen(true));
   const [query, setQuery] = useState("");
   const highlightRef = useRef<HTMLButtonElement>(null);
   /**
@@ -214,12 +221,23 @@ export default function Dashboard({
             >
               {t("Menü")}
             </button>
-            <div className="company-pill">
-              <CompanyLogo logo={profile.logo} name={profile.name} size={26} />
+            <div className="company-pill" {...pillHandlers}>
+              <span className="company-mark" aria-hidden="true">
+                {profile.logo ? <img src={profile.logo} alt="" /> : <Svg d={SHOP_ICON} />}
+              </span>
               <span className="company-text">
                 <strong>{profile.name || t("Hesabım")}</strong>
+                {profile.email && <small>{profile.email}</small>}
               </span>
             </div>
+            {bizOpen && (
+              <BusinessSheet
+                businesses={[{ id: "main", name: profile.name || t("Hesabım") }]}
+                currentName={profile.name || t("Hesabım")}
+                onChoose={() => setBizOpen(false)}
+                onClose={() => setBizOpen(false)}
+              />
+            )}
             <div className="topbar-actions">
               <button
                 className="icon-btn"
