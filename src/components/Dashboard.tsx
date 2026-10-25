@@ -1,5 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import BusinessPlus from "./BusinessPlus";
+import { activeWorkspace, businessList, switchWorkspace } from "../lib/storage";
 import {
   balanceOf,
   cashTotal,
@@ -241,6 +242,9 @@ export default function Dashboard({
               <BusinessPlus
                 top={plusAt.top}
                 left={plusAt.left}
+                businesses={businessList()}
+                activeId={activeWorkspace()}
+                onSwitch={(id) => switchWorkspace(id)}
                 onClose={() => setPlusAt(null)}
                 onAdd={() => {
                   setPlusAt(null);

@@ -128,3 +128,19 @@ export function usePersistedState<T>(
   }, [key, value]);
   return [value, setValue];
 }
+
+/** Ana işletmenin adı (ana işletme aktif değilken de okunabilsin diye doğrudan kayıttan alınır) */
+function mainName(): string {
+  try {
+    const raw = localStorage.getItem(BASE + "profile");
+    const profile = raw ? (JSON.parse(raw) as { name?: string }) : null;
+    return profile?.name?.trim() || "Hesabım";
+  } catch {
+    return "Hesabım";
+  }
+}
+
+/** Tüm işletmeler: önce ana işletme, sonra eklenenler */
+export function businessList(): Workspace[] {
+  return [{ id: MAIN_WORKSPACE, name: mainName() }, ...listWorkspaces()];
+}

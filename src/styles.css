@@ -2637,3 +2637,38 @@ a.action-btn {
 .plans-item small {
   color: var(--muted);
 }
+
+/* İşletme listesi: firma kutusuna dokununca açılan siyah katmandaki kolon */
+.biz-col {
+  position: fixed;
+  display: grid;
+  gap: 8px;
+  width: 260px;
+  animation: biz-drop 0.3s ease-out;
+}
+
+.biz-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  background: rgba(20, 28, 36, 0.9);
+  color: #fff;
+  text-align: left;
+  font-size: 0.95rem;
+}
+
+.biz-item.is-active {
+  border-color: var(--brand, #2f7fd0);
+}
+
+.biz-item small {
+  color: var(--brand, #2f7fd0);
+  font-weight: 700;
+}
+
+.biz-col .biz-row {
+  margin-top: 6px;
+}
