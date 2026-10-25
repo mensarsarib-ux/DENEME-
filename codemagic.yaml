@@ -14,6 +14,9 @@ workflows:
         APP_BUNDLE_ID: "com.mensar.hesabim"
         XCODE_WORKSPACE: "ios/App/App.xcworkspace"
         XCODE_SCHEME: "App"
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.mensar.hesabim
       xcode: latest
       node: 20
     triggering:
@@ -22,9 +25,6 @@ workflows:
       branch_patterns:
         - pattern: "claude/hesabim-splash-dashboard"
           include: true
-    ios_signing:
-      distribution_type: app_store
-      bundle_identifier: com.mensar.hesabim
     scripts:
       - name: Paketleri kur
         script: npm ci
