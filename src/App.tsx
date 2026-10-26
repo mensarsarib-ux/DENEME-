@@ -550,6 +550,10 @@ export default function App() {
             }
             onOpenParty={openParty}
             onNewParty={(kind) => {
+              if (!canAddParty(parties.length)) {
+                go({ name: "menu", page: "plans" });
+                return;
+              }
               setActiveTab(kind);
               go({ name: "new", kind });
             }}
