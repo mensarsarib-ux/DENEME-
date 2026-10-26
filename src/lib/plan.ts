@@ -5,7 +5,21 @@
  */
 export type Plan = "free" | "pro" | "proplus" | "premium";
 
-export const CURRENT_PLAN: Plan = "free";
+/**
+ * TEST KANCASI: ?plan=pro gibi bir bağlantıyla planı denemek için. Satın alma bağlanınca
+ * ve sunucu tarafı zorlanınca kaldırılacak; şu an plan sınırları yalnızca istemcide olduğu için
+ * bu kanca herkes için açıktır.
+ */
+function planFromUrl(): Plan | null {
+  try {
+    const p = new URLSearchParams(window.location.search).get("plan");
+    return p === "free" || p === "pro" || p === "proplus" || p === "premium" ? p : null;
+  } catch {
+    return null;
+  }
+}
+
+export const CURRENT_PLAN: Plan = planFromUrl() ?? "free";
 
 /** Plan sınırları. Infinity = sınırsız. */
 export const LIMITS: Record<

@@ -17,7 +17,9 @@ function resetLocalData() {
   } catch {
     /* depolama erişilemiyorsa sessizce geç */
   }
-  window.location.replace(url.origin + url.pathname);
+  // Diğer parametreler (ör. ?plan=pro) korunur
+  url.searchParams.delete("sifirla");
+  window.location.replace(url.toString());
 }
 resetLocalData();
 
