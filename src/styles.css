@@ -3156,3 +3156,8 @@ a.action-btn {
   font-size: 0.82rem;
   line-height: 1.4;
 }
+
+/* Menüde Çıkış yap: kırmızı, en altta */
+.drawer-signout .drawer-label {
+  color: var(--red);
+}

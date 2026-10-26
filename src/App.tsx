@@ -713,6 +713,7 @@ export default function App() {
           go({ name: "menu", page });
         }}
         onClose={() => setDrawerOpen(false)}
+        onSignOut={session ? logout : undefined}
       />
     )}
     </>

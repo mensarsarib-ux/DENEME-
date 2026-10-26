@@ -19,12 +19,15 @@ export default function MenuDrawer({
   unread,
   onNavigate,
   onClose,
+  onSignOut,
 }: {
   profile: Profile;
   /** Okunmamış bildirim sayısı; Bildirimler satırında rozet olarak görünür */
   unread: number;
   onNavigate: (page: MenuPage) => void;
   onClose: () => void;
+  /** Giriş yapılmışsa çıkış yapar; yoksa Çıkış yap satırı gösterilmez */
+  onSignOut?: () => void;
 }) {
   const panelRef = useRef<HTMLElement>(null);
 
@@ -111,6 +114,20 @@ export default function MenuDrawer({
             <span className="drawer-label">{t("Gizlilik politikası")}</span>
             <span className="drawer-chevron" aria-hidden="true">›</span>
           </button>
+          {onSignOut && (
+            <button
+              type="button"
+              className="drawer-item drawer-signout"
+              onClick={() => {
+                if (window.confirm(t("Çıkış yapmak istediğinize emin misiniz? Verileriniz hesabınızda saklanır."))) {
+                  haptic("warning");
+                  onSignOut();
+                }
+              }}
+            >
+              <span className="drawer-label">{t("Çıkış yap")}</span>
+            </button>
+          )}
         </nav>
       </aside>
     </div>

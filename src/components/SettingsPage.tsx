@@ -137,7 +137,6 @@ export default function SettingsPage({
   const [restoreText, setRestoreText] = useState("");
   const [restoreMsg, setRestoreMsg] = useState<{ ok: boolean; text: string } | null>(null);
   const [confirmReset, setConfirmReset] = useState(false);
-  const [confirmSignOut, setConfirmSignOut] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [devices, setDevices] = useState<DeviceInfo[] | null>(null);
   const [devicesFailed, setDevicesFailed] = useState(false);
@@ -342,9 +341,6 @@ export default function SettingsPage({
           <section className="card" aria-label={t("Hesap işlemleri")}>
             <h2 className="card-title">{t("Hesap işlemleri")}</h2>
             <div className="card-actions">
-              <button type="button" className="action-btn is-danger" onClick={() => setConfirmSignOut(true)}>{t("Çıkış yap")}</button>
-            </div>
-            <div className="card-actions">
               <button
                 type="button"
                 className="action-btn is-danger"
@@ -400,19 +396,6 @@ export default function SettingsPage({
         />
       )}
 
-      {confirmSignOut && account && (
-        <div className="action-backdrop" onClick={() => setConfirmSignOut(false)}>
-          <div className="action-sheet is-centered" role="alertdialog" aria-label={t("Çıkış yap")} onClick={(e) => e.stopPropagation()}>
-            <div className="action-handle" aria-hidden="true" />
-            <h2 className="sheet-title">{t("Çıkış yapmak istediğinize emin misiniz?")}</h2>
-            <p className="sheet-note">{t("Verileriniz hesabınızda saklanır; tekrar giriş yapınca geri gelir.")}</p>
-            <button className="danger-btn" type="button" onClick={() => { haptic("warning"); setConfirmSignOut(false); account.onSignOut(); }}>
-              {t("EVET, ÇIKIŞ YAP")}
-            </button>
-            <button className="action-btn is-cancel" type="button" autoFocus onClick={() => setConfirmSignOut(false)}>{t("Vazgeç")}</button>
-          </div>
-        </div>
-      )}
 
       {confirmReset && (
         <div className="action-backdrop" onClick={() => setConfirmReset(false)}>
