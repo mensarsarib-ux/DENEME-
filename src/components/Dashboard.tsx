@@ -16,7 +16,7 @@ import { findMatch, type MatchRange } from "../lib/search";
 import { locale, t } from "../lib/i18n";
 import StatsCarousel from "./StatsCarousel";
 import Highlight from "./Highlight";
-import SwipeRow from "./SwipeRow";
+import { PartyActionSheet, PartyRow } from "./PartyRow";
 import PartyTabs, { type TabInfo } from "./PartyTabs";
 import { Svg } from "./Icon";
 
@@ -183,6 +183,9 @@ export default function Dashboard({
     }))
     .sort((a, b) => a.name.localeCompare(b.name, "tr"));
 
+  /** Basılı tutulan kayıt: altında arşivle / sil kartı açılır */
+  const [sheetFor, setSheetFor] = useState<{ id: string; name: string } | null>(null);
+
   const searching = searchOpen && query.trim() !== "";
   // Aramada isim başında eşleşenler öne gelir, sonra alfabetik sıra
   const rows: Row[] = searching
@@ -202,6 +205,22 @@ export default function Dashboard({
 
   return (
     <div className="app">
+      {sheetFor && (
+        <PartyActionSheet
+          name={sheetFor.name}
+          onArchive={() => {
+            onArchive(sheetFor.id);
+            setSheetFor(null);
+          }}
+          onDelete={() => {
+            if (window.confirm(t("{name} silinsin mi? Kişinin tüm işlemleri de silinir.", { name: sheetFor.name }))) {
+              onDeleteParty(sheetFor.id);
+            }
+            setSheetFor(null);
+          }}
+          onClose={() => setSheetFor(null)}
+        />
+      )}
       {searchOpen ? (
         <header className="topbar topbar-search">
           <div className="search-field" role="search">
@@ -383,29 +402,21 @@ export default function Dashboard({
           <ul className="list">
             {rows.map((r, i) => (
               <li key={r.id}>
-                <SwipeRow
-                  onArchive={() => onArchive(r.id)}
-                  onDelete={() => {
-                    if (window.confirm(t("{name} silinsin mi? Kişinin tüm işlemleri de silinir.", { name: r.name }))) {
-                      onDeleteParty(r.id);
-                    }
-                  }}
+                <PartyRow
+                  buttonRef={r.id === highlightId ? highlightRef : undefined}
+                  className={`row ${searching ? "is-match" : ""} ${searching && i === 0 ? "is-top" : ""} ${r.id === highlightId ? "is-new" : ""}`}
+                  onOpen={() => onSelectParty(r.id)}
+                  onHold={() => setSheetFor({ id: r.id, name: r.name })}
                 >
-                  <button
-                    ref={r.id === highlightId ? highlightRef : undefined}
-                    className={`row ${searching ? "is-match" : ""} ${searching && i === 0 ? "is-top" : ""} ${r.id === highlightId ? "is-new" : ""}`}
-                    onClick={() => onSelectParty(r.id)}
+                  <span className="row-name">
+                    <Highlight text={r.name} range={r.range} />
+                  </span>
+                  <span
+                    className={`row-amount ${r.balance < 0 ? "is-debt" : ""}`}
                   >
-                    <span className="row-name">
-                      <Highlight text={r.name} range={r.range} />
-                    </span>
-                    <span
-                      className={`row-amount ${r.balance < 0 ? "is-debt" : ""}`}
-                    >
-                      {money.format(r.balance)}
-                    </span>
-                  </button>
-                </SwipeRow>
+                    {money.format(r.balance)}
+                  </span>
+                </PartyRow>
               </li>
             ))}
           </ul>

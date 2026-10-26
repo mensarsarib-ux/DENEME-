@@ -3247,44 +3247,6 @@ a.action-btn {
   color: var(--red);
 }
 
-/* Kaydırmalı satır: sağa kaydırınca altındaki "Arşive al" düğmesi görünür */
-.swipe-row {
-  position: relative;
-  overflow: hidden;
-}
-
-.swipe-action {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 96px;
-  border: 0;
-  color: #fff;
-  font: inherit;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.swipe-action.is-archive {
-  left: 0;
-  background: #64748b;
-}
-
-.swipe-action.is-delete {
-  right: 0;
-  background: #dc2626;
-}
-
-.swipe-track {
-  position: relative;
-  background: var(--surface);
-  touch-action: pan-y;
-}
-
-.swipe-track.is-settling {
-  transition: transform 0.2s ease-out;
-}
-
 /* Arşiv sayfası: basılı tutulan satırın altındaki seçenekler */
 .archive-armed {
   display: flex;
@@ -3312,4 +3274,75 @@ a.action-btn {
 .archive-cancel-btn {
   background: var(--surface-head);
   color: var(--text);
+}
+
+/* Basılı tutulan kaydın kartı: alttan çıkar */
+.party-sheet-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.45);
+  animation: party-sheet-fade 0.18s ease-out;
+}
+
+.party-sheet {
+  width: 100%;
+  max-width: 440px;
+  margin: 0 8px calc(12px + env(safe-area-inset-bottom));
+  padding: 18px 16px 14px;
+  border-radius: 22px;
+  background: var(--surface-head);
+  animation: party-sheet-up 0.22s ease-out;
+}
+
+.party-sheet-title {
+  margin: 0;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.party-sheet-sub {
+  margin: 2px 0 14px;
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.party-sheet-btn {
+  display: block;
+  width: 100%;
+  margin-bottom: 8px;
+  padding: 14px;
+  border: 0;
+  border-radius: 16px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.party-sheet-btn.is-danger {
+  color: #ef4444;
+}
+
+.party-sheet-btn.is-cancel {
+  margin-bottom: 0;
+  background: transparent;
+  color: var(--muted);
+}
+
+@keyframes party-sheet-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes party-sheet-up {
+  from { transform: translateY(24px); opacity: 0; }
+  to { transform: none; opacity: 1; }
 }
