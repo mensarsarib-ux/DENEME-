@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Splash from "./components/Splash";
 import Dashboard from "./components/Dashboard";
 import CustomerPage from "./components/CustomerPage";
@@ -23,6 +23,8 @@ import TeamPage from "./components/TeamPage";
 import TeamMemberPage from "./components/TeamMemberPage";
 import type { TeamPerson } from "./lib/cloud";
 import { renameBusiness } from "./lib/cloud";
+import { migrateLocalWorkspaces } from "./lib/migrate";
+import { listWorkspaces } from "./lib/storage";
 import { activeWorkspace, MAIN_WORKSPACE } from "./lib/storage";
 import type { TabInfo } from "./components/PartyTabs";
 import {
@@ -133,7 +135,10 @@ export default function App() {
   // Çalışma alanı: ana işletme, sunucudaki bir ortak işletme ya da yalnızca bu cihazdaki (eski) bir işletme
   const [serverBiz, setServerBiz] = useState<MyBusiness[] | null>(null);
   const activeId = activeWorkspace();
-  const serverMine = serverBiz?.find((b) => b.businessId === activeId) ?? null;
+  // Yerel işletme taşındıysa sunucudaki karşılığı kullanılır
+  const localWs = listWorkspaces().find((w) => w.id === activeId);
+  const serverKey = serverBiz?.some((b) => b.businessId === activeId) ? activeId : localWs?.serverId;
+  const serverMine = serverBiz?.find((b) => b.businessId === serverKey) ?? null;
   const wsKind: "main" | "server" | "local" | "pending" =
     activeId === MAIN_WORKSPACE ? "main" : serverBiz === null ? "pending" : serverMine ? "server" : "local";
   const isMainWorkspace = wsKind === "main";
@@ -231,6 +236,19 @@ export default function App() {
       alive = false;
     };
   }, [session, recheck]);
+
+  // Bu cihazdaki yerel işletmeler (sunucuda yoksa) bir kez sunucuya taşınır
+  const migratedRef = useRef(false);
+  useEffect(() => {
+    if (!session || !serverBiz || migratedRef.current) return;
+    migratedRef.current = true;
+    void migrateLocalWorkspaces(session, serverBiz.map((b) => b.businessId))
+      .then((changed) => {
+        if (changed) setRecheck((n) => n + 1);
+      })
+      .catch(() => undefined);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session, serverBiz]);
 
   // Sahibin işletmesinin sunucudaki adı, yerelde girilen işletme adıyla eşitlenir (ekip listesinde görünür)
   useEffect(() => {

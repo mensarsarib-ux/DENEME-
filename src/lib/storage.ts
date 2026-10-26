@@ -11,6 +11,8 @@ export const MAIN_WORKSPACE = "main";
 export interface Workspace {
   id: string;
   name: string;
+  /** Sunucudaki karşılığı (taşınmış yerel işletmeler için) */
+  serverId?: string;
 }
 
 /** Aktif işletme; değişince uygulama yeniden yüklenir ve o işletmenin verisi açılır */
@@ -163,6 +165,32 @@ export function deleteWorkspace(id: string) {
     }
     localStorage.setItem(WORKSPACES_KEY, JSON.stringify(listWorkspaces().filter((w) => w.id !== id)));
     if (activeWorkspace() === id) localStorage.removeItem(WORKSPACE_KEY);
+  } catch {
+    /* sessizce geç */
+  }
+}
+
+/** Yerel bir işletmenin verisini (taşıma için) okur */
+export function readWorkspaceSnapshot(id: string): Record<string, unknown> {
+  const out: Record<string, unknown> = {};
+  for (const key of ["profile", "parties", "transactions", "accounts", "notes", "readIds"]) {
+    try {
+      const raw = localStorage.getItem(`${BASE}ws:${id}:${key}`);
+      if (raw) out[key] = JSON.parse(raw);
+    } catch {
+      /* bozuk kayıt atlanır */
+    }
+  }
+  return out;
+}
+
+/** Yerel işletmenin sunucudaki karşılığını kaydeder */
+export function setWorkspaceServerId(localId: string, serverId: string) {
+  try {
+    localStorage.setItem(
+      WORKSPACES_KEY,
+      JSON.stringify(listWorkspaces().map((w) => (w.id === localId ? { ...w, serverId } : w))),
+    );
   } catch {
     /* sessizce geç */
   }
