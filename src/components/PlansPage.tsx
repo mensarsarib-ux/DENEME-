@@ -3,7 +3,7 @@ import { t } from "../lib/i18n";
 import { SUPPORT_ICON } from "../lib/menu";
 import PageHeader from "./PageHeader";
 
-/** Paket kartları: fiyat aylık TL, özellikler kısa ve açık cümlelerle */
+/** Paket kartları (en üst paket önce): fiyat yıllık TL, özellikler kısa ve açık cümlelerle */
 const PLANS: {
   id: Plan;
   tagline: string;
@@ -13,14 +13,27 @@ const PLANS: {
   lines: string[];
 }[] = [
   {
-    id: "free",
-    tagline: "Başlamak için",
-    price: 0,
-    tone: "free",
+    id: "premium",
+    tagline: "Sınır istemeyenler için",
+    price: 1999,
+    tone: "prem",
+    badge: "SINIRSIZ",
     lines: [
-      "Bir işletme ile başlayın.",
-      "4 sekmeye kadar liste oluşturun.",
-      "Her listede 10 kayda kadar kayıt tutun.",
+      "İşletme sayısında sınır olmadan çalışın.",
+      "Sekme ve kayıt sayısında sınır olmadan kayıt tutun.",
+      "Ekip üyesi sınırı olmadan ekibinizi büyütün.",
+    ],
+  },
+  {
+    id: "proplus",
+    tagline: "Büyüyen işletmeler için",
+    price: 1499,
+    tone: "plus",
+    lines: [
+      "Altı işletmeyi tek hesaptan yönetin.",
+      "10 sekmeye kadar liste oluşturun.",
+      "Her listede 40 kayda kadar kayıt tutun.",
+      "Siz dahil beş kişilik bir ekiple çalışın.",
     ],
   },
   {
@@ -37,30 +50,18 @@ const PLANS: {
     ],
   },
   {
-    id: "proplus",
-    tagline: "Büyüyen işletmeler için",
-    price: 1499,
-    tone: "plus",
+    id: "free",
+    tagline: "Başlamak için",
+    price: 0,
+    tone: "free",
     lines: [
-      "Altı işletmeyi tek hesaptan yönetin.",
-      "10 sekmeye kadar liste oluşturun.",
-      "Her listede 40 kayda kadar kayıt tutun.",
-      "Siz dahil beş kişilik bir ekiple çalışın.",
-    ],
-  },
-  {
-    id: "premium",
-    tagline: "Sınır istemeyenler için",
-    price: 1999,
-    tone: "prem",
-    badge: "SINIRSIZ",
-    lines: [
-      "İşletme sayısında sınır olmadan çalışın.",
-      "Sekme ve kayıt sayısında sınır olmadan kayıt tutun.",
-      "Ekip üyesi sınırı olmadan ekibinizi büyütün.",
+      "Bir işletme ile başlayın.",
+      "4 sekmeye kadar liste oluşturun.",
+      "Her listede 10 kayda kadar kayıt tutun.",
     ],
   },
 ];
+
 
 const price = (value: number) => (value === 0 ? "₺0" : `₺${value.toLocaleString("tr-TR")}`);
 
@@ -125,7 +126,7 @@ export default function PlansPage({ onBack, onPrivacy }: { onBack: () => void; o
                 </div>
                 <p className="paywall-price">
                   {price(p.price)}
-                  <small>{p.price === 0 ? t("sonsuza kadar") : t("aylık")}</small>
+                  <small>{p.price === 0 ? t("sonsuza kadar") : t("yıllık")}</small>
                 </p>
               </div>
               <ul className="paywall-lines">
@@ -142,6 +143,9 @@ export default function PlansPage({ onBack, onPrivacy }: { onBack: () => void; o
 
         <p className="paywall-note">
           {t("Abonelik Apple Kimliğiniz üzerinden ücretlendirilir. Dönem sonunda otomatik olarak yenilenir. Ayarlar → Apple Hesabı → Abonelikler bölümünden en az 24 saat önce iptal edebilirsiniz.")}
+        </p>
+        <p className="paywall-note">
+          {t("Fiyatlar yıllık abonelik ücretidir.")}
         </p>
         <p className="paywall-note">
           {t("Satın almalar henüz açılmadı; abonelikler yakında bu sayfadan başlatılabilecek.")}
