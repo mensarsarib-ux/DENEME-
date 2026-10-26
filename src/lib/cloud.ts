@@ -625,3 +625,18 @@ export async function removeTeamMember(session: Session, userId: string): Promis
   if (!upd.ok) throw new CloudError("unknown", String(upd.status));
   return true;
 }
+
+/** Sahibin işletmesinin sunucudaki adını günceller (ekip listesinde görünen ad) */
+export async function renameBusiness(session: Session, businessId: string, name: string): Promise<true | "expired"> {
+  const s = await fresh(session);
+  if (!s) return "expired";
+  const res = await call(`/rest/v1/businesses?id=eq.${businessId}`, {
+    method: "PATCH",
+    token: s.accessToken,
+    headers: { Prefer: "return=minimal" },
+    body: JSON.stringify({ name: name.trim() || "Hesabım" }),
+  });
+  if (res.status === 401) return "expired";
+  if (!res.ok) throw new CloudError("unknown", String(res.status));
+  return true;
+}

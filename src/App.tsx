@@ -22,6 +22,7 @@ import JoinBusinessPage from "./components/JoinBusinessPage";
 import TeamPage from "./components/TeamPage";
 import TeamMemberPage from "./components/TeamMemberPage";
 import type { TeamPerson } from "./lib/cloud";
+import { renameBusiness } from "./lib/cloud";
 import { activeWorkspace, MAIN_WORKSPACE } from "./lib/storage";
 import type { TabInfo } from "./components/PartyTabs";
 import {
@@ -230,6 +231,13 @@ export default function App() {
       alive = false;
     };
   }, [session, recheck]);
+
+  // Sahibin işletmesinin sunucudaki adı, yerelde girilen işletme adıyla eşitlenir (ekip listesinde görünür)
+  useEffect(() => {
+    if (!session || effMembership?.role !== "owner" || !profile.name.trim()) return;
+    void renameBusiness(session, effMembership.businessId, profile.name).catch(() => undefined);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session, effMembership?.businessId, effMembership?.role, profile.name]);
 
   // Sahibin işletmesi sunucuda yoksa oluşturulur; ardından üyelik ve istek durumu okunur
   useEffect(() => {
