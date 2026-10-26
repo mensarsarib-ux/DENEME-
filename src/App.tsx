@@ -11,7 +11,7 @@ import ReportsPage from "./components/ReportsPage";
 import NotesPage from "./components/NotesPage";
 import ContactsPage from "./components/ContactsPage";
 import BusinessRequestsPage from "./components/BusinessRequestsPage";
-import { ensureOwnerBusiness, listPendingRequests, myMembership, myRequestStatus, type Membership } from "./lib/cloud";
+import { ensureOwnerBusiness, listChangeNotices, listPendingRequests, myMembership, myRequestStatus, type Membership } from "./lib/cloud";
 import WaitingScreen from "./components/WaitingScreen";
 import SettingsPage from "./components/SettingsPage";
 import SupportPage from "./components/SupportPage";
@@ -225,8 +225,13 @@ export default function App() {
     if (!session) return;
     let alive = true;
     const check = () =>
-      listPendingRequests(session)
-        .then((res) => alive && Array.isArray(res) && setPendingCount(res.length))
+      Promise.all([listPendingRequests(session), listChangeNotices(session)])
+        .then(([reqs, changes]) => {
+          if (!alive) return;
+          const r = Array.isArray(reqs) ? reqs.length : 0;
+          const c = Array.isArray(changes) ? changes.length : 0;
+          setPendingCount(r + c);
+        })
         .catch(() => undefined);
     void check();
     const timer = window.setInterval(check, 60_000);

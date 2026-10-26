@@ -466,3 +466,37 @@ export async function myRequestStatus(session: Session): Promise<string | null |
   if (!res.ok) throw new CloudError("unknown", String(res.status));
   return ((await res.json()) as string | null) ?? null;
 }
+
+export interface ChangeNotice {
+  id: string;
+  message: string;
+  created_at: string;
+}
+
+/** Sahibin okunmamış değişiklik bildirimleri */
+export async function listChangeNotices(session: Session): Promise<ChangeNotice[] | "expired"> {
+  const s = await fresh(session);
+  if (!s) return "expired";
+  const res = await call(
+    "/rest/v1/business_notifications?select=id,message,created_at&kind=eq.data_change&read=eq.false&order=created_at.desc&limit=50",
+    { token: s.accessToken },
+  );
+  if (res.status === 401) return "expired";
+  if (!res.ok) throw new CloudError("unknown", String(res.status));
+  return (await res.json()) as ChangeNotice[];
+}
+
+/** Değişiklik bildirimlerini okundu olarak işaretler */
+export async function markChangeNoticesRead(session: Session): Promise<true | "expired"> {
+  const s = await fresh(session);
+  if (!s) return "expired";
+  const res = await call("/rest/v1/business_notifications?kind=eq.data_change&read=eq.false", {
+    method: "PATCH",
+    token: s.accessToken,
+    headers: { Prefer: "return=minimal" },
+    body: JSON.stringify({ read: true }),
+  });
+  if (res.status === 401) return "expired";
+  if (!res.ok) throw new CloudError("unknown", String(res.status));
+  return true;
+}

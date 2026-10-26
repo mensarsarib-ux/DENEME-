@@ -1,6 +1,14 @@
 import { useEffect, useState } from "react";
-import { decideJoin, listPendingRequests, loadSession, type PendingRequest } from "../lib/cloud";
-import { t } from "../lib/i18n";
+import {
+  decideJoin,
+  listChangeNotices,
+  listPendingRequests,
+  loadSession,
+  markChangeNoticesRead,
+  type ChangeNotice,
+  type PendingRequest,
+} from "../lib/cloud";
+import { locale, t } from "../lib/i18n";
 import { haptic } from "../lib/haptics";
 import { SUPPORT_ICON } from "../lib/menu";
 import PageHeader from "./PageHeader";
@@ -11,6 +19,7 @@ export default function BusinessRequestsPage({ onBack }: { onBack: () => void })
   const [items, setItems] = useState<PendingRequest[] | null>(null);
   const [failed, setFailed] = useState(false);
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [changes, setChanges] = useState<ChangeNotice[]>([]);
 
   async function refresh() {
     if (!session) {
@@ -24,6 +33,8 @@ export default function BusinessRequestsPage({ onBack }: { onBack: () => void })
         return;
       }
       setItems(res);
+      const notices = await listChangeNotices(session);
+      if (Array.isArray(notices)) setChanges(notices);
       setFailed(false);
     } catch {
       setFailed(true);
@@ -58,6 +69,32 @@ export default function BusinessRequestsPage({ onBack }: { onBack: () => void })
     <div className="cust-page">
       <PageHeader title={t("Bildirimler")} subtitle={t("Katılma istekleri")} icon={SUPPORT_ICON} onBack={onBack} />
       <div className="stack">
+        <section className="card" aria-label={t("Değişiklik bildirimleri")}>
+          <h2 className="card-title">{t("DEĞİŞİKLİKLER")}</h2>
+          {changes.length === 0 && <p className="card-empty">{t("Yeni değişiklik yok.")}</p>}
+          {changes.map((c) => (
+            <div key={c.id} className="request-row">
+              <div className="request-text">
+                <small>{c.message}</small>
+                <small>{new Date(c.created_at).toLocaleString(locale(), { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}</small>
+              </div>
+            </div>
+          ))}
+          {changes.length > 0 && (
+            <button
+              type="button"
+              className="help-link"
+              onClick={async () => {
+                if (!session) return;
+                const r = await markChangeNoticesRead(session);
+                if (r === true) setChanges([]);
+              }}
+            >
+              {t("Hepsini okundu işaretle")}
+            </button>
+          )}
+        </section>
+
         <section className="card" aria-label={t("Katılma istekleri")}>
           {failed && <p className="form-error" role="alert">{t("Bildirimler yüklenemedi.")}</p>}
           {!failed && items === null && <p className="card-empty">{t("Yükleniyor…")}</p>}
