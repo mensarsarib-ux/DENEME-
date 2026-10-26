@@ -1824,6 +1824,19 @@ body {
   margin: 0 0 8px;
   padding-bottom: 8px;
   border-bottom: 1px solid var(--line);
+  animation: drawer-biz-in 0.22s ease-out;
+  transform-origin: top center;
+}
+
+@keyframes drawer-biz-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scaleY(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 .drawer-biz-item {
@@ -1849,11 +1862,12 @@ body {
 
 .drawer-biz-item small {
   flex-shrink: 0;
-  color: var(--muted);
+  color: var(--accent, #3b82f6);
+  font-weight: 700;
 }
 
 .drawer-biz-item.is-current {
-  opacity: 0.7;
+  background: var(--surface-head);
   cursor: default;
 }
 

@@ -107,7 +107,7 @@ export default function MenuDrawer({
                   onClick={() => switchWorkspace(b.id)}
                 >
                   <span>{b.name}</span>
-                  <small>{isCurrent ? t("Şu an buradasınız") : t("Geç")}</small>
+                  {isCurrent && <small aria-hidden="true">✓</small>}
                 </button>
               );
             })}
