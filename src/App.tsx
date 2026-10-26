@@ -623,7 +623,7 @@ export default function App() {
       case "privacy":
         return <PrivacyPage onBack={toHome} />;
       case "plans":
-        return <PlansPage profile={profile} businesses={businessList(serverBusinesses)} onBack={toHome} />;
+        return <PlansPage onBack={toHome} onPrivacy={() => go({ name: "menu", page: "privacy" })} />;
       case "newbusiness":
         return <NewBusinessPage onBack={toHome} onJoin={() => go({ name: "menu", page: "join" })} />;
       case "team":
