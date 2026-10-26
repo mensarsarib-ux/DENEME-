@@ -14,6 +14,7 @@ export default function NewBusinessPage({ onBack, onJoin }: { onBack: () => void
   const [email, setEmail] = useState("");
   const [address, setAddress] = useState("");
 
+  const [notice, setNotice] = useState<string | null>(null);
   const ready = name.trim() !== "";
 
   async function submit(event: FormEvent) {
@@ -29,8 +30,22 @@ export default function NewBusinessPage({ onBack, onJoin }: { onBack: () => void
     };
     // Sunucuda da açılır (ekip üyeleri görür); aynı kimlik yerel çalışma alanında kullanılır
     const session = loadSession();
-    const serverId = session ? await createBusiness(session, profile.name).catch(() => null) : null;
-    createWorkspace(profile.name, profile, typeof serverId === "string" ? serverId : undefined);
+    if (!session) {
+      setNotice(t("Ekip paylaşımı için giriş yapmanız gerekir; işletme yalnızca bu cihazda açılacak."));
+    }
+    let serverId: string | undefined;
+    if (session) {
+      try {
+        const r = await createBusiness(session, profile.name);
+        if (typeof r === "string") serverId = r;
+        else setNotice(t("Oturum sona ermiş; yeniden giriş yapın."));
+      } catch (e) {
+        const detail = e instanceof Error ? e.message : String(e);
+        setNotice(t("Sunucuya kaydedilemedi: {d}", { d: detail }));
+        return;
+      }
+    }
+    createWorkspace(profile.name, profile, serverId);
     window.location.reload();
   }
 
@@ -54,6 +69,7 @@ export default function NewBusinessPage({ onBack, onJoin }: { onBack: () => void
           <label htmlFor="nb-address">{t("Adres")}</label>
           <textarea id="nb-address" rows={2} value={address} onChange={(e) => setAddress(e.target.value)} />
         </div>
+        {notice && <p className="form-error" role="alert">{notice}</p>}
         <button className="primary-btn" type="submit" disabled={!ready}>
           {t("İŞLETMEYİ OLUŞTUR")}
         </button>
