@@ -1,4 +1,8 @@
-/** Hesap planı. Şimdilik herkes ücretsizdir; satın alma bağlanınca burası değişir. */
+/**
+ * Hesap planı. Şimdilik herkes ücretsizdir; satın alma bağlanınca burası değişir.
+ * NOT: Sınırlar şu an yalnızca uygulamada kontrol ediliyor. Satın alma bağlanınca
+ * plan bilgisi sunucuda tutulup sınırlar veritabanında da zorlanacak.
+ */
 export type Plan = "free" | "pro" | "proplus" | "premium";
 
 export const CURRENT_PLAN: Plan = "free";
