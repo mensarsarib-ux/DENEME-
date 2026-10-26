@@ -55,7 +55,8 @@ export function useCloudSync({
       const remote = await pull(cur.session, cur.businessId);
       if (remote === "expired") return latest.current.onExpired();
       if (remote === null) {
-        if (first) {
+        // Ortak işletmede veri yoksa üye boş verisini yazmaz; yalnızca sahip ilk veriyi oluşturur
+        if (first && !cur.businessId) {
           const at = await push(cur.session, cur.snapshot, cur.businessId);
           if (at === "expired") return latest.current.onExpired();
           syncedJson.current = cur.json;
