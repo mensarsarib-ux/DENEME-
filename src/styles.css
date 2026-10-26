@@ -3555,3 +3555,9 @@ a.action-btn {
   font-weight: 600;
   cursor: pointer;
 }
+
+.paywall-links {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}

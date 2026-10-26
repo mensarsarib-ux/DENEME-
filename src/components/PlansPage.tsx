@@ -94,7 +94,15 @@ function Hero() {
 }
 
 /** Paketler sayfası: üstte görsel, altta paket kartları, abonelik bilgisi ve geri yükleme */
-export default function PlansPage({ onBack, onPrivacy }: { onBack: () => void; onPrivacy: () => void }) {
+export default function PlansPage({
+  onBack,
+  onPrivacy,
+  onTerms,
+}: {
+  onBack: () => void;
+  onPrivacy: () => void;
+  onTerms: () => void;
+}) {
   return (
     <div className="cust-page">
       <PageHeader title={t("İşletme paketleri")} subtitle={t("{p} paketini kullanıyorsunuz", { p: PLAN_NAME[CURRENT_PLAN] })} icon={SUPPORT_ICON} onBack={onBack} />
@@ -153,9 +161,14 @@ export default function PlansPage({ onBack, onPrivacy }: { onBack: () => void; o
         <button type="button" className="paywall-restore" disabled>
           {t("Satın alımı geri yükle")}
         </button>
-        <button type="button" className="paywall-link" onClick={onPrivacy}>
-          {t("Gizlilik politikası")}
-        </button>
+        <div className="paywall-links">
+          <button type="button" className="paywall-link" onClick={onPrivacy}>
+            {t("Gizlilik politikası")}
+          </button>
+          <button type="button" className="paywall-link" onClick={onTerms}>
+            {t("Kullanım koşulları")}
+          </button>
+        </div>
       </div>
     </div>
   );

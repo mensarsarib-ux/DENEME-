@@ -17,6 +17,7 @@ import SettingsPage from "./components/SettingsPage";
 import SupportPage from "./components/SupportPage";
 import PrivacyPage from "./components/PrivacyPage";
 import PlansPage from "./components/PlansPage";
+import TermsPage from "./components/TermsPage";
 import ArchivePage from "./components/ArchivePage";
 import NewBusinessPage from "./components/NewBusinessPage";
 import JoinBusinessPage from "./components/JoinBusinessPage";
@@ -622,8 +623,10 @@ export default function App() {
         );
       case "privacy":
         return <PrivacyPage onBack={toHome} />;
+      case "terms":
+        return <TermsPage onBack={toHome} />;
       case "plans":
-        return <PlansPage onBack={toHome} onPrivacy={() => go({ name: "menu", page: "privacy" })} />;
+        return <PlansPage onBack={toHome} onPrivacy={() => go({ name: "menu", page: "privacy" })} onTerms={() => go({ name: "menu", page: "terms" })} />;
       case "newbusiness":
         return <NewBusinessPage onBack={toHome} onJoin={() => go({ name: "menu", page: "join" })} />;
       case "team":

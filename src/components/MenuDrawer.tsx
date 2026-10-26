@@ -166,6 +166,11 @@ export default function MenuDrawer({
             <span className="drawer-label">{t("Gizlilik politikası")}</span>
             <span className="drawer-chevron" aria-hidden="true">›</span>
           </button>
+          <button type="button" className="drawer-item" onClick={() => open("terms")}>
+            <Svg d={PRIVACY_ICON} />
+            <span className="drawer-label">{t("Kullanım koşulları")}</span>
+            <span className="drawer-chevron" aria-hidden="true">›</span>
+          </button>
           {onSignOut && (
             <button
               type="button"

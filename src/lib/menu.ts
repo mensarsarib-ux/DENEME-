@@ -10,6 +10,7 @@ export type MenuPage =
   | "settings"
   | "support"
   | "privacy"
+  | "terms"
   | "plans"
   | "newbusiness"
   | "join"
