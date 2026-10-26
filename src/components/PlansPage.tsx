@@ -1,7 +1,7 @@
 import type { Profile } from "../data/mock";
 import { t } from "../lib/i18n";
 import { haptic } from "../lib/haptics";
-import { activeWorkspace, listWorkspaces, MAIN_WORKSPACE, switchWorkspace } from "../lib/storage";
+import { activeWorkspace, switchWorkspace } from "../lib/storage";
 import { SUPPORT_ICON } from "../lib/menu";
 import CompanyLogo from "./CompanyLogo";
 import PageHeader from "./PageHeader";
@@ -23,10 +23,18 @@ const PLANS: { name: string; lines: string[] }[] = [
 ];
 
 /** İşletme paketleri sayfası: mevcut işletme ve üst pakete geçiş seçenekleri */
-export default function PlansPage({ profile, onBack }: { profile: Profile; onBack: () => void }) {
+export default function PlansPage({
+  profile,
+  businesses,
+  onBack,
+}: {
+  profile: Profile;
+  /** Kullanıcının işletmeleri: bu cihazdakiler ve sunucudaki ortak işletmeler */
+  businesses: { id: string; name: string }[];
+  onBack: () => void;
+}) {
   const name = profile.name || t("Hesabım");
   const active = activeWorkspace();
-  const others = listWorkspaces();
 
   return (
     <div className="cust-page">
@@ -43,19 +51,21 @@ export default function PlansPage({ profile, onBack }: { profile: Profile; onBac
         <section className="card" aria-label={t("İşletmelerim")}>
           <h2 className="card-title">{t("İŞLETMELERİM")}</h2>
           <div className="plans-list">
-            {active !== MAIN_WORKSPACE && (
-              <button type="button" className="plans-item" onClick={() => switchWorkspace(MAIN_WORKSPACE)}>
-                <span>{t("Ana işletme")}</span>
-              </button>
-            )}
-            {others
-              .filter((w) => w.id !== active)
-              .map((w) => (
-                <button key={w.id} type="button" className="plans-item" onClick={() => switchWorkspace(w.id)}>
-                  <span>{w.name}</span>
+            {businesses.map((b) => {
+              const isActive = b.id === active;
+              return (
+                <button
+                  key={b.id}
+                  type="button"
+                  className="plans-item"
+                  disabled={isActive}
+                  onClick={() => switchWorkspace(b.id)}
+                >
+                  <span>{b.name}</span>
+                  <small>{isActive ? t("Şu an buradasınız") : t("Geç")}</small>
                 </button>
-              ))}
-            {active !== MAIN_WORKSPACE && <small className="plans-note">{t("Şu an bu işletmedesiniz: {n}", { n: name })}</small>}
+              );
+            })}
           </div>
         </section>
 

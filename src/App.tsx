@@ -26,7 +26,7 @@ import { renameBusiness } from "./lib/cloud";
 import { migrateLocalWorkspaces } from "./lib/migrate";
 import { canAddItem, canAddTab } from "./lib/plan";
 import { deleteMyAccount } from "./lib/cloud";
-import { listWorkspaces } from "./lib/storage";
+import { businessList, listWorkspaces } from "./lib/storage";
 import { activeWorkspace, MAIN_WORKSPACE } from "./lib/storage";
 import type { TabInfo } from "./components/PartyTabs";
 import {
@@ -616,7 +616,7 @@ export default function App() {
       case "privacy":
         return <PrivacyPage onBack={toHome} />;
       case "plans":
-        return <PlansPage profile={profile} onBack={toHome} />;
+        return <PlansPage profile={profile} businesses={businessList(serverBusinesses)} onBack={toHome} />;
       case "newbusiness":
         return <NewBusinessPage onBack={toHome} onJoin={() => go({ name: "menu", page: "join" })} />;
       case "team":
