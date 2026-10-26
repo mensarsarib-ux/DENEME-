@@ -599,7 +599,9 @@ export default function App() {
             />
           );
         }
-        return session ? <TeamPage session={session} onOpen={setTeamPerson} onBack={toHome} /> : null;
+        return session ? (
+          <TeamPage session={session} onOpen={setTeamPerson} onPlans={() => go({ name: "menu", page: "plans" })} onBack={toHome} />
+        ) : null;
       case "join":
         return <JoinBusinessPage onBack={toHome} />;
       case "support":

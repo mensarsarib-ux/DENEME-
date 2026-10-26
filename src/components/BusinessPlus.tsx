@@ -4,6 +4,7 @@ import { haptic } from "../lib/haptics";
 import type { Workspace } from "../lib/storage";
 import { MAIN_WORKSPACE } from "../lib/storage";
 import { Svg } from "./Icon";
+import { canUseMultiBusiness } from "../lib/plan";
 
 /** Mağaza simgesi (firma kutusunda ve listede aynı) */
 export const STORE_ICON = "M5 21V6l7-3 7 3v15M9 21v-5h6v5M9 9h1.5M13.5 9H15M9 13h1.5M13.5 13H15";
@@ -75,6 +76,7 @@ export default function BusinessPlus({
   onAdd,
   onDelete,
   canAdd = true,
+  onPlans,
   onClose,
 }: {
   /** Firma kutusunun alt kenarı ve sol kenarı (piksel) */
@@ -87,10 +89,13 @@ export default function BusinessPlus({
   onDelete: (id: string) => void;
   /** Yalnızca yetkili kişi yeni işletme ekleyebilir */
   canAdd?: boolean;
+  /** Paketlere geç sayfasını açar */
+  onPlans: () => void;
   onClose: () => void;
 }) {
   const [armed, setArmed] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
+  const [upsell, setUpsell] = useState(false);
 
   return (
     <div className="biz-layer" onClick={onClose}>
@@ -124,6 +129,11 @@ export default function BusinessPlus({
             className="biz-plus"
             aria-label={t("İşletme ekle")}
             onClick={() => {
+              if (!canUseMultiBusiness()) {
+                haptic("warning");
+                setUpsell(true);
+                return;
+              }
               if (!canAdd) {
                 haptic("warning");
                 setNotice(t("Yalnızca yetkili kişi yeni işletme açabilir."));
@@ -139,6 +149,11 @@ export default function BusinessPlus({
             type="button"
             className="biz-add"
             onClick={() => {
+              if (!canUseMultiBusiness()) {
+                haptic("warning");
+                setUpsell(true);
+                return;
+              }
               if (!canAdd) {
                 haptic("warning");
                 setNotice(t("Yalnızca yetkili kişi yeni işletme açabilir."));
@@ -151,6 +166,12 @@ export default function BusinessPlus({
           </button>
         </div>
         {notice && <p className="biz-notice" role="status">{notice}</p>}
+        {upsell && (
+          <div className="biz-notice" role="dialog" aria-label={t("Paketlere geç")}>
+            <p>{t("Ücretsiz planda tek işletme bulunur. Birden fazla işletme için paketlere geçin.")}</p>
+            <button type="button" className="primary-btn" onClick={onPlans}>{t("Paketlere geç")}</button>
+          </div>
+        )}
       </div>
     </div>
   );

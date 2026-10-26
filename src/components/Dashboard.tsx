@@ -272,6 +272,7 @@ export default function Dashboard({
                   setDeleteTarget({ id, name: b?.name ?? "" });
                 }}
                 canAdd={canCreateBusiness}
+                onPlans={onOpenPlans}
                 onClose={() => setPlusAt(null)}
                 onAdd={() => {
                   setPlusAt(null);
