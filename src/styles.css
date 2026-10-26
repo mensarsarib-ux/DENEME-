@@ -1812,11 +1812,6 @@ body {
   white-space: nowrap;
 }
 
-.drawer-company-chevron {
-  color: var(--muted);
-  font-size: 0.8rem;
-}
-
 .drawer-biz-list {
   display: flex;
   flex-direction: column;
@@ -1842,11 +1837,10 @@ body {
 .drawer-biz-item {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 8px;
+  gap: 12px;
   padding: 10px 12px;
   border: 0;
-  border-radius: 10px;
+  border-radius: 14px;
   background: var(--surface-head);
   color: var(--text);
   font: inherit;
@@ -1854,16 +1848,28 @@ body {
   cursor: pointer;
 }
 
-.drawer-biz-item span {
+.drawer-biz-mark {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(59, 130, 246, 0.14);
+  color: #3b82f6;
+}
+
+.drawer-biz-mark svg {
+  width: 20px;
+  height: 20px;
+}
+
+.drawer-biz-name {
+  flex: 1;
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-.drawer-biz-item small {
-  flex-shrink: 0;
-  color: var(--accent, #3b82f6);
-  font-weight: 700;
 }
 
 .drawer-biz-item.is-current {

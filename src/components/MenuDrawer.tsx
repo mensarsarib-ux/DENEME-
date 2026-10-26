@@ -10,6 +10,7 @@ import CompanyLogo from "./CompanyLogo";
 import { Svg } from "./Icon";
 import { t } from "../lib/i18n";
 import { activeWorkspace, switchWorkspace } from "../lib/storage";
+import { STORE_ICON } from "./BusinessPlus";
 
 /**
  * Soldan açılan yarı genişlikte menü penceresi. Seçenekler: işletme profili, hesaplarım, raporlar,
@@ -86,7 +87,6 @@ export default function MenuDrawer({
             }}
           >
             <strong>{profile.name || t("Hesabım")}</strong>
-            <span className="drawer-company-chevron" aria-hidden="true">{bizOpen ? "▴" : "▾"}</span>
           </button>
           <button className="drawer-close" aria-label={t("Menüyü kapat")} onClick={onClose}>
             ×
@@ -106,7 +106,10 @@ export default function MenuDrawer({
                   disabled={isCurrent}
                   onClick={() => switchWorkspace(b.id)}
                 >
-                  <span>{b.name}</span>
+                  <span className="drawer-biz-mark" aria-hidden="true">
+                    <Svg d={STORE_ICON} />
+                  </span>
+                  <span className="drawer-biz-name">{b.name}</span>
                   {isCurrent && <small aria-hidden="true">✓</small>}
                 </button>
               );

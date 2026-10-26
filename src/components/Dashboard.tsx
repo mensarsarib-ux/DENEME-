@@ -1,6 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import BusinessPlus from "./BusinessPlus";
-import { canAddBusiness } from "../lib/plan";
 import { activeWorkspace, businessList, switchWorkspace } from "../lib/storage";
 import { businessColor } from "../lib/business-colors";
 import DeleteBusinessDialog from "./DeleteBusinessDialog";
@@ -121,11 +120,6 @@ export default function Dashboard({
   const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
   // Logoya dokununca + açılır; konum logonun altından alınır
   function openPlus() {
-    // Ücretsiz planda doğrudan paket seçenekleri açılır
-    if (!canAddBusiness(businessList(serverBusinesses).length)) {
-      onOpenPlans();
-      return;
-    }
     const m = markRef.current?.getBoundingClientRect();
     if (m) setPlusAt({ top: m.bottom, left: m.left + 14 });
   }
