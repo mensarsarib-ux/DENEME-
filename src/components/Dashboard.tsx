@@ -16,6 +16,7 @@ import { findMatch, type MatchRange } from "../lib/search";
 import { locale, t } from "../lib/i18n";
 import StatsCarousel from "./StatsCarousel";
 import Highlight from "./Highlight";
+import SwipeArchive from "./SwipeArchive";
 import PartyTabs, { type TabInfo } from "./PartyTabs";
 import { Svg } from "./Icon";
 
@@ -69,6 +70,7 @@ export default function Dashboard({
   transactions,
   highlightId,
   onSelectParty,
+  onArchive,
   onNewParty,
   onSelectTab,
   onCreateTab,
@@ -94,6 +96,8 @@ export default function Dashboard({
   /** Az önce eklenen kayıt: listede kaydırılıp vurgulanır */
   highlightId?: string | null;
   onSelectParty: (id: string) => void;
+  /** Satır sağa kaydırılıp "Arşive al" ile arşive gönderilir */
+  onArchive: (id: string) => void;
   /** Etkin sekmeye yeni kayıt ekler */
   onNewParty: () => void;
   /** Sekme değişince üstteki istatistikler yerinde kalır, yalnızca alttaki liste değişir */
@@ -376,20 +380,22 @@ export default function Dashboard({
           <ul className="list">
             {rows.map((r, i) => (
               <li key={r.id}>
-                <button
-                  ref={r.id === highlightId ? highlightRef : undefined}
-                  className={`row ${searching ? "is-match" : ""} ${searching && i === 0 ? "is-top" : ""} ${r.id === highlightId ? "is-new" : ""}`}
-                  onClick={() => onSelectParty(r.id)}
-                >
-                  <span className="row-name">
-                    <Highlight text={r.name} range={r.range} />
-                  </span>
-                  <span
-                    className={`row-amount ${r.balance < 0 ? "is-debt" : ""}`}
+                <SwipeArchive onArchive={() => onArchive(r.id)}>
+                  <button
+                    ref={r.id === highlightId ? highlightRef : undefined}
+                    className={`row ${searching ? "is-match" : ""} ${searching && i === 0 ? "is-top" : ""} ${r.id === highlightId ? "is-new" : ""}`}
+                    onClick={() => onSelectParty(r.id)}
                   >
-                    {money.format(r.balance)}
-                  </span>
-                </button>
+                    <span className="row-name">
+                      <Highlight text={r.name} range={r.range} />
+                    </span>
+                    <span
+                      className={`row-amount ${r.balance < 0 ? "is-debt" : ""}`}
+                    >
+                      {money.format(r.balance)}
+                    </span>
+                  </button>
+                </SwipeArchive>
               </li>
             ))}
           </ul>

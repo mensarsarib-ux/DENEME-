@@ -3246,3 +3246,62 @@ a.action-btn {
 .drawer-signout .drawer-label {
   color: var(--red);
 }
+
+/* Kaydırmalı satır: sağa kaydırınca altındaki "Arşive al" düğmesi görünür */
+.swipe-row {
+  position: relative;
+  overflow: hidden;
+}
+
+.swipe-action {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 96px;
+  border: 0;
+  background: #64748b;
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.swipe-track {
+  position: relative;
+  background: var(--surface);
+  touch-action: pan-y;
+}
+
+.swipe-track.is-settling {
+  transition: transform 0.2s ease-out;
+}
+
+/* Arşiv sayfası: basılı tutulan satırın altındaki seçenekler */
+.archive-armed {
+  display: flex;
+  gap: 8px;
+  padding: 8px 16px 12px;
+  border-bottom: 1px solid var(--line);
+}
+
+.archive-restore-btn,
+.archive-cancel-btn {
+  flex: 1;
+  padding: 10px 12px;
+  border: 0;
+  border-radius: 12px;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.archive-restore-btn {
+  background: #3b82f6;
+  color: #fff;
+}
+
+.archive-cancel-btn {
+  background: var(--surface-head);
+  color: var(--text);
+}

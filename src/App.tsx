@@ -17,6 +17,7 @@ import SettingsPage from "./components/SettingsPage";
 import SupportPage from "./components/SupportPage";
 import PrivacyPage from "./components/PrivacyPage";
 import PlansPage from "./components/PlansPage";
+import ArchivePage from "./components/ArchivePage";
 import NewBusinessPage from "./components/NewBusinessPage";
 import JoinBusinessPage from "./components/JoinBusinessPage";
 import TeamPage from "./components/TeamPage";
@@ -381,7 +382,11 @@ export default function App() {
   const currentTab = groups.some((g) => g.id === activeTab)
     ? activeTab
     : "customer";
-  const membersOf = (kind: PartyKind) => parties.filter((p) => p.kind === kind);
+  // Arşivdeki kayıtlar ana listede görünmez; analizler ise tüm kayıtları kullanmaya devam eder
+  const membersOf = (kind: PartyKind) => parties.filter((p) => p.kind === kind && !p.archived);
+  function setArchived(id: string, archived: boolean) {
+    setParties((prev) => prev.map((p) => (p.id === id ? { ...p, archived: archived || undefined } : p)));
+  }
   const tabs: TabInfo[] = groups.map((g) => {
     const members = membersOf(g.id);
     return {
@@ -565,6 +570,8 @@ export default function App() {
         );
       case "notes":
         return <NotesPage notes={notes} onChange={setNotes} onBack={toHome} />;
+      case "archive":
+        return <ArchivePage parties={parties} groups={groups} onRestore={(id) => setArchived(id, false)} onBack={toHome} />;
       case "contacts":
         return (
           <ContactsPage
@@ -575,7 +582,7 @@ export default function App() {
             }
             onOpenParty={openParty}
             onNewParty={(kind) => {
-              if (!canAddItem(parties.filter((p) => p.kind === kind).length)) {
+              if (!canAddItem(membersOf(kind).length)) {
                 go({ name: "menu", page: "plans" });
                 return;
               }
@@ -692,8 +699,9 @@ export default function App() {
       transactions={transactions}
       highlightId={addedId}
       onSelectParty={(id) => go({ name: "party", id })}
+      onArchive={(id) => setArchived(id, true)}
       onNewParty={() => {
-        if (!canAddItem(parties.filter((p) => p.kind === currentTab).length)) {
+        if (!canAddItem(membersOf(currentTab).length)) {
           go({ name: "menu", page: "plans" });
           return;
         }

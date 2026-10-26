@@ -41,6 +41,8 @@ export interface Customer {
   address?: string;
   email?: string;
   note?: string;
+  /** Arşivdeki kayıt ana listede görünmez; verileri ve analizleri silinmez */
+  archived?: boolean;
 }
 
 export const initialCustomers: Customer[] = [

@@ -4,6 +4,7 @@ export type MenuPage =
   | "accounts"
   | "reports"
   | "notes"
+  | "archive"
   | "contacts"
   | "notifications"
   | "settings"
@@ -20,6 +21,7 @@ export const MENU_ITEMS: { page: MenuPage; label: string; icon: string }[] = [
   { page: "plans", label: "İşletme paketleri", icon: "M4 20V8l8-4 8 4v12M9 20v-6h6v6" },
   { page: "reports", label: "Raporlar", icon: "M5 20V10M11 20V4M17 20v-7" },
   { page: "notes", label: "Notlar", icon: "M6 3h12v18H6zM9 8h6M9 12h6M9 16h4" },
+  { page: "archive", label: "Arşiv", icon: "M3 5h18v4H3zM5 9v11h14V9M10 13h4" },
   { page: "contacts", label: "Kişiler", icon: "M9 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM3 20a6 6 0 0 1 12 0M17 11a2.5 2.5 0 1 0 0-5M16 14a5 5 0 0 1 5 5" },
   { page: "notifications", label: "Bildirimler", icon: "M6 16V11a6 6 0 0 1 12 0v5l2 2H4zM10 21h4" },
   { page: "team", label: "Ekiplerim", icon: "M9 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM3 20a6 6 0 0 1 12 0M16 11a3 3 0 1 0 0-6M17 14a6 6 0 0 1 4 6" },
