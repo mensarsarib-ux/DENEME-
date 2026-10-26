@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import type { Profile } from "../data/mock";
 import { haptic } from "../lib/haptics";
 import { MENU_ITEMS, PRIVACY_ICON, SUPPORT_ICON, type MenuPage } from "../lib/menu";
+import { canUseMultiBusiness } from "../lib/plan";
 
 /** Şimdilik menüde gösterilmeyen sayfalar; kodları durur, listeden çıkarılarak tekrar açılabilir */
 const HIDDEN_PAGES: MenuPage[] = ["contacts", "reports"];
@@ -38,7 +39,8 @@ export default function MenuDrawer({
 
   function open(page: MenuPage) {
     haptic("light");
-    onNavigate(page);
+    // Ücretsiz planda Ekiplerim doğrudan paket seçeneklerini açar
+    onNavigate(page === "team" && !canUseMultiBusiness() ? "plans" : page);
   }
 
   return (
