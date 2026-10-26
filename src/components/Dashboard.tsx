@@ -77,6 +77,7 @@ export default function Dashboard({
   onOpenMenu,
   onOpenKasa,
   onOpenPlans,
+  canCreateBusiness,
 }: {
   /** İşletme profili: üst çubukta ad olarak görünür */
   profile: Profile;
@@ -103,6 +104,8 @@ export default function Dashboard({
   onOpenKasa: () => void;
   /** Firma logosundaki + ile işletme paketleri sayfası açılır */
   onOpenPlans: () => void;
+  /** Yalnızca yetkili kişi yeni işletme açabilir */
+  canCreateBusiness: boolean;
   /** Sol üstteki Menü: yan menü penceresini açar */
   onOpenMenu: () => void;
 }) {
@@ -265,6 +268,7 @@ export default function Dashboard({
                   setPlusAt(null);
                   setDeleteTarget({ id, name: b?.name ?? "" });
                 }}
+                canAdd={canCreateBusiness}
                 onClose={() => setPlusAt(null)}
                 onAdd={() => {
                   setPlusAt(null);

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { pull, push, type Session } from "./cloud";
+import { notifyChanges, pull, push, type Session } from "./cloud";
+import { describeChanges } from "./changes";
 
 export type SyncStatus = "loading" | "idle" | "syncing" | "synced" | "error";
 
@@ -104,8 +105,15 @@ export function useCloudSync({
       busy.current = true;
       setStatus("syncing");
       try {
+        const before = syncedJson.current;
         const at = await push(cur.session, cur.snapshot, cur.businessId);
         if (at === "expired") return cur.onExpired();
+        // Üye değişiklikleri, içerikleriyle sahibe bildirilir
+        if (cur.businessId && !cur.canSeed) {
+          const prev = before ? (JSON.parse(before) as Record<string, unknown>) : null;
+          const messages = describeChanges(prev, JSON.parse(cur.json) as Record<string, unknown>);
+          await notifyChanges(cur.session, cur.businessId, messages).catch(() => undefined);
+        }
         syncedJson.current = cur.json;
         markSynced(at);
       } catch {

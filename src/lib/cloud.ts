@@ -500,3 +500,31 @@ export async function markChangeNoticesRead(session: Session): Promise<true | "e
   if (!res.ok) throw new CloudError("unknown", String(res.status));
   return true;
 }
+
+/** Yetkili olarak yeni bir işletmeyi sunucuda oluşturur; ekip üyeleri otomatik üye olur */
+export async function createBusiness(session: Session, name: string): Promise<void | "expired"> {
+  const s = await fresh(session);
+  if (!s) return "expired";
+  const res = await call("/rest/v1/businesses", {
+    method: "POST",
+    token: s.accessToken,
+    headers: { Prefer: "return=minimal" },
+    body: JSON.stringify({ name: name.trim() || "Hesabım", owner_id: s.userId }),
+  });
+  if (res.status === 401) return "expired";
+  if (!res.ok) throw new CloudError("unknown", String(res.status));
+}
+
+/** Üye değişikliklerini içerikleriyle sahibe bildirim olarak yazar */
+export async function notifyChanges(session: Session, businessId: string, messages: string[]): Promise<void | "expired"> {
+  if (messages.length === 0) return;
+  const s = await fresh(session);
+  if (!s) return "expired";
+  const res = await call("/rest/v1/business_notifications", {
+    method: "POST",
+    token: s.accessToken,
+    headers: { Prefer: "return=minimal" },
+    body: JSON.stringify({ business_id: businessId, kind: "data_change", message: messages.join(" · ").slice(0, 900) }),
+  });
+  if (res.status === 401) return "expired";
+}

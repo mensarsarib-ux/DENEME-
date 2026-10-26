@@ -3047,3 +3047,21 @@ a.action-btn {
 .request-reject:disabled {
   opacity: 0.5;
 }
+
+.biz-notice {
+  margin: 6px 0 0;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(228, 87, 74, 0.2);
+  color: #fff;
+  font-size: 0.8rem;
+}
+
+.biz-notice {
+  margin: 6px 0 0;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(228, 87, 74, 0.2);
+  color: #fff;
+  font-size: 0.8rem;
+}

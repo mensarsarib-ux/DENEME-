@@ -133,6 +133,8 @@ export default function App() {
   const [requestStatus, setRequestStatus] = useState<string | null>(null);
   const [recheck, setRecheck] = useState(0);
   const memberReady = !isMainWorkspace || membership !== undefined;
+  // Yeni işletme yalnızca yetkili (sahip) tarafından açılabilir
+  const canCreateBusiness = membership === null || membership?.role === "owner";
   const waiting = isMainWorkspace && !!session && membership === null && requestStatus !== null;
   const sync = useCloudSync({
     session: isMainWorkspace && memberReady && !waiting ? session : null,
@@ -574,6 +576,7 @@ export default function App() {
       onOpenMenu={() => setDrawerOpen(true)}
       onOpenKasa={() => go({ name: "kasa" })}
       onOpenPlans={() => go({ name: "menu", page: "newbusiness" })}
+      canCreateBusiness={canCreateBusiness}
       parties={parties}
       members={membersOf(currentTab)}
       activeTab={currentTab}

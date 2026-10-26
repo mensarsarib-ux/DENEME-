@@ -74,6 +74,7 @@ export default function BusinessPlus({
   onSwitch,
   onAdd,
   onDelete,
+  canAdd = true,
   onClose,
 }: {
   /** Firma kutusunun alt kenarı ve sol kenarı (piksel) */
@@ -84,9 +85,12 @@ export default function BusinessPlus({
   onSwitch: (id: string) => void;
   onAdd: () => void;
   onDelete: (id: string) => void;
+  /** Yalnızca yetkili kişi yeni işletme ekleyebilir */
+  canAdd?: boolean;
   onClose: () => void;
 }) {
   const [armed, setArmed] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
 
   return (
     <div className="biz-layer" onClick={onClose}>
@@ -120,16 +124,33 @@ export default function BusinessPlus({
             className="biz-plus"
             aria-label={t("İşletme ekle")}
             onClick={() => {
+              if (!canAdd) {
+                haptic("warning");
+                setNotice(t("Yalnızca yetkili kişi yeni işletme açabilir."));
+                return;
+              }
               haptic("medium");
               onAdd();
             }}
           >
             +
           </button>
-          <button type="button" className="biz-add" onClick={onAdd}>
+          <button
+            type="button"
+            className="biz-add"
+            onClick={() => {
+              if (!canAdd) {
+                haptic("warning");
+                setNotice(t("Yalnızca yetkili kişi yeni işletme açabilir."));
+                return;
+              }
+              onAdd();
+            }}
+          >
             {t("İşletme ekle")}
           </button>
         </div>
+        {notice && <p className="biz-notice" role="status">{notice}</p>}
       </div>
     </div>
   );

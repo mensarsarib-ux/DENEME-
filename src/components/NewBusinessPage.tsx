@@ -2,6 +2,7 @@ import { useState, type FormEvent } from "react";
 import type { Profile } from "../data/mock";
 import { t } from "../lib/i18n";
 import { createWorkspace } from "../lib/storage";
+import { createBusiness, loadSession } from "../lib/cloud";
 import PageHeader from "./PageHeader";
 import { SUPPORT_ICON } from "../lib/menu";
 import PhoneField from "./PhoneField";
@@ -26,6 +27,9 @@ export default function NewBusinessPage({ onBack, onJoin }: { onBack: () => void
       address: address.trim(),
       taxNo: "",
     };
+    // Sunucuda da kaydedilir: ekip üyeleri bu işletmeyi de görür
+    const session = loadSession();
+    if (session) void createBusiness(session, profile.name).catch(() => undefined);
     // Yeni işletme aktif olur; sayfa yeniden yüklenince boş veriyle açılır
     createWorkspace(profile.name, profile);
     window.location.reload();
