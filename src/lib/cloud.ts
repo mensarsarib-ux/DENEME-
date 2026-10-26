@@ -670,3 +670,13 @@ export async function leaveOrDeleteBusiness(session: Session, businessId: string
   if (!res.ok) throw new CloudError("unknown", String(res.status));
   return true;
 }
+
+/** Giriş yapan kişinin hesabını ve tüm verisini siler */
+export async function deleteMyAccount(session: Session): Promise<true | "expired"> {
+  const s = await fresh(session);
+  if (!s) return "expired";
+  const res = await call("/rest/v1/rpc/delete_my_account", { method: "POST", token: s.accessToken, body: "{}" });
+  if (res.status === 401) return "expired";
+  if (!res.ok) throw new CloudError("unknown", String(res.status));
+  return true;
+}

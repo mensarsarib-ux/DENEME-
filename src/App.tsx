@@ -25,6 +25,7 @@ import type { TeamPerson } from "./lib/cloud";
 import { renameBusiness } from "./lib/cloud";
 import { migrateLocalWorkspaces } from "./lib/migrate";
 import { canAddItem, canAddTab } from "./lib/plan";
+import { deleteMyAccount } from "./lib/cloud";
 import { listWorkspaces } from "./lib/storage";
 import { activeWorkspace, MAIN_WORKSPACE } from "./lib/storage";
 import type { TabInfo } from "./components/PartyTabs";
@@ -217,6 +218,26 @@ export default function App() {
     setView({ name: "home" });
     setSession(null);
   }
+  // Hesabı ve tüm verileri siler; yerel veriler de temizlenir
+  async function deleteAccountNow() {
+    if (!session) return;
+    try {
+      const r = await deleteMyAccount(session);
+      if (r === "expired") {
+        window.alert(t("Oturumunuz sona ermiş; yeniden giriş yapıp tekrar deneyin."));
+        return;
+      }
+    } catch {
+      window.alert(t("Hesap silinemedi; bağlantınızı kontrol edip tekrar deneyin."));
+      return;
+    }
+    signOut();
+    Object.keys(localStorage)
+      .filter((k) => k.startsWith("hesabim:"))
+      .forEach((k) => localStorage.removeItem(k));
+    window.location.reload();
+  }
+
   // Az önce eklenen kayıt; listede vurgulanır
   const [addedId, setAddedId] = useState<string | null>(null);
 
@@ -583,6 +604,7 @@ export default function App() {
                     lastSync: sync.lastSync,
                     onSync: sync.syncNow,
                     onSignOut: logout,
+                    onDeleteAccount: deleteAccountNow,
                   }
                 : undefined
             }

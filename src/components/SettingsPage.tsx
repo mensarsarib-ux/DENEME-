@@ -123,6 +123,8 @@ export default function SettingsPage({
     lastSync: Date | null;
     onSync: () => void;
     onSignOut: () => void;
+    /** Hesabı ve tüm verileri kalıcı olarak siler */
+    onDeleteAccount: () => void;
   };
   /** Hata varsa mesajını, başarılıysa null döndürür */
   onRestore: (text: string) => string | null;
@@ -209,6 +211,19 @@ export default function SettingsPage({
             <div className="card-actions">
               <button type="button" className="action-btn" onClick={account.onSync}>{t("Şimdi eşitle")}</button>
               <button type="button" className="action-btn is-danger" onClick={() => setConfirmSignOut(true)}>{t("Çıkış yap")}</button>
+            </div>
+            <div className="card-actions">
+              <button
+                type="button"
+                className="action-btn is-danger"
+                onClick={() => {
+                  if (window.confirm(t("Hesabınız ve bu hesaba bağlı tüm veriler kalıcı olarak silinecek. Sahibi olduğunuz işletmeler ve o işletmelerdeki üyelikler de silinir. Bu işlem geri alınamaz. Devam edilsin mi?"))) {
+                    account.onDeleteAccount();
+                  }
+                }}
+              >
+                {t("Hesabımı sil")}
+              </button>
             </div>
           </section>
         )}
