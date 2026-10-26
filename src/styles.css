@@ -3139,3 +3139,20 @@ a.action-btn {
   font-weight: 600;
   font-size: 0.85rem;
 }
+
+/* Paket detayları: ad, sınır satırları ve yakında */
+.plans-item-detail {
+  display: grid;
+  gap: 4px;
+  text-align: left;
+}
+
+.plans-item-name {
+  font-weight: 700;
+}
+
+.plans-item-lines {
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.4;
+}

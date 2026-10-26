@@ -3,7 +3,7 @@ import { teamPeople, type Session, type TeamPerson } from "../lib/cloud";
 import { t } from "../lib/i18n";
 import { haptic } from "../lib/haptics";
 import { SUPPORT_ICON } from "../lib/menu";
-import { canUseMultiBusiness } from "../lib/plan";
+import { canUseTeam } from "../lib/plan";
 import PageHeader from "./PageHeader";
 
 /** Ekiplerim: ekip üyelerinin listesi; birine dokununca sınırları açılır */
@@ -32,7 +32,7 @@ export default function TeamPage({
     <div className="cust-page">
       <PageHeader title={t("Ekiplerim")} subtitle={t("Ekip üyeleri ve işletme erişimleri")} icon={SUPPORT_ICON} onBack={onBack} />
       <div className="stack">
-        {!canUseMultiBusiness() && (
+        {!canUseTeam() && (
           <section className="card" aria-label={t("Paketlere geç")}>
             <p>{t("Ekip ve paylaşım için paketlere geçin.")}</p>
             <button type="button" className="primary-btn" onClick={onPlans}>{t("Paketlere geç")}</button>

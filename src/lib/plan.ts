@@ -1,28 +1,56 @@
 /** Hesap planı. Şimdilik herkes ücretsizdir; satın alma bağlanınca burası değişir. */
-export type Plan = "free" | "pro" | "proplus";
+export type Plan = "free" | "pro" | "proplus" | "premium";
 
 export const CURRENT_PLAN: Plan = "free";
 
-/** Ücretsiz planda tek işletme; Pro ve Pro Plus'ta birden fazla işletme ve ekip */
-export function canUseMultiBusiness(plan: Plan = CURRENT_PLAN): boolean {
-  return plan !== "free";
-}
-
-/** Müşteri/tedarikçi kayıt sınırı */
-export const PARTY_LIMITS: Record<Plan, number> = {
-  free: 2,
-  pro: 10,
-  proplus: 15,
+/** Plan sınırları. Infinity = sınırsız. */
+export const LIMITS: Record<
+  Plan,
+  {
+    /** Açılabilir işletme sayısı */
+    businesses: number;
+    /** Sekme sayısı (Müşteriler ve Tedarikçiler dahil) */
+    tabs: number;
+    /** Her sekmedeki (ve Müşteriler/Tedarikçiler listesindeki) kayıt sayısı */
+    itemsPerTab: number;
+    /** Ekip sayısı, yönetici dahil. 0 = ekip kapalı */
+    team: number;
+  }
+> = {
+  free: { businesses: 1, tabs: 4, itemsPerTab: 10, team: 0 },
+  pro: { businesses: 2, tabs: 8, itemsPerTab: 20, team: 3 },
+  proplus: { businesses: 4, tabs: 10, itemsPerTab: 40, team: 5 },
+  premium: { businesses: Infinity, tabs: Infinity, itemsPerTab: Infinity, team: Infinity },
 };
 
-/** Yeni kişi eklenebilir mi? Sınır dolunca paketler sayfasına yönlendirilir */
-export function canAddParty(count: number, plan: Plan = CURRENT_PLAN): boolean {
-  return count < PARTY_LIMITS[plan];
-}
-
-/** Plan adı (menü kartı için) */
 export const PLAN_NAME: Record<Plan, string> = {
   free: "Ücretsiz",
   pro: "Pro",
   proplus: "Pro Plus",
+  premium: "Premium",
 };
+
+/** Ekip özelliği açık mı? */
+export function canUseTeam(plan: Plan = CURRENT_PLAN): boolean {
+  return LIMITS[plan].team > 0;
+}
+
+/** Yeni işletme eklenebilir mi? (mevcut işletme sayısına göre) */
+export function canAddBusiness(count: number, plan: Plan = CURRENT_PLAN): boolean {
+  return count < LIMITS[plan].businesses;
+}
+
+/** Yeni sekme eklenebilir mi? (mevcut sekme sayısına göre) */
+export function canAddTab(count: number, plan: Plan = CURRENT_PLAN): boolean {
+  return count < LIMITS[plan].tabs;
+}
+
+/** Bir sekmeye/listeye yeni kayıt eklenebilir mi? (o listedeki kayıt sayısına göre) */
+export function canAddItem(count: number, plan: Plan = CURRENT_PLAN): boolean {
+  return count < LIMITS[plan].itemsPerTab;
+}
+
+/** Ekibe yeni üye eklenebilir mi? Yönetici de sayılır, bu yüzden üye sayısı en fazla team-1 olabilir. */
+export function canAddTeamMember(memberCount: number, plan: Plan = CURRENT_PLAN): boolean {
+  return memberCount < LIMITS[plan].team - 1;
+}

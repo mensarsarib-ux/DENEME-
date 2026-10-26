@@ -4,7 +4,7 @@ import { haptic } from "../lib/haptics";
 import type { Workspace } from "../lib/storage";
 import { MAIN_WORKSPACE } from "../lib/storage";
 import { Svg } from "./Icon";
-import { canUseMultiBusiness } from "../lib/plan";
+import { canAddBusiness } from "../lib/plan";
 
 /** Mağaza simgesi (firma kutusunda ve listede aynı) */
 export const STORE_ICON = "M5 21V6l7-3 7 3v15M9 21v-5h6v5M9 9h1.5M13.5 9H15M9 13h1.5M13.5 13H15";
@@ -76,6 +76,7 @@ export default function BusinessPlus({
   onAdd,
   onDelete,
   canAdd = true,
+  businessCount,
   onPlans,
   onClose,
 }: {
@@ -89,6 +90,8 @@ export default function BusinessPlus({
   onDelete: (id: string) => void;
   /** Yalnızca yetkili kişi yeni işletme ekleyebilir */
   canAdd?: boolean;
+  /** Mevcut işletme sayısı (plan sınırı için) */
+  businessCount: number;
   /** Paketlere geç sayfasını açar */
   onPlans: () => void;
   onClose: () => void;
@@ -129,7 +132,7 @@ export default function BusinessPlus({
             className="biz-plus"
             aria-label={t("İşletme ekle")}
             onClick={() => {
-              if (!canUseMultiBusiness()) {
+              if (!canAddBusiness(businessCount)) {
                 haptic("warning");
                 setUpsell(true);
                 return;
@@ -149,7 +152,7 @@ export default function BusinessPlus({
             type="button"
             className="biz-add"
             onClick={() => {
-              if (!canUseMultiBusiness()) {
+              if (!canAddBusiness(businessCount)) {
                 haptic("warning");
                 setUpsell(true);
                 return;

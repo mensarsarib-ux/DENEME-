@@ -24,7 +24,7 @@ import TeamMemberPage from "./components/TeamMemberPage";
 import type { TeamPerson } from "./lib/cloud";
 import { renameBusiness } from "./lib/cloud";
 import { migrateLocalWorkspaces } from "./lib/migrate";
-import { canAddParty } from "./lib/plan";
+import { canAddItem, canAddTab } from "./lib/plan";
 import { listWorkspaces } from "./lib/storage";
 import { activeWorkspace, MAIN_WORKSPACE } from "./lib/storage";
 import type { TabInfo } from "./components/PartyTabs";
@@ -433,6 +433,10 @@ export default function App() {
 
   /** Yeni sekme oluştur ve listesini göster */
   function createTab(name: string) {
+    if (!canAddTab(groups.length)) {
+      go({ name: "menu", page: "plans" });
+      return;
+    }
     const group: Group = { id: `g${Date.now()}`, name };
     setGroups((prev) => [...prev, group]);
     openTab(group.id);
@@ -550,7 +554,7 @@ export default function App() {
             }
             onOpenParty={openParty}
             onNewParty={(kind) => {
-              if (!canAddParty(parties.length)) {
+              if (!canAddItem(parties.filter((p) => p.kind === kind).length)) {
                 go({ name: "menu", page: "plans" });
                 return;
               }
@@ -667,7 +671,7 @@ export default function App() {
       highlightId={addedId}
       onSelectParty={(id) => go({ name: "party", id })}
       onNewParty={() => {
-        if (!canAddParty(parties.length)) {
+        if (!canAddItem(parties.filter((p) => p.kind === currentTab).length)) {
           go({ name: "menu", page: "plans" });
           return;
         }

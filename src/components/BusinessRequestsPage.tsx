@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import {
   decideJoin,
+  teamPeople,
   listChangeNotices,
   listPendingRequests,
   loadSession,
@@ -9,6 +10,7 @@ import {
   type PendingRequest,
 } from "../lib/cloud";
 import { locale, t } from "../lib/i18n";
+import { canAddTeamMember } from "../lib/plan";
 import { haptic } from "../lib/haptics";
 import { SUPPORT_ICON } from "../lib/menu";
 import PageHeader from "./PageHeader";
@@ -19,6 +21,7 @@ export default function BusinessRequestsPage({ onBack }: { onBack: () => void })
   const [items, setItems] = useState<PendingRequest[] | null>(null);
   const [failed, setFailed] = useState(false);
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
   const [changes, setChanges] = useState<ChangeNotice[]>([]);
 
   async function refresh() {
@@ -53,6 +56,14 @@ export default function BusinessRequestsPage({ onBack }: { onBack: () => void })
     if (!session) return;
     setBusyId(item.request_id);
     try {
+      // Ekip sınırı: onaylamadan önce mevcut üye sayısına bakılır
+      if (approve) {
+        const people = await teamPeople(session);
+        if (Array.isArray(people) && !canAddTeamMember(people.length)) {
+          setNotice(t("Ekip sınırına ulaşıldı. Daha fazla üye için paketi yükseltin."));
+          return;
+        }
+      }
       const res = await decideJoin(session, item.request_id, approve);
       if (res === true) {
         haptic(approve ? "success" : "light");
@@ -97,6 +108,7 @@ export default function BusinessRequestsPage({ onBack }: { onBack: () => void })
 
         <section className="card" aria-label={t("Katılma istekleri")}>
           {failed && <p className="form-error" role="alert">{t("Bildirimler yüklenemedi.")}</p>}
+          {notice && <p className="form-error" role="alert">{notice}</p>}
           {!failed && items === null && <p className="card-empty">{t("Yükleniyor…")}</p>}
           {items && items.length === 0 && <p className="card-empty">{t("Bekleyen bildirim yok.")}</p>}
           {items &&

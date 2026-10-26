@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import BusinessPlus from "./BusinessPlus";
-import { canUseMultiBusiness } from "../lib/plan";
+import { canAddBusiness } from "../lib/plan";
 import { activeWorkspace, businessList, switchWorkspace } from "../lib/storage";
 import { businessColor } from "../lib/business-colors";
 import DeleteBusinessDialog from "./DeleteBusinessDialog";
@@ -122,7 +122,7 @@ export default function Dashboard({
   // Logoya dokununca + açılır; konum logonun altından alınır
   function openPlus() {
     // Ücretsiz planda doğrudan paket seçenekleri açılır
-    if (!canUseMultiBusiness()) {
+    if (!canAddBusiness(businessList(serverBusinesses).length)) {
       onOpenPlans();
       return;
     }
@@ -278,6 +278,7 @@ export default function Dashboard({
                   setDeleteTarget({ id, name: b?.name ?? "" });
                 }}
                 canAdd={canCreateBusiness}
+                businessCount={businessList(serverBusinesses).length}
                 onPlans={onOpenPlans}
                 onClose={() => setPlusAt(null)}
                 onAdd={() => {

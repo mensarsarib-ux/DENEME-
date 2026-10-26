@@ -6,10 +6,20 @@ import { SUPPORT_ICON } from "../lib/menu";
 import CompanyLogo from "./CompanyLogo";
 import PageHeader from "./PageHeader";
 
-/** Paket seçenekleri: kayıt sınırları (müşteri/tedarikçi). Satın alma akışı daha sonra bağlanacak. */
-const PLANS: { name: string; parties: number }[] = [
-  { name: "Pro", parties: 10 },
-  { name: "Pro Plus", parties: 15 },
+/** Paket seçenekleri ve sınırları (plan.ts ile aynı değerler) */
+const PLANS: { name: string; lines: string[] }[] = [
+  {
+    name: "Pro",
+    lines: ["2 işletme", "8 sekme (Müşteriler ve Tedarikçiler dahil)", "Her listede 20 kayıt", "3 ekip üyesi (yönetici dahil)"],
+  },
+  {
+    name: "Pro Plus",
+    lines: ["4 işletme", "10 sekme (Müşteriler ve Tedarikçiler dahil)", "Her listede 40 kayıt", "5 ekip üyesi (yönetici dahil)"],
+  },
+  {
+    name: "Premium",
+    lines: ["Sınırsız işletme", "Sınırsız sekme", "Sınırsız kayıt", "Sınırsız ekip"],
+  },
 ];
 
 /** İşletme paketleri sayfası: mevcut işletme ve üst pakete geçiş seçenekleri */
@@ -56,11 +66,12 @@ export default function PlansPage({ profile, onBack }: { profile: Profile; onBac
               <button
                 key={p.name}
                 type="button"
-                className="plans-item"
+                className="plans-item plans-item-detail"
                 disabled
                 onClick={() => haptic("light")}
               >
-                <span>{t("{p}: {n} kayıt", { p: p.name, n: p.parties })}</span>
+                <span className="plans-item-name">{p.name}</span>
+                <span className="plans-item-lines">{p.lines.join(" · ")}</span>
                 <small>{t("Yakında")}</small>
               </button>
             ))}
