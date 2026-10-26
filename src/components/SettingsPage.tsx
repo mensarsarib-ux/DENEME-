@@ -210,20 +210,6 @@ export default function SettingsPage({
             </p>
             <div className="card-actions">
               <button type="button" className="action-btn" onClick={account.onSync}>{t("Şimdi eşitle")}</button>
-              <button type="button" className="action-btn is-danger" onClick={() => setConfirmSignOut(true)}>{t("Çıkış yap")}</button>
-            </div>
-            <div className="card-actions">
-              <button
-                type="button"
-                className="action-btn is-danger"
-                onClick={() => {
-                  if (window.confirm(t("Hesabınız ve bu hesaba bağlı tüm veriler kalıcı olarak silinecek. Sahibi olduğunuz işletmeler ve o işletmelerdeki üyelikler de silinir. Bu işlem geri alınamaz. Devam edilsin mi?"))) {
-                    account.onDeleteAccount();
-                  }
-                }}
-              >
-                {t("Hesabımı sil")}
-              </button>
             </div>
           </section>
         )}
@@ -349,6 +335,28 @@ export default function SettingsPage({
             {t("Tüm verileri sıfırla")}
           </button>
         </section>
+
+        {account && (
+          <section className="card" aria-label={t("Hesap işlemleri")}>
+            <h2 className="card-title">{t("Hesap işlemleri")}</h2>
+            <div className="card-actions">
+              <button type="button" className="action-btn is-danger" onClick={() => setConfirmSignOut(true)}>{t("Çıkış yap")}</button>
+            </div>
+            <div className="card-actions">
+              <button
+                type="button"
+                className="action-btn is-danger"
+                onClick={() => {
+                  if (window.confirm(t("Hesabınız ve bu hesaba bağlı tüm veriler kalıcı olarak silinecek. Sahibi olduğunuz işletmeler ve o işletmelerdeki üyelikler de silinir. Bu işlem geri alınamaz. Devam edilsin mi?"))) {
+                    account.onDeleteAccount();
+                  }
+                }}
+              >
+                {t("Hesabımı sil")}
+              </button>
+            </div>
+          </section>
+        )}
       </div>
 
       {pickingCurrency && (
