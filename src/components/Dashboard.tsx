@@ -78,6 +78,7 @@ export default function Dashboard({
   onOpenKasa,
   onOpenPlans,
   canCreateBusiness,
+  serverBusinesses,
 }: {
   /** İşletme profili: üst çubukta ad olarak görünür */
   profile: Profile;
@@ -106,6 +107,8 @@ export default function Dashboard({
   onOpenPlans: () => void;
   /** Yalnızca yetkili kişi yeni işletme açabilir */
   canCreateBusiness: boolean;
+  /** Sunucudaki, bu cihazda olmayan ortak işletmeler (üye olunanlar) */
+  serverBusinesses: { id: string; name: string }[];
   /** Sol üstteki Menü: yan menü penceresini açar */
   onOpenMenu: () => void;
 }) {
@@ -244,7 +247,7 @@ export default function Dashboard({
                 className="company-mark"
                 ref={markRef}
                 aria-hidden="true"
-                style={{ color: businessColor(Math.max(0, businessList().findIndex((b) => b.id === activeWorkspace()))) }}
+                style={{ color: businessColor(Math.max(0, businessList(serverBusinesses).findIndex((b) => b.id === activeWorkspace()))) }}
               >
                 {profile.logo ? <img src={profile.logo} alt="" /> : <Svg d={SHOP_ICON} />}
               </span>
@@ -260,11 +263,11 @@ export default function Dashboard({
               <BusinessPlus
                 top={plusAt.top}
                 left={plusAt.left}
-                businesses={businessList().map((b, i) => ({ ...b, color: businessColor(i) }))}
+                businesses={businessList(serverBusinesses).map((b, i) => ({ ...b, color: businessColor(i) }))}
                 activeId={activeWorkspace()}
                 onSwitch={(id) => switchWorkspace(id)}
                 onDelete={(id) => {
-                  const b = businessList().find((x) => x.id === id);
+                  const b = businessList(serverBusinesses).find((x) => x.id === id);
                   setPlusAt(null);
                   setDeleteTarget({ id, name: b?.name ?? "" });
                 }}

@@ -16,7 +16,7 @@ export default function NewBusinessPage({ onBack, onJoin }: { onBack: () => void
 
   const ready = name.trim() !== "";
 
-  function submit(event: FormEvent) {
+  async function submit(event: FormEvent) {
     event.preventDefault();
     if (!ready) return;
     const profile: Profile = {
@@ -27,11 +27,10 @@ export default function NewBusinessPage({ onBack, onJoin }: { onBack: () => void
       address: address.trim(),
       taxNo: "",
     };
-    // Sunucuda da kaydedilir: ekip üyeleri bu işletmeyi de görür
+    // Sunucuda da açılır (ekip üyeleri görür); aynı kimlik yerel çalışma alanında kullanılır
     const session = loadSession();
-    if (session) void createBusiness(session, profile.name).catch(() => undefined);
-    // Yeni işletme aktif olur; sayfa yeniden yüklenince boş veriyle açılır
-    createWorkspace(profile.name, profile);
+    const serverId = session ? await createBusiness(session, profile.name).catch(() => null) : null;
+    createWorkspace(profile.name, profile, typeof serverId === "string" ? serverId : undefined);
     window.location.reload();
   }
 

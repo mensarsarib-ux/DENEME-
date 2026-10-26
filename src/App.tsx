@@ -11,7 +11,7 @@ import ReportsPage from "./components/ReportsPage";
 import NotesPage from "./components/NotesPage";
 import ContactsPage from "./components/ContactsPage";
 import BusinessRequestsPage from "./components/BusinessRequestsPage";
-import { ensureOwnerBusiness, listChangeNotices, listPendingRequests, myMembership, myRequestStatus, type Membership } from "./lib/cloud";
+import { ensureOwnerBusiness, listChangeNotices, listPendingRequests, myBusinesses, myMembership, myRequestStatus, type Membership, type MyBusiness } from "./lib/cloud";
 import WaitingScreen from "./components/WaitingScreen";
 import SettingsPage from "./components/SettingsPage";
 import SupportPage from "./components/SupportPage";
@@ -126,20 +126,33 @@ export default function App() {
     };
   }, [session]);
 
-  // Bulut eşitlemesi yalnızca ana işletmede çalışır; yeni işletmenin verisi ana verinin üzerine yazılmaz
-  const isMainWorkspace = activeWorkspace() === MAIN_WORKSPACE;
-  // Üyelik: undefined = henüz kontrol edilmedi, null = işletmesi yok
+  // Çalışma alanı: ana işletme, sunucudaki bir ortak işletme ya da yalnızca bu cihazdaki (eski) bir işletme
+  const [serverBiz, setServerBiz] = useState<MyBusiness[] | null>(null);
+  const activeId = activeWorkspace();
+  const serverMine = serverBiz?.find((b) => b.businessId === activeId) ?? null;
+  const wsKind: "main" | "server" | "local" | "pending" =
+    activeId === MAIN_WORKSPACE ? "main" : serverBiz === null ? "pending" : serverMine ? "server" : "local";
+  const isMainWorkspace = wsKind === "main";
+  const serverWs = wsKind === "main" || wsKind === "server";
+  // Üyelik: undefined = henüz kontrol edilmedi, null = işletmesi yok (ana işletme için)
   const [membership, setMembership] = useState<Membership | null | undefined>(undefined);
   const [requestStatus, setRequestStatus] = useState<string | null>(null);
   const [recheck, setRecheck] = useState(0);
-  const memberReady = !isMainWorkspace || membership !== undefined;
+  const effMembership: Membership | null | undefined =
+    wsKind === "server" && serverMine ? { businessId: serverMine.businessId, role: serverMine.role } : membership;
+  const memberReady =
+    wsKind === "local" ? true : wsKind === "pending" ? false : effMembership !== undefined;
   // Yeni işletme yalnızca yetkili (sahip) tarafından açılabilir
-  const canCreateBusiness = membership === null || membership?.role === "owner";
+  const canCreateBusiness = wsKind === "local" || effMembership === null || effMembership?.role === "owner";
   const waiting = isMainWorkspace && !!session && membership === null && requestStatus !== null;
+  // Ekip üyesinin listesinde, bu cihazın ana işletmesi dışında kalan ortak işletmeler
+  const serverBusinesses = (serverBiz ?? [])
+    .filter((b) => b.role === "member" && b.businessId !== membership?.businessId)
+    .map((b) => ({ id: b.businessId, name: b.name }));
   const sync = useCloudSync({
-    session: isMainWorkspace && memberReady && !waiting ? session : null,
-    businessId: membership?.businessId ?? null,
-    canSeed: membership?.role === "owner",
+    session: serverWs && memberReady && !waiting ? session : null,
+    businessId: effMembership?.businessId ?? null,
+    canSeed: effMembership?.role === "owner",
     snapshot,
     onExpired: () => setSession(null),
     apply: (d) => {
@@ -198,6 +211,20 @@ export default function App() {
   useSwipeBack(phase === "home");
 
   useEffect(() => setHapticsEnabled(settings.haptics), [settings.haptics]);
+
+  // Giriş yapan kişinin tüm ortak işletmeleri (sahip ve üye olarak)
+  useEffect(() => {
+    if (!session) return;
+    let alive = true;
+    myBusinesses(session)
+      .then((r) => {
+        if (alive && Array.isArray(r)) setServerBiz(r);
+      })
+      .catch(() => undefined);
+    return () => {
+      alive = false;
+    };
+  }, [session, recheck]);
 
   // Sahibin işletmesi sunucuda yoksa oluşturulur; ardından üyelik ve istek durumu okunur
   useEffect(() => {
@@ -281,15 +308,19 @@ export default function App() {
   }
 
   // Yükleme ekranı yalnızca ana işletmede, bulut verisi beklenirken gösterilir
-  if (session && isMainWorkspace && waiting) {
+  if (session && serverWs && waiting) {
     return <WaitingScreen status={requestStatus} onRecheck={() => setRecheck((n) => n + 1)} onLogout={logout} />;
   }
 
-  if (session && isMainWorkspace && !memberReady) {
+  if (session && wsKind === "pending") {
     return <div className="sync-loading">{t("Verileriniz getiriliyor…")}</div>;
   }
 
-  if (session && isMainWorkspace && !sync.ready) {
+  if (session && serverWs && !memberReady) {
+    return <div className="sync-loading">{t("Verileriniz getiriliyor…")}</div>;
+  }
+
+  if (session && serverWs && !sync.ready) {
     return <div className="sync-loading">{t("Verileriniz getiriliyor…")}</div>;
   }
 
@@ -576,6 +607,7 @@ export default function App() {
       onOpenMenu={() => setDrawerOpen(true)}
       onOpenKasa={() => go({ name: "kasa" })}
       onOpenPlans={() => go({ name: "menu", page: "newbusiness" })}
+      serverBusinesses={serverBusinesses}
       canCreateBusiness={canCreateBusiness}
       parties={parties}
       members={membersOf(currentTab)}

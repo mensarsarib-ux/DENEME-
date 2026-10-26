@@ -501,18 +501,37 @@ export async function markChangeNoticesRead(session: Session): Promise<true | "e
   return true;
 }
 
-/** Yetkili olarak yeni bir işletmeyi sunucuda oluşturur; ekip üyeleri otomatik üye olur */
-export async function createBusiness(session: Session, name: string): Promise<void | "expired"> {
+/** Yetkili olarak yeni bir işletmeyi sunucuda oluşturur; ekip üyeleri otomatik üye olur. Yeni kimliği döndürür. */
+export async function createBusiness(session: Session, name: string): Promise<string | "expired"> {
   const s = await fresh(session);
   if (!s) return "expired";
   const res = await call("/rest/v1/businesses", {
     method: "POST",
     token: s.accessToken,
-    headers: { Prefer: "return=minimal" },
+    headers: { Prefer: "return=representation" },
     body: JSON.stringify({ name: name.trim() || "Hesabım", owner_id: s.userId }),
   });
   if (res.status === 401) return "expired";
   if (!res.ok) throw new CloudError("unknown", String(res.status));
+  const rows = (await res.json()) as { id: string }[];
+  return rows[0].id;
+}
+
+export interface MyBusiness {
+  businessId: string;
+  role: "owner" | "member";
+  name: string;
+}
+
+/** Giriş yapan kişinin tüm işletmeleri (sahip ve üye olarak) */
+export async function myBusinesses(session: Session): Promise<MyBusiness[] | "expired"> {
+  const s = await fresh(session);
+  if (!s) return "expired";
+  const res = await call("/rest/v1/rpc/my_businesses", { method: "POST", token: s.accessToken, body: "{}" });
+  if (res.status === 401) return "expired";
+  if (!res.ok) throw new CloudError("unknown", String(res.status));
+  const rows = (await res.json()) as { business_id: string; role: "owner" | "member"; name: string }[];
+  return rows.map((r) => ({ businessId: r.business_id, role: r.role, name: r.name }));
 }
 
 /** Üye değişikliklerini içerikleriyle sahibe bildirim olarak yazar */

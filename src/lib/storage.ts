@@ -38,8 +38,9 @@ export function listWorkspaces(): Workspace[] {
 }
 
 /** Yeni işletme oluşturur, verilen profille başlatır ve ona geçer (sayfa yeniden yüklenmeli) */
-export function createWorkspace(name: string, profile: object): string {
-  const id = Math.random().toString(36).slice(2, 10);
+export function createWorkspace(name: string, profile: object, serverId?: string): string {
+  // Sunucuda oluşturulmuşsa aynı kimlik kullanılır; böylece ekip üyeleriyle eşleşir
+  const id = serverId ?? Math.random().toString(36).slice(2, 10);
   try {
     localStorage.setItem(WORKSPACES_KEY, JSON.stringify([...listWorkspaces(), { id, name }]));
     // Yeni işletme bomboş açılır: örnek kayıtlar yerine boş listeler yazılır
@@ -141,8 +142,15 @@ function mainName(): string {
 }
 
 /** Tüm işletmeler: önce ana işletme, sonra eklenenler */
-export function businessList(): Workspace[] {
-  return [{ id: MAIN_WORKSPACE, name: mainName() }, ...listWorkspaces()];
+/** Ana işletme, yerel işletmeler ve sunucudaki ortak işletmeler (yerelde olmayanlar) */
+export function businessList(shared: Workspace[] = []): Workspace[] {
+  const local = listWorkspaces();
+  const known = new Set(local.map((w) => w.id));
+  return [
+    { id: MAIN_WORKSPACE, name: mainName() },
+    ...local,
+    ...shared.filter((w) => !known.has(w.id) && w.id !== MAIN_WORKSPACE),
+  ];
 }
 
 /** Bir işletmeyi ve tüm verilerini siler. Ana işletme silinemez. Çağıran, kimlik doğrulamasını önceden yapmalı. */
