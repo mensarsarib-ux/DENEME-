@@ -708,6 +708,7 @@ export default function App() {
       <MenuDrawer
         unread={pendingCount}
         businesses={businessList(serverBusinesses)}
+        canCreateBusiness={canCreateBusiness}
         onNavigate={(page) => {
           setDrawerOpen(false);
           go({ name: "menu", page });

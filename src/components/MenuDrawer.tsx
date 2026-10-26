@@ -1,7 +1,7 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { haptic } from "../lib/haptics";
 import { MENU_ITEMS, PRIVACY_ICON, SUPPORT_ICON, type MenuPage } from "../lib/menu";
-import { CURRENT_PLAN, LIMITS, PLAN_NAME, canUseTeam } from "../lib/plan";
+import { CURRENT_PLAN, LIMITS, PLAN_NAME, canAddBusiness, canUseTeam } from "../lib/plan";
 
 /** Şimdilik menüde gösterilmeyen sayfalar; kodları durur, listeden çıkarılarak tekrar açılabilir */
 const HIDDEN_PAGES: MenuPage[] = ["contacts", "reports"];
@@ -17,6 +17,7 @@ import { STORE_ICON } from "./BusinessPlus";
 export default function MenuDrawer({
   unread,
   businesses,
+  canCreateBusiness,
   onNavigate,
   onClose,
   onSignOut,
@@ -25,12 +26,15 @@ export default function MenuDrawer({
   unread: number;
   /** Geçiş yapılabilecek işletmeler: bu cihazdakiler ve sunucudaki ortak işletmeler */
   businesses: { id: string; name: string }[];
+  /** Yalnızca yetkili kişi (sahip ya da bireysel kullanıcı) yeni işletme ekleyebilir */
+  canCreateBusiness: boolean;
   onNavigate: (page: MenuPage) => void;
   onClose: () => void;
   /** Giriş yapılmışsa çıkış yapar; yoksa Çıkış yap satırı gösterilmez */
   onSignOut?: () => void;
 }) {
   const panelRef = useRef<HTMLElement>(null);
+  const [bizOpen, setBizOpen] = useState(false);
   const currentId = activeWorkspace();
 
   useEffect(() => {
@@ -41,6 +45,12 @@ export default function MenuDrawer({
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, [onClose]);
+
+  /** Sınır doluysa işletme ekleme yerine paketler açılır */
+  function addBusiness() {
+    haptic("light");
+    onNavigate(canAddBusiness(businesses.length) ? "newbusiness" : "plans");
+  }
 
   function open(page: MenuPage) {
     haptic("light");
@@ -70,34 +80,55 @@ export default function MenuDrawer({
           </button>
         </div>
 
-        {/* İşletme listesi: dokununca geçilir; aktif olan ✓ ile işaretlenir */}
+        {/* İşletmeler: tek işletme varsa liste gizli kalır; birden fazlaysa dokununca açılır */}
         <div className="drawer-head">
-          <span className="drawer-biz-label">{t("İŞLETMELERİM")}</span>
+          {businesses.length > 1 ? (
+            <button
+              type="button"
+              className="drawer-biz-label drawer-biz-toggle"
+              aria-expanded={bizOpen}
+              onClick={() => {
+                haptic("light");
+                setBizOpen((v) => !v);
+              }}
+            >
+              {t("İŞLETMELERİM")} <span className="drawer-biz-count">{businesses.length}</span>
+            </button>
+          ) : (
+            <span className="drawer-biz-label" />
+          )}
           <button className="drawer-close" aria-label={t("Menüyü kapat")} onClick={onClose}>
             ×
           </button>
         </div>
-        <div className="drawer-biz-list" role="list" aria-label={t("İşletmelerim")}>
-          {businesses.map((b) => {
-            const isCurrent = b.id === currentId;
-            return (
-              <button
-                key={b.id}
-                type="button"
-                role="listitem"
-                className={isCurrent ? "drawer-biz-item is-current" : "drawer-biz-item"}
-                disabled={isCurrent}
-                onClick={() => switchWorkspace(b.id)}
-              >
-                <span className="drawer-biz-mark" aria-hidden="true">
-                  <Svg d={STORE_ICON} />
-                </span>
-                <span className="drawer-biz-name">{b.name}</span>
-                {isCurrent && <small aria-hidden="true">✓</small>}
-              </button>
-            );
-          })}
-        </div>
+        {businesses.length > 1 && bizOpen && (
+          <div className="drawer-biz-list" role="list" aria-label={t("İşletmelerim")}>
+            {businesses.map((b) => {
+              const isCurrent = b.id === currentId;
+              return (
+                <button
+                  key={b.id}
+                  type="button"
+                  role="listitem"
+                  className={isCurrent ? "drawer-biz-item is-current" : "drawer-biz-item"}
+                  disabled={isCurrent}
+                  onClick={() => switchWorkspace(b.id)}
+                >
+                  <span className="drawer-biz-mark" aria-hidden="true">
+                    <Svg d={STORE_ICON} />
+                  </span>
+                  <span className="drawer-biz-name">{b.name}</span>
+                  {isCurrent && <small aria-hidden="true">✓</small>}
+                </button>
+              );
+            })}
+          </div>
+        )}
+        {canCreateBusiness && (
+          <button type="button" className="drawer-biz-add" aria-label={t("İşletme ekle")} onClick={addBusiness}>
+            +
+          </button>
+        )}
 
         <nav className="drawer-nav" aria-label={t("Menü seçenekleri")}>
           {MENU_ITEMS.filter((item) => !HIDDEN_PAGES.includes(item.page)).map((item) => (

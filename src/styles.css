@@ -1801,6 +1801,34 @@ body {
   color: var(--muted);
 }
 
+.drawer-biz-toggle {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.drawer-biz-count {
+  color: #3b82f6;
+}
+
+.drawer-biz-add {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  margin: 4px 0 8px;
+  border: 1.5px solid #3b82f6;
+  border-radius: 50%;
+  background: none;
+  color: #3b82f6;
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
 .drawer-biz-list {
   display: flex;
   flex-direction: column;
