@@ -24,6 +24,7 @@ import TeamMemberPage from "./components/TeamMemberPage";
 import type { TeamPerson } from "./lib/cloud";
 import { renameBusiness } from "./lib/cloud";
 import { migrateLocalWorkspaces } from "./lib/migrate";
+import { canAddParty } from "./lib/plan";
 import { listWorkspaces } from "./lib/storage";
 import { activeWorkspace, MAIN_WORKSPACE } from "./lib/storage";
 import type { TabInfo } from "./components/PartyTabs";
@@ -661,7 +662,13 @@ export default function App() {
       transactions={transactions}
       highlightId={addedId}
       onSelectParty={(id) => go({ name: "party", id })}
-      onNewParty={() => go({ name: "new", kind: currentTab })}
+      onNewParty={() => {
+        if (!canAddParty(parties.length)) {
+          go({ name: "menu", page: "plans" });
+          return;
+        }
+        go({ name: "new", kind: currentTab });
+      }}
       onSelectTab={openTab}
       onCreateTab={createTab}
       onRenameTab={renameTab}
