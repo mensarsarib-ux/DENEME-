@@ -18,8 +18,8 @@ export const LIMITS: Record<
   }
 > = {
   free: { businesses: 1, tabs: 4, itemsPerTab: 10, team: 0 },
-  pro: { businesses: 2, tabs: 8, itemsPerTab: 20, team: 3 },
-  proplus: { businesses: 4, tabs: 10, itemsPerTab: 40, team: 5 },
+  pro: { businesses: 3, tabs: 8, itemsPerTab: 20, team: 3 },
+  proplus: { businesses: 6, tabs: 10, itemsPerTab: 40, team: 5 },
   premium: { businesses: Infinity, tabs: Infinity, itemsPerTab: Infinity, team: Infinity },
 };
 

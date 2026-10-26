@@ -10,11 +10,11 @@ import PageHeader from "./PageHeader";
 const PLANS: { name: string; lines: string[] }[] = [
   {
     name: "Pro",
-    lines: ["2 işletme", "8 sekme (Müşteriler ve Tedarikçiler dahil)", "Her listede 20 kayıt", "3 ekip üyesi (yönetici dahil)"],
+    lines: ["3 işletme", "8 sekme (Müşteriler ve Tedarikçiler dahil)", "Her listede 20 kayıt", "3 ekip üyesi (yönetici dahil)"],
   },
   {
     name: "Pro Plus",
-    lines: ["4 işletme", "10 sekme (Müşteriler ve Tedarikçiler dahil)", "Her listede 40 kayıt", "5 ekip üyesi (yönetici dahil)"],
+    lines: ["6 işletme", "10 sekme (Müşteriler ve Tedarikçiler dahil)", "Her listede 40 kayıt", "5 ekip üyesi (yönetici dahil)"],
   },
   {
     name: "Premium",
