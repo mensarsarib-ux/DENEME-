@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import AccountDeleteDialog from "./AccountDeleteDialog";
 import { currentDeviceId, listDevices, removeDevice, type DeviceInfo, type Session } from "../lib/cloud";
 import type { Settings } from "../data/mock";
 import { locale, t } from "../lib/i18n";
@@ -137,6 +138,7 @@ export default function SettingsPage({
   const [restoreMsg, setRestoreMsg] = useState<{ ok: boolean; text: string } | null>(null);
   const [confirmReset, setConfirmReset] = useState(false);
   const [confirmSignOut, setConfirmSignOut] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
   const [devices, setDevices] = useState<DeviceInfo[] | null>(null);
   const [devicesFailed, setDevicesFailed] = useState(false);
   const session = account?.session;
@@ -346,11 +348,7 @@ export default function SettingsPage({
               <button
                 type="button"
                 className="action-btn is-danger"
-                onClick={() => {
-                  if (window.confirm(t("Hesabınız ve bu hesaba bağlı tüm veriler kalıcı olarak silinecek. Sahibi olduğunuz işletmeler ve o işletmelerdeki üyelikler de silinir. Bu işlem geri alınamaz. Devam edilsin mi?"))) {
-                    account.onDeleteAccount();
-                  }
-                }}
+                onClick={() => setConfirmDelete(true)}
               >
                 {t("Hesabımı sil")}
               </button>
@@ -389,6 +387,17 @@ export default function SettingsPage({
             </ul>
           </div>
         </div>
+      )}
+
+      {confirmDelete && account && (
+        <AccountDeleteDialog
+          email={account.email}
+          onClose={() => setConfirmDelete(false)}
+          onConfirm={() => {
+            setConfirmDelete(false);
+            account.onDeleteAccount();
+          }}
+        />
       )}
 
       {confirmSignOut && account && (
