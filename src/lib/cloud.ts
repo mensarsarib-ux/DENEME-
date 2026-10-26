@@ -649,3 +649,24 @@ export async function renameBusiness(session: Session, businessId: string, name:
   if (!res.ok) throw new CloudError("unknown", String(res.status));
   return true;
 }
+
+/** Üyeyse kendi üyeliğini kaldırır; sahipse işletmeyi sunucudan siler */
+export async function leaveOrDeleteBusiness(session: Session, businessId: string): Promise<true | "expired"> {
+  const s = await fresh(session);
+  if (!s) return "expired";
+  const own = await call(`/rest/v1/businesses?select=id&id=eq.${businessId}&owner_id=eq.${s.userId}`, { token: s.accessToken });
+  const owned = own.ok ? ((await own.json()) as unknown[]).length > 0 : false;
+  if (owned) {
+    const res = await call(`/rest/v1/businesses?id=eq.${businessId}`, { method: "DELETE", token: s.accessToken });
+    if (res.status === 401) return "expired";
+    if (!res.ok) throw new CloudError("unknown", String(res.status));
+    return true;
+  }
+  const res = await call(`/rest/v1/business_members?business_id=eq.${businessId}&user_id=eq.${s.userId}&role=eq.member`, {
+    method: "DELETE",
+    token: s.accessToken,
+  });
+  if (res.status === 401) return "expired";
+  if (!res.ok) throw new CloudError("unknown", String(res.status));
+  return true;
+}

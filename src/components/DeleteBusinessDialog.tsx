@@ -1,7 +1,14 @@
 import { useState, type FormEvent } from "react";
-import { CloudError, loadSession, signIn } from "../lib/cloud";
+import { CloudError, signIn } from "../lib/cloud";
 import { t } from "../lib/i18n";
-import { deleteWorkspace } from "../lib/storage";
+import { deleteWorkspace, listWorkspaces } from "../lib/storage";
+import { leaveOrDeleteBusiness, loadSession } from "../lib/cloud";
+
+/** Yerel işletmenin sunucudaki karşılığı (taşınmış ya da sunucudan açılmış ise) */
+function localServerId(id: string): string | null {
+  const w = listWorkspaces().find((x) => x.id === id);
+  return w?.serverId ?? (w ? w.id : null);
+}
 
 /**
  * İşletme silme onayı: hesap e-postası ve şifre doğrulanmadan veri silinmez.
@@ -43,6 +50,22 @@ export default function DeleteBusinessDialog({
         ? t("E-posta veya şifre hatalı.")
         : t("Doğrulanamadı; bağlantınızı kontrol edin."));
       return;
+    }
+    // Sunucuda: üye ise yalnızca kendi üyeliği kalkar; sahip ise işletme sunucudan da silinir
+    const serverId = localServerId(id);
+    if (serverId) {
+      try {
+        const r = await leaveOrDeleteBusiness(session!, serverId);
+        if (r === "expired") {
+          setBusy(false);
+          setError(t("Oturumunuz sona ermiş; yeniden giriş yapın."));
+          return;
+        }
+      } catch {
+        setBusy(false);
+        setError(t("Sunucudan silinemedi; bağlantınızı kontrol edin."));
+        return;
+      }
     }
     deleteWorkspace(id);
     window.location.reload();
