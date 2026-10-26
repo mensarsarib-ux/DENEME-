@@ -700,6 +700,10 @@ export default function App() {
       highlightId={addedId}
       onSelectParty={(id) => go({ name: "party", id })}
       onArchive={(id) => setArchived(id, true)}
+      onDeleteParty={(id) => {
+        setParties((prev) => prev.filter((p) => p.id !== id));
+        setTransactions((prev) => prev.filter((t) => t.customerId !== id));
+      }}
       onNewParty={() => {
         if (!canAddItem(membersOf(currentTab).length)) {
           go({ name: "menu", page: "plans" });

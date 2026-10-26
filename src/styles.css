@@ -3257,14 +3257,22 @@ a.action-btn {
   position: absolute;
   top: 0;
   bottom: 0;
-  left: 0;
   width: 96px;
   border: 0;
-  background: #64748b;
   color: #fff;
   font: inherit;
   font-weight: 600;
   cursor: pointer;
+}
+
+.swipe-action.is-archive {
+  left: 0;
+  background: #64748b;
+}
+
+.swipe-action.is-delete {
+  right: 0;
+  background: #dc2626;
 }
 
 .swipe-track {

@@ -1,18 +1,20 @@
 import { useRef, useState, type PointerEvent, type ReactNode } from "react";
 import { t } from "../lib/i18n";
 
-/** Sağa kaydırınca açılan "Arşive al" düğmesinin genişliği (piksel) */
+/** Kaydırınca açılan düğmelerin genişliği (piksel) */
 const ACTION_WIDTH = 96;
 
 /**
- * Listedeki bir satırı sağa kaydırınca altından "Arşive al" düğmesi çıkar.
+ * Satırı sağa kaydırınca solda "Arşive al", sola kaydırınca sağda "Sil" çıkar.
  * Yatay hareket değilse (dikey kaydırma) satır normal davranır.
  */
-export default function SwipeArchive({
+export default function SwipeRow({
   onArchive,
+  onDelete,
   children,
 }: {
   onArchive: () => void;
+  onDelete: () => void;
   children: ReactNode;
 }) {
   const [offset, setOffset] = useState(0);
@@ -43,7 +45,7 @@ export default function SwipeArchive({
     }
     if (s.axis !== "x") return;
     moved.current = true;
-    place(Math.min(ACTION_WIDTH, Math.max(0, s.base + dx)));
+    place(Math.min(ACTION_WIDTH, Math.max(-ACTION_WIDTH, s.base + dx)));
   }
 
   function onPointerEnd() {
@@ -51,13 +53,33 @@ export default function SwipeArchive({
     start.current = null;
     if (!s || s.axis !== "x") return;
     setDragging(false);
-    place(offsetRef.current > ACTION_WIDTH / 2 ? ACTION_WIDTH : 0);
+    const v = offsetRef.current;
+    place(v > ACTION_WIDTH / 2 ? ACTION_WIDTH : v < -ACTION_WIDTH / 2 ? -ACTION_WIDTH : 0);
   }
+
+  // Düğmeye basılınca satır önce kapanır; sonra işlem yapılır (onay iptal edilirse satır kapalı kalır)
+  const act = (fn: () => void) => () => {
+    place(0);
+    fn();
+  };
 
   return (
     <div className="swipe-row">
-      <button type="button" className="swipe-action" onClick={onArchive} tabIndex={offset > 0 ? 0 : -1}>
+      <button
+        type="button"
+        className="swipe-action is-archive"
+        onClick={act(onArchive)}
+        tabIndex={offset > 0 ? 0 : -1}
+      >
         {t("Arşive al")}
+      </button>
+      <button
+        type="button"
+        className="swipe-action is-delete"
+        onClick={act(onDelete)}
+        tabIndex={offset < 0 ? 0 : -1}
+      >
+        {t("Sil")}
       </button>
       <div
         className={`swipe-track ${dragging ? "" : "is-settling"}`}
@@ -68,7 +90,7 @@ export default function SwipeArchive({
         onPointerCancel={onPointerEnd}
         onClickCapture={(e) => {
           // Kaydırma bittikten sonra gelen tıklama satırı açmasın; açıkken tıklama kapatır
-          if (moved.current || offsetRef.current > 0) {
+          if (moved.current || offsetRef.current !== 0) {
             e.stopPropagation();
             e.preventDefault();
             moved.current = false;

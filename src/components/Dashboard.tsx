@@ -16,7 +16,7 @@ import { findMatch, type MatchRange } from "../lib/search";
 import { locale, t } from "../lib/i18n";
 import StatsCarousel from "./StatsCarousel";
 import Highlight from "./Highlight";
-import SwipeArchive from "./SwipeArchive";
+import SwipeRow from "./SwipeRow";
 import PartyTabs, { type TabInfo } from "./PartyTabs";
 import { Svg } from "./Icon";
 
@@ -71,6 +71,7 @@ export default function Dashboard({
   highlightId,
   onSelectParty,
   onArchive,
+  onDeleteParty,
   onNewParty,
   onSelectTab,
   onCreateTab,
@@ -98,6 +99,8 @@ export default function Dashboard({
   onSelectParty: (id: string) => void;
   /** Satır sağa kaydırılıp "Arşive al" ile arşive gönderilir */
   onArchive: (id: string) => void;
+  /** Satır sola kaydırılıp "Sil" ile kişi ve işlemleri silinir (onaydan sonra) */
+  onDeleteParty: (id: string) => void;
   /** Etkin sekmeye yeni kayıt ekler */
   onNewParty: () => void;
   /** Sekme değişince üstteki istatistikler yerinde kalır, yalnızca alttaki liste değişir */
@@ -380,7 +383,14 @@ export default function Dashboard({
           <ul className="list">
             {rows.map((r, i) => (
               <li key={r.id}>
-                <SwipeArchive onArchive={() => onArchive(r.id)}>
+                <SwipeRow
+                  onArchive={() => onArchive(r.id)}
+                  onDelete={() => {
+                    if (window.confirm(t("{name} silinsin mi? Kişinin tüm işlemleri de silinir.", { name: r.name }))) {
+                      onDeleteParty(r.id);
+                    }
+                  }}
+                >
                   <button
                     ref={r.id === highlightId ? highlightRef : undefined}
                     className={`row ${searching ? "is-match" : ""} ${searching && i === 0 ? "is-top" : ""} ${r.id === highlightId ? "is-new" : ""}`}
@@ -395,7 +405,7 @@ export default function Dashboard({
                       {money.format(r.balance)}
                     </span>
                   </button>
-                </SwipeArchive>
+                </SwipeRow>
               </li>
             ))}
           </ul>
