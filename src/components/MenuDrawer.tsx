@@ -96,9 +96,6 @@ export default function MenuDrawer({
             </span>
             <span className="drawer-biz-title">{businesses.find((b) => b.id === currentId)?.name ?? t("Hesabım")}</span>
           </button>
-          <button className="drawer-close" aria-label={t("Menüyü kapat")} onClick={onClose}>
-            ×
-          </button>
         </div>
         {bizOpen && (
           <>
