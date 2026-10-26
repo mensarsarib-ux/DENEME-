@@ -91,6 +91,9 @@ export default function MenuDrawer({
               setBizOpen((v) => !v);
             }}
           >
+            <span className="drawer-biz-mark" aria-hidden="true">
+              <Svg d={STORE_ICON} />
+            </span>
             <span className="drawer-biz-title">{businesses.find((b) => b.id === currentId)?.name ?? t("Hesabım")}</span>
           </button>
           <button className="drawer-close" aria-label={t("Menüyü kapat")} onClick={onClose}>

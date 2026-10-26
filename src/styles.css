@@ -1803,6 +1803,10 @@ body {
 }
 
 .drawer-biz-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
   padding: 0;
   border: 0;
   background: none;
