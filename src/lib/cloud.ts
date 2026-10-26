@@ -588,6 +588,15 @@ export async function setBusinessShare(
       );
   if (res.status === 401) return "expired";
   if (!res.ok) throw new CloudError("unknown", String(res.status));
+  // Kaldırma: sunucu hata vermese de gerçekten bir satır silinmiş mi kontrol edilir
+  if (!share) {
+    const check = await call(
+      `/rest/v1/business_members?select=user_id&business_id=eq.${businessId}&user_id=eq.${userId}&role=eq.member`,
+      { token: s.accessToken },
+    );
+    const rows = (await check.json().catch(() => [])) as unknown[];
+    if (rows.length > 0) throw new CloudError("unknown", "paylaşım kaldırılamadı");
+  }
   return true;
 }
 
