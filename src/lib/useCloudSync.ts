@@ -18,10 +18,13 @@ export function useCloudSync({
   apply,
   onExpired,
   businessId = null,
+  canSeed = true,
 }: {
   session: Session | null;
   /** Veri ortak işletmeden okunur/yazılır; boşsa kişinin kendi verisi kullanılır */
   businessId?: string | null;
+  /** Ortak veri henüz yoksa ilk veriyi yazabilen taraf (sahip); üye yazamaz */
+  canSeed?: boolean;
   /** Sunucuya yazılacak veri; anahtar sırası her zaman aynı olmalı */
   snapshot: Record<string, unknown>;
   /** Sunucudan gelen veriyi uygular; uygulanan verinin aynı biçimdeki halini döndürür */
@@ -33,8 +36,8 @@ export function useCloudSync({
   const [ready, setReady] = useState(false);
 
   const json = JSON.stringify(snapshot);
-  const latest = useRef({ json, snapshot, apply, onExpired, session, businessId });
-  latest.current = { json, snapshot, apply, onExpired, session, businessId };
+  const latest = useRef({ json, snapshot, apply, onExpired, session, businessId, canSeed });
+  latest.current = { json, snapshot, apply, onExpired, session, businessId, canSeed };
   // Sunucuyla aynı olduğu bilinen son veri ve sunucudaki güncelleme zamanı
   const syncedJson = useRef<string | null>(null);
   const syncedAt = useRef<string | null>(null);
@@ -56,7 +59,7 @@ export function useCloudSync({
       if (remote === "expired") return latest.current.onExpired();
       if (remote === null) {
         // Ortak işletmede veri yoksa üye boş verisini yazmaz; yalnızca sahip ilk veriyi oluşturur
-        if (first && !cur.businessId) {
+        if (first && (!cur.businessId || cur.canSeed)) {
           const at = await push(cur.session, cur.snapshot, cur.businessId);
           if (at === "expired") return latest.current.onExpired();
           syncedJson.current = cur.json;

@@ -137,6 +137,7 @@ export default function App() {
   const sync = useCloudSync({
     session: isMainWorkspace && memberReady && !waiting ? session : null,
     businessId: membership?.businessId ?? null,
+    canSeed: membership?.role === "owner",
     snapshot,
     onExpired: () => setSession(null),
     apply: (d) => {
