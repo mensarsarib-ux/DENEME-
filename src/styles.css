@@ -3065,3 +3065,19 @@ a.action-btn {
   color: #fff;
   font-size: 0.8rem;
 }
+
+/* Ayarlar → Ekip: üye ve işletme paylaşım onay kutuları */
+.team-list {
+  display: grid;
+  gap: 14px;
+}
+
+.team-member {
+  display: grid;
+  gap: 2px;
+}
+
+.team-email {
+  overflow-wrap: anywhere;
+  margin-bottom: 2px;
+}

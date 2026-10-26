@@ -547,3 +547,46 @@ export async function notifyChanges(session: Session, businessId: string, messag
   });
   if (res.status === 401) return "expired";
 }
+
+export interface TeamRow {
+  business_id: string;
+  business_name: string;
+  user_id: string;
+  email: string;
+  role: "owner" | "member";
+}
+
+/** Yetkilinin işletmelerindeki tüm kayıtlar (sahip ve üye satırları) */
+export async function teamOverview(session: Session): Promise<TeamRow[] | "expired"> {
+  const s = await fresh(session);
+  if (!s) return "expired";
+  const res = await call("/rest/v1/rpc/team_overview", { method: "POST", token: s.accessToken, body: "{}" });
+  if (res.status === 401) return "expired";
+  if (!res.ok) throw new CloudError("unknown", String(res.status));
+  return (await res.json()) as TeamRow[];
+}
+
+/** Üyeye bu işletmeyi paylaşır ya da paylaşımı kaldırır */
+export async function setBusinessShare(
+  session: Session,
+  businessId: string,
+  userId: string,
+  share: boolean,
+): Promise<true | "expired"> {
+  const s = await fresh(session);
+  if (!s) return "expired";
+  const res = share
+    ? await call("/rest/v1/business_members", {
+        method: "POST",
+        token: s.accessToken,
+        headers: { Prefer: "resolution=ignore-duplicates,return=minimal" },
+        body: JSON.stringify({ business_id: businessId, user_id: userId, role: "member" }),
+      })
+    : await call(
+        `/rest/v1/business_members?business_id=eq.${businessId}&user_id=eq.${userId}&role=eq.member`,
+        { method: "DELETE", token: s.accessToken },
+      );
+  if (res.status === 401) return "expired";
+  if (!res.ok) throw new CloudError("unknown", String(res.status));
+  return true;
+}

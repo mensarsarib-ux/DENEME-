@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import TeamSection from "./TeamSection";
 import { currentDeviceId, listDevices, removeDevice, type DeviceInfo, type Session } from "../lib/cloud";
 import type { Settings } from "../data/mock";
 import { locale, t } from "../lib/i18n";
@@ -207,6 +208,14 @@ export default function SettingsPage({
               <button type="button" className="action-btn" onClick={account.onSync}>{t("Şimdi eşitle")}</button>
               <button type="button" className="action-btn is-danger" onClick={() => setConfirmSignOut(true)}>{t("Çıkış yap")}</button>
             </div>
+          </section>
+        )}
+
+        {account && (
+          <section className="card" aria-label={t("Ekip")}>
+            <h2 className="card-title">{t("Ekip")}</h2>
+            <p className="field-hint">{t("Üyelerin hangi işletmeleri göreceğini siz seçersiniz.")}</p>
+            <TeamSection session={account.session} />
           </section>
         )}
 
