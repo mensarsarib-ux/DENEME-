@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Profile } from "../data/mock";
 import { haptic } from "../lib/haptics";
 import { MENU_ITEMS, PRIVACY_ICON, SUPPORT_ICON, type MenuPage } from "../lib/menu";
@@ -9,6 +9,7 @@ const HIDDEN_PAGES: MenuPage[] = ["contacts", "reports"];
 import CompanyLogo from "./CompanyLogo";
 import { Svg } from "./Icon";
 import { t } from "../lib/i18n";
+import { activeWorkspace, switchWorkspace } from "../lib/storage";
 
 /**
  * Soldan açılan yarı genişlikte menü penceresi. Seçenekler: işletme profili, hesaplarım, raporlar,
@@ -17,6 +18,7 @@ import { t } from "../lib/i18n";
 export default function MenuDrawer({
   profile,
   unread,
+  businesses,
   onNavigate,
   onClose,
   onSignOut,
@@ -24,12 +26,16 @@ export default function MenuDrawer({
   profile: Profile;
   /** Okunmamış bildirim sayısı; Bildirimler satırında rozet olarak görünür */
   unread: number;
+  /** Geçiş yapılabilecek işletmeler: bu cihazdakiler ve sunucudaki ortak işletmeler */
+  businesses: { id: string; name: string }[];
   onNavigate: (page: MenuPage) => void;
   onClose: () => void;
   /** Giriş yapılmışsa çıkış yapar; yoksa Çıkış yap satırı gösterilmez */
   onSignOut?: () => void;
 }) {
   const panelRef = useRef<HTMLElement>(null);
+  const [bizOpen, setBizOpen] = useState(false);
+  const currentId = activeWorkspace();
 
   useEffect(() => {
     panelRef.current?.focus();
@@ -70,13 +76,43 @@ export default function MenuDrawer({
 
         <div className="drawer-head">
           <CompanyLogo logo={profile.logo} name={profile.name} size={44} />
-          <span className="drawer-company">
+          <button
+            type="button"
+            className="drawer-company drawer-company-btn"
+            aria-expanded={bizOpen}
+            onClick={() => {
+              haptic("light");
+              setBizOpen((v) => !v);
+            }}
+          >
             <strong>{profile.name || t("Hesabım")}</strong>
-          </span>
+            <span className="drawer-company-chevron" aria-hidden="true">{bizOpen ? "▴" : "▾"}</span>
+          </button>
           <button className="drawer-close" aria-label={t("Menüyü kapat")} onClick={onClose}>
             ×
           </button>
         </div>
+
+        {bizOpen && (
+          <div className="drawer-biz-list" role="list" aria-label={t("İşletmelerim")}>
+            {businesses.map((b) => {
+              const isCurrent = b.id === currentId;
+              return (
+                <button
+                  key={b.id}
+                  type="button"
+                  role="listitem"
+                  className={isCurrent ? "drawer-biz-item is-current" : "drawer-biz-item"}
+                  disabled={isCurrent}
+                  onClick={() => switchWorkspace(b.id)}
+                >
+                  <span>{b.name}</span>
+                  <small>{isCurrent ? t("Şu an buradasınız") : t("Geç")}</small>
+                </button>
+              );
+            })}
+          </div>
+        )}
 
         <nav className="drawer-nav" aria-label={t("Menü seçenekleri")}>
           {MENU_ITEMS.filter((item) => !HIDDEN_PAGES.includes(item.page)).map((item) => (

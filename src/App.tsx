@@ -708,6 +708,7 @@ export default function App() {
       <MenuDrawer
         profile={profile}
         unread={pendingCount}
+        businesses={businessList(serverBusinesses)}
         onNavigate={(page) => {
           setDrawerOpen(false);
           go({ name: "menu", page });
