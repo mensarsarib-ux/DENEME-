@@ -2578,7 +2578,7 @@ a.action-btn {
 
 /* Özet istatistikleri: yana kaydırılabilir üç bölüm */
 .stats-carousel { position: relative; }
-.stats-track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; }
+.stats-track { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; }
 .stats-track::-webkit-scrollbar { display: none; }
 .stats-slide { flex: 0 0 100%; min-width: 0; scroll-snap-align: start; }
 .stats-slide > .card { margin: 0; height: 100%; box-sizing: border-box; }
