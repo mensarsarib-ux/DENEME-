@@ -19,6 +19,9 @@ import PrivacyPage from "./components/PrivacyPage";
 import PlansPage from "./components/PlansPage";
 import NewBusinessPage from "./components/NewBusinessPage";
 import JoinBusinessPage from "./components/JoinBusinessPage";
+import TeamPage from "./components/TeamPage";
+import TeamMemberPage from "./components/TeamMemberPage";
+import type { TeamPerson } from "./lib/cloud";
 import { activeWorkspace, MAIN_WORKSPACE } from "./lib/storage";
 import type { TabInfo } from "./components/PartyTabs";
 import {
@@ -138,6 +141,8 @@ export default function App() {
   const [membership, setMembership] = useState<Membership | null | undefined>(undefined);
   const [requestStatus, setRequestStatus] = useState<string | null>(null);
   const [recheck, setRecheck] = useState(0);
+  // Ekiplerim: seçili üye (detay sayfası için)
+  const [teamPerson, setTeamPerson] = useState<TeamPerson | null>(null);
   const effMembership: Membership | null | undefined =
     wsKind === "server" && serverMine ? { businessId: serverMine.businessId, role: serverMine.role } : membership;
   const memberReady =
@@ -557,6 +562,18 @@ export default function App() {
         return <PlansPage profile={profile} onBack={toHome} />;
       case "newbusiness":
         return <NewBusinessPage onBack={toHome} onJoin={() => go({ name: "menu", page: "join" })} />;
+      case "team":
+        if (session && teamPerson) {
+          return (
+            <TeamMemberPage
+              session={session}
+              person={teamPerson}
+              onBack={() => setTeamPerson(null)}
+              onRemoved={() => setTeamPerson(null)}
+            />
+          );
+        }
+        return session ? <TeamPage session={session} onOpen={setTeamPerson} onBack={toHome} /> : null;
       case "join":
         return <JoinBusinessPage onBack={toHome} />;
       case "support":

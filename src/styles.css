@@ -3081,3 +3081,23 @@ a.action-btn {
   overflow-wrap: anywhere;
   margin-bottom: 2px;
 }
+
+/* Ekiplerim: üye satırı */
+.team-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 14px 4px;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  background: transparent;
+  color: var(--text);
+  text-align: left;
+}
+
+.team-row-email {
+  overflow-wrap: anywhere;
+  font-weight: 600;
+}

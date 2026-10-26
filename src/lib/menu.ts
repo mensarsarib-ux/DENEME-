@@ -11,7 +11,8 @@ export type MenuPage =
   | "privacy"
   | "plans"
   | "newbusiness"
-  | "join";
+  | "join"
+  | "team";
 
 export const MENU_ITEMS: { page: MenuPage; label: string; icon: string }[] = [
   { page: "profile", label: "İşletme profili", icon: "M4 21V8l8-5 8 5v13M9 21v-6h6v6M8 11h.01M12 11h.01M16 11h.01" },
@@ -21,6 +22,7 @@ export const MENU_ITEMS: { page: MenuPage; label: string; icon: string }[] = [
   { page: "notes", label: "Notlar", icon: "M6 3h12v18H6zM9 8h6M9 12h6M9 16h4" },
   { page: "contacts", label: "Kişiler", icon: "M9 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM3 20a6 6 0 0 1 12 0M17 11a2.5 2.5 0 1 0 0-5M16 14a5 5 0 0 1 5 5" },
   { page: "notifications", label: "Bildirimler", icon: "M6 16V11a6 6 0 0 1 12 0v5l2 2H4zM10 21h4" },
+  { page: "team", label: "Ekiplerim", icon: "M9 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM3 20a6 6 0 0 1 12 0M16 11a3 3 0 1 0 0-6M17 14a6 6 0 0 1 4 6" },
   { page: "settings", label: "Ayarlar", icon: "M4 7h10M18 7h2M4 17h2M10 17h10M14 4v6M8 14v6" },
 ];
 

@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import TeamSection from "./TeamSection";
 import { currentDeviceId, listDevices, removeDevice, type DeviceInfo, type Session } from "../lib/cloud";
 import type { Settings } from "../data/mock";
 import { locale, t } from "../lib/i18n";
@@ -99,6 +98,9 @@ function TextSizePicker({
     </div>
   );
 }
+
+/** Bağlı cihazlar şimdilik Ayarlar'da gizli; kodu duruyor */
+const SHOW_DEVICES = false;
 
 export default function SettingsPage({
   settings,
@@ -211,15 +213,7 @@ export default function SettingsPage({
           </section>
         )}
 
-        {account && (
-          <section className="card" aria-label={t("Ekip")}>
-            <h2 className="card-title">{t("Ekip")}</h2>
-            <p className="field-hint">{t("Üyelerin hangi işletmeleri göreceğini siz seçersiniz.")}</p>
-            <TeamSection session={account.session} />
-          </section>
-        )}
-
-        {account && (
+        {SHOW_DEVICES && account && (
           <section className="card" aria-label={t("Bağlı cihazlar")}>
             <h2 className="card-title">{t("Bağlı cihazlar")}</h2>
             {devicesFailed && <p className="field-hint">{t("Cihazlar yüklenemedi.")}</p>}

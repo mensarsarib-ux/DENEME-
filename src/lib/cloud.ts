@@ -590,3 +590,38 @@ export async function setBusinessShare(
   if (!res.ok) throw new CloudError("unknown", String(res.status));
   return true;
 }
+
+export interface TeamPerson {
+  user_id: string;
+  email: string;
+}
+
+/** Ekip üyeleri: onaylanmış katılmalar ve üyelikler (paylaşım kalksa da listede kalır) */
+export async function teamPeople(session: Session): Promise<TeamPerson[] | "expired"> {
+  const s = await fresh(session);
+  if (!s) return "expired";
+  const res = await call("/rest/v1/rpc/team_people", { method: "POST", token: s.accessToken, body: "{}" });
+  if (res.status === 401) return "expired";
+  if (!res.ok) throw new CloudError("unknown", String(res.status));
+  return (await res.json()) as TeamPerson[];
+}
+
+/** Ekip üyesini siler: tüm paylaşımları kalkar, katılma kaydı reddedilmiş olur */
+export async function removeTeamMember(session: Session, userId: string): Promise<true | "expired"> {
+  const s = await fresh(session);
+  if (!s) return "expired";
+  const del = await call(`/rest/v1/business_members?user_id=eq.${userId}&role=eq.member`, {
+    method: "DELETE",
+    token: s.accessToken,
+  });
+  if (del.status === 401) return "expired";
+  if (!del.ok) throw new CloudError("unknown", String(del.status));
+  const upd = await call(`/rest/v1/join_requests?requester_id=eq.${userId}&status=eq.approved`, {
+    method: "PATCH",
+    token: s.accessToken,
+    headers: { Prefer: "return=minimal" },
+    body: JSON.stringify({ status: "rejected" }),
+  });
+  if (!upd.ok) throw new CloudError("unknown", String(upd.status));
+  return true;
+}
