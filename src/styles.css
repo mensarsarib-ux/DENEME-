@@ -1793,45 +1793,21 @@ body {
   color: var(--muted);
 }
 
-.drawer-company-btn {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 0;
-  border: 0;
-  background: none;
-  color: inherit;
-  text-align: left;
-  font: inherit;
-  cursor: pointer;
-}
-
-.drawer-company-btn strong {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.drawer-biz-label {
+  flex: 1;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--muted);
 }
 
 .drawer-biz-list {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
   margin: 0 0 8px;
   padding-bottom: 8px;
   border-bottom: 1px solid var(--line);
-  animation: drawer-biz-in 0.22s ease-out;
-  transform-origin: top center;
-}
-
-@keyframes drawer-biz-in {
-  from {
-    opacity: 0;
-    transform: translateY(-8px) scaleY(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
 }
 
 .drawer-biz-item {

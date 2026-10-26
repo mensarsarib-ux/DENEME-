@@ -1,12 +1,10 @@
-import { useEffect, useRef, useState } from "react";
-import type { Profile } from "../data/mock";
+import { useEffect, useRef } from "react";
 import { haptic } from "../lib/haptics";
 import { MENU_ITEMS, PRIVACY_ICON, SUPPORT_ICON, type MenuPage } from "../lib/menu";
 import { CURRENT_PLAN, LIMITS, PLAN_NAME, canUseTeam } from "../lib/plan";
 
 /** Şimdilik menüde gösterilmeyen sayfalar; kodları durur, listeden çıkarılarak tekrar açılabilir */
 const HIDDEN_PAGES: MenuPage[] = ["contacts", "reports"];
-import CompanyLogo from "./CompanyLogo";
 import { Svg } from "./Icon";
 import { t } from "../lib/i18n";
 import { activeWorkspace, switchWorkspace } from "../lib/storage";
@@ -17,14 +15,12 @@ import { STORE_ICON } from "./BusinessPlus";
  * notlar, kişiler, bildirimler, ayarlar; biraz boşluktan sonra en altta "Destek al".
  */
 export default function MenuDrawer({
-  profile,
   unread,
   businesses,
   onNavigate,
   onClose,
   onSignOut,
 }: {
-  profile: Profile;
   /** Okunmamış bildirim sayısı; Bildirimler satırında rozet olarak görünür */
   unread: number;
   /** Geçiş yapılabilecek işletmeler: bu cihazdakiler ve sunucudaki ortak işletmeler */
@@ -35,7 +31,6 @@ export default function MenuDrawer({
   onSignOut?: () => void;
 }) {
   const panelRef = useRef<HTMLElement>(null);
-  const [bizOpen, setBizOpen] = useState(false);
   const currentId = activeWorkspace();
 
   useEffect(() => {
@@ -75,47 +70,34 @@ export default function MenuDrawer({
           </button>
         </div>
 
+        {/* İşletme listesi: dokununca geçilir; aktif olan ✓ ile işaretlenir */}
         <div className="drawer-head">
-          <CompanyLogo logo={profile.logo} name={profile.name} size={44} />
-          <button
-            type="button"
-            className="drawer-company drawer-company-btn"
-            aria-expanded={bizOpen}
-            onClick={() => {
-              haptic("light");
-              setBizOpen((v) => !v);
-            }}
-          >
-            <strong>{profile.name || t("Hesabım")}</strong>
-          </button>
+          <span className="drawer-biz-label">{t("İŞLETMELERİM")}</span>
           <button className="drawer-close" aria-label={t("Menüyü kapat")} onClick={onClose}>
             ×
           </button>
         </div>
-
-        {bizOpen && (
-          <div className="drawer-biz-list" role="list" aria-label={t("İşletmelerim")}>
-            {businesses.map((b) => {
-              const isCurrent = b.id === currentId;
-              return (
-                <button
-                  key={b.id}
-                  type="button"
-                  role="listitem"
-                  className={isCurrent ? "drawer-biz-item is-current" : "drawer-biz-item"}
-                  disabled={isCurrent}
-                  onClick={() => switchWorkspace(b.id)}
-                >
-                  <span className="drawer-biz-mark" aria-hidden="true">
-                    <Svg d={STORE_ICON} />
-                  </span>
-                  <span className="drawer-biz-name">{b.name}</span>
-                  {isCurrent && <small aria-hidden="true">✓</small>}
-                </button>
-              );
-            })}
-          </div>
-        )}
+        <div className="drawer-biz-list" role="list" aria-label={t("İşletmelerim")}>
+          {businesses.map((b) => {
+            const isCurrent = b.id === currentId;
+            return (
+              <button
+                key={b.id}
+                type="button"
+                role="listitem"
+                className={isCurrent ? "drawer-biz-item is-current" : "drawer-biz-item"}
+                disabled={isCurrent}
+                onClick={() => switchWorkspace(b.id)}
+              >
+                <span className="drawer-biz-mark" aria-hidden="true">
+                  <Svg d={STORE_ICON} />
+                </span>
+                <span className="drawer-biz-name">{b.name}</span>
+                {isCurrent && <small aria-hidden="true">✓</small>}
+              </button>
+            );
+          })}
+        </div>
 
         <nav className="drawer-nav" aria-label={t("Menü seçenekleri")}>
           {MENU_ITEMS.filter((item) => !HIDDEN_PAGES.includes(item.page)).map((item) => (

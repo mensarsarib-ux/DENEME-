@@ -706,7 +706,6 @@ export default function App() {
     />
     {drawerOpen && (
       <MenuDrawer
-        profile={profile}
         unread={pendingCount}
         businesses={businessList(serverBusinesses)}
         onNavigate={(page) => {
