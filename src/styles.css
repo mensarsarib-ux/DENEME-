@@ -3101,3 +3101,41 @@ a.action-btn {
   overflow-wrap: anywhere;
   font-weight: 600;
 }
+
+/* Menü plan kartı: mevcut paket ve üst pakete geç */
+.plan-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin: 12px 14px 4px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(60, 143, 217, 0.18), rgba(47, 120, 189, 0.08));
+  border: 1px solid rgba(60, 143, 217, 0.35);
+}
+
+.plan-card-text {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.plan-card-label {
+  font-weight: 700;
+}
+
+.plan-card-text small {
+  color: var(--muted);
+}
+
+.plan-card-btn {
+  flex: none;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--blue);
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.85rem;
+}

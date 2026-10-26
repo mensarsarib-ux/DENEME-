@@ -54,6 +54,17 @@ export default function MenuDrawer({
         aria-label={t("Menü")}
         onClick={(e) => e.stopPropagation()}
       >
+        {/* Plan kartı: mevcut paket ve yükseltme */}
+        <div className="plan-card">
+          <div className="plan-card-text">
+            <span className="plan-card-label">{canUseMultiBusiness() ? t("Paket: Pro") : t("Paket: Ücretsiz")}</span>
+            <small>{canUseMultiBusiness() ? t("Birden fazla işletme ve ekip") : t("Tek işletme")}</small>
+          </div>
+          <button type="button" className="plan-card-btn" onClick={() => open("plans")}>
+            {t("Üst pakete geç")}
+          </button>
+        </div>
+
         <div className="drawer-head">
           <CompanyLogo logo={profile.logo} name={profile.name} size={44} />
           <span className="drawer-company">
