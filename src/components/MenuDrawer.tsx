@@ -80,54 +80,54 @@ export default function MenuDrawer({
           </button>
         </div>
 
-        {/* İşletmeler: tek işletme varsa liste gizli kalır; birden fazlaysa dokununca açılır */}
+        {/* Açık olan işletmenin adı; dokununca altında işletme listesi (varsa) ve + açılır */}
         <div className="drawer-head">
-          {businesses.length > 1 ? (
-            <button
-              type="button"
-              className="drawer-biz-label drawer-biz-toggle"
-              aria-expanded={bizOpen}
-              onClick={() => {
-                haptic("light");
-                setBizOpen((v) => !v);
-              }}
-            >
-              {t("İŞLETMELERİM")} <span className="drawer-biz-count">{businesses.length}</span>
-            </button>
-          ) : (
-            <span className="drawer-biz-label" />
-          )}
+          <button
+            type="button"
+            className="drawer-biz-toggle"
+            aria-expanded={bizOpen}
+            onClick={() => {
+              haptic("light");
+              setBizOpen((v) => !v);
+            }}
+          >
+            <span className="drawer-biz-title">{businesses.find((b) => b.id === currentId)?.name ?? t("Hesabım")}</span>
+          </button>
           <button className="drawer-close" aria-label={t("Menüyü kapat")} onClick={onClose}>
             ×
           </button>
         </div>
-        {businesses.length > 1 && bizOpen && (
-          <div className="drawer-biz-list" role="list" aria-label={t("İşletmelerim")}>
-            {businesses.map((b) => {
-              const isCurrent = b.id === currentId;
-              return (
-                <button
-                  key={b.id}
-                  type="button"
-                  role="listitem"
-                  className={isCurrent ? "drawer-biz-item is-current" : "drawer-biz-item"}
-                  disabled={isCurrent}
-                  onClick={() => switchWorkspace(b.id)}
-                >
-                  <span className="drawer-biz-mark" aria-hidden="true">
-                    <Svg d={STORE_ICON} />
-                  </span>
-                  <span className="drawer-biz-name">{b.name}</span>
-                  {isCurrent && <small aria-hidden="true">✓</small>}
-                </button>
-              );
-            })}
-          </div>
-        )}
-        {canCreateBusiness && (
-          <button type="button" className="drawer-biz-add" aria-label={t("İşletme ekle")} onClick={addBusiness}>
-            +
-          </button>
+        {bizOpen && (
+          <>
+            {businesses.length > 1 && (
+              <div className="drawer-biz-list" role="list" aria-label={t("İşletmelerim")}>
+                {businesses.map((b) => {
+                  const isCurrent = b.id === currentId;
+                  return (
+                    <button
+                      key={b.id}
+                      type="button"
+                      role="listitem"
+                      className={isCurrent ? "drawer-biz-item is-current" : "drawer-biz-item"}
+                      disabled={isCurrent}
+                      onClick={() => switchWorkspace(b.id)}
+                    >
+                      <span className="drawer-biz-mark" aria-hidden="true">
+                        <Svg d={STORE_ICON} />
+                      </span>
+                      <span className="drawer-biz-name">{b.name}</span>
+                      {isCurrent && <small aria-hidden="true">✓</small>}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+            {canCreateBusiness && (
+              <button type="button" className="drawer-biz-add" aria-label={t("İşletme ekle")} onClick={addBusiness}>
+                +
+              </button>
+            )}
+          </>
         )}
 
         <nav className="drawer-nav" aria-label={t("Menü seçenekleri")}>

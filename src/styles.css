@@ -1793,12 +1793,13 @@ body {
   color: var(--muted);
 }
 
-.drawer-biz-label {
-  flex: 1;
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  color: var(--muted);
+.drawer-biz-title {
+  display: block;
+  font-size: 1.05rem;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .drawer-biz-toggle {
@@ -1808,10 +1809,6 @@ body {
   font: inherit;
   text-align: left;
   cursor: pointer;
-}
-
-.drawer-biz-count {
-  color: #3b82f6;
 }
 
 .drawer-biz-add {
