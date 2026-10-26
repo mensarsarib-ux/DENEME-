@@ -6,8 +6,11 @@ import { SUPPORT_ICON } from "../lib/menu";
 import CompanyLogo from "./CompanyLogo";
 import PageHeader from "./PageHeader";
 
-/** Üst paketler: işletme sayısı. Ayrıntılı satın alma akışı daha sonra bağlanacak. */
-const PLANS = [2, 5, 10];
+/** Paket seçenekleri: kayıt sınırları (müşteri/tedarikçi). Satın alma akışı daha sonra bağlanacak. */
+const PLANS: { name: string; parties: number }[] = [
+  { name: "Pro", parties: 10 },
+  { name: "Pro Plus", parties: 15 },
+];
 
 /** İşletme paketleri sayfası: mevcut işletme ve üst pakete geçiş seçenekleri */
 export default function PlansPage({ profile, onBack }: { profile: Profile; onBack: () => void }) {
@@ -49,15 +52,15 @@ export default function PlansPage({ profile, onBack }: { profile: Profile; onBac
         <section className="card" aria-label={t("Üst paketler")}>
           <h2 className="card-title">{t("ÜST PAKETE GEÇ")}</h2>
           <div className="plans-list">
-            {PLANS.map((n) => (
+            {PLANS.map((p) => (
               <button
-                key={n}
+                key={p.name}
                 type="button"
                 className="plans-item"
                 disabled
                 onClick={() => haptic("light")}
               >
-                <span>{t("{n} işletme", { n })}</span>
+                <span>{t("{p}: {n} kayıt", { p: p.name, n: p.parties })}</span>
                 <small>{t("Yakında")}</small>
               </button>
             ))}

@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import type { Profile } from "../data/mock";
 import { haptic } from "../lib/haptics";
 import { MENU_ITEMS, PRIVACY_ICON, SUPPORT_ICON, type MenuPage } from "../lib/menu";
-import { canUseMultiBusiness } from "../lib/plan";
+import { CURRENT_PLAN, PLAN_NAME, canUseMultiBusiness } from "../lib/plan";
 
 /** Şimdilik menüde gösterilmeyen sayfalar; kodları durur, listeden çıkarılarak tekrar açılabilir */
 const HIDDEN_PAGES: MenuPage[] = ["contacts", "reports"];
@@ -57,7 +57,7 @@ export default function MenuDrawer({
         {/* Plan kartı: mevcut paket ve yükseltme */}
         <div className="plan-card">
           <div className="plan-card-text">
-            <span className="plan-card-label">{canUseMultiBusiness() ? t("Paket: Pro") : t("Paket: Ücretsiz")}</span>
+            <span className="plan-card-label">{t("Paket: {p}", { p: PLAN_NAME[CURRENT_PLAN] })}</span>
             <small>{canUseMultiBusiness() ? t("Birden fazla işletme ve ekip") : t("Tek işletme")}</small>
           </div>
           <button type="button" className="plan-card-btn" onClick={() => open("plans")}>
