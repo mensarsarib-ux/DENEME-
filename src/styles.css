@@ -3637,3 +3637,24 @@ a.action-btn {
   from { opacity: 1; }
   to { opacity: 0; }
 }
+
+/* Uygulama arayüzünde metin seçimi ve iOS'un Kopyala/Ara menüsü kapalı; basılı tutma işlemleri bozulmasın.
+   Girişlerde ve kopyalanması gereken alanlarda seçime izin verilir. */
+body,
+button,
+.row,
+.tx,
+li {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+input,
+textarea,
+[contenteditable="true"],
+.selectable {
+  -webkit-user-select: text;
+  user-select: text;
+  -webkit-touch-callout: default;
+}
