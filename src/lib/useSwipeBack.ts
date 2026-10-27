@@ -8,6 +8,20 @@ const COMMIT_RATIO = 0.4;
 const EASE = "transform 0.35s cubic-bezier(0.32, 0.72, 0, 1)";
 const SETTLE_MS = 360;
 
+/** Geri dönülen ekran soldan kayarak yerine oturur (iOS'taki gibi) */
+function enterFromLeft() {
+  window.requestAnimationFrame(() => {
+    const next = document.querySelector<HTMLElement>(".cust-page, .app");
+    next?.animate(
+      [
+        { transform: "translateX(-28%)", opacity: 0.6 },
+        { transform: "none", opacity: 1 },
+      ],
+      { duration: 350, easing: "cubic-bezier(0.32, 0.72, 0, 1)" },
+    );
+  });
+}
+
 /**
  * iOS'taki gibi: sol kenardan sağa kaydırınca sayfa parmağı takip eder; yeterince kayınca
  * sayfa sağa doğru kayarak kapanır ve "Geri" düğmesine basılmış olur. Yetersizse yerine döner.
@@ -65,7 +79,10 @@ export function useSwipeBack(enabled: boolean) {
       const commit = dx > window.innerWidth * COMMIT_RATIO;
       target.style.transform = commit ? `translateX(${window.innerWidth}px)` : "translateX(0px)";
       window.setTimeout(() => {
-        if (commit) back?.click();
+        if (commit) {
+          back?.click();
+          enterFromLeft();
+        }
         // Sayfa aynı kalıyorsa (ör. ayar grupları) konumu da sıfırlanmalı; bu yüzden her durumda temizlenir
         target.style.transition = "none";
         target.style.transform = "";
