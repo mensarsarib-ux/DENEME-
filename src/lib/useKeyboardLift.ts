@@ -15,8 +15,8 @@ export function useKeyboardLift(ref: RefObject<HTMLElement>) {
     };
 
     if (Capacitor.isNativePlatform()) {
-      // Klavye üstündeki boşluk: panelin alt kenarı klavyenin tepesine yaklaşsın (ölçülen ~8 px fazla)
-      const show = Keyboard.addListener("keyboardWillShow", (info) => lift(Math.max(0, info.keyboardHeight - 8)));
+      // Klavye üstündeki boşluk: panelin alt kenarı klavyenin tepesine yaklaşsın (ölçülen fazlalık ~16 px)
+      const show = Keyboard.addListener("keyboardWillShow", (info) => lift(Math.max(0, info.keyboardHeight - 16)));
       const hide = Keyboard.addListener("keyboardWillHide", () => lift(0));
       return () => {
         void show.then((h) => h.remove());
