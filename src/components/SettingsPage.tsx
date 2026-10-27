@@ -111,6 +111,7 @@ export default function SettingsPage({
   onRestore,
   onReset,
   canReset = true,
+  onRestoreFromAccount,
   onBack,
 }: {
   settings: Settings;
@@ -133,9 +134,11 @@ export default function SettingsPage({
   onReset: () => void;
   /** Yalnızca yetkili kişi (sahip ya da bireysel kullanıcı) tüm verileri sıfırlayabilir */
   canReset?: boolean;
+  /** Hesaptaki veriyi çekip cihaza geri yükler; hata metni ya da null döner */
+  onRestoreFromAccount?: () => Promise<string | null>;
   onBack: () => void;
 }) {
-  const [copied, setCopied] = useState<"ok" | "fail" | null>(null);
+  const [backupDone, setBackupDone] = useState(false);
   const [restoring, setRestoring] = useState(false);
   const [restoreText, setRestoreText] = useState("");
   const [restoreMsg, setRestoreMsg] = useState<{ ok: boolean; text: string } | null>(null);
@@ -172,32 +175,47 @@ export default function SettingsPage({
   const set = <K extends keyof Settings>(key: K, value: Settings[K]) =>
     onChange({ ...settings, [key]: value });
 
-  async function copyBackup() {
-    try {
-      await navigator.clipboard.writeText(backupText);
-      setCopied("ok");
-      haptic("success");
-    } catch {
-      setCopied("fail");
-    }
+  /** Yedeği telefona kaydedilebilecek bir JSON dosyası olarak indirir */
+  function downloadBackup() {
+    const url = URL.createObjectURL(new Blob([backupText], { type: "application/json" }));
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `hesabim-yedek-${new Date().toISOString().slice(0, 10)}.json`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+    haptic("success");
+    setBackupDone(true);
   }
 
-  /** Seçilen yedek dosyasını okur; içeriği yapıştırma kutusuna koyar ve kayıt sayısını gösterir */
+  /** Seçilen yedek dosyasını okur ve doğrudan geri yükler */
   async function loadFile(file: File) {
     const text = await file.text();
-    setRestoreText(text);
-    try {
-      const data = JSON.parse(text) as { parties?: unknown[]; transactions?: unknown[] };
-      setRestoreMsg({
-        ok: true,
-        text: t("Dosya okundu: {p} kişi, {x} işlem. Yüklemek için GERİ YÜKLE'ye basın.", {
-          p: data.parties?.length ?? 0,
-          x: data.transactions?.length ?? 0,
-        }),
-      });
-    } catch {
-      setRestoreMsg({ ok: false, text: t("Dosya geçerli bir yedek değil.") });
+    const error = onRestore(text);
+    if (error) {
+      haptic("warning");
+      setRestoreMsg({ ok: false, text: t(error) });
+      return;
     }
+    haptic("success");
+    setRestoreMsg({ ok: true, text: t("Yedek dosyası yüklendi, veriler geri döndü.") });
+    setRestoring(false);
+  }
+
+  /** Hesaptaki veriyi çekip geri yükler */
+  async function pullFromAccount() {
+    if (!onRestoreFromAccount) return;
+    haptic("light");
+    const error = await onRestoreFromAccount();
+    if (error) {
+      haptic("warning");
+      setRestoreMsg({ ok: false, text: error });
+      return;
+    }
+    haptic("success");
+    setRestoreMsg({ ok: true, text: t("Hesaptaki veriler geri çekildi.") });
+    setRestoring(false);
   }
 
   function restore() {
@@ -329,18 +347,12 @@ export default function SettingsPage({
           <h2 className="card-title">{t("Veriler")}</h2>
           <p className="card-empty">{t("Veriler yalnızca bu tarayıcıda saklanır. Yedek alıp başka cihaza taşıyabilirsiniz.")}</p>
           <div className="card-actions">
-            <button type="button" className="action-btn" onClick={copyBackup}>{t("Yedeği kopyala")}</button>
+            <button type="button" className="action-btn" onClick={downloadBackup}>{t("Yedekleme al")}</button>
             <button type="button" className="action-btn" onClick={() => { setRestoring((r) => !r); setRestoreMsg(null); }}>
-              {t("Yedekten yükle")}
+              {t("Geri yükle")}
             </button>
           </div>
-          {copied === "ok" && <p className="form-success">{t("Yedek panoya kopyalandı.")}</p>}
-          {copied === "fail" && (
-            <>
-              <p className="field-hint">{t("Kopyalanamadı; metni elle kopyalayın:")}</p>
-              <textarea className="copy-box" readOnly rows={5} value={backupText} onFocus={(e) => e.currentTarget.select()} />
-            </>
-          )}
+          {backupDone && <p className="form-success">{t("Yedek dosyası hazırlandı. Telefonunuza kaydedin.")}</p>}
           {restoring && (
             <div className="field">
               <label htmlFor="restore-text">{t("Yedek metnini yapıştırın")}</label>
@@ -362,9 +374,9 @@ export default function SettingsPage({
                     }}
                   />
                 </label>
-                {account?.session && (
-                  <button type="button" className="action-btn" disabled title={t("Yakında")}>
-                    {t("Hesaptan seç")}
+                {account?.session && onRestoreFromAccount && (
+                  <button type="button" className="action-btn" onClick={pullFromAccount}>
+                    {t("Hesaptan çek")}
                   </button>
                 )}
               </div>

@@ -26,7 +26,7 @@ import type { TeamPerson } from "./lib/cloud";
 import { renameBusiness } from "./lib/cloud";
 import { migrateLocalWorkspaces } from "./lib/migrate";
 import { canAddItem, canAddTab } from "./lib/plan";
-import { deleteMyAccount } from "./lib/cloud";
+import { deleteMyAccount, pull } from "./lib/cloud";
 import { businessList, listWorkspaces } from "./lib/storage";
 import { activeWorkspace, MAIN_WORKSPACE } from "./lib/storage";
 import type { TabInfo } from "./components/PartyTabs";
@@ -413,6 +413,17 @@ export default function App() {
     return null;
   }
 
+  /** Hesaptaki veriyi çekip bu cihaza geri yükler; eşitleme duraklamışsa yeniden başlatır */
+  async function restoreFromAccount(): Promise<string | null> {
+    if (!session) return t("Hesaba giriş yapılmamış.");
+    const remote = await pull(session, effMembership?.businessId ?? null);
+    if (remote === "expired") return t("Oturumunuzun süresi doldu, yeniden giriş yapın.");
+    if (!remote) return t("Hesapta kayıtlı veri yok.");
+    const error = restore(JSON.stringify(remote.data));
+    if (!error) setSyncPaused(false);
+    return error;
+  }
+
   // Yalnızca bu cihazdaki veriyi siler; hesap açık kalır. Eşitleme duraklatılır ki boş veri buluta yazılmasın
   // ve silinen veri hemen geri gelmesin. Uygulama yeniden açılınca hesaptaki veri tekrar çekilir.
   function resetAll() {
@@ -601,6 +612,7 @@ export default function App() {
             onRestore={restore}
             onReset={resetAll}
             canReset={canCreateBusiness}
+            onRestoreFromAccount={restoreFromAccount}
             onBack={toHome}
           />
         );
