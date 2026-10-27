@@ -91,7 +91,7 @@ export default function AccountsPage({
       </div>
 
       {editing && (
-        <div className="action-backdrop" onClick={() => setEditing(null)}>
+        <div className="action-backdrop is-high" onClick={() => setEditing(null)}>
           <form
             className="action-sheet is-centered"
             role="dialog"

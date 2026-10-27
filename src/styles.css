@@ -1001,12 +1001,16 @@ body {
   text-align: center;
 }
 
+/* Bakiye satırı ekranın altına yapışık kalır; güvenli alanın üstünde görünür */
 .tx-total {
+  position: sticky;
+  bottom: 0;
+  z-index: 1;
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 12px;
-  padding: 14px 16px;
+  padding: 14px 16px calc(14px + env(safe-area-inset-bottom, 0px));
   background: #1f252d;
   color: var(--muted);
   font-size: 0.85rem;
@@ -1309,6 +1313,16 @@ body {
   justify-content: center;
   background: rgba(0, 0, 0, 0.5);
   animation: fade-in 0.2s ease-out;
+}
+
+/* Klavye açıkken alan kapanmasın diye pencere ekranın üst kısmında durur */
+.action-backdrop.is-high {
+  align-items: flex-start;
+  padding-top: 12vh;
+}
+
+.action-sheet.is-centered {
+  border-radius: 20px;
 }
 
 .action-sheet {
