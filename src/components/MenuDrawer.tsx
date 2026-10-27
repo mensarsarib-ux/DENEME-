@@ -1,4 +1,7 @@
 import { useEffect, useRef, useState } from "react";
+
+/** Kapanış animasyonunun süresi (ms); menü bu süre dolunca gerçekten kapanır */
+const CLOSE_MS = 260;
 import { haptic } from "../lib/haptics";
 import { MENU_ITEMS, PRIVACY_ICON, SUPPORT_ICON, type MenuPage } from "../lib/menu";
 import { CURRENT_PLAN, LIMITS, PLAN_NAME, canAddBusiness, canUseTeam } from "../lib/plan";
@@ -36,15 +39,27 @@ export default function MenuDrawer({
   const panelRef = useRef<HTMLElement>(null);
   const [bizOpen, setBizOpen] = useState(false);
   const currentId = activeWorkspace();
+  const [closing, setClosing] = useState(false);
 
   useEffect(() => {
     panelRef.current?.focus();
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onClose();
+      if (event.key === "Escape") requestClose();
     };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, [onClose]);
+
+  /** Önce kapanış animasyonu oynar, sonra menü kapanır ve varsa ardından iş yapılır */
+  function requestClose(after?: () => void) {
+    if (closing) return;
+    setClosing(true);
+    haptic("light");
+    window.setTimeout(() => {
+      onClose();
+      after?.();
+    }, CLOSE_MS);
+  }
 
   /** Sınır doluysa işletme ekleme yerine paketler açılır */
   function addBusiness() {
@@ -55,13 +70,14 @@ export default function MenuDrawer({
   function open(page: MenuPage) {
     haptic("light");
     // Ücretsiz planda Ekiplerim doğrudan paket seçeneklerini açar
-    onNavigate(page === "team" && !canUseTeam() ? "plans" : page);
+    const target = page === "team" && !canUseTeam() ? "plans" : page;
+    requestClose(() => onNavigate(target));
   }
 
   return (
-    <div className="drawer-backdrop" onClick={onClose}>
+    <div className={`drawer-backdrop ${closing ? "is-closing" : ""}`} onClick={() => requestClose()}>
       <aside
-        className="drawer"
+        className={`drawer ${closing ? "is-closing" : ""}`}
         ref={panelRef}
         tabIndex={-1}
         role="dialog"

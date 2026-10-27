@@ -3614,3 +3614,26 @@ a.action-btn {
   background: rgba(60, 143, 217, 0.12);
   color: var(--blue);
 }
+
+/* Menü: açılış ve kapanış iOS'taki gibi yumuşak; kapanış açılıştan biraz hızlı */
+.drawer {
+  animation: drawer-in 0.36s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.drawer.is-closing {
+  animation: drawer-out 0.26s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+.drawer-backdrop.is-closing {
+  animation: drawer-fade-out 0.26s ease-in forwards;
+}
+
+@keyframes drawer-out {
+  from { transform: none; }
+  to { transform: translateX(-100%); }
+}
+
+@keyframes drawer-fade-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
