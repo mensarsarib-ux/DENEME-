@@ -110,7 +110,6 @@ export default function SettingsPage({
   account,
   onRestore,
   onReset,
-  canReset = true,
   onRestoreFromAccount,
   onBack,
 }: {
@@ -132,8 +131,6 @@ export default function SettingsPage({
   /** Hata varsa mesajını, başarılıysa null döndürür */
   onRestore: (text: string) => string | null;
   onReset: () => void;
-  /** Yalnızca yetkili kişi (sahip ya da bireysel kullanıcı) tüm verileri sıfırlayabilir */
-  canReset?: boolean;
   /** Hesaptaki veriyi çekip cihaza geri yükler; hata metni ya da null döner */
   onRestoreFromAccount?: () => Promise<string | null>;
   onBack: () => void;
@@ -366,11 +363,9 @@ export default function SettingsPage({
           {restoreMsg && (
             <p className={restoreMsg.ok ? "form-success" : "field-hint"} role="status">{restoreMsg.text}</p>
           )}
-          {canReset && (
-            <button type="button" className="action-btn is-danger" onClick={() => setConfirmReset(true)}>
-              {t("Tüm verileri sıfırla")}
-            </button>
-          )}
+          <button type="button" className="action-btn is-danger" onClick={() => setConfirmReset(true)}>
+            {t("Tüm verileri sıfırla")}
+          </button>
         </section>
 
         {account && (
@@ -433,7 +428,20 @@ export default function SettingsPage({
       )}
 
 
-      {confirmReset && (
+      {confirmReset && account && (
+        <AccountDeleteDialog
+          email={account.email}
+          title={t("Verileri silmek için şifrenizi girin")}
+          note={t("Bu cihazdaki tüm kayıtlar, notlar ve ayarlar silinir. Hesabınızdaki veriler silinmez; hesaptan geri çekebilirsiniz.")}
+          actionLabel={t("Tüm verileri sil")}
+          onClose={() => setConfirmReset(false)}
+          onConfirm={() => {
+            setConfirmReset(false);
+            onReset();
+          }}
+        />
+      )}
+      {confirmReset && !account && (
         <div className="action-backdrop" onClick={() => setConfirmReset(false)}>
           <div className="action-sheet is-centered" role="alertdialog" aria-label={t("Sıfırlama onayı")} onClick={(e) => e.stopPropagation()}>
             <div className="action-handle" aria-hidden="true" />

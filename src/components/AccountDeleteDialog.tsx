@@ -10,10 +10,17 @@ export default function AccountDeleteDialog({
   email,
   onConfirm,
   onClose,
+  title = t("Hesabınızı silmek için şifrenizi girin"),
+  note = t("Hesabınız ve bu hesaba bağlı tüm veriler kalıcı olarak silinecek. Bu işlem geri alınamaz."),
+  actionLabel = t("Hesabımı sil"),
 }: {
   email: string;
   onConfirm: () => void;
   onClose: () => void;
+  /** Pencerenin başlığı, açıklaması ve onay düğmesinin metni */
+  title?: string;
+  note?: string;
+  actionLabel?: string;
 }) {
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
@@ -42,10 +49,8 @@ export default function AccountDeleteDialog({
     <div className="action-backdrop" onClick={onClose}>
       <form className="action-sheet" onSubmit={submit} onClick={(e) => e.stopPropagation()} noValidate>
         <div className="sheet-handle" aria-hidden="true" />
-        <h2 className="sheet-title">{t("Hesabınızı silmek için şifrenizi girin")}</h2>
-        <p className="sheet-note">
-          {t("Hesabınız ve bu hesaba bağlı tüm veriler kalıcı olarak silinecek. Bu işlem geri alınamaz.")}
-        </p>
+        <h2 className="sheet-title">{title}</h2>
+        <p className="sheet-note">{note}</p>
         <div className="field">
           <label htmlFor="acc-del-password">{t("Şifre")}</label>
           <input
@@ -58,7 +63,7 @@ export default function AccountDeleteDialog({
         </div>
         {error && <p className="form-error" role="alert">{error}</p>}
         <button className="danger-btn" type="submit" disabled={busy || !password}>
-          {busy ? t("Doğrulanıyor…") : t("Hesabımı sil")}
+          {busy ? t("Doğrulanıyor…") : actionLabel}
         </button>
         <button type="button" className="help-link" onClick={onClose}>
           {t("Vazgeç")}

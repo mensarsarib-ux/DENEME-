@@ -613,7 +613,6 @@ export default function App() {
             }
             onRestore={restore}
             onReset={resetAll}
-            canReset={canCreateBusiness}
             onRestoreFromAccount={restoreFromAccount}
             onBack={toHome}
           />
