@@ -813,7 +813,7 @@ body {
 /* ---------- Müşteri sayfası ---------- */
 
 .cust-page {
-  animation: page-in 0.28s ease-out;
+  animation: page-in 0.35s cubic-bezier(0.32, 0.72, 0, 1);
   max-width: 480px;
   height: 100%;
   min-height: 0;
@@ -1227,11 +1227,9 @@ body {
 
 @keyframes page-in {
   from {
-    opacity: 0;
-    transform: translateY(8px);
+    transform: translateX(28%);
   }
   to {
-    opacity: 1;
     transform: none;
   }
 }
