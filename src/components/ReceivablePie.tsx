@@ -1,5 +1,10 @@
-import { balanceOf, type Customer, type Transaction } from "../data/mock";
+import { useState } from "react";
+import { balanceOf, type Customer, type Period, type Transaction } from "../data/mock";
+import { haptic } from "../lib/haptics";
 import { t } from "../lib/i18n";
+import { rangeOf, titleOf, type RangeMode } from "../lib/ranges";
+import { useLongPress } from "../lib/useLongPress";
+import PeriodSheet from "./PeriodSheet";
 
 /** Pasta dilimleri: uygulamanın mavi tonları, yarı saydam (renk düzeniyle uyumlu) */
 const SLICES = [
@@ -24,7 +29,10 @@ function arc(start: number, end: number): string {
   return `M${c},${c} L${x1.toFixed(2)},${y1.toFixed(2)} A${r},${r} 0 ${large} 1 ${x2.toFixed(2)},${y2.toFixed(2)} Z`;
 }
 
-/** En çok alacağı olan müşteriler: ilk beş ve kalanı "Diğer" olarak pasta dilimi */
+/**
+ * En çok alacağı olan müşteriler: ilk beş ve kalanı "Diğer" olarak pasta dilimi.
+ * Basılı tutunca dönem seçilir; seçilen dönemin sonu itibarıyla alacaklar gösterilir.
+ */
 export default function ReceivablePie({
   parties,
   transactions,
@@ -32,9 +40,19 @@ export default function ReceivablePie({
   parties: Customer[];
   transactions: Transaction[];
 }) {
+  const [mode, setMode] = useState<RangeMode>("monthly");
+  const [custom, setCustom] = useState<[Date, Date] | null>(null);
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const { handlers, pressing } = useLongPress(() => {
+    haptic("medium");
+    setSheetOpen(true);
+  });
+
+  const period = rangeOf(mode, 0, custom);
+  const asOf = transactions.filter((tx) => new Date(tx.date) < period[1]);
   const owed = parties
     .filter((p) => p.kind === "customer")
-    .map((p) => ({ name: p.name, amount: balanceOf(transactions, p.id) }))
+    .map((p) => ({ name: p.name, amount: balanceOf(asOf, p.id) }))
     .filter((x) => x.amount > 0)
     .sort((a, b) => b.amount - a.amount);
 
@@ -55,7 +73,12 @@ export default function ReceivablePie({
   });
 
   return (
-    <section className="card pie-card" aria-label={t("En çok alacağı olan müşteriler")}>
+    <section
+      className={`card pie-card ${pressing ? "is-pressing" : ""}`}
+      aria-label={t("En çok alacağı olan müşteriler")}
+      title={t("Dönemi değiştirmek için basılı tutun")}
+      {...handlers}
+    >
       <h2 className="card-title">{t("EN ÇOK ALACAĞI OLAN MÜŞTERİLER")}</h2>
       {rows.length === 0 ? (
         <p className="pie-empty">{t("Henüz alacak yok.")}</p>
@@ -81,6 +104,25 @@ export default function ReceivablePie({
           </ul>
         </div>
       )}
+      <p className="col-note">{titleOf(mode, period)}</p>
+
+      <PeriodSheet
+        open={sheetOpen}
+        mode={mode}
+        custom={custom}
+        onClose={() => setSheetOpen(false)}
+        onChoose={(next: Period) => {
+          haptic("light");
+          setMode(next);
+          setCustom(null);
+          setSheetOpen(false);
+        }}
+        onCustom={(range) => {
+          setCustom(range);
+          setMode("custom");
+          setSheetOpen(false);
+        }}
+      />
     </section>
   );
 }
