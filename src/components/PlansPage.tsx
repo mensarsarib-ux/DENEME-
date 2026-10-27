@@ -63,6 +63,12 @@ const PLANS: {
 ];
 
 
+/**
+ * Ödeme (Apple abonelikleri) açılana kadar false. İlk sürümde yalnızca ücretsiz paket gösterilir;
+ * ürünler App Store Connect'te hazır olunca true yapılıp satın alma bağlanır.
+ */
+const PURCHASES_OPEN = false;
+
 const price = (value: number) => (value === 0 ? "₺0" : `₺${value.toLocaleString("tr-TR")}`);
 
 /** Üstteki görsel: mağaza, yükselen grafik ve taç; uygulamanın mavi tonlarında */
@@ -113,7 +119,7 @@ export default function PlansPage({
           <p className="paywall-lead">{t("Daha fazla işletme, sekme ve kayıt için paketinizi yükseltin.")}</p>
         </div>
 
-        {PLANS.map((p) => {
+        {PLANS.filter((p) => PURCHASES_OPEN || p.id === "free").map((p) => {
           const current = p.id === CURRENT_PLAN;
           return (
             <section key={p.id} className={`paywall-card tone-${p.tone} ${current ? "is-current" : ""}`} aria-label={PLAN_NAME[p.id]}>
@@ -149,15 +155,19 @@ export default function PlansPage({
           );
         })}
 
-        <p className="paywall-note">
-          {t("Abonelik Apple Kimliğiniz üzerinden ücretlendirilir. Dönem sonunda otomatik olarak yenilenir. Ayarlar → Apple Hesabı → Abonelikler bölümünden en az 24 saat önce iptal edebilirsiniz.")}
-        </p>
-        <p className="paywall-note">
-          {t("Fiyatlar yıllık abonelik ücretidir.")}
-        </p>
-        <button type="button" className="paywall-restore" disabled>
-          {t("Satın alımı geri yükle")}
-        </button>
+        {PURCHASES_OPEN && (
+          <>
+            <p className="paywall-note">
+              {t("Abonelik Apple Kimliğiniz üzerinden ücretlendirilir. Dönem sonunda otomatik olarak yenilenir. Ayarlar → Apple Hesabı → Abonelikler bölümünden en az 24 saat önce iptal edebilirsiniz.")}
+            </p>
+            <p className="paywall-note">
+              {t("Fiyatlar yıllık abonelik ücretidir.")}
+            </p>
+            <button type="button" className="paywall-restore" disabled>
+              {t("Satın alımı geri yükle")}
+            </button>
+          </>
+        )}
         <div className="paywall-links">
           <button type="button" className="paywall-link" onClick={onPrivacy}>
             {t("Gizlilik politikası")}
