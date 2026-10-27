@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 /** Kapanış animasyonunun süresi (ms); menü bu süre dolunca gerçekten kapanır */
 const CLOSE_MS = 260;
 import { haptic } from "../lib/haptics";
-import { MENU_ITEMS, PRIVACY_ICON, SUPPORT_ICON, type MenuPage } from "../lib/menu";
+import { MENU_ITEMS, TEAM_ICON, type MenuPage } from "../lib/menu";
 import { CURRENT_PLAN, LIMITS, PLAN_NAME, canAddBusiness, canUseTeam } from "../lib/plan";
 
 /** Şimdilik menüde gösterilmeyen sayfalar; kodları durur, listeden çıkarılarak tekrar açılabilir */
@@ -170,21 +170,11 @@ export default function MenuDrawer({
 
         <div className="drawer-spacer" />
 
-        {/* En altta: destek ve gizlilik; işletme bilgileri gibi aynı satır stilinde */}
-        <nav className="drawer-nav drawer-footer" aria-label={t("Yasal ve destek")}>
-          <button type="button" className="drawer-item" onClick={() => open("support")}>
-            <Svg d={SUPPORT_ICON} />
-            <span className="drawer-label">{t("Destek al")}</span>
-            <span className="drawer-chevron" aria-hidden="true">›</span>
-          </button>
-          <button type="button" className="drawer-item" onClick={() => open("privacy")}>
-            <Svg d={PRIVACY_ICON} />
-            <span className="drawer-label">{t("Gizlilik politikası")}</span>
-            <span className="drawer-chevron" aria-hidden="true">›</span>
-          </button>
-          <button type="button" className="drawer-item" onClick={() => open("terms")}>
-            <Svg d={PRIVACY_ICON} />
-            <span className="drawer-label">{t("Kullanım koşulları")}</span>
+        {/* En altta: ekip arkadaşlarını davet et ve çıkış yap */}
+        <nav className="drawer-nav drawer-footer" aria-label={t("Ekip ve hesap")}>
+          <button type="button" className="drawer-item" onClick={() => open("team")}>
+            <Svg d={TEAM_ICON} />
+            <span className="drawer-label">{t("Ekip arkadaşlarını davet et")}</span>
             <span className="drawer-chevron" aria-hidden="true">›</span>
           </button>
           {onSignOut && (

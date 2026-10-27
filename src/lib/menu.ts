@@ -32,3 +32,6 @@ export const PRIVACY_ICON = "M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6zM9 12l2 2
 
 export const SUPPORT_ICON =
   "M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5M12 17h.01";
+
+/** Ekip arkadaşlarını davet et satırının simgesi */
+export const TEAM_ICON = "M9 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM3 20a6 6 0 0 1 12 0M17 8v6M14 11h6";
