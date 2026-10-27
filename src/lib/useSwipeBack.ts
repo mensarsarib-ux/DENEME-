@@ -112,7 +112,8 @@ export function useSwipeBack(enabled: boolean) {
       window.setTimeout(() => {
         if (commit) {
           back?.click();
-          enterFromLeft();
+          // Arkada kopya zaten yerinde; yeni ekranı ayrıca kaydırmak görüntüde ikinci bir hareket yapar
+          if (!under) enterFromLeft();
         }
         // Sayfa aynı kalıyorsa (ör. ayar grupları) konumu da sıfırlanmalı; bu yüzden her durumda temizlenir
         target.style.transition = "none";
