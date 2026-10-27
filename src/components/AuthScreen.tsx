@@ -59,7 +59,7 @@ export default function AuthScreen({
   const canSubmit =
     !busy &&
     (mode === "code"
-      ? /^\d{6}$/.test(code)
+      ? /^\d{6,8}$/.test(code)
       : mode === "login"
       ? validMail && password !== ""
       : mode === "register"
@@ -314,7 +314,7 @@ export default function AuthScreen({
                 id="auth-code"
                 inputMode="numeric"
                 autoComplete="one-time-code"
-                maxLength={6}
+                maxLength={8}
                 value={code}
                 onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
               />
