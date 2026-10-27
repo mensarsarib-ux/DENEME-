@@ -268,7 +268,10 @@ export default function Dashboard({
               className="topbar-menu"
               aria-label={t("Menüyü aç")}
               aria-haspopup="dialog"
-              onClick={onOpenMenu}
+              onClick={() => {
+                haptic("light");
+                onOpenMenu();
+              }}
             >
               {t("Menü")}
             </button>
