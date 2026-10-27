@@ -33,7 +33,7 @@ function enterFromLeft() {
 export function useSwipeBack(enabled: boolean) {
   useEffect(() => {
     if (!enabled) return;
-    let start: { x: number; y: number; axis: "x" | "y" | null } | null = null;
+    let start: { x: number; y: number; axis: "x" | "y" | null; inner: boolean } | null = null;
     let page: HTMLElement | null = null;
     let underlay: HTMLElement | null = null;
 
@@ -44,7 +44,8 @@ export function useSwipeBack(enabled: boolean) {
         t.clientX <= EDGE &&
         !document.querySelector(".action-backdrop, .drawer-backdrop") &&
         document.querySelector('button[aria-label="Geri"]');
-      start = ok ? { x: t.clientX, y: t.clientY, axis: null } : null;
+      const inner = ok ? document.querySelector<HTMLElement>('button[aria-label="Geri"]')?.dataset.inner === "1" : false;
+      start = ok ? { x: t.clientX, y: t.clientY, axis: null, inner } : null;
       page = ok ? document.querySelector<HTMLElement>(".cust-page") : null;
     };
 
@@ -59,8 +60,8 @@ export function useSwipeBack(enabled: boolean) {
         if (start.axis === "x") {
           page.style.transition = "none";
           page.style.boxShadow = "-12px 0 28px rgba(0, 0, 0, 0.35)";
-          // Arkada ana ekranın kopyası: sayfa kaydıkça soldan yerine kayar
-          const copy = homeUnderlay();
+          // Arkada ana ekranın kopyası: sayfa kaydıkça soldan yerine kayar (aynı sayfa içi geri dönüşte kopya gösterilmez)
+          const copy = start.inner ? null : homeUnderlay();
           const parent = page.parentElement;
           if (copy && parent) {
             underlay = copy;
@@ -112,7 +113,8 @@ export function useSwipeBack(enabled: boolean) {
       window.setTimeout(() => {
         if (commit) {
           back?.click();
-          // Arkada kopya zaten yerinde; yeni ekranı ayrıca kaydırmak görüntüde ikinci bir hareket yapar
+          // Arkada kopya zaten yerinde; yeni ekranı ayrıca kaydırmak görüntüde ikinci bir hareket yapar.
+          // Aynı sayfa içi geri dönüşte (kopya yok) içerik soldan kayarak gelir.
           if (!under) enterFromLeft();
         }
         // Sayfa aynı kalıyorsa (ör. ayar grupları) konumu da sıfırlanmalı; bu yüzden her durumda temizlenir

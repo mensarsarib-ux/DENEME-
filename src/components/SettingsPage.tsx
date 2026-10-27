@@ -249,6 +249,7 @@ export default function SettingsPage({
         subtitle={group ? undefined : t("Tercihleriniz bu cihazda saklanır")}
         icon={ICON}
         onBack={group ? () => setGroup(null) : onBack}
+        innerBack={group !== null}
       />
       <div className="stack">
         {group === null && (

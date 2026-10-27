@@ -8,17 +8,20 @@ export default function PageHeader({
   subtitle,
   icon,
   onBack,
+  innerBack = false,
   action,
 }: {
   title: string;
   subtitle?: string;
   icon?: string;
   onBack: () => void;
+  /** Geri, aynı sayfa içinde bir önceki adıma döner (ör. ayar grubundan ayar listesine) */
+  innerBack?: boolean;
   action?: ReactNode;
 }) {
   return (
     <header className="cust-header">
-      <button className="round-btn" aria-label={t("Geri")} onClick={onBack}>
+      <button className="round-btn" aria-label={t("Geri")} data-inner={innerBack ? "1" : undefined} onClick={onBack}>
         <Svg d="M15 5l-7 7 7 7" />
       </button>
       <div className="cust-title">
