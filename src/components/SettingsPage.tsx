@@ -140,7 +140,6 @@ export default function SettingsPage({
 }) {
   const [backupDone, setBackupDone] = useState(false);
   const [restoring, setRestoring] = useState(false);
-  const [restoreText, setRestoreText] = useState("");
   const [restoreMsg, setRestoreMsg] = useState<{ ok: boolean; text: string } | null>(null);
   const [confirmReset, setConfirmReset] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -216,19 +215,6 @@ export default function SettingsPage({
     haptic("success");
     setRestoreMsg({ ok: true, text: t("Hesaptaki veriler geri çekildi.") });
     setRestoring(false);
-  }
-
-  function restore() {
-    const error = onRestore(restoreText);
-    if (error) {
-      haptic("warning");
-      setRestoreMsg({ ok: false, text: t(error) });
-    } else {
-      haptic("success");
-      setRestoreMsg({ ok: true, text: t("Yedek geri yüklendi.") });
-      setRestoreText("");
-      setRestoring(false);
-    }
   }
 
   return (
@@ -355,11 +341,6 @@ export default function SettingsPage({
           {backupDone && <p className="form-success">{t("Yedek dosyası hazırlandı. Telefonunuza kaydedin.")}</p>}
           {restoring && (
             <div className="field">
-              <label htmlFor="restore-text">{t("Yedek metnini yapıştırın")}</label>
-              <textarea id="restore-text" rows={5} value={restoreText} onChange={(e) => setRestoreText(e.target.value)} />
-              <button type="button" className="primary-btn" disabled={!restoreText.trim()} onClick={restore}>
-                {t("GERİ YÜKLE")}
-              </button>
               <div className="card-actions">
                 <label className="action-btn file-btn">
                   {t("Dosya ekle")}

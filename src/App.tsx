@@ -419,7 +419,8 @@ export default function App() {
     const remote = await pull(session, effMembership?.businessId ?? null);
     if (remote === "expired") return t("Oturumunuzun süresi doldu, yeniden giriş yapın.");
     if (!remote) return t("Hesapta kayıtlı veri yok.");
-    const error = restore(JSON.stringify(remote.data));
+    // Bulut verisi sürüm alanı olmadan saklanır; geri yükleme için sürüm eklenir
+    const error = restore(JSON.stringify({ version: 1, ...remote.data }));
     if (!error) setSyncPaused(false);
     return error;
   }
