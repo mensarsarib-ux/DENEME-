@@ -73,6 +73,7 @@ export default function ReceivablePie({
   });
 
   return (
+    <>
     <section
       className={`card pie-card ${pressing ? "is-pressing" : ""}`}
       aria-label={t("En çok alacağı olan müşteriler")}
@@ -106,23 +107,24 @@ export default function ReceivablePie({
       )}
       <p className="col-note">{titleOf(mode, period)}</p>
 
-      <PeriodSheet
-        open={sheetOpen}
-        mode={mode}
-        custom={custom}
-        onClose={() => setSheetOpen(false)}
-        onChoose={(next: Period) => {
-          haptic("light");
-          setMode(next);
-          setCustom(null);
-          setSheetOpen(false);
-        }}
-        onCustom={(range) => {
-          setCustom(range);
-          setMode("custom");
-          setSheetOpen(false);
-        }}
-      />
     </section>
+    <PeriodSheet
+      open={sheetOpen}
+      mode={mode}
+      custom={custom}
+      onClose={() => setSheetOpen(false)}
+      onChoose={(next: Period) => {
+        haptic("light");
+        setMode(next);
+        setCustom(null);
+        setSheetOpen(false);
+      }}
+      onCustom={(range) => {
+        setCustom(range);
+        setMode("custom");
+        setSheetOpen(false);
+      }}
+    />
+    </>
   );
 }

@@ -42,6 +42,7 @@ export default function ColumnChart({ transactions }: { transactions: Transactio
   }
 
   return (
+    <>
     <section
       className={`card col-chart ${pressing ? "is-pressing" : ""}`}
       aria-label={t("Gelir ve gider sütunları")}
@@ -73,19 +74,20 @@ export default function ColumnChart({ transactions }: { transactions: Transactio
         {titleOf(mode, period)} · {t("Gelir {g}", { g: money.format(gelir) })}
       </p>
 
-      <PeriodSheet
-        open={sheetOpen}
-        mode={mode}
-        custom={custom}
-        onClose={() => setSheetOpen(false)}
-        onChoose={choosePeriod}
-        onCustom={(range) => {
-          setCustom(range);
-          setMode("custom");
-          setSheetOpen(false);
-        }}
-      />
     </section>
+    <PeriodSheet
+      open={sheetOpen}
+      mode={mode}
+      custom={custom}
+      onClose={() => setSheetOpen(false)}
+      onChoose={choosePeriod}
+      onCustom={(range) => {
+        setCustom(range);
+        setMode("custom");
+        setSheetOpen(false);
+      }}
+    />
+    </>
   );
 }
 
