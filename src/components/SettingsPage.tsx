@@ -110,6 +110,8 @@ export default function SettingsPage({
   account,
   onRestore,
   onReset,
+  canReset = true,
+  onRestoreFromAccount,
   onBack,
 }: {
   settings: Settings;
@@ -130,6 +132,10 @@ export default function SettingsPage({
   /** Hata varsa mesajını, başarılıysa null döndürür */
   onRestore: (text: string) => string | null;
   onReset: () => void;
+  /** Yalnızca yetkili kişi (sahip ya da bireysel kullanıcı) tüm verileri sıfırlayabilir */
+  canReset?: boolean;
+  /** Hesaptaki veriyi çekip geri yükler; hata metni ya da null döner */
+  onRestoreFromAccount?: () => Promise<string | null>;
   onBack: () => void;
 }) {
   const [copied, setCopied] = useState<"ok" | "fail" | null>(null);
@@ -176,6 +182,20 @@ export default function SettingsPage({
       haptic("success");
     } catch {
       setCopied("fail");
+    }
+  }
+
+  async function restoreFromAccount() {
+    if (!onRestoreFromAccount) return;
+    haptic("light");
+    const error = await onRestoreFromAccount();
+    if (error) {
+      haptic("warning");
+      setRestoreMsg({ ok: false, text: error });
+    } else {
+      haptic("success");
+      setRestoreMsg({ ok: true, text: t("Hesaptaki veri geri yüklendi.") });
+      setRestoring(false);
     }
   }
 
@@ -327,14 +347,21 @@ export default function SettingsPage({
               <button type="button" className="primary-btn" disabled={!restoreText.trim()} onClick={restore}>
                 {t("GERİ YÜKLE")}
               </button>
+              {account?.session && onRestoreFromAccount && (
+                <button type="button" className="action-btn" onClick={restoreFromAccount}>
+                  {t("Hesaptan çek ve geri yükle")}
+                </button>
+              )}
             </div>
           )}
           {restoreMsg && (
             <p className={restoreMsg.ok ? "form-success" : "field-hint"} role="status">{restoreMsg.text}</p>
           )}
-          <button type="button" className="action-btn is-danger" onClick={() => setConfirmReset(true)}>
-            {t("Tüm verileri sıfırla")}
-          </button>
+          {canReset && (
+            <button type="button" className="action-btn is-danger" onClick={() => setConfirmReset(true)}>
+              {t("Tüm verileri sıfırla")}
+            </button>
+          )}
         </section>
 
         {account && (
