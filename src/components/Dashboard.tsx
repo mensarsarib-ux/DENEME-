@@ -354,7 +354,10 @@ export default function Dashboard({
               <button
                 className="row row-big"
                 aria-label={t("Kasa: nakit ve banka")}
-                onClick={onOpenKasa}
+                onClick={() => {
+                  haptic("light");
+                  onOpenKasa();
+                }}
               >
                 <span className="row-name">{t("Kasa")}</span>
                 <span className="row-amount">
