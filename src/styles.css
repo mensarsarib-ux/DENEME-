@@ -3589,3 +3589,28 @@ a.action-btn {
   justify-content: center;
   cursor: pointer;
 }
+
+/* Liste sıralaması seçeneği */
+.sort-options {
+  display: flex;
+  gap: 8px;
+}
+
+.sort-btn {
+  flex: 1;
+  padding: 12px 6px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface-head);
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.sort-btn.is-active {
+  border-color: var(--blue);
+  background: rgba(60, 143, 217, 0.12);
+  color: var(--blue);
+}

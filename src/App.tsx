@@ -687,6 +687,7 @@ export default function App() {
       profile={profile}
       accounts={accounts}
       onOpenMenu={() => setDrawerOpen(true)}
+      listSort={settings.listSort}
       onOpenKasa={() => go({ name: "kasa" })}
       onOpenPlans={() => go({ name: "menu", page: "newbusiness" })}
       onPlans={() => go({ name: "menu", page: "plans" })}

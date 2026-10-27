@@ -305,6 +305,8 @@ export interface Settings {
   currency: string;
   /** Yazı boyutu: küçük, orta, büyük */
   textSize: "small" | "medium" | "large";
+  /** Müşteri ve tedarikçi listesinin sıralaması: A'dan Z'ye, bakiyeye göre artan ya da azalan */
+  listSort: "name" | "balance-asc" | "balance-desc";
   notifyReceivable: boolean;
   /** Bir kişinin alacağı bu tutarı geçince bildirim üretilir */
   receivableLimit: number;
@@ -321,6 +323,7 @@ export interface Settings {
 export const DEFAULT_SETTINGS: Settings = {
   currency: "TRY",
   textSize: "medium",
+  listSort: "name",
   haptics: true,
   notifyReceivable: true,
   receivableLimit: 100000,

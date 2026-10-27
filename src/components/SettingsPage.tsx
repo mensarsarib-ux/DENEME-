@@ -298,6 +298,34 @@ export default function SettingsPage({
           <p className="field-hint">{t("Sağa veya sola kaydırın ya da bir seçeneğe dokunun.")}</p>
         </section>
 
+        <section className="card" aria-label={t("Liste sıralaması")}>
+          <h2 className="card-title">{t("Liste sıralaması")}</h2>
+          <div className="sort-options" role="radiogroup" aria-label={t("Liste sıralaması")}>
+            {(
+              [
+                ["name", t("A → Z")],
+                ["balance-asc", t("Küçükten büyüğe")],
+                ["balance-desc", t("Büyükten küçüğe")],
+              ] as const
+            ).map(([value, label]) => (
+              <button
+                key={value}
+                type="button"
+                role="radio"
+                aria-checked={settings.listSort === value}
+                className={`sort-btn ${settings.listSort === value ? "is-active" : ""}`}
+                onClick={() => {
+                  haptic("light");
+                  set("listSort", value);
+                }}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+          <p className="field-hint">{t("Müşteri ve tedarikçi listeleri bu sıraya göre dizilir.")}</p>
+        </section>
+
         <section className="card" aria-label={t("Para birimi")}>
           <h2 className="card-title">{t("Para birimi")}</h2>
           <button type="button" className="currency-current" onClick={() => setPickingCurrency(true)}>

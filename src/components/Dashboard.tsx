@@ -79,6 +79,7 @@ export default function Dashboard({
   onRenameTab,
   onDeleteTab,
   onOpenMenu,
+  listSort,
   onOpenKasa,
   onOpenPlans,
   onPlans,
@@ -122,6 +123,8 @@ export default function Dashboard({
   serverBusinesses: { id: string; name: string }[];
   /** Sol üstteki Menü: yan menü penceresini açar */
   onOpenMenu: () => void;
+  /** Liste sıralaması: A'dan Z'ye, bakiyeye göre artan ya da azalan */
+  listSort: "name" | "balance-asc" | "balance-desc";
 }) {
   const [searchOpen, setSearchOpen] = useState(false);
   // Firma kutusuna basılı tutunca altında "+" çıkar; konumu bu kutudan alınır
@@ -185,7 +188,11 @@ export default function Dashboard({
       balance: balanceOf(transactions, c.id),
       range: null,
     }))
-    .sort((a, b) => a.name.localeCompare(b.name, "tr"));
+    .sort((a, b) => {
+      if (listSort === "balance-asc") return a.balance - b.balance || a.name.localeCompare(b.name, "tr");
+      if (listSort === "balance-desc") return b.balance - a.balance || a.name.localeCompare(b.name, "tr");
+      return a.name.localeCompare(b.name, "tr");
+    });
 
   /** Basılı tutulan kayıt: altında arşivle / sil kartı açılır */
   const [sheetFor, setSheetFor] = useState<{ id: string; name: string } | null>(null);
