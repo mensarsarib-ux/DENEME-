@@ -22,6 +22,7 @@ import { saveViaViewer } from "../lib/saveFile";
 import StatementSheet from "./StatementSheet";
 import { statementText } from "../lib/statement";
 import Keypad from "./Keypad";
+import { useKeyboardLift } from "../lib/useKeyboardLift";
 
 /** Nakit ve banka simgeleri */
 const CASH_ICON = "M3 7h18v10H3zM12 9.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM6 10v.01M18 14v.01";
@@ -75,22 +76,6 @@ export default function CustomerPage({
     const timer = window.setTimeout(() => setKeypadOpen(true), 350);
     return () => window.clearTimeout(timer);
   }, []);
-  // Yazı klavyesi açılınca giriş paneli klavyenin üstüne kalksın (görünen alanın altına göre)
-  useEffect(() => {
-    const vv = window.visualViewport;
-    const dock = entryRef.current;
-    if (!vv || !dock) return;
-    const lift = () => {
-      dock.style.bottom = `${Math.max(0, window.innerHeight - vv.height - vv.offsetTop)}px`;
-    };
-    vv.addEventListener("resize", lift);
-    vv.addEventListener("scroll", lift);
-    return () => {
-      vv.removeEventListener("resize", lift);
-      vv.removeEventListener("scroll", lift);
-      dock.style.bottom = "";
-    };
-  }, []);
   const [dateValue, setDateValue] = useState<string | null>(null);
   const [description, setDescription] = useState("");
   // Seçenek penceresi açık işlem ve düzenlenmekte olan işlem
@@ -135,6 +120,8 @@ export default function CustomerPage({
   const [justAdded, setJustAdded] = useState<string[]>([]);
   const newRowRef = useRef<HTMLLIElement>(null);
   const entryRef = useRef<HTMLDivElement>(null);
+  // Yazı klavyesi açılınca giriş paneli klavyenin üstüne kalkar
+  useKeyboardLift(entryRef);
 
   // Giriş panelinin dışında (işlem listesi, başlık, boş alan) bir yere dokunulunca tuş takımı kapanır.
   // "click" kullanılır: liste kaydırılırken tetiklenmez.
