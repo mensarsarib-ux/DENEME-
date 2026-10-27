@@ -414,6 +414,15 @@ export default function App() {
   }
 
   /** Hesaptaki veriyi çekip bu cihaza geri yükler; eşitleme duraklamışsa yeniden başlatır */
+  /** Sunucudaki kaydın durumunu kısa metin olarak döner (tanılama için) */
+  async function remoteStatus(): Promise<string> {
+    if (!session) return t("Giriş yapılmadı");
+    const remote = await pull(session, effMembership?.businessId ?? null);
+    if (remote === "expired") return t("Oturum süresi dolmuş; yeniden giriş yapın");
+    if (!remote) return t("Sunucuda kayıtlı veri yok");
+    return t("Sunucuda kayıtlı veri var · son güncelleme {d}", { d: new Date(remote.updatedAt).toLocaleString("tr-TR") });
+  }
+
   async function restoreFromAccount(): Promise<string | null> {
     if (!session) return t("Hesaba giriş yapılmamış.");
     const remote = await pull(session, effMembership?.businessId ?? null);
@@ -614,6 +623,7 @@ export default function App() {
             onRestore={restore}
             onReset={resetAll}
             onRestoreFromAccount={restoreFromAccount}
+            onRemoteStatus={remoteStatus}
             onBack={toHome}
             onOpenPrivacy={() => go({ name: "menu", page: "privacy" })}
             onOpenTerms={() => go({ name: "menu", page: "terms" })}

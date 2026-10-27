@@ -127,6 +127,7 @@ export default function SettingsPage({
   onOpenPrivacy,
   onOpenTerms,
   onOpenSupport,
+  onRemoteStatus,
 }: {
   settings: Settings;
   /** Tüm verilerin JSON yedeği */
@@ -152,9 +153,18 @@ export default function SettingsPage({
   onOpenPrivacy: () => void;
   onOpenTerms: () => void;
   onOpenSupport: () => void;
+  /** Sunucudaki kaydın durumu (tanılama satırı için) */
+  onRemoteStatus: () => Promise<string>;
 }) {
   /** Açık olan ayar grubu; null ise ana liste görünür */
   const [group, setGroup] = useState<SettingsGroup | null>(null);
+  const [remoteText, setRemoteText] = useState<string | null>(null);
+  useEffect(() => {
+    if (group !== "hesap" || !account) return;
+    setRemoteText(null);
+    void onRemoteStatus().then(setRemoteText).catch(() => setRemoteText(t("Durum alınamadı")));
+    // Hesabım sayfası açılınca yenilenir
+  }, [group]);
   const [backupDone, setBackupDone] = useState(false);
   const [restoring, setRestoring] = useState(false);
   const [restoreMsg, setRestoreMsg] = useState<{ ok: boolean; text: string } | null>(null);
@@ -281,6 +291,7 @@ export default function SettingsPage({
             <div className="card-actions">
               <button type="button" className="action-btn" onClick={account.onSync}>{t("Şimdi eşitle")}</button>
             </div>
+            <p className="field-hint" role="status">{t("Sunucudaki durum")}: {remoteText ?? t("kontrol ediliyor…")}</p>
           </section>
         )}
 
