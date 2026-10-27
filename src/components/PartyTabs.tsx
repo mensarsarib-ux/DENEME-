@@ -203,6 +203,7 @@ export default function PartyTabs({
             type="button"
             aria-label={t("Yeni sekme ekle")}
             onClick={() => {
+              haptic("light");
               setName("");
               setDialog({ type: "create" });
             }}

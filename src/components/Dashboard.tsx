@@ -19,6 +19,7 @@ import Highlight from "./Highlight";
 import { PartyActionSheet, PartyRow } from "./PartyRow";
 import PartyTabs, { type TabInfo } from "./PartyTabs";
 import { Svg } from "./Icon";
+import { haptic } from "../lib/haptics";
 
 /** Logo yoksa firma kutusunda görünen dükkân simgesi */
 const SHOP_ICON = "M5 21V6l7-3 7 3v15M9 21v-5h6v5M9 9h1.5M13.5 9H15M9 13h1.5M13.5 13H15";
@@ -321,7 +322,10 @@ export default function Dashboard({
               <button
                 className="icon-btn"
                 aria-label={labels.add}
-                onClick={onNewParty}
+                onClick={() => {
+                  haptic("light");
+                  onNewParty();
+                }}
               >
                 <Svg d="M12 5v14M5 12h14" />
               </button>
