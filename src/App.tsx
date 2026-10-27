@@ -354,7 +354,8 @@ export default function App() {
     return <div className="sync-loading">{t("Verileriniz getiriliyor…")}</div>;
   }
 
-  if (session && serverWs && !sync.ready) {
+  // Eşitleme duraklatılmışsa (tüm verileri sil sonrası) yükleme ekranı beklenmez
+  if (session && serverWs && !sync.ready && !syncPaused) {
     return <div className="sync-loading">{t("Verileriniz getiriliyor…")}</div>;
   }
 
