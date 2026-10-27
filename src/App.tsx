@@ -693,6 +693,7 @@ export default function App() {
       onOpenMenu={() => setDrawerOpen(true)}
       onOpenKasa={() => go({ name: "kasa" })}
       onOpenPlans={() => go({ name: "menu", page: "newbusiness" })}
+      onPlans={() => go({ name: "menu", page: "plans" })}
       serverBusinesses={serverBusinesses}
       canCreateBusiness={canCreateBusiness}
       parties={parties}

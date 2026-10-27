@@ -80,6 +80,7 @@ export default function Dashboard({
   onOpenMenu,
   onOpenKasa,
   onOpenPlans,
+  onPlans,
   canCreateBusiness,
   serverBusinesses,
 }: {
@@ -112,6 +113,8 @@ export default function Dashboard({
   onOpenKasa: () => void;
   /** Firma logosundaki + ile işletme paketleri sayfası açılır */
   onOpenPlans: () => void;
+  /** Paketler sayfasını açar (işletme sınırı dolunca) */
+  onPlans: () => void;
   /** Yalnızca yetkili kişi yeni işletme açabilir */
   canCreateBusiness: boolean;
   /** Sunucudaki, bu cihazda olmayan ortak işletmeler (üye olunanlar) */
@@ -299,7 +302,7 @@ export default function Dashboard({
                 }}
                 canAdd={canCreateBusiness}
                 businessCount={businessList(serverBusinesses).length}
-                onPlans={onOpenPlans}
+                onPlans={onPlans}
                 onClose={() => setPlusAt(null)}
                 onAdd={() => {
                   setPlusAt(null);
