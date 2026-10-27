@@ -166,7 +166,7 @@ export default function SettingsPage({
     // Hesabım sayfası açılınca yenilenir
   }, [group]);
   const [backupDone, setBackupDone] = useState(false);
-  const [restoring, setRestoring] = useState(false);
+  const [restoreSheet, setRestoreSheet] = useState(false);
   const [restoreMsg, setRestoreMsg] = useState<{ ok: boolean; text: string } | null>(null);
   const [confirmReset, setConfirmReset] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -224,7 +224,7 @@ export default function SettingsPage({
     }
     haptic("success");
     setRestoreMsg({ ok: true, text: t("Yedek dosyası yüklendi, veriler geri döndü.") });
-    setRestoring(false);
+    setRestoreSheet(false);
   }
 
   /** Hesaptaki veriyi çekip geri yükler */
@@ -239,7 +239,7 @@ export default function SettingsPage({
     }
     haptic("success");
     setRestoreMsg({ ok: true, text: t("Hesaptaki veriler geri çekildi.") });
-    setRestoring(false);
+    setRestoreSheet(false);
   }
 
   return (
@@ -443,44 +443,61 @@ export default function SettingsPage({
         <section className="card" aria-label={t("Veriler")}>
           <h2 className="card-title">{t("Veriler")}</h2>
           <p className="card-empty">{t("Veriler yalnızca bu tarayıcıda saklanır. Yedek alıp başka cihaza taşıyabilirsiniz.")}</p>
-          <div className="card-actions">
-            <button type="button" className="action-btn" onClick={downloadBackup}>{t("Yedekleme al")}</button>
-            <button type="button" className="action-btn" onClick={() => { setRestoring((r) => !r); setRestoreMsg(null); }}>
+          <div className="data-actions">
+            <button type="button" className="action-btn is-center" onClick={() => { haptic("light"); void downloadBackup(); }}>
+              {t("Yedekleme al")}
+            </button>
+            <button type="button" className="action-btn is-center" onClick={() => { haptic("light"); setRestoreMsg(null); setRestoreSheet(true); }}>
               {t("Geri yükle")}
+            </button>
+            <button type="button" className="action-btn is-center is-danger" onClick={() => { haptic("warning"); setConfirmReset(true); }}>
+              {t("Tüm verileri sıfırla")}
             </button>
           </div>
           {backupDone && <p className="form-success">{t("Yedek dosyası hazırlandı. Telefonunuza kaydedin.")}</p>}
-          {restoring && (
-            <div className="field">
-              <div className="card-actions">
-                <label className="action-btn file-btn">
-                  {t("Dosya ekle")}
-                  <input
-                    type="file"
-                    accept=".json,application/json"
-                    hidden
-                    onChange={(e) => {
-                      const file = e.currentTarget.files?.[0];
-                      if (file) void loadFile(file);
-                      e.currentTarget.value = "";
-                    }}
-                  />
-                </label>
-                {account?.session && onRestoreFromAccount && (
-                  <button type="button" className="action-btn" onClick={pullFromAccount}>
-                    {t("Hesaptan çek")}
-                  </button>
-                )}
-              </div>
-            </div>
-          )}
           {restoreMsg && (
             <p className={restoreMsg.ok ? "form-success" : "field-hint"} role="status">{restoreMsg.text}</p>
           )}
-          <button type="button" className="action-btn is-danger" onClick={() => setConfirmReset(true)}>
-            {t("Tüm verileri sıfırla")}
-          </button>
         </section>
+
+        {restoreSheet && (
+          <div className="action-backdrop" onClick={() => setRestoreSheet(false)}>
+            <div className="action-sheet" role="dialog" aria-label={t("Geri yükle")} onClick={(e) => e.stopPropagation()}>
+              <div className="action-handle" aria-hidden="true" />
+              <h2 className="sheet-title">{t("Geri yükle")}</h2>
+              <label className="action-btn is-center file-btn" onClick={() => haptic("light")}>
+                {t("Dosya ekle")}
+                <input
+                  type="file"
+                  accept=".json,application/json"
+                  hidden
+                  onChange={(e) => {
+                    const file = e.currentTarget.files?.[0];
+                    setRestoreSheet(false);
+                    if (file) void loadFile(file);
+                    e.currentTarget.value = "";
+                  }}
+                />
+              </label>
+              {account?.session && onRestoreFromAccount && (
+                <button
+                  type="button"
+                  className="action-btn is-center"
+                  onClick={() => {
+                    haptic("light");
+                    setRestoreSheet(false);
+                    void pullFromAccount();
+                  }}
+                >
+                  {t("Hesaptan çek")}
+                </button>
+              )}
+              <button type="button" className="action-btn is-center is-cancel" onClick={() => setRestoreSheet(false)}>
+                {t("Vazgeç")}
+              </button>
+            </div>
+          </div>
+        )}
 
           </>
         )}

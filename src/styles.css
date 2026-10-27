@@ -3707,3 +3707,19 @@ textarea,
   color: var(--muted);
   font-size: 1.3rem;
 }
+
+/* Veriler: ortalanmış, eşit genişlikte düğmeler */
+.data-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.action-btn.is-center,
+.file-btn.is-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  text-align: center;
+}
