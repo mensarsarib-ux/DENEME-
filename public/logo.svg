@@ -1,5 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
-  <!-- Yer tutucu logo: paylaşacağınız logo ile bu dosyanın içeriğini değiştirin (aynı dosya adı) -->
-  <rect width="120" height="120" rx="28" fill="#1e3a5f" />
-  <path d="M34 86V34h10v20h32V34h10v52H76V64H44v22z" fill="#f5f7fa" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#24497a"/>
+      <stop offset="1" stop-color="#14304a"/>
+    </linearGradient>
+  </defs>
+  <rect width="1024" height="1024" fill="url(#bg)"/>
+  <path d="M276 760V264h88v206h296V264h88v496h-88V552H364v208z" fill="#f5f7fa"/>
+  <path d="M338 824 L400 884 L526 758" fill="none" stroke="#3fbf82" stroke-width="40" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>

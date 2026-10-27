@@ -1,4 +1,6 @@
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
+import { Capacitor } from "@capacitor/core";
+import { Keyboard } from "@capacitor/keyboard";
 import {
   CloudError,
   findBusinessAnon,
@@ -46,6 +48,23 @@ export default function AuthScreen({
   const [info, setInfo] = useState<string | null>(null);
   // Kod gönderilmiş olan e-posta, kodu girilen değer ve katılınacak işletme (katılma akışında)
   const [pendingMail, setPendingMail] = useState<string | null>(null);
+  // Yazı klavyesi açıkken kart yukarı çıkar; yerel uygulamada klavye olayıyla, tarayıcıda görünen alanla
+  const [keyboardOpen, setKeyboardOpen] = useState(false);
+  useEffect(() => {
+    if (Capacitor.isNativePlatform()) {
+      const show = Keyboard.addListener("keyboardWillShow", () => setKeyboardOpen(true));
+      const hide = Keyboard.addListener("keyboardWillHide", () => setKeyboardOpen(false));
+      return () => {
+        void show.then((h) => h.remove());
+        void hide.then((h) => h.remove());
+      };
+    }
+    const vv = window.visualViewport;
+    if (!vv) return;
+    const update = () => setKeyboardOpen(vv.height < window.innerHeight * 0.75);
+    vv.addEventListener("resize", update);
+    return () => vv.removeEventListener("resize", update);
+  }, []);
   const [pendingJoin, setPendingJoin] = useState<string | null>(null);
   const [code, setCode] = useState("");
 
@@ -231,12 +250,12 @@ export default function AuthScreen({
   );
 
   return (
-    <div className="auth-page">
+    <div className={`auth-page ${keyboardOpen ? "is-keyboard" : ""}`}>
       <form className="auth-card" onSubmit={submit} noValidate>
         <div className="auth-brand" aria-hidden="true">
           <img src="/logo.svg" alt="" />
         </div>
-        <h1>Hesabım</h1>
+        <h1>Hesabım Muhasebe</h1>
         <p className="auth-sub">{subtitle}</p>
 
         {(mode === "login" || mode === "register" || mode === "join") && (

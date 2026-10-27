@@ -2510,7 +2510,12 @@ a.action-btn {
   align-items: center;
   justify-content: center;
   padding: 24px 16px calc(env(safe-area-inset-bottom, 0px) + 24px);
-  background: linear-gradient(180deg, var(--bg-top), var(--bg-mid) 55%, var(--bg-bottom));
+  background: var(--surface);
+}
+/* Klavye açıkken kart ekranın üst kısmına çıkar; düğme klavyenin üstünde kalır */
+.auth-page.is-keyboard {
+  align-items: flex-start;
+  padding-top: 40px;
 }
 .auth-card {
   width: min(100%, 380px);
