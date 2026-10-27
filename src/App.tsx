@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import Splash from "./components/Splash";
 import Dashboard from "./components/Dashboard";
 import CustomerPage from "./components/CustomerPage";
 import KasaPage from "./components/KasaPage";
@@ -57,9 +56,6 @@ import { cloudEnabled, heartbeat, loadSession, readRecoveryToken, signOut, type 
 import { useCloudSync } from "./lib/useCloudSync";
 import { clearStored, usePersistedState } from "./lib/storage";
 
-// Açılış ekranı ne kadar görünsün (ms) ve çıkış animasyonunun süresi
-const SPLASH_DURATION = 2200;
-const SPLASH_EXIT = 400;
 
 
 /** Açık olan ekran. Tüm sekmeler (müşteriler, tedarikçiler, özel sekmeler) ana ekranda açılır. */
@@ -72,7 +68,6 @@ type View =
   | { name: "new"; kind: PartyKind };
 
 export default function App() {
-  const [phase, setPhase] = useState<"splash" | "exiting" | "home">("splash");
   const [view, setView] = useState<View>({ name: "home" });
   // Sekmeler: Müşteriler, Tedarikçiler ve kullanıcının açtıkları
   const [groups, setGroups] = usePersistedState<Group[]>("groups", BUILTIN_GROUPS);
@@ -243,7 +238,7 @@ export default function App() {
   // Az önce eklenen kayıt; listede vurgulanır
   const [addedId, setAddedId] = useState<string | null>(null);
 
-  useSwipeBack(phase === "home");
+  useSwipeBack(true);
 
   useEffect(() => setHapticsEnabled(settings.haptics), [settings.haptics]);
 
@@ -325,25 +320,6 @@ export default function App() {
     };
   }, [session]);
 
-  useEffect(() => {
-    const exit = window.setTimeout(() => setPhase("exiting"), SPLASH_DURATION);
-    const done = window.setTimeout(
-      () => setPhase("home"),
-      SPLASH_DURATION + SPLASH_EXIT,
-    );
-    return () => {
-      window.clearTimeout(exit);
-      window.clearTimeout(done);
-    };
-  }, []);
-
-  if (phase !== "home") {
-    return (
-      <div className={`splash-wrap ${phase === "exiting" ? "is-exiting" : ""}`}>
-        <Splash />
-      </div>
-    );
-  }
 
   if (cloudEnabled && !session) {
     return (
