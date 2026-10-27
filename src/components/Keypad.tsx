@@ -23,11 +23,13 @@ export default function Keypad({
   const downAt = useRef(0);
   const releaseTimer = useRef<number>();
 
+  // Karakter basılma anında girer (Apple klavyesi gibi); tıklama beklenmez
   const gesture = (key: string) => ({
     onPointerDown: () => {
       window.clearTimeout(releaseTimer.current);
       downAt.current = performance.now();
       setDown(key);
+      press(key);
     },
     onPointerUp: release,
     onPointerCancel: release,
@@ -66,7 +68,7 @@ export default function Keypad({
           type="button"
           className={down === key ? "is-down" : undefined}
           {...gesture(key)}
-          onClick={() => press(key)}
+          onClick={(e) => e.detail === 0 && press(key)}
         >
           <span className="key-num">{key}</span>
         </button>
@@ -76,7 +78,7 @@ export default function Keypad({
         className={`key-fn ${down === "," ? "is-down" : ""}`}
         aria-label={t("Virgül")}
         {...gesture(",")}
-        onClick={() => press(",")}
+        onClick={(e) => e.detail === 0 && press(",")}
       >
         <span className="key-num">,</span>
       </button>
@@ -84,7 +86,7 @@ export default function Keypad({
         type="button"
         className={down === "0" ? "is-down" : undefined}
         {...gesture("0")}
-        onClick={() => press("0")}
+        onClick={(e) => e.detail === 0 && press("0")}
       >
         <span className="key-num">0</span>
       </button>
@@ -93,7 +95,7 @@ export default function Keypad({
         className={`key-fn ${down === "back" ? "is-down" : ""}`}
         aria-label={t("Sil")}
         {...gesture("back")}
-        onClick={() => press("back")}
+        onClick={(e) => e.detail === 0 && press("back")}
       >
         <Svg d="M20 6H9l-5 6 5 6h11zM13 10l4 4M17 10l-4 4" />
       </button>
