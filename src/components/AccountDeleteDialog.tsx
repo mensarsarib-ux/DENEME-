@@ -46,7 +46,7 @@ export default function AccountDeleteDialog({
   }
 
   return (
-    <div className="action-backdrop" onClick={onClose}>
+    <div className="action-backdrop is-high" onClick={onClose}>
       <form className="action-sheet" onSubmit={submit} onClick={(e) => e.stopPropagation()} noValidate>
         <div className="sheet-handle" aria-hidden="true" />
         <h2 className="sheet-title">{title}</h2>
