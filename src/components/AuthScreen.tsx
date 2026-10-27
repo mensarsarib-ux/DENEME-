@@ -4,6 +4,7 @@ import {
   findBusinessAnon,
   normalizePhone,
   requestJoin,
+  resendSignupCode,
   sendResetEmail,
   setPassword,
   signIn,
@@ -42,6 +43,8 @@ export default function AuthScreen({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
+  // Doğrulama bağlantısı gönderilmiş olan e-posta; tekrar gönderme için tutulur
+  const [pendingMail, setPendingMail] = useState<string | null>(null);
 
   const mail = email.trim();
   const validMail = /^\S+@\S+\.\S+$/.test(mail);
@@ -88,7 +91,8 @@ export default function AuthScreen({
         if (result === "pending") {
           haptic("success");
           setMode("login");
-          setInfo(t("Hesabınız oluşturuldu. Giriş yapabilirsiniz."));
+          setPendingMail(mail);
+          setInfo(t("Doğrulama bağlantısı {m} adresine gönderildi. Bağlantıya dokunduktan sonra giriş yapın.", { m: mail }));
         } else {
           onSession(result, { isNew: true, businessName: business.trim() });
         }
@@ -266,6 +270,22 @@ export default function AuthScreen({
 
         {error && <p className="form-error" role="alert">{error}</p>}
         {info && <p className="form-success" role="status">{info}</p>}
+        {pendingMail && mode === "login" && (
+          <button
+            type="button"
+            className="help-link"
+            onClick={async () => {
+              try {
+                await resendSignupCode(pendingMail);
+                setInfo(t("Doğrulama bağlantısı yeniden gönderildi."));
+              } catch {
+                setError(t("Gönderilemedi; bağlantınızı kontrol edin."));
+              }
+            }}
+          >
+            {t("Doğrulama mailini tekrar gönder")}
+          </button>
+        )}
 
         <button className="primary-btn" type="submit" disabled={!canSubmit}>
           {busy ? t("Bekleyin…") : submitLabel}
