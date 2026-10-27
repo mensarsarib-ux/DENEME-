@@ -65,13 +65,11 @@ export function useSwipeBack(enabled: boolean) {
       const commit = dx > window.innerWidth * COMMIT_RATIO;
       target.style.transform = commit ? `translateX(${window.innerWidth}px)` : "translateX(0px)";
       window.setTimeout(() => {
-        if (commit) {
-          back?.click();
-        } else {
-          target.style.transition = "";
-          target.style.transform = "";
-          target.style.boxShadow = "";
-        }
+        if (commit) back?.click();
+        // Sayfa aynı kalıyorsa (ör. ayar grupları) konumu da sıfırlanmalı; bu yüzden her durumda temizlenir
+        target.style.transition = "none";
+        target.style.transform = "";
+        target.style.boxShadow = "";
       }, SETTLE_MS);
     };
 
