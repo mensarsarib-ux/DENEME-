@@ -96,34 +96,37 @@ export function useCloudSync({
     void pullRemote(true);
   }, [userId, pullRemote]);
 
+  /** Yerel veriyi sunucuya yazar; değişiklik yoksa ya da başka bir yazma sürüyorsa hiçbir şey yapmaz */
+  const pushNow = useCallback(async () => {
+    const cur = latest.current;
+    if (!cur.session || busy.current) return;
+    busy.current = true;
+    setStatus("syncing");
+    try {
+      const before = syncedJson.current;
+      const at = await push(cur.session, cur.snapshot, cur.businessId);
+      if (at === "expired") return cur.onExpired();
+      // Üye değişiklikleri, içerikleriyle sahibe bildirilir
+      if (cur.businessId && !cur.canSeed) {
+        const prev = before ? (JSON.parse(before) as Record<string, unknown>) : null;
+        const messages = describeChanges(prev, JSON.parse(cur.json) as Record<string, unknown>);
+        await notifyChanges(cur.session, cur.businessId, messages).catch(() => undefined);
+      }
+      syncedJson.current = cur.json;
+      markSynced(at);
+    } catch {
+      setStatus("error");
+    } finally {
+      busy.current = false;
+    }
+  }, []);
+
   // Yerel değişiklikleri kısa beklemeyle sunucuya yaz
   useEffect(() => {
     if (!session || !ready || json === syncedJson.current) return;
-    const timer = window.setTimeout(async () => {
-      const cur = latest.current;
-      if (!cur.session || busy.current) return;
-      busy.current = true;
-      setStatus("syncing");
-      try {
-        const before = syncedJson.current;
-        const at = await push(cur.session, cur.snapshot, cur.businessId);
-        if (at === "expired") return cur.onExpired();
-        // Üye değişiklikleri, içerikleriyle sahibe bildirilir
-        if (cur.businessId && !cur.canSeed) {
-          const prev = before ? (JSON.parse(before) as Record<string, unknown>) : null;
-          const messages = describeChanges(prev, JSON.parse(cur.json) as Record<string, unknown>);
-          await notifyChanges(cur.session, cur.businessId, messages).catch(() => undefined);
-        }
-        syncedJson.current = cur.json;
-        markSynced(at);
-      } catch {
-        setStatus("error");
-      } finally {
-        busy.current = false;
-      }
-    }, PUSH_DELAY_MS);
+    const timer = window.setTimeout(() => void pushNow(), PUSH_DELAY_MS);
     return () => window.clearTimeout(timer);
-  }, [json, session, ready]);
+  }, [json, session, ready, pushNow]);
 
   // Başka telefondaki değişiklikleri al: düzenli aralıkla, sayfa öne gelince ve internet dönünce
   useEffect(() => {
@@ -141,7 +144,18 @@ export function useCloudSync({
     };
   }, [session, ready, pullRemote]);
 
-  const syncNow = useCallback(() => void pullRemote(false), [pullRemote]);
+  // "Şimdi eşitle": önce sunucudan çeker, sonra bekleyen yerel değişiklikleri hemen yazar
+  const [pushTick, setPushTick] = useState(0);
+  useEffect(() => {
+    if (pushTick === 0 || !session || !ready || json === syncedJson.current) return;
+    void pushNow();
+    // Yalnızca "Şimdi eşitle" çağrıldığında çalışır
+  }, [pushTick]);
+
+  const syncNow = useCallback(async () => {
+    await pullRemote(false);
+    setPushTick((n) => n + 1);
+  }, [pullRemote]);
 
   return { status, lastSync, ready, syncNow };
 }
