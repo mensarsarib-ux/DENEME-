@@ -26,7 +26,7 @@ import type { TeamPerson } from "./lib/cloud";
 import { renameBusiness } from "./lib/cloud";
 import { migrateLocalWorkspaces } from "./lib/migrate";
 import { canAddItem, canAddTab } from "./lib/plan";
-import { deleteMyAccount, pull } from "./lib/cloud";
+import { deleteMyAccount } from "./lib/cloud";
 import { businessList, listWorkspaces } from "./lib/storage";
 import { activeWorkspace, MAIN_WORKSPACE } from "./lib/storage";
 import type { TabInfo } from "./components/PartyTabs";
@@ -159,8 +159,10 @@ export default function App() {
   const serverBusinesses = (serverBiz ?? [])
     .filter((b) => b.role === "member" && b.businessId !== membership?.businessId)
     .map((b) => ({ id: b.businessId, name: b.name }));
+  // Tüm verileri sıfırlayınca eşitleme duraklar; uygulama yeniden açılınca devam eder
+  const [syncPaused, setSyncPaused] = useState(false);
   const sync = useCloudSync({
-    session: serverWs && memberReady && !waiting ? session : null,
+    session: serverWs && memberReady && !waiting && !syncPaused ? session : null,
     businessId: effMembership?.businessId ?? null,
     canSeed: effMembership?.role === "owner",
     snapshot,
@@ -208,6 +210,7 @@ export default function App() {
   }
 
   function logout() {
+    setSyncPaused(false);
     signOut();
     clearStored();
     emptyWorkspace("");
@@ -410,23 +413,11 @@ export default function App() {
     return null;
   }
 
-  /** Hesaptaki veriyi çekip bu cihaza geri yükler; hata metni ya da null döner */
-  async function restoreFromAccount(): Promise<string | null> {
-    if (!session) return t("Hesaba giriş yapılmamış.");
-    const remote = await pull(session, effMembership?.businessId ?? null);
-    if (remote === "expired") return t("Oturumunuzun süresi doldu, yeniden giriş yapın.");
-    if (!remote) return t("Hesapta kayıtlı veri yok.");
-    return restore(JSON.stringify(remote.data));
-  }
-
-  // Yalnızca bu cihazdaki veriyi siler; hesap açık kalır. Giriş yapılmışsa sayfa yeniden yüklenir:
-  // açılışta önce bulut verisi çekilir, boş veri buluta yazılmaz ve hesaptaki veri cihaza geri gelir.
+  // Yalnızca bu cihazdaki veriyi siler; hesap açık kalır. Eşitleme duraklatılır ki boş veri buluta yazılmasın
+  // ve silinen veri hemen geri gelmesin. Uygulama yeniden açılınca hesaptaki veri tekrar çekilir.
   function resetAll() {
     clearStored();
-    if (session) {
-      window.location.reload();
-      return;
-    }
+    if (session) setSyncPaused(true);
     setGroups(BUILTIN_GROUPS);
     setParties([...initialCustomers, ...initialSuppliers]);
     setTransactions(initialTransactions);
@@ -610,7 +601,6 @@ export default function App() {
             onRestore={restore}
             onReset={resetAll}
             canReset={canCreateBusiness}
-            onRestoreFromAccount={restoreFromAccount}
             onBack={toHome}
           />
         );

@@ -3578,3 +3578,11 @@ a.action-btn {
   justify-content: center;
   gap: 16px;
 }
+
+/* Dosya ekle: etiket olarak görünen düğme */
+.file-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
