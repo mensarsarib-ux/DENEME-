@@ -75,6 +75,22 @@ export default function CustomerPage({
     const timer = window.setTimeout(() => setKeypadOpen(true), 350);
     return () => window.clearTimeout(timer);
   }, []);
+  // Yazı klavyesi açılınca giriş paneli klavyenin üstüne kalksın (görünen alanın altına göre)
+  useEffect(() => {
+    const vv = window.visualViewport;
+    const dock = entryRef.current;
+    if (!vv || !dock) return;
+    const lift = () => {
+      dock.style.bottom = `${Math.max(0, window.innerHeight - vv.height - vv.offsetTop)}px`;
+    };
+    vv.addEventListener("resize", lift);
+    vv.addEventListener("scroll", lift);
+    return () => {
+      vv.removeEventListener("resize", lift);
+      vv.removeEventListener("scroll", lift);
+      dock.style.bottom = "";
+    };
+  }, []);
   const [dateValue, setDateValue] = useState<string | null>(null);
   const [description, setDescription] = useState("");
   // Seçenek penceresi açık işlem ve düzenlenmekte olan işlem
@@ -486,8 +502,10 @@ export default function CustomerPage({
                 rows={2}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                // Alanlar yerinde kalsın diye tuş takımı kapatılmaz; yazı klavyesi alt kısmı kaplar
-                onFocus={() => setTyping(true)}
+                onFocus={() => {
+                  setTyping(true);
+                  setKeypadOpen(false);
+                }}
                 onBlur={() => setTyping(false)}
               />
             </div>
