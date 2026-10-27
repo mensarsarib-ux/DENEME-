@@ -429,12 +429,13 @@ export default function App() {
   function resetAll() {
     clearStored();
     if (session) setSyncPaused(true);
+    // Sekmeler kalır, kayıtlar ve notlar boşalır; hesaplar sıfır bakiyeyle açılır
     setGroups(BUILTIN_GROUPS);
-    setParties([...initialCustomers, ...initialSuppliers]);
-    setTransactions(initialTransactions);
-    setAccounts(initialAccounts);
-    setProfile(DEFAULT_PROFILE);
-    setNotes(initialNotes);
+    setParties([]);
+    setTransactions([]);
+    setAccounts(initialAccounts.map((a) => ({ ...a, opening: 0 })));
+    setProfile({ ...DEFAULT_PROFILE, name: "", owner: "" });
+    setNotes([]);
     setReadIds([]);
     setSettings(DEFAULT_SETTINGS);
     setActiveTab("customer");
