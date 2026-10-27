@@ -155,9 +155,6 @@ export default function PlansPage({
         <p className="paywall-note">
           {t("Fiyatlar yıllık abonelik ücretidir.")}
         </p>
-        <p className="paywall-note">
-          {t("Satın almalar henüz açılmadı; abonelikler yakında bu sayfadan başlatılabilecek.")}
-        </p>
         <button type="button" className="paywall-restore" disabled>
           {t("Satın alımı geri yükle")}
         </button>
