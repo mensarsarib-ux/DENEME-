@@ -72,7 +72,7 @@ export default function DeleteBusinessDialog({
   }
 
   return (
-    <div className="action-backdrop" onClick={onClose}>
+    <div className="action-backdrop is-high" onClick={onClose}>
       <form className="action-sheet" onSubmit={confirm} onClick={(e) => e.stopPropagation()} noValidate>
         <div className="sheet-handle" aria-hidden="true" />
         <h2 className="sheet-title">{t("“{n}” silinsin mi?", { n: name })}</h2>
