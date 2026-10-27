@@ -410,11 +410,14 @@ export default function App() {
     return null;
   }
 
-  // Yalnızca bu cihazı sıfırlar. Giriş yapılmışsa oturum kapanır ki sıfırlanmış veri buluta yazılmasın;
-  // bulut verileri olduğu gibi kalır ve tekrar giriş yapılınca geri gelir.
+  // Yalnızca bu cihazdaki veriyi siler; hesap açık kalır. Giriş yapılmışsa sayfa yeniden yüklenir:
+  // açılışta önce bulut verisi çekilir, boş veri buluta yazılmaz ve hesaptaki veri cihaza geri gelir.
   function resetAll() {
-    if (session) logout();
     clearStored();
+    if (session) {
+      window.location.reload();
+      return;
+    }
     setGroups(BUILTIN_GROUPS);
     setParties([...initialCustomers, ...initialSuppliers]);
     setTransactions(initialTransactions);

@@ -402,7 +402,7 @@ export default function SettingsPage({
           <div className="action-sheet is-centered" role="alertdialog" aria-label={t("Sıfırlama onayı")} onClick={(e) => e.stopPropagation()}>
             <div className="action-handle" aria-hidden="true" />
             <h2 className="sheet-title">{t("Tüm verileri sıfırlamak istediğinize emin misiniz?")}</h2>
-            <p className="sheet-note">{t("Bu cihazdaki kayıtlar, notlar ve ayarlar örnek verilere döner. Giriş yaptıysanız oturum kapanır; bulut verileriniz silinmez ve tekrar giriş yapınca geri gelir. Bu işlem geri alınamaz.")}</p>
+            <p className="sheet-note">{t("Bu cihazdaki kayıtlar, notlar ve ayarlar silinir. Hesabınız açık kalır ve hesabınızdaki veriler cihaza geri gelir. Hesabınızdaki veriler silinmez. Bu işlem bu cihaz için geri alınamaz.")}</p>
             <button className="danger-btn" type="button" onClick={() => { haptic("warning"); setConfirmReset(false); onReset(); }}>
               {t("EVET, SIFIRLA")}
             </button>
