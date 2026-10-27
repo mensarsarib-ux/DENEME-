@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { haptic } from "../lib/haptics";
 import {
   accountBalance,
   monthRange,
@@ -63,7 +64,10 @@ export default function KasaPage({
   return (
     <div className="cust-page">
       <header className="cust-header">
-        <button className="round-btn" aria-label={t("Geri")} onClick={onBack}>
+        <button className="round-btn" aria-label={t("Geri")} onClick={() => {
+            haptic("light");
+            onBack();
+          }}>
           <Svg d="M15 5l-7 7 7 7" />
         </button>
         <div className="cust-title">
@@ -86,7 +90,10 @@ export default function KasaPage({
               role="tab"
               aria-selected={active === a.id}
               className={`party-tab ${active === a.id ? "is-active" : ""}`}
-              onClick={() => setActive(a.id)}
+              onClick={() => {
+                haptic("light");
+                setActive(a.id);
+              }}
             >
               <span className="party-tab-label">
                 <span className="party-tab-name">{t(a.name)}</span>
@@ -113,7 +120,10 @@ export default function KasaPage({
             type="button"
             className={`kasa-seg ${kind === value ? "is-active" : ""}`}
             aria-pressed={kind === value}
-            onClick={() => setKind(value)}
+            onClick={() => {
+              haptic("light");
+              setKind(value);
+            }}
           >
             {label}
           </button>
@@ -123,7 +133,10 @@ export default function KasaPage({
           className={`kasa-cal ${span !== "all" || order !== "new" ? "is-on" : ""}`}
           aria-label={t("Tarih ve sıralama")}
           aria-haspopup="dialog"
-          onClick={() => setSheetOpen(true)}
+          onClick={() => {
+            haptic("light");
+            setSheetOpen(true);
+          }}
         >
           <Svg d="M4 5h16v15H4zM4 10h16M8 3v4M16 3v4" />
         </button>
@@ -150,7 +163,10 @@ export default function KasaPage({
                   type="button"
                   className={`action-btn ${span === value ? "is-active" : ""}`}
                   aria-pressed={span === value}
-                  onClick={() => setSpan(value)}
+                  onClick={() => {
+                    haptic("light");
+                    setSpan(value);
+                  }}
                 >
                   {label}
                 </button>
@@ -181,13 +197,19 @@ export default function KasaPage({
                   type="button"
                   className={`action-btn ${order === value ? "is-active" : ""}`}
                   aria-pressed={order === value}
-                  onClick={() => setOrder(value)}
+                  onClick={() => {
+                    haptic("light");
+                    setOrder(value);
+                  }}
                 >
                   {label}
                 </button>
               ))}
             </div>
-            <button className="primary-btn" type="button" onClick={() => setSheetOpen(false)}>
+            <button className="primary-btn" type="button" onClick={() => {
+              haptic("light");
+              setSheetOpen(false);
+            }}>
               {t("Tamam")}
             </button>
           </div>
