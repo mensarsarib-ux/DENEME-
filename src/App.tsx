@@ -615,6 +615,9 @@ export default function App() {
             onReset={resetAll}
             onRestoreFromAccount={restoreFromAccount}
             onBack={toHome}
+            onOpenPrivacy={() => go({ name: "menu", page: "privacy" })}
+            onOpenTerms={() => go({ name: "menu", page: "terms" })}
+            onOpenSupport={() => go({ name: "menu", page: "support" })}
           />
         );
       case "privacy":

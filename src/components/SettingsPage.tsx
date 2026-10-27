@@ -42,6 +42,17 @@ function Switch({
   );
 }
 
+/** Ayarlar ana listesindeki gruplar */
+type SettingsGroup = "hesap" | "gorunum" | "para" | "veriler" | "destek";
+
+const GROUP_TITLES: Record<SettingsGroup, string> = {
+  hesap: "Hesabım",
+  gorunum: "Görünüm",
+  para: "Para ve bildirimler",
+  veriler: "Veriler",
+  destek: "Destek ve yasal",
+};
+
 /** Ayarlar: titreşim, destek e-postası, yedekleme ve sıfırlama */
 const SIZES = ["small", "medium", "large"] as const;
 
@@ -112,6 +123,9 @@ export default function SettingsPage({
   onReset,
   onRestoreFromAccount,
   onBack,
+  onOpenPrivacy,
+  onOpenTerms,
+  onOpenSupport,
 }: {
   settings: Settings;
   /** Tüm verilerin JSON yedeği */
@@ -134,7 +148,12 @@ export default function SettingsPage({
   /** Hesaptaki veriyi çekip cihaza geri yükler; hata metni ya da null döner */
   onRestoreFromAccount?: () => Promise<string | null>;
   onBack: () => void;
+  onOpenPrivacy: () => void;
+  onOpenTerms: () => void;
+  onOpenSupport: () => void;
 }) {
+  /** Açık olan ayar grubu; null ise ana liste görünür */
+  const [group, setGroup] = useState<SettingsGroup | null>(null);
   const [backupDone, setBackupDone] = useState(false);
   const [restoring, setRestoring] = useState(false);
   const [restoreMsg, setRestoreMsg] = useState<{ ok: boolean; text: string } | null>(null);
@@ -216,8 +235,37 @@ export default function SettingsPage({
 
   return (
     <div className="cust-page">
-      <PageHeader title={t("Ayarlar")} subtitle={t("Tercihleriniz bu cihazda saklanır")} icon={ICON} onBack={onBack} />
+      <PageHeader
+        title={group ? t(GROUP_TITLES[group]) : t("Ayarlar")}
+        subtitle={group ? undefined : t("Tercihleriniz bu cihazda saklanır")}
+        icon={ICON}
+        onBack={group ? () => setGroup(null) : onBack}
+      />
       <div className="stack">
+        {group === null && (
+          <section className="card settings-menu" aria-label={t("Ayarlar")}>
+            {(
+              [
+                ["hesap", account ? account.email : t("Giriş yapılmadı")],
+                ["gorunum", t("Yazı boyutu, titreşim, liste sıralaması")],
+                ["para", t("Para birimi ve bildirim eşikleri")],
+                ["veriler", t("Yedek al, geri yükle, tüm verileri sil")],
+                ["destek", t("Destek, gizlilik, kullanım koşulları")],
+              ] as const
+            ).map(([value, hint]) => (
+              <button key={value} type="button" className="settings-row" onClick={() => setGroup(value)}>
+                <span className="settings-row-text">
+                  <strong>{t(GROUP_TITLES[value])}</strong>
+                  <small>{hint}</small>
+                </span>
+                <span className="settings-row-chevron" aria-hidden="true">›</span>
+              </button>
+            ))}
+          </section>
+        )}
+
+        {group === "hesap" && (
+          <>
         {account && (
           <section className="card" aria-label={t("Hesap")}>
             <h2 className="card-title">{t("Hesap")}</h2>
@@ -282,6 +330,11 @@ export default function SettingsPage({
           </section>
         )}
 
+          </>
+        )}
+
+        {group === "gorunum" && (
+          <>
         <section className="card" aria-label={t("Genel")}>
           <h2 className="card-title">{t("Genel")}</h2>
           <Switch
@@ -326,6 +379,11 @@ export default function SettingsPage({
           <p className="field-hint">{t("Müşteri ve tedarikçi listeleri bu sıraya göre dizilir.")}</p>
         </section>
 
+          </>
+        )}
+
+        {group === "para" && (
+          <>
         <section className="card" aria-label={t("Para birimi")}>
           <h2 className="card-title">{t("Para birimi")}</h2>
           <button type="button" className="currency-current" onClick={() => setPickingCurrency(true)}>
@@ -339,6 +397,11 @@ export default function SettingsPage({
           <p className="field-hint">{t("Yalnızca gösterilen simge değişir; mevcut tutarlar başka bir para birimine çevrilmez.")}</p>
         </section>
 
+          </>
+        )}
+
+        {group === "destek" && (
+          <>
         <section className="card" aria-label={t("Destek")}>
           <h2 className="card-title">{t("Destek e-postası")}</h2>
           <div className="field">
@@ -354,6 +417,19 @@ export default function SettingsPage({
           </div>
         </section>
 
+        <section className="card" aria-label={t("Yasal")}>
+          <h2 className="card-title">{t("Yasal ve destek")}</h2>
+          <div className="card-actions">
+            <button type="button" className="action-btn" onClick={onOpenSupport}>{t("Destek al")}</button>
+            <button type="button" className="action-btn" onClick={onOpenPrivacy}>{t("Gizlilik politikası")}</button>
+            <button type="button" className="action-btn" onClick={onOpenTerms}>{t("Kullanım koşulları")}</button>
+          </div>
+        </section>
+          </>
+        )}
+
+        {group === "veriler" && (
+          <>
         <section className="card" aria-label={t("Veriler")}>
           <h2 className="card-title">{t("Veriler")}</h2>
           <p className="card-empty">{t("Veriler yalnızca bu tarayıcıda saklanır. Yedek alıp başka cihaza taşıyabilirsiniz.")}</p>
@@ -396,7 +472,10 @@ export default function SettingsPage({
           </button>
         </section>
 
-        {account && (
+          </>
+        )}
+
+        {group === null && account && (
           <section className="card" aria-label={t("Hesap işlemleri")}>
             <h2 className="card-title">{t("Hesap işlemleri")}</h2>
             <div className="card-actions">
