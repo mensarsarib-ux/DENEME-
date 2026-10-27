@@ -160,7 +160,24 @@ export default function App() {
     .filter((b) => b.role === "member" && b.businessId !== membership?.businessId)
     .map((b) => ({ id: b.businessId, name: b.name }));
   // Tüm verileri sıfırlayınca eşitleme duraklar; uygulama yeniden açılınca devam eder
-  const [syncPaused, setSyncPaused] = useState(false);
+  // Duraklatma yeniden açılışlarda da korunur; yalnızca hesaptan çekilince ya da çıkış yapınca kalkar
+  const PAUSE_KEY = "hesabim:sync-paused";
+  const [syncPaused, setSyncPausedState] = useState(() => {
+    try {
+      return localStorage.getItem(PAUSE_KEY) === "1";
+    } catch {
+      return false;
+    }
+  });
+  const setSyncPaused = (paused: boolean) => {
+    try {
+      if (paused) localStorage.setItem(PAUSE_KEY, "1");
+      else localStorage.removeItem(PAUSE_KEY);
+    } catch {
+      /* depolama erişilemiyorsa yalnızca oturum boyunca geçerli */
+    }
+    setSyncPausedState(paused);
+  };
   const sync = useCloudSync({
     session: serverWs && memberReady && !waiting && !syncPaused ? session : null,
     businessId: effMembership?.businessId ?? null,
