@@ -1175,8 +1175,9 @@ body {
 }
 
 /* Açıklama yazılırken işlem türü sekmeleri gizlenir; yazı klavyesinin üstünde tarih ve açıklama kalır */
+/* Yazı yazılırken sekmeler gizlenir ama yerlerini korur; alanlar kaymaz */
 .entry-dock.is-typing .entry-tabs {
-  display: none;
+  visibility: hidden;
 }
 
 .entry-tabs {

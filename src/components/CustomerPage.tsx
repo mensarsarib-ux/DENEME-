@@ -486,10 +486,8 @@ export default function CustomerPage({
                 rows={2}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                onFocus={() => {
-                  setTyping(true);
-                  setKeypadOpen(false);
-                }}
+                // Alanlar yerinde kalsın diye tuş takımı kapatılmaz; yazı klavyesi alt kısmı kaplar
+                onFocus={() => setTyping(true)}
                 onBlur={() => setTyping(false)}
               />
             </div>
