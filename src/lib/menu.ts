@@ -19,7 +19,6 @@ export type MenuPage =
 export const MENU_ITEMS: { page: MenuPage; label: string; icon: string }[] = [
   { page: "profile", label: "İşletme profili", icon: "M4 21V8l8-5 8 5v13M9 21v-6h6v6M8 11h.01M12 11h.01M16 11h.01" },
   { page: "accounts", label: "Hesaplarım", icon: "M3 7h18v10H3zM3 11h18M7 15h3" },
-  { page: "plans", label: "İşletme paketleri", icon: "M4 20V8l8-4 8 4v12M9 20v-6h6v6" },
   { page: "reports", label: "Raporlar", icon: "M5 20V10M11 20V4M17 20v-7" },
   { page: "notes", label: "Notlar", icon: "M6 3h12v18H6zM9 8h6M9 12h6M9 16h4" },
   { page: "archive", label: "Arşiv", icon: "M3 5h18v4H3zM5 9v11h14V9M10 13h4" },
