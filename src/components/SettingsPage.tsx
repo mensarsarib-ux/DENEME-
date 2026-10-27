@@ -5,6 +5,7 @@ import type { Settings } from "../data/mock";
 import { locale, t } from "../lib/i18n";
 import { CURRENCIES, currencyOf } from "../lib/currencies";
 import { haptic } from "../lib/haptics";
+import { saveTextFile } from "../lib/saveBackup";
 import { MENU_ITEMS } from "../lib/menu";
 import type { SyncStatus } from "../lib/useCloudSync";
 import PageHeader from "./PageHeader";
@@ -190,18 +191,16 @@ export default function SettingsPage({
   const set = <K extends keyof Settings>(key: K, value: Settings[K]) =>
     onChange({ ...settings, [key]: value });
 
-  /** Yedeği telefona kaydedilebilecek bir JSON dosyası olarak indirir */
-  function downloadBackup() {
-    const url = URL.createObjectURL(new Blob([backupText], { type: "application/json" }));
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `hesabim-yedek-${new Date().toISOString().slice(0, 10)}.json`;
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
-    haptic("success");
-    setBackupDone(true);
+  /** Yedeği JSON dosyası olarak kaydettirir (iPhone'da paylaşım penceresiyle) */
+  async function downloadBackup() {
+    try {
+      await saveTextFile(`hesabim-yedek-${new Date().toISOString().slice(0, 10)}.json`, backupText);
+      haptic("success");
+      setBackupDone(true);
+    } catch {
+      haptic("warning");
+      setRestoreMsg({ ok: false, text: t("Yedek kaydedilemedi; tekrar deneyin.") });
+    }
   }
 
   /** Seçilen yedek dosyasını okur ve doğrudan geri yükler */
