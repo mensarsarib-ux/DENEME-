@@ -1048,20 +1048,21 @@ body {
 
 /* Giriş paneli ekranın alt kenarına oturur: alt köşeler düz, ev çizgisi alanı panelin içinde */
 .entry {
-  margin: 0 8px;
+  margin: 0 8px calc(14px + env(safe-area-inset-bottom, 0px));
   display: flex;
   flex-direction: column;
   overflow: hidden;
   border: 2px solid var(--accent);
-  border-bottom-width: 0;
-  border-radius: 16px 16px 0 0;
+  border-radius: 16px;
   background: #161d26;
-  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 /* Tuş takımı açıkken panelin altı tuş takımına bağlanır; güvenli alanı tuş takımı kendisi taşır */
+/* Tuş takımı açıkken çerçeve tuş takımına bağlanır: alt kenar açık, köşeler yalnızca üstte */
 .entry-dock.is-keypad-open .entry {
-  padding-bottom: 0;
+  margin-bottom: 0;
+  border-bottom-width: 0;
+  border-radius: 16px 16px 0 0;
 }
 
 .entry-field,
