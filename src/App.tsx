@@ -434,7 +434,10 @@ export default function App() {
     return null;
   }
 
+  // Yalnızca bu cihazı sıfırlar. Giriş yapılmışsa oturum kapanır ki sıfırlanmış veri buluta yazılmasın;
+  // bulut verileri olduğu gibi kalır ve tekrar giriş yapılınca geri gelir.
   function resetAll() {
+    if (session) logout();
     clearStored();
     setGroups(BUILTIN_GROUPS);
     setParties([...initialCustomers, ...initialSuppliers]);
