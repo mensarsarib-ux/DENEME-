@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { homeUnderlay } from "./homeSnapshot";
 
 /** Parmağın ekranın sol kenarından başlaması gereken en fazla uzaklık (px) */
 const EDGE = 40;
@@ -7,6 +8,8 @@ const COMMIT_RATIO = 0.4;
 /** iOS'taki yay benzeri hareket eğrisi ve süre */
 const EASE = "transform 0.35s cubic-bezier(0.32, 0.72, 0, 1)";
 const SETTLE_MS = 360;
+/** Arkadaki ana ekranın başlangıçta sola kayma oranı (ekran genişliğinin yüzdesi, 0–1) */
+const UNDERLAY_SHIFT = 0.3;
 
 /** Geri dönülen ekran soldan kayarak yerine oturur (iOS'taki gibi) */
 function enterFromLeft() {
@@ -32,6 +35,7 @@ export function useSwipeBack(enabled: boolean) {
     if (!enabled) return;
     let start: { x: number; y: number; axis: "x" | "y" | null } | null = null;
     let page: HTMLElement | null = null;
+    let underlay: HTMLElement | null = null;
 
     const onStart = (e: TouchEvent) => {
       const t = e.touches[0];
@@ -55,12 +59,33 @@ export function useSwipeBack(enabled: boolean) {
         if (start.axis === "x") {
           page.style.transition = "none";
           page.style.boxShadow = "-12px 0 28px rgba(0, 0, 0, 0.35)";
+          // Arkada ana ekranın kopyası: sayfa kaydıkça soldan yerine kayar
+          const copy = homeUnderlay();
+          const parent = page.parentElement;
+          if (copy && parent) {
+            underlay = copy;
+            underlay.style.position = "absolute";
+            underlay.style.inset = "0";
+            underlay.style.zIndex = "0";
+            underlay.style.pointerEvents = "none";
+            underlay.style.overflow = "hidden";
+            underlay.style.transform = `translateX(${-UNDERLAY_SHIFT * 100}%)`;
+            parent.insertBefore(underlay, page);
+            page.style.position = "relative";
+            page.style.zIndex = "1";
+          }
         } else {
           start = null;
           return;
         }
       }
-      page.style.transform = `translateX(${Math.max(0, dx)}px)`;
+      const shift = Math.max(0, dx);
+      page.style.transform = `translateX(${shift}px)`;
+      if (underlay) {
+        const width = window.innerWidth;
+        const progress = Math.min(1, shift / width);
+        underlay.style.transform = `translateX(${-UNDERLAY_SHIFT * width * (1 - progress)}px)`;
+      }
     };
 
     const onEnd = (e: TouchEvent) => {
@@ -78,6 +103,12 @@ export function useSwipeBack(enabled: boolean) {
       target.style.transition = EASE;
       const commit = dx > window.innerWidth * COMMIT_RATIO;
       target.style.transform = commit ? `translateX(${window.innerWidth}px)` : "translateX(0px)";
+      const under = underlay;
+      underlay = null;
+      if (under) {
+        under.style.transition = EASE;
+        under.style.transform = commit ? "translateX(0px)" : `translateX(${-UNDERLAY_SHIFT * window.innerWidth}px)`;
+      }
       window.setTimeout(() => {
         if (commit) {
           back?.click();
@@ -87,12 +118,17 @@ export function useSwipeBack(enabled: boolean) {
         target.style.transition = "none";
         target.style.transform = "";
         target.style.boxShadow = "";
+        target.style.position = "";
+        target.style.zIndex = "";
+        under?.remove();
       }, SETTLE_MS);
     };
 
     const onCancel = () => {
       start = null;
       page = null;
+      underlay?.remove();
+      underlay = null;
     };
 
     document.addEventListener("touchstart", onStart, { passive: true });

@@ -28,6 +28,7 @@ import { migrateLocalWorkspaces } from "./lib/migrate";
 import { canAddItem, canAddTab } from "./lib/plan";
 import { deleteMyAccount, pull } from "./lib/cloud";
 import { businessList, listWorkspaces } from "./lib/storage";
+import { captureHome } from "./lib/homeSnapshot";
 import { activeWorkspace, MAIN_WORKSPACE } from "./lib/storage";
 import type { TabInfo } from "./components/PartyTabs";
 import {
@@ -470,6 +471,8 @@ export default function App() {
   }
 
   function go(next: View) {
+    // Ana ekrandan çıkarken son hâli saklanır; geri kaydırmada arkada görünsün
+    if (view.name === "home") captureHome();
     setAddedId(null);
     setView(next);
   }
