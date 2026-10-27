@@ -9,6 +9,7 @@ import {
   setPassword,
   signIn,
   signUp,
+  verifySignupCode,
   type Session,
 } from "../lib/cloud";
 import { haptic } from "../lib/haptics";
@@ -16,7 +17,7 @@ import { t } from "../lib/i18n";
 import PhoneField from "./PhoneField";
 
 /** Giriş ekranının modları: giriş, kayıt, şifremi unuttum, e-postadan gelen yeni şifre */
-type Mode = "login" | "register" | "join" | "forgot" | "recovery";
+type Mode = "login" | "register" | "join" | "forgot" | "recovery" | "code";
 
 /**
  * Giriş ve kayıt ekranı. Giriş yalnızca e-posta ve şifreyle yapılır.
@@ -43,8 +44,10 @@ export default function AuthScreen({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
-  // Doğrulama bağlantısı gönderilmiş olan e-posta; tekrar gönderme için tutulur
+  // Kod gönderilmiş olan e-posta, kodu girilen değer ve katılınacak işletme (katılma akışında)
   const [pendingMail, setPendingMail] = useState<string | null>(null);
+  const [pendingJoin, setPendingJoin] = useState<string | null>(null);
+  const [code, setCode] = useState("");
 
   const mail = email.trim();
   const validMail = /^\S+@\S+\.\S+$/.test(mail);
@@ -55,7 +58,9 @@ export default function AuthScreen({
 
   const canSubmit =
     !busy &&
-    (mode === "login"
+    (mode === "code"
+      ? /^\d{6}$/.test(code)
+      : mode === "login"
       ? validMail && password !== ""
       : mode === "register"
         ? business.trim() !== "" && validMail && validPhone && strongEnough
@@ -82,6 +87,31 @@ export default function AuthScreen({
     if (!canSubmit) return;
     setBusy(true);
     setError(null);
+    if (mode === "code") {
+      try {
+        const session = await verifySignupCode(pendingMail ?? mail, code);
+        if (session === "invalid") {
+          haptic("warning");
+          setError(t("Kod hatalı ya da süresi dolmuş. Yeni kod isteyin."));
+          return;
+        }
+        // Katılma akışında isteği gönder; kayıt akışında yeni işletme açılır
+        if (pendingJoin) {
+          await requestJoin(session, pendingJoin);
+          haptic("success");
+          onSession(session);
+        } else {
+          haptic("success");
+          onSession(session, { isNew: true, businessName: business.trim() });
+        }
+      } catch (e) {
+        haptic("warning");
+        setError(describe(e));
+      } finally {
+        setBusy(false);
+      }
+      return;
+    }
     setInfo(null);
     try {
       if (mode === "login") {
@@ -90,9 +120,11 @@ export default function AuthScreen({
         const result = await signUp(mail, phone.trim(), password);
         if (result === "pending") {
           haptic("success");
-          setMode("login");
           setPendingMail(mail);
-          setInfo(t("Doğrulama bağlantısı {m} adresine gönderildi. Bağlantıya dokunduktan sonra giriş yapın.", { m: mail }));
+          setPendingJoin(null);
+          setCode("");
+          setMode("code");
+          setInfo(t("{m} adresine 6 haneli bir doğrulama kodu gönderdik.", { m: mail }));
         } else {
           onSession(result, { isNew: true, businessName: business.trim() });
         }
@@ -106,10 +138,12 @@ export default function AuthScreen({
         }
         const result = await signUp(mail, phone.trim(), password);
         if (result === "pending") {
-          // Doğrulama kapalıyken oturum hemen açılır; yine de gelmezse katılma isteğini giriş sonrası gönder
           haptic("success");
-          setMode("login");
-          setInfo(t("Hesabınız oluşturuldu. Giriş yapıp Var olan işletmeye katıl ekranından isteği gönderin."));
+          setPendingMail(mail);
+          setPendingJoin(found[0].id);
+          setCode("");
+          setMode("code");
+          setInfo(t("{m} adresine 6 haneli bir doğrulama kodu gönderdik.", { m: mail }));
           return;
         }
         // Oturum açıldı: katılma isteği gönderilir, yetkili onaylayınca erişim açılır
@@ -144,6 +178,7 @@ export default function AuthScreen({
   };
 
   const submitLabel = {
+    code: t("KODU ONAYLA"),
     login: t("GİRİŞ YAP"),
     register: t("KAYIT OL"),
     join: t("KAYIT OL VE KATIL"),
@@ -152,6 +187,7 @@ export default function AuthScreen({
   }[mode];
 
   const subtitle = {
+    code: t("E-postanızı doğrulayın"),
     login: t("Hesabınıza giriş yapın"),
     register: t("Yeni hesap oluşturun"),
     join: t("Var olan işletmeye katılın"),
@@ -270,21 +306,38 @@ export default function AuthScreen({
 
         {error && <p className="form-error" role="alert">{error}</p>}
         {info && <p className="form-success" role="status">{info}</p>}
-        {pendingMail && mode === "login" && (
-          <button
-            type="button"
-            className="help-link"
-            onClick={async () => {
-              try {
-                await resendSignupCode(pendingMail);
-                setInfo(t("Doğrulama bağlantısı yeniden gönderildi."));
-              } catch {
-                setError(t("Gönderilemedi; bağlantınızı kontrol edin."));
-              }
-            }}
-          >
-            {t("Doğrulama mailini tekrar gönder")}
-          </button>
+        {mode === "code" && (
+          <>
+            <div className="field">
+              <label htmlFor="auth-code">{t("Doğrulama kodu")}</label>
+              <input
+                id="auth-code"
+                inputMode="numeric"
+                autoComplete="one-time-code"
+                maxLength={6}
+                value={code}
+                onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
+              />
+            </div>
+            <button
+              type="button"
+              className="help-link"
+              onClick={async () => {
+                if (!pendingMail) return;
+                try {
+                  await resendSignupCode(pendingMail);
+                  setInfo(t("Yeni doğrulama kodu gönderildi."));
+                } catch {
+                  setError(t("Gönderilemedi; bağlantınızı kontrol edin."));
+                }
+              }}
+            >
+              {t("Kodu tekrar gönder")}
+            </button>
+            <button type="button" className="help-link" onClick={() => switchMode("register")}>
+              {t("Vazgeç")}
+            </button>
+          </>
         )}
 
         <button className="primary-btn" type="submit" disabled={!canSubmit}>
