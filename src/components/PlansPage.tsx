@@ -6,6 +6,9 @@ import { t } from "../lib/i18n";
 import { SUPPORT_ICON } from "../lib/menu";
 import PageHeader from "./PageHeader";
 
+/** Paket sırası: alttan üste; sayfada yalnızca mevcut paket ve üstü gösterilir */
+const RANK: Record<Plan, number> = { free: 0, pro: 1, proplus: 2, premium: 3 };
+
 /** Paket kartları (en üst paket önce): fiyat yıllık TL, özellikler kısa ve açık cümlelerle */
 const PLANS: {
   id: Plan;
@@ -172,7 +175,7 @@ export default function PlansPage({
           <p className="paywall-lead">{t("Daha fazla işletme, sekme ve kayıt için paketinizi yükseltin.")}</p>
         </div>
 
-        {PLANS.filter((p) => PURCHASES_OPEN || p.id === "free").map((p) => {
+        {PLANS.filter((p) => RANK[p.id] >= RANK[CURRENT_PLAN] && (PURCHASES_OPEN || p.id === "free")).map((p) => {
           const current = p.id === CURRENT_PLAN;
           return (
             <section key={p.id} className={`paywall-card tone-${p.tone} ${current ? "is-current" : ""}`} aria-label={PLAN_NAME[p.id]}>
