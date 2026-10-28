@@ -213,7 +213,8 @@ export default function PlansPage({
                   <p className="paywall-tag">{t(p.tagline)}</p>
                 </div>
                 <p className="paywall-price">
-                  {price(p.price)}
+                  {/* Fiyat App Store'dan geldiyse o gösterilir (ülkeye göre para birimi doğru olur) */}
+                  {(p.id !== "free" && storePrices[PLAN_PRODUCT[p.id as Exclude<Plan, "free">]]) || price(p.price)}
                   <small>{p.price === 0 ? t("sonsuza kadar") : t("yıllık")}</small>
                 </p>
               </div>
@@ -255,6 +256,11 @@ export default function PlansPage({
             </button>
             {message && <p className="field-hint" role="status">{message}</p>}
           </>
+        )}
+        {PURCHASES_OPEN && shownPlan !== "free" && (
+          <a className="paywall-link" href="https://apps.apple.com/account/subscriptions" target="_blank" rel="noreferrer">
+            {t("Aboneliği yönet veya iptal et")}
+          </a>
         )}
         <div className="paywall-links">
           <button type="button" className="paywall-link" onClick={onPrivacy}>

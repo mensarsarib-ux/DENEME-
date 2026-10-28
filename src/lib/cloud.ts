@@ -489,6 +489,20 @@ export interface Membership {
 }
 
 /** Giriş yapan kişinin işletme üyeliği; yoksa null */
+/** Ortak işletmenin sahibinin paketi (sınırlar buna göre uygulanır); bilinmiyorsa null */
+export async function businessPlan(session: Session, businessId: string): Promise<string | null> {
+  const s = await fresh(session);
+  if (!s) return null;
+  const res = await call("/rest/v1/rpc/business_plan", {
+    method: "POST",
+    token: s.accessToken,
+    body: JSON.stringify({ bid: businessId }),
+  });
+  if (!res.ok) return null;
+  const plan = (await res.json().catch(() => null)) as string | null;
+  return typeof plan === "string" ? plan : null;
+}
+
 export async function myMembership(session: Session): Promise<Membership | null | "expired"> {
   const s = await fresh(session);
   if (!s) return "expired";

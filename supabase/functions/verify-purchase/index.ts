@@ -72,6 +72,7 @@ async function appleGet(path: string, token: string): Promise<{ data?: Record<st
 
 type TxInfo = {
   productId: string;
+  originalTransactionId?: string;
   bundleId: string;
   expiresDate?: number;
   revocationDate?: number;
@@ -109,13 +110,15 @@ Deno.serve(async (req) => {
   try {
     const token = await appleJwt();
     const now = Date.now();
-    let best: { plan: string; productId: string; expires: number } | null = null;
+    let best: { plan: string; productId: string; expires: number; original: string } | null = null;
     const consider = (info: TxInfo, active: boolean, source: string) => {
       console.log(`${source} ${info.productId} aktif=${active} bitis=${info.expiresDate} yukseltildi=${info.isUpgraded ?? false}`);
       const plan = PRODUCT_PLAN[info.productId];
       if (!plan || info.bundleId !== BUNDLE_ID || !active || info.revocationDate || info.isUpgraded) return;
       const expires = Math.max(info.expiresDate ?? 0, now + 24 * 3600 * 1000);
-      if (!best || RANK[plan] > RANK[best.plan]) best = { plan, productId: info.productId, expires };
+      if (!best || RANK[plan] > RANK[best.plan]) {
+        best = { plan, productId: info.productId, expires, original: String(info.originalTransactionId ?? "") };
+      }
     };
 
     // 1) İşlemin kendisi: satın alınan ürün anında doğru gelir (yükseltmede durum servisi geride kalabilir)
@@ -138,9 +141,31 @@ Deno.serve(async (req) => {
       return json({ error: "apple_reddetti", reason: [...tx.tried, ...status.tried].join(" | ") }, 402);
     }
 
-    const chosen = best as { plan: string; productId: string; expires: number } | null;
+    const chosen = best as { plan: string; productId: string; expires: number; original: string } | null;
+
+    // Aynı Apple aboneliği başka bir Hesabım hesabında etkinse bu hesaba paket açılmaz
+    if (chosen?.original) {
+      const { data: other } = await admin
+        .from("entitlements")
+        .select("user_id")
+        .eq("original_transaction_id", chosen.original)
+        .neq("user_id", userId)
+        .gt("expires_at", new Date().toISOString())
+        .neq("plan", "free")
+        .limit(1);
+      if (other && other.length > 0) {
+        console.log(`abonelik baska hesapta ${chosen.original}`);
+        return json({ error: "baska_hesapta" }, 409);
+      }
+    }
+
     const row = chosen
-      ? { plan: chosen.plan, product_id: chosen.productId, expires_at: new Date(chosen.expires).toISOString() }
+      ? {
+          plan: chosen.plan,
+          product_id: chosen.productId,
+          original_transaction_id: chosen.original || null,
+          expires_at: new Date(chosen.expires).toISOString(),
+        }
       : { plan: "free", product_id: null, expires_at: null };
     const { error } = await admin.from("entitlements").upsert({
       user_id: userId,

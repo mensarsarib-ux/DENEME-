@@ -3723,3 +3723,10 @@ textarea,
   width: 100%;
   text-align: center;
 }
+
+/* Paketler sayfasındaki bağlantı (abonelik yönetimi) düğmelerle aynı hizada */
+a.paywall-link {
+  display: block;
+  text-align: center;
+  text-decoration: none;
+}

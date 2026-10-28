@@ -32,12 +32,40 @@ export async function loadProducts(): Promise<Product[]> {
 
 /** Seçilen paketi satın alır; Apple'dan gelen işlem sunucuda doğrulanır, plan ancak onaydan sonra açılır */
 export async function buyPlan(plan: Exclude<Plan, "free">): Promise<void> {
+  // Ödeme alınmadan önce giriş kontrol edilir; paket hesaba bağlanacağı için giriş şarttır
+  if (!loadSession()) throw new Error("Paket almak için önce hesabınıza giriş yapın");
   const tx = await NativePurchases.purchaseProduct({
     productIdentifier: PLAN_PRODUCT[plan],
     productType: PURCHASE_TYPE.SUBS,
   });
-  const confirmed = await confirmWithServer(String(tx.transactionId));
+  const id = String(tx.transactionId);
+  // Sunucuya ulaşılamazsa satın alma kaybolmasın: işlem, doğrulanana kadar cihazda bekletilir
+  savePendingTransaction(id);
+  const confirmed = await confirmWithServer(id);
   if (confirmed === "free") throw new Error("Apple bu hesap için aktif abonelik göstermedi");
+}
+
+const PENDING_KEY = "hesabim:pending-transaction";
+
+/** Henüz sunucuda doğrulanamamış son satın alma (yalnızca aynı hesap için geçerli) */
+function pendingTransaction(): string | undefined {
+  try {
+    const raw = localStorage.getItem(PENDING_KEY);
+    const saved = raw ? (JSON.parse(raw) as { id?: string; userId?: string }) : null;
+    return saved?.id && saved.userId === loadSession()?.userId ? saved.id : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+function savePendingTransaction(id: string | null) {
+  try {
+    const userId = loadSession()?.userId;
+    if (id && userId) localStorage.setItem(PENDING_KEY, JSON.stringify({ id, userId }));
+    else localStorage.removeItem(PENDING_KEY);
+  } catch {
+    /* depolama erişilemiyorsa geri yükleme sunucudaki kayıtla yapılır */
+  }
 }
 
 /**
@@ -47,15 +75,21 @@ export async function buyPlan(plan: Exclude<Plan, "free">): Promise<void> {
 async function confirmWithServer(transactionId?: string): Promise<Plan> {
   const session = loadSession();
   if (!session) throw new Error("Satın alma için giriş yapmanız gerekiyor");
-  const result = await verifyPurchase(session, transactionId);
+  const result = await verifyPurchase(session, transactionId ?? pendingTransaction());
   if (result === "expired") throw new Error("Oturumunuzun süresi doldu, yeniden giriş yapın");
   if ("error" in result) {
     if (result.error.startsWith("aktif_abonelik_yok") || result.error.startsWith("islem_yok")) {
+      savePendingTransaction(null);
       saveEntitledPlan("free");
       return "free";
     }
+    if (result.error.startsWith("baska_hesapta")) {
+      savePendingTransaction(null);
+      throw new Error("Bu Apple aboneliği başka bir Hesabım hesabında kullanılıyor.");
+    }
     throw new Error(`Satın alma doğrulanamadı: ${result.error}`);
   }
+  savePendingTransaction(null);
   const plan = result.plan as Plan;
   saveEntitledPlan(plan);
   return plan;

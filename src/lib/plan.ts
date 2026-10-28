@@ -1,23 +1,8 @@
 /**
- * Hesap planı. Şimdilik herkes ücretsizdir; satın alma bağlanınca burası değişir.
- * NOT: Sınırlar şu an yalnızca uygulamada kontrol ediliyor. Satın alma bağlanınca
- * plan bilgisi sunucuda tutulup sınırlar veritabanında da zorlanacak.
+ * Hesap planı. Apple aboneliği sunucuda doğrulanır ve hesabın kaydında tutulur
+ * (verify-purchase fonksiyonu, entitlements tablosu); cihaz yalnızca son bilinen planı saklar.
  */
 export type Plan = "free" | "pro" | "proplus" | "premium";
-
-/**
- * TEST KANCASI: ?plan=pro gibi bir bağlantıyla planı denemek için. Satın alma bağlanınca
- * ve sunucu tarafı zorlanınca kaldırılacak; şu an plan sınırları yalnızca istemcide olduğu için
- * bu kanca herkes için açıktır.
- */
-function planFromUrl(): Plan | null {
-  try {
-    const p = new URLSearchParams(window.location.search).get("plan");
-    return p === "free" || p === "pro" || p === "proplus" || p === "premium" ? p : null;
-  } catch {
-    return null;
-  }
-}
 
 /** Satın alımdan ya da geri yüklemeden gelen, cihazda saklanan plan */
 function storedPlan(): Plan | null {
@@ -35,7 +20,7 @@ function storedPlan(): Plan | null {
   }
 }
 
-export let CURRENT_PLAN: Plan = planFromUrl() ?? storedPlan() ?? "free";
+export let CURRENT_PLAN: Plan = storedPlan() ?? "free";
 
 /** Satın alma ya da geri yüklemeden sonra paketi uygulamayı yeniden başlatmadan değiştirir */
 export function setCurrentPlan(plan: Plan): void {

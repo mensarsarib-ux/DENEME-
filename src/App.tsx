@@ -25,8 +25,9 @@ import TeamMemberPage from "./components/TeamMemberPage";
 import type { TeamPerson } from "./lib/cloud";
 import { renameBusiness } from "./lib/cloud";
 import { migrateLocalWorkspaces } from "./lib/migrate";
-import { canAddItem, canAddTab } from "./lib/plan";
-import { deleteMyAccount, pull } from "./lib/cloud";
+import { canAddItem, canAddTab, type Plan } from "./lib/plan";
+import { syncPlanFromServer } from "./lib/entitlement";
+import { businessPlan, deleteMyAccount, pull } from "./lib/cloud";
 import { businessList, listWorkspaces } from "./lib/storage";
 import { captureHome } from "./lib/homeSnapshot";
 import { activeWorkspace, MAIN_WORKSPACE } from "./lib/storage";
@@ -160,6 +161,25 @@ export default function App() {
   const serverBusinesses = (serverBiz ?? [])
     .filter((b) => b.role === "member" && b.businessId !== membership?.businessId)
     .map((b) => ({ id: b.businessId, name: b.name }));
+  // Hesabın paketi sunucudan okunur: açılışta ve her girişte (arka planda, açılışı bekletmez)
+  useEffect(() => {
+    if (session?.userId) void syncPlanFromServer();
+  }, [session?.userId]);
+  // Ortak işletmede (üye olarak) liste ve sekme sınırları işletme sahibinin paketine göre uygulanır
+  const [ownerPlan, setOwnerPlan] = useState<Plan | null>(null);
+  const memberBusinessId = effMembership?.role === "member" ? effMembership.businessId : null;
+  useEffect(() => {
+    setOwnerPlan(null);
+    if (!session || !memberBusinessId) return;
+    let alive = true;
+    void businessPlan(session, memberBusinessId).then((plan) => {
+      if (alive && (plan === "free" || plan === "pro" || plan === "proplus" || plan === "premium")) setOwnerPlan(plan);
+    });
+    return () => {
+      alive = false;
+    };
+  }, [session, memberBusinessId]);
+  const limitPlan = ownerPlan ?? undefined;
   // Tüm verileri sıfırlayınca eşitleme duraklar; uygulama yeniden açılınca devam eder
   // Duraklatma yeniden açılışlarda da korunur; yalnızca hesaptan çekilince ya da çıkış yapınca kalkar
   const PAUSE_KEY = "hesabim:sync-paused";
@@ -231,9 +251,13 @@ export default function App() {
     setSyncPaused(false);
     signOut();
     clearStored();
-    // Hesabın planı bu cihazda kalmasın; yeniden açılışta yeni hesabın planı okunur
+    // Hesabın planı ve eşitleme işaretleri bu cihazda kalmasın; yeniden açılışta yeni hesabınki okunur
     try {
       localStorage.removeItem("hesabim:plan");
+      localStorage.removeItem("hesabim:pending-transaction");
+      Object.keys(localStorage)
+        .filter((k) => k.startsWith("hesabim:dirty:"))
+        .forEach((k) => localStorage.removeItem(k));
     } catch {
       /* erişilemiyorsa sayfa yenilemesi yeterli */
     }
@@ -493,7 +517,7 @@ export default function App() {
 
   /** Yeni sekme oluştur ve listesini göster */
   function createTab(name: string) {
-    if (!canAddTab(groups.length)) {
+    if (!canAddTab(groups.length, limitPlan)) {
       go({ name: "menu", page: "plans" });
       return;
     }
@@ -616,7 +640,7 @@ export default function App() {
             }
             onOpenParty={openParty}
             onNewParty={(kind) => {
-              if (!canAddItem(membersOf(kind).length)) {
+              if (!canAddItem(membersOf(kind).length, limitPlan)) {
                 go({ name: "menu", page: "plans" });
                 return;
               }
@@ -748,7 +772,7 @@ export default function App() {
         setTransactions((prev) => prev.filter((t) => t.customerId !== id));
       }}
       onNewParty={() => {
-        if (!canAddItem(membersOf(currentTab).length)) {
+        if (!canAddItem(membersOf(currentTab).length, limitPlan)) {
           go({ name: "menu", page: "plans" });
           return;
         }

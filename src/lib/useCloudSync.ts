@@ -44,6 +44,28 @@ export function useCloudSync({
   const syncedAt = useRef<string | null>(null);
   const busy = useRef(false);
 
+  /**
+   * Cihazda sunucuya henüz gitmemiş değişiklik olduğunu gösteren işaret (uygulama kapansa da kalır).
+   * İşaret varsa açılışta sunucudaki eski veri cihazdakinin üzerine yazılmaz, önce cihazdaki gönderilir.
+   */
+  const dirtyKey = (cur: typeof latest.current) =>
+    `hesabim:dirty:${cur.session?.userId ?? "-"}:${cur.businessId ?? "kisisel"}`;
+  const setDirty = (cur: typeof latest.current, on: boolean) => {
+    try {
+      if (on) localStorage.setItem(dirtyKey(cur), "1");
+      else localStorage.removeItem(dirtyKey(cur));
+    } catch {
+      /* depolama erişilemiyorsa koruma yalnızca oturum boyunca geçerli */
+    }
+  };
+  const isDirty = (cur: typeof latest.current) => {
+    try {
+      return localStorage.getItem(dirtyKey(cur)) === "1";
+    } catch {
+      return false;
+    }
+  };
+
   const markSynced = (at: string) => {
     syncedAt.current = at;
     setLastSync(new Date());
@@ -66,6 +88,13 @@ export function useCloudSync({
           syncedJson.current = cur.json;
           markSynced(at);
         }
+      } else if (first && isDirty(cur)) {
+        // Bu cihazda sunucuya gitmemiş değişiklik var: sunucudaki eski veri üstüne yazılmaz, cihazdaki gönderilir
+        const at = await push(cur.session, cur.snapshot, cur.businessId);
+        if (at === "expired") return latest.current.onExpired();
+        syncedJson.current = cur.json;
+        setDirty(cur, false);
+        markSynced(at);
       } else if (remote.updatedAt !== syncedAt.current) {
         const applied = latest.current.apply(remote.data);
         syncedJson.current = JSON.stringify(applied);
@@ -113,6 +142,8 @@ export function useCloudSync({
         await notifyChanges(cur.session, cur.businessId, messages).catch(() => undefined);
       }
       syncedJson.current = cur.json;
+      // Gönderim sırasında yeni bir değişiklik olmadıysa işaret kaldırılır
+      if (latest.current.json === cur.json) setDirty(cur, false);
       markSynced(at);
     } catch {
       setStatus("error");
@@ -124,6 +155,7 @@ export function useCloudSync({
   // Yerel değişiklikleri kısa beklemeyle sunucuya yaz
   useEffect(() => {
     if (!session || !ready || json === syncedJson.current) return;
+    setDirty(latest.current, true);
     const timer = window.setTimeout(() => void pushNow(), PUSH_DELAY_MS);
     return () => window.clearTimeout(timer);
   }, [json, session, ready, pushNow]);
