@@ -116,13 +116,13 @@ export async function restorePlan(): Promise<Plan> {
   if (!purchasesAvailable()) return "free";
   try {
     await NativePurchases.restorePurchases();
-  } catch (e) {
-    throw new Error(`Apple geri yükleme hatası: ${String(e)}`);
+  } catch {
+    // Apple ile eşitleme başarısız olsa da (ör. "Unable to Complete Request") abonelik sunucuda Apple'a sorulabilir
   }
   return await confirmWithServer();
 }
 
-/** Plan değişince uygulama yeniden açılır ki tüm sınırlar yeni planla hesaplansın */
+/** Doğrulanan planı uygular ve hesaba bağlı olarak cihazda saklar */
 function saveEntitledPlan(plan: Plan) {
   setCurrentPlan(plan);
   try {
