@@ -62,6 +62,19 @@ async function confirmWithServer(transactionId?: string): Promise<Plan> {
 }
 
 /**
+ * Şifre istemeden hesabın aboneliğini sunucuda Apple'a tekrar sordurur (kayıtlı işlem üzerinden).
+ * "Zaten abonesiniz" durumunda ve paketler sayfası açılınca kullanılır; bilinmiyorsa null döner.
+ */
+export async function refreshPlan(): Promise<Plan | null> {
+  if (!purchasesAvailable() || !loadSession()) return null;
+  try {
+    return await confirmWithServer();
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Geri yükleme: Apple ile eşitlenir, sonra hesabın sunucudaki işlemi Apple'a tekrar sorulur.
  * (Eklentinin iOS'taki geri yükleme sonucu boş döndüğü için abonelik bilgisi oradan okunmaz.)
  */

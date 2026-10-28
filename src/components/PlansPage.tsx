@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { CURRENT_PLAN, PLAN_NAME, type Plan } from "../lib/plan";
-import { buyPlan, loadProducts, PLAN_PRODUCT, purchasesAvailable, restorePlan } from "../lib/purchases";
+import { buyPlan, loadProducts, PLAN_PRODUCT, purchasesAvailable, refreshPlan, restorePlan } from "../lib/purchases";
 import { haptic } from "../lib/haptics";
 import { t } from "../lib/i18n";
 import { SUPPORT_ICON } from "../lib/menu";
@@ -76,6 +76,18 @@ const PLANS: {
 const PURCHASES_OPEN = purchasesAvailable();
 
 /** Fiyat: tam sayı değilse kuruşla gösterilir (ör. ₺499,99) */
+/** Paket değiştiyse uygulama yeni paketle açılır; aynı paket için tekrar tekrar yenilenmez */
+function reopenWithPlan(plan: Plan | null) {
+  if (!plan || plan === CURRENT_PLAN) return;
+  try {
+    if (sessionStorage.getItem("hesabim:plan-reload") === plan) return;
+    sessionStorage.setItem("hesabim:plan-reload", plan);
+  } catch {
+    return;
+  }
+  window.location.reload();
+}
+
 const price = (value: number) =>
   value === 0
     ? "₺0"
@@ -125,6 +137,8 @@ export default function PlansPage({
   const [message, setMessage] = useState<string | null>(null);
   useEffect(() => {
     if (!PURCHASES_OPEN) return;
+    // Sayfa açılınca paket Apple'dan tekrar okunur; farklıysa uygulama yeni paketle açılır
+    void refreshPlan().then(reopenWithPlan);
     loadProducts()
       .then((products) => {
         const map: Record<string, string> = {};
@@ -145,8 +159,12 @@ export default function PlansPage({
       window.location.reload();
     } catch (e) {
       const reason = e instanceof Error ? e.message : String(e);
-      // Kullanıcı vazgeçtiyse hata gösterilmez
-      if (!/cancel/i.test(reason)) setMessage(`${t("Satın alma tamamlanamadı.")} ${reason}`);
+      if (/cancel/i.test(reason)) {
+        // Vazgeçme ya da Apple'ın "Bu öğeye abonesiniz" penceresi: paket sunucuda tekrar kontrol edilir
+        reopenWithPlan(await refreshPlan());
+      } else {
+        setMessage(`${t("Satın alma tamamlanamadı.")} ${reason}`);
+      }
     } finally {
       setBusy(false);
     }
