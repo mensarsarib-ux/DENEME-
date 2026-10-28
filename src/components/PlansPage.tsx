@@ -15,7 +15,7 @@ const PLANS: {
   {
     id: "premium",
     tagline: "Sınır istemeyenler için",
-    price: 1999,
+    price: 1299.99,
     tone: "prem",
     badge: "SINIRSIZ",
     lines: [
@@ -27,7 +27,7 @@ const PLANS: {
   {
     id: "proplus",
     tagline: "Büyüyen işletmeler için",
-    price: 1499,
+    price: 899.99,
     tone: "plus",
     lines: [
       "Altı işletmeyi tek hesaptan yönetin.",
@@ -39,7 +39,7 @@ const PLANS: {
   {
     id: "pro",
     tagline: "Küçük ekipler için",
-    price: 999,
+    price: 499.99,
     tone: "pro",
     badge: "EN ÇOK TERCİH EDİLEN",
     lines: [
@@ -69,7 +69,11 @@ const PLANS: {
  */
 const PURCHASES_OPEN = false;
 
-const price = (value: number) => (value === 0 ? "₺0" : `₺${value.toLocaleString("tr-TR")}`);
+/** Fiyat: tam sayı değilse kuruşla gösterilir (ör. ₺499,99) */
+const price = (value: number) =>
+  value === 0
+    ? "₺0"
+    : `₺${value.toLocaleString("tr-TR", { minimumFractionDigits: value % 1 ? 2 : 0, maximumFractionDigits: 2 })}`;
 
 /** Üstteki görsel: mağaza, yükselen grafik ve taç; uygulamanın mavi tonlarında */
 function Hero() {
