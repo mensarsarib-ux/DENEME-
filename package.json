@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "postinstall": "node scripts/patch-native-purchases.cjs"
   },
   "dependencies": {
     "@capacitor/core": "^6.2.2",

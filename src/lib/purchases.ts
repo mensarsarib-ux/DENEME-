@@ -45,6 +45,29 @@ export async function buyPlan(plan: Exclude<Plan, "free">): Promise<void> {
   if (confirmed === "free") throw new Error("Apple bu hesap için aktif abonelik göstermedi");
 }
 
+/**
+ * Telefondaki Apple hesabının şu an geçerli aboneliği (en üst paket). Hesabın sunucudaki kaydı eski ya da
+ * başka bir Apple hesabına ait olabilir; geri yüklemede ve "zaten abonesiniz" durumunda asıl kaynak budur.
+ * (Metot, scripts/patch-native-purchases.cjs ile eklentiye eklenir.)
+ */
+async function deviceTransactionId(): Promise<string | undefined> {
+  const RANK: Record<string, number> = { pro: 1, proplus: 2, premium: 3 };
+  try {
+    const plugin = NativePurchases as unknown as {
+      getCurrentEntitlements(): Promise<{ entitlements: { transactionId: string; productIdentifier: string }[] }>;
+    };
+    const { entitlements } = await plugin.getCurrentEntitlements();
+    let best: { id: string; rank: number } | undefined;
+    for (const e of entitlements ?? []) {
+      const plan = PRODUCT_PLAN[e.productIdentifier];
+      if (plan && (!best || RANK[plan] > best.rank)) best = { id: String(e.transactionId), rank: RANK[plan] };
+    }
+    return best?.id;
+  } catch {
+    return undefined;
+  }
+}
+
 const PENDING_KEY = "hesabim:pending-transaction";
 
 /** Henüz sunucuda doğrulanamamış son satın alma (yalnızca aynı hesap için geçerli) */
@@ -99,18 +122,19 @@ async function confirmWithServer(transactionId?: string): Promise<Plan> {
  * Şifre istemeden hesabın aboneliğini sunucuda Apple'a tekrar sordurur (kayıtlı işlem üzerinden).
  * "Zaten abonesiniz" durumunda ve paketler sayfası açılınca kullanılır; bilinmiyorsa null döner.
  */
-export async function refreshPlan(): Promise<Plan | null> {
+export async function refreshPlan(fromDevice = false): Promise<Plan | null> {
   if (!purchasesAvailable() || !loadSession()) return null;
   try {
-    return await confirmWithServer();
+    // fromDevice: kullanıcı satın almayı denediyse telefondaki geçerli abonelik bu hesaba bağlanır
+    return await confirmWithServer(fromDevice ? await deviceTransactionId() : undefined);
   } catch {
     return null;
   }
 }
 
 /**
- * Geri yükleme: Apple ile eşitlenir, sonra hesabın sunucudaki işlemi Apple'a tekrar sorulur.
- * (Eklentinin iOS'taki geri yükleme sonucu boş döndüğü için abonelik bilgisi oradan okunmaz.)
+ * Geri yükleme: Apple ile eşitlenir, sonra telefondaki geçerli abonelik (yoksa hesabın kayıtlı işlemi)
+ * sunucuda Apple'a sorulur ve bu hesaba bağlanır.
  */
 export async function restorePlan(): Promise<Plan> {
   if (!purchasesAvailable()) return "free";
@@ -119,7 +143,8 @@ export async function restorePlan(): Promise<Plan> {
   } catch {
     // Apple ile eşitleme başarısız olsa da (ör. "Unable to Complete Request") abonelik sunucuda Apple'a sorulabilir
   }
-  return await confirmWithServer();
+  // Önce telefondaki geçerli abonelik, o yoksa hesabın kayıtlı işlemi Apple'a sorulur
+  return await confirmWithServer(await deviceTransactionId());
 }
 
 /** Doğrulanan planı uygular ve hesaba bağlı olarak cihazda saklar */
