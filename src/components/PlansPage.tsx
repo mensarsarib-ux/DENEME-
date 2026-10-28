@@ -1,4 +1,7 @@
+import { useEffect, useState } from "react";
 import { CURRENT_PLAN, PLAN_NAME, type Plan } from "../lib/plan";
+import { buyPlan, loadProducts, PLAN_PRODUCT, purchasesAvailable, restorePlan } from "../lib/purchases";
+import { haptic } from "../lib/haptics";
 import { t } from "../lib/i18n";
 import { SUPPORT_ICON } from "../lib/menu";
 import PageHeader from "./PageHeader";
@@ -67,7 +70,7 @@ const PLANS: {
  * Ödeme (Apple abonelikleri) açılana kadar false. İlk sürümde yalnızca ücretsiz paket gösterilir;
  * ürünler App Store Connect'te hazır olunca true yapılıp satın alma bağlanır.
  */
-const PURCHASES_OPEN = false;
+const PURCHASES_OPEN = purchasesAvailable();
 
 /** Fiyat: tam sayı değilse kuruşla gösterilir (ör. ₺499,99) */
 const price = (value: number) =>
@@ -113,6 +116,52 @@ export default function PlansPage({
   onPrivacy: () => void;
   onTerms: () => void;
 }) {
+  // App Store'dan gelen fiyatlar (yalnızca yerel uygulamada); satın alma sürüyorsa düğmeler kilitlenir
+  const [storePrices, setStorePrices] = useState<Record<string, string>>({});
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
+  useEffect(() => {
+    if (!PURCHASES_OPEN) return;
+    loadProducts()
+      .then((products) => {
+        const map: Record<string, string> = {};
+        for (const p of products) map[p.identifier] = p.priceString;
+        setStorePrices(map);
+      })
+      .catch(() => setMessage(t("Fiyatlar alınamadı; bağlantınızı kontrol edin.")));
+  }, []);
+
+  async function purchase(plan: Exclude<Plan, "free">) {
+    if (busy) return;
+    haptic("medium");
+    setBusy(true);
+    setMessage(null);
+    try {
+      await buyPlan(plan);
+      // Yeni plan, sınırların hepsinde geçerli olsun diye uygulama yeniden açılır
+      window.location.reload();
+    } catch {
+      setMessage(t("Satın alma tamamlanamadı."));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function restore() {
+    if (busy) return;
+    haptic("light");
+    setBusy(true);
+    setMessage(null);
+    try {
+      const plan = await restorePlan();
+      if (plan === "free") setMessage(t("Geri yüklenecek aktif abonelik bulunamadı."));
+      else window.location.reload();
+    } catch {
+      setMessage(t("Geri yükleme yapılamadı."));
+    } finally {
+      setBusy(false);
+    }
+  }
   return (
     <div className="cust-page">
       <PageHeader title={t("İşletme paketleri")} subtitle={t("{p} paketini kullanıyorsunuz", { p: PLAN_NAME[CURRENT_PLAN] })} icon={SUPPORT_ICON} onBack={onBack} />
@@ -152,9 +201,22 @@ export default function PlansPage({
                   <li key={line}>{t(line)}</li>
                 ))}
               </ul>
-              <button type="button" className="paywall-btn" disabled>
-                {current ? t("Kullanılıyor") : t("{p}'ya geç", { p: PLAN_NAME[p.id] })}
-              </button>
+              {current || p.id === "free" ? (
+                <button type="button" className="paywall-btn" disabled>
+                  {current ? t("Kullanılıyor") : t("Ücretsiz")}
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  className="paywall-btn"
+                  disabled={busy || !storePrices[PLAN_PRODUCT[p.id as Exclude<Plan, "free">]]}
+                  onClick={() => void purchase(p.id as Exclude<Plan, "free">)}
+                >
+                  {storePrices[PLAN_PRODUCT[p.id as Exclude<Plan, "free">]]
+                    ? t("{p}'ya geç", { p: PLAN_NAME[p.id] })
+                    : t("Fiyat bekleniyor…")}
+                </button>
+              )}
             </section>
           );
         })}
@@ -167,9 +229,10 @@ export default function PlansPage({
             <p className="paywall-note">
               {t("Fiyatlar yıllık abonelik ücretidir.")}
             </p>
-            <button type="button" className="paywall-restore" disabled>
+            <button type="button" className="paywall-restore" disabled={busy} onClick={() => void restore()}>
               {t("Satın alımı geri yükle")}
             </button>
+            {message && <p className="field-hint" role="status">{message}</p>}
           </>
         )}
         <div className="paywall-links">

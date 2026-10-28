@@ -19,7 +19,17 @@ function planFromUrl(): Plan | null {
   }
 }
 
-export const CURRENT_PLAN: Plan = planFromUrl() ?? "free";
+/** Satın alımdan ya da geri yüklemeden gelen, cihazda saklanan plan */
+function storedPlan(): Plan | null {
+  try {
+    const p = localStorage.getItem("hesabim:plan");
+    return p === "free" || p === "pro" || p === "proplus" || p === "premium" ? p : null;
+  } catch {
+    return null;
+  }
+}
+
+export const CURRENT_PLAN: Plan = planFromUrl() ?? storedPlan() ?? "free";
 
 /** Plan sınırları. Infinity = sınırsız. */
 export const LIMITS: Record<
