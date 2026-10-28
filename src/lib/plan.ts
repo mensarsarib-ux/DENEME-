@@ -35,7 +35,12 @@ function storedPlan(): Plan | null {
   }
 }
 
-export const CURRENT_PLAN: Plan = planFromUrl() ?? storedPlan() ?? "free";
+export let CURRENT_PLAN: Plan = planFromUrl() ?? storedPlan() ?? "free";
+
+/** Satın alma ya da geri yüklemeden sonra paketi uygulamayı yeniden başlatmadan değiştirir */
+export function setCurrentPlan(plan: Plan): void {
+  CURRENT_PLAN = plan;
+}
 
 /** Plan sınırları. Infinity = sınırsız. */
 export const LIMITS: Record<

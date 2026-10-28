@@ -1,6 +1,6 @@
 import { Capacitor } from "@capacitor/core";
 import { NativePurchases, PURCHASE_TYPE, type Product } from "@capgo/native-purchases";
-import type { Plan } from "./plan";
+import { setCurrentPlan, type Plan } from "./plan";
 import { loadSession, verifyPurchase } from "./cloud";
 
 /** App Store Connect'teki abonelik kimlikleri ve karşılık gelen paketler */
@@ -90,6 +90,7 @@ export async function restorePlan(): Promise<Plan> {
 
 /** Plan değişince uygulama yeniden açılır ki tüm sınırlar yeni planla hesaplansın */
 function saveEntitledPlan(plan: Plan) {
+  setCurrentPlan(plan);
   try {
     const userId = loadSession()?.userId;
     if (plan === "free" || !userId) localStorage.removeItem("hesabim:plan");

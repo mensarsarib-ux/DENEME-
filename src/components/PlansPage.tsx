@@ -76,18 +76,6 @@ const PLANS: {
 const PURCHASES_OPEN = purchasesAvailable();
 
 /** Fiyat: tam sayı değilse kuruşla gösterilir (ör. ₺499,99) */
-/** Paket değiştiyse uygulama yeni paketle açılır; aynı paket için tekrar tekrar yenilenmez */
-function reopenWithPlan(plan: Plan | null) {
-  if (!plan || plan === CURRENT_PLAN) return;
-  try {
-    if (sessionStorage.getItem("hesabim:plan-reload") === plan) return;
-    sessionStorage.setItem("hesabim:plan-reload", plan);
-  } catch {
-    return;
-  }
-  window.location.reload();
-}
-
 const price = (value: number) =>
   value === 0
     ? "₺0"
@@ -135,10 +123,18 @@ export default function PlansPage({
   const [storePrices, setStorePrices] = useState<Record<string, string>>({});
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  // Paket değişince sayfa yeni paketle yeniden çizilir (uygulama yeniden başlatılmaz, veriler yerinde kalır)
+  const [shownPlan, setShownPlan] = useState<Plan>(CURRENT_PLAN);
+  function showPlan(plan: Plan | null) {
+    if (plan && plan !== shownPlan) {
+      setShownPlan(plan);
+      if (plan !== "free") setMessage(t("{p} paketiniz etkin.", { p: PLAN_NAME[plan] }));
+    }
+  }
   useEffect(() => {
     if (!PURCHASES_OPEN) return;
     // Sayfa açılınca paket Apple'dan tekrar okunur; farklıysa uygulama yeni paketle açılır
-    void refreshPlan().then(reopenWithPlan);
+    void refreshPlan().then(showPlan);
     loadProducts()
       .then((products) => {
         const map: Record<string, string> = {};
@@ -155,13 +151,12 @@ export default function PlansPage({
     setMessage(null);
     try {
       await buyPlan(plan);
-      // Yeni plan, sınırların hepsinde geçerli olsun diye uygulama yeniden açılır
-      window.location.reload();
+      showPlan(CURRENT_PLAN);
     } catch (e) {
       const reason = e instanceof Error ? e.message : String(e);
       if (/cancel/i.test(reason)) {
         // Vazgeçme ya da Apple'ın "Bu öğeye abonesiniz" penceresi: paket sunucuda tekrar kontrol edilir
-        reopenWithPlan(await refreshPlan());
+        showPlan(await refreshPlan());
       } else {
         setMessage(`${t("Satın alma tamamlanamadı.")} ${reason}`);
       }
@@ -178,7 +173,10 @@ export default function PlansPage({
     try {
       const plan = await restorePlan();
       if (plan === "free") setMessage(t("Geri yüklenecek aktif abonelik bulunamadı."));
-      else window.location.reload();
+      else {
+        showPlan(plan);
+        setMessage(t("{p} paketiniz geri yüklendi.", { p: PLAN_NAME[plan] }));
+      }
     } catch (e) {
       setMessage(`${t("Geri yükleme yapılamadı.")} ${String(e instanceof Error ? e.message : e)}`);
     } finally {
@@ -187,7 +185,7 @@ export default function PlansPage({
   }
   return (
     <div className="cust-page">
-      <PageHeader title={t("İşletme paketleri")} subtitle={t("{p} paketini kullanıyorsunuz", { p: PLAN_NAME[CURRENT_PLAN] })} icon={SUPPORT_ICON} onBack={onBack} />
+      <PageHeader title={t("İşletme paketleri")} subtitle={t("{p} paketini kullanıyorsunuz", { p: PLAN_NAME[shownPlan] })} icon={SUPPORT_ICON} onBack={onBack} />
       <div className="paywall">
         <div className="paywall-hero">
           <Hero />
@@ -195,8 +193,8 @@ export default function PlansPage({
           <p className="paywall-lead">{t("Daha fazla işletme, sekme ve kayıt için paketinizi yükseltin.")}</p>
         </div>
 
-        {PLANS.filter((p) => RANK[p.id] >= RANK[CURRENT_PLAN] && (PURCHASES_OPEN || p.id === "free")).map((p) => {
-          const current = p.id === CURRENT_PLAN;
+        {PLANS.filter((p) => RANK[p.id] >= RANK[shownPlan] && (PURCHASES_OPEN || p.id === "free")).map((p) => {
+          const current = p.id === shownPlan;
           return (
             <section key={p.id} className={`paywall-card tone-${p.tone} ${current ? "is-current" : ""}`} aria-label={PLAN_NAME[p.id]}>
               {(current || p.badge) && (
