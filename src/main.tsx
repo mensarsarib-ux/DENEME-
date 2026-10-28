@@ -1,7 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import App from "./App";
 import "./styles.css";
+import { syncPlanFromServer } from "./lib/entitlement";
 
 /**
  * ?sifirla bağlantısı: bu cihazdaki tüm Hesabım verisini (oturum, işletmeler, kayıtlar) siler
@@ -23,8 +23,13 @@ function resetLocalData() {
 }
 resetLocalData();
 
-createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
-);
+// Plan, uygulama modülleri yüklenmeden önce sunucudan okunur; böylece her hesap kendi planıyla açılır
+void (async () => {
+  await syncPlanFromServer();
+  const { default: App } = await import("./App");
+  createRoot(document.getElementById("root")!).render(
+    <StrictMode>
+      <App />
+    </StrictMode>,
+  );
+})();

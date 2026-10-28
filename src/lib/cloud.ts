@@ -208,6 +208,24 @@ export async function verifyPurchase(
   return { plan: body.plan, expiresAt: body.expiresAt };
 }
 
+/**
+ * Hesabın sunucudaki planını okur. Kayıt yoksa ya da süresi dolmuşsa "free" döner.
+ * Oturum bittiyse "expired", bağlantı yoksa null döner.
+ */
+export async function fetchPlan(session: Session): Promise<{ plan: string } | "expired" | null> {
+  const s = await fresh(session);
+  if (!s) return "expired";
+  const res = await call(`/rest/v1/entitlements?select=plan,expires_at&user_id=eq.${s.userId}`, {
+    token: s.accessToken,
+  });
+  if (res.status === 401) return "expired";
+  if (!res.ok) return null;
+  const rows = (await res.json()) as { plan: string; expires_at: string | null }[];
+  const row = rows[0];
+  if (!row || !row.expires_at || new Date(row.expires_at).getTime() <= Date.now()) return { plan: "free" };
+  return { plan: row.plan };
+}
+
 export async function pull(session: Session, businessId?: string | null): Promise<RemoteData | null | "expired"> {
   const s = await fresh(session);
   if (!s) return "expired";
