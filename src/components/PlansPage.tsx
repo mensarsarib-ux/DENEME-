@@ -159,8 +159,8 @@ export default function PlansPage({
       const plan = await restorePlan();
       if (plan === "free") setMessage(t("Geri yüklenecek aktif abonelik bulunamadı."));
       else window.location.reload();
-    } catch {
-      setMessage(t("Geri yükleme yapılamadı."));
+    } catch (e) {
+      setMessage(`${t("Geri yükleme yapılamadı.")} ${String(e instanceof Error ? e.message : e)}`);
     } finally {
       setBusy(false);
     }

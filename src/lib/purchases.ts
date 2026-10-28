@@ -59,8 +59,14 @@ async function confirmWithServer(transactionId: string): Promise<Plan> {
 /** Geri yükleme: Apple Kimliğindeki aktif aboneliği, son satın alma kaydı üzerinden sunucuda doğrular */
 export async function restorePlan(): Promise<Plan> {
   if (!purchasesAvailable()) return "free";
-  const { customerInfo } = await NativePurchases.restorePurchases();
-  const hasActive = customerInfo.activeSubscriptions.some((id) => PRODUCT_PLAN[id]);
+  let customerInfo;
+  try {
+    ({ customerInfo } = await NativePurchases.restorePurchases());
+  } catch (e) {
+    throw new Error(`Apple geri yükleme hatası: ${String(e)}`);
+  }
+  const active = customerInfo.activeSubscriptions;
+  const hasActive = active.some((id) => PRODUCT_PLAN[id]);
   if (!hasActive) {
     saveEntitledPlan("free");
     return "free";
@@ -71,7 +77,7 @@ export async function restorePlan(): Promise<Plan> {
   } catch {
     transactionId = null;
   }
-  if (!transactionId) throw new Error("Geri yüklenecek işlem bu cihazda bulunamadı");
+  if (!transactionId) throw new Error(`İşlem kaydı yok (Apple aktif: ${active.join(", ") || "hiçbiri"})`);
   return await confirmWithServer(transactionId);
 }
 
