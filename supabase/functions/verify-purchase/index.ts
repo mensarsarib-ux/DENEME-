@@ -106,6 +106,8 @@ Deno.serve(async (req) => {
     transactionId = (data?.transaction_id as string | undefined) ?? "";
   }
   if (!transactionId) return json({ error: "islem_yok" }, 404);
+  // Hangi işlemin sorulduğu: telefondan gelen mi, hesabın kayıtlı işlemi mi (sorun ayıklamak için)
+  console.log(`istek kaynak=${input.transactionId != null ? "telefon" : "kayit"} islem=${transactionId}`);
 
   try {
     const token = await appleJwt();
