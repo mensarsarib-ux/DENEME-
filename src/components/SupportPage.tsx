@@ -11,7 +11,7 @@ const faq = (): [string, string][] => [
   [t("İşlemi düzenlemek veya silmek için ne yapmalıyım?"), t("Listedeki işleme dokunun; Düzenle ve Sil seçenekleri açılır. Silme işlemi geri alınabilir.")],
   [t("Dönem nasıl değişir?"), t("Ana ekrandaki grafiğe basılı tutun; hazır dönemleri seçebilir veya özel tarih aralığı verebilirsiniz.")],
   [t("Sekmeyi nasıl düzenlerim?"), t("Sekme adına basılı tutun; Düzenle ve Sil seçenekleri çıkar. Yeni sekme için sağa kaydırıp + düğmesini kullanın.")],
-  [t("Verilerim nerede saklanıyor?"), t("Yalnızca bu cihazdaki tarayıcıda. Ayarlar > Veriler bölümünden yedek alabilir ve geri yükleyebilirsiniz.")],
+  [t("Verilerim nerede saklanıyor?"), t("Hesabınızda, güvenli sunucularda saklanır ve aynı hesapla girdiğiniz telefonlar arasında eşitlenir. Ayarlar > Veriler bölümünden ayrıca yedek alabilir ve geri yükleyebilirsiniz.")],
 ];
 
 /** Destek: sık sorulan sorular ve sorun bildirme formu */

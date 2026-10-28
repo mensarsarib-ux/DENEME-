@@ -256,7 +256,7 @@ export default function App() {
       localStorage.removeItem("hesabim:plan");
       localStorage.removeItem("hesabim:pending-transaction");
       Object.keys(localStorage)
-        .filter((k) => k.startsWith("hesabim:dirty:"))
+        .filter((k) => k.startsWith("hesabim:dirty:") || k.startsWith("hesabim:base:"))
         .forEach((k) => localStorage.removeItem(k));
     } catch {
       /* erişilemiyorsa sayfa yenilemesi yeterli */

@@ -65,6 +65,10 @@ export default function BusinessRequestsPage({ onBack }: { onBack: () => void })
         }
       }
       const res = await decideJoin(session, item.request_id, approve);
+      if (res === "limit") {
+        setNotice(t("Ekip sınırına ulaşıldı. Daha fazla üye için paketi yükseltin."));
+        return;
+      }
       if (res === true) {
         haptic(approve ? "success" : "light");
         setItems((list) => (list ? list.filter((x) => x.request_id !== item.request_id) : list));

@@ -261,6 +261,34 @@ export async function push(session: Session, data: Record<string, unknown>, busi
   return rows[0]?.updated_at ?? new Date().toISOString();
 }
 
+/**
+ * Veriyi yalnızca sunucudaki veri hâlâ "expectedAt" zamanındaki haliyse yazar (araya başka telefon girmediyse).
+ * Araya başka bir yazma girdiyse "conflict" döner; çağıran taraf yeni veriyi alıp birleştirir ve yeniden dener.
+ */
+export async function pushIfUnchanged(
+  session: Session,
+  data: Record<string, unknown>,
+  expectedAt: string,
+  businessId?: string | null,
+): Promise<string | "expired" | "conflict"> {
+  const s = await fresh(session);
+  if (!s) return "expired";
+  const at = encodeURIComponent(expectedAt);
+  const path = businessId
+    ? `/rest/v1/business_data?business_id=eq.${businessId}&updated_at=eq.${at}`
+    : `/rest/v1/user_data?user_id=eq.${s.userId}&updated_at=eq.${at}`;
+  const res = await call(path, {
+    method: "PATCH",
+    token: s.accessToken,
+    headers: { Prefer: "return=representation" },
+    body: JSON.stringify({ data, updated_at: new Date().toISOString() }),
+  });
+  if (res.status === 401) return "expired";
+  if (!res.ok) throw new CloudError("unknown", String(res.status));
+  const rows = (await res.json()) as { updated_at: string }[];
+  return rows.length ? rows[0].updated_at : "conflict";
+}
+
 /* ---------- Bağlı cihazlar ---------- */
 
 export interface DeviceInfo {
@@ -428,8 +456,8 @@ export async function listPendingRequests(session: Session): Promise<PendingRequ
   return (await res.json()) as PendingRequest[];
 }
 
-/** İsteği onaylar ya da reddeder */
-export async function decideJoin(session: Session, requestId: string, approve: boolean): Promise<true | "expired"> {
+/** İsteği onaylar ya da reddeder; paketin ekip sınırı doluysa sunucu onaylamaz ("limit") */
+export async function decideJoin(session: Session, requestId: string, approve: boolean): Promise<true | "expired" | "limit"> {
   const s = await fresh(session);
   if (!s) return "expired";
   const res = await call("/rest/v1/rpc/decide_join", {
@@ -438,7 +466,11 @@ export async function decideJoin(session: Session, requestId: string, approve: b
     body: JSON.stringify({ req: requestId, approve }),
   });
   if (res.status === 401) return "expired";
-  if (!res.ok) throw new CloudError("unknown", String(res.status));
+  if (!res.ok) {
+    const text = await res.text().catch(() => "");
+    if (text.includes("ekip_siniri")) return "limit";
+    throw new CloudError("unknown", String(res.status));
+  }
   return true;
 }
 
