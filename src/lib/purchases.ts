@@ -78,8 +78,9 @@ export async function restorePlan(): Promise<Plan> {
 /** Plan değişince uygulama yeniden açılır ki tüm sınırlar yeni planla hesaplansın */
 function saveEntitledPlan(plan: Plan) {
   try {
-    if (plan === "free") localStorage.removeItem("hesabim:plan");
-    else localStorage.setItem("hesabim:plan", plan);
+    const userId = loadSession()?.userId;
+    if (plan === "free" || !userId) localStorage.removeItem("hesabim:plan");
+    else localStorage.setItem("hesabim:plan", JSON.stringify({ plan, userId }));
   } catch {
     /* depolama erişilemiyorsa bir sonraki açılışta geri yüklemek gerekir */
   }

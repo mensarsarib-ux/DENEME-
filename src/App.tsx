@@ -231,10 +231,18 @@ export default function App() {
     setSyncPaused(false);
     signOut();
     clearStored();
+    // Hesabın planı bu cihazda kalmasın; yeniden açılışta yeni hesabın planı okunur
+    try {
+      localStorage.removeItem("hesabim:plan");
+    } catch {
+      /* erişilemiyorsa sayfa yenilemesi yeterli */
+    }
     emptyWorkspace("");
     setDrawerOpen(false);
     setView({ name: "home" });
     setSession(null);
+    // Paket bilgisi açılışta okunur; yenileme ile bir sonraki hesabın planı doğru gelir
+    window.location.reload();
   }
   // Hesabı ve tüm verileri siler; yerel veriler de temizlenir
   async function deleteAccountNow() {

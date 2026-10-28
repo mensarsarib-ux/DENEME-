@@ -22,7 +22,13 @@ function planFromUrl(): Plan | null {
 /** Satın alımdan ya da geri yüklemeden gelen, cihazda saklanan plan */
 function storedPlan(): Plan | null {
   try {
-    const p = localStorage.getItem("hesabim:plan");
+    const raw = localStorage.getItem("hesabim:plan");
+    if (!raw) return null;
+    const saved = JSON.parse(raw) as { plan?: string; userId?: string };
+    // Plan yalnızca kendi hesabına aittir; başka hesapta (ya da çıkıştan sonra) geçerli değildir
+    const auth = JSON.parse(localStorage.getItem("hesabim:auth") ?? "null") as { userId?: string } | null;
+    if (!auth?.userId || saved.userId !== auth.userId) return null;
+    const p = saved.plan;
     return p === "free" || p === "pro" || p === "proplus" || p === "premium" ? p : null;
   } catch {
     return null;
