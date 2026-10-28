@@ -187,6 +187,27 @@ export interface RemoteData {
 
 /** Sunucudaki veriyi getirir; hiç kaydedilmemişse null. Oturum bittiyse "expired".
  *  businessId verilirse kişinin kendi verisi yerine ortak işletme verisi okunur. */
+/**
+ * Satın almayı sunucuda Apple'a doğrulatır; onaylanan planı döner.
+ * Hata ya da aktif abonelik yoksa null döner (plan açılmaz).
+ */
+export async function verifyPurchase(
+  session: Session,
+  transactionId: string,
+): Promise<{ plan: string; expiresAt: string } | "expired" | null> {
+  const s = await fresh(session);
+  if (!s) return "expired";
+  const res = await call("/functions/v1/verify-purchase", {
+    method: "POST",
+    token: s.accessToken,
+    body: JSON.stringify({ transactionId }),
+  });
+  if (!res.ok) return null;
+  const body = (await res.json().catch(() => null)) as { plan?: string; expiresAt?: string } | null;
+  if (!body?.plan || !body.expiresAt) return null;
+  return { plan: body.plan, expiresAt: body.expiresAt };
+}
+
 export async function pull(session: Session, businessId?: string | null): Promise<RemoteData | null | "expired"> {
   const s = await fresh(session);
   if (!s) return "expired";

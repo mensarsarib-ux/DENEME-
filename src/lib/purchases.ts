@@ -1,6 +1,7 @@
 import { Capacitor } from "@capacitor/core";
 import { NativePurchases, PURCHASE_TYPE, type Product } from "@capgo/native-purchases";
 import type { Plan } from "./plan";
+import { loadSession, verifyPurchase } from "./cloud";
 
 /** App Store Connect'teki abonelik kimlikleri ve karşılık gelen paketler */
 export const PRODUCT_PLAN: Record<string, Exclude<Plan, "free">> = {
@@ -16,9 +17,6 @@ export const PLAN_PRODUCT: Record<Exclude<Plan, "free">, string> = {
   premium: "com.mensar.hesabim.premium.yearly",
 };
 
-/** Paketler arasında yükseklik sırası: yüksek olan, aktif aboneliklerde geçerli sayılır */
-const RANK: Record<Plan, number> = { free: 0, pro: 1, proplus: 2, premium: 3 };
-
 /** Satın alma yalnızca yerel uygulamada çalışır; tarayıcıda her zaman kapalıdır */
 export const purchasesAvailable = () => Capacitor.isNativePlatform();
 
@@ -32,23 +30,49 @@ export async function loadProducts(): Promise<Product[]> {
   return products;
 }
 
-/** Seçilen paketi satın alır; başarılıysa plan cihazda kaydedilir */
+/** Seçilen paketi satın alır; Apple'dan gelen işlem sunucuda doğrulanır, plan ancak onaydan sonra açılır */
 export async function buyPlan(plan: Exclude<Plan, "free">): Promise<void> {
-  await NativePurchases.purchaseProduct({ productIdentifier: PLAN_PRODUCT[plan], productType: PURCHASE_TYPE.SUBS });
-  saveEntitledPlan(plan);
+  const tx = await NativePurchases.purchaseProduct({
+    productIdentifier: PLAN_PRODUCT[plan],
+    productType: PURCHASE_TYPE.SUBS,
+  });
+  try {
+    localStorage.setItem("hesabim:transaction", tx.transactionId);
+  } catch {
+    /* geri yükleme için kayıt tutulamadı */
+  }
+  await confirmWithServer(tx.transactionId);
 }
 
-/** Apple Kimliğinin aktif aboneliklerini okur ve en yüksek paketi cihaza kaydeder */
+/** Sunucuda doğrulanan planı kaydeder; doğrulanamazsa hata fırlatır */
+async function confirmWithServer(transactionId: string): Promise<Plan> {
+  const session = loadSession();
+  if (!session) throw new Error("Satın alma için giriş yapmanız gerekiyor");
+  const result = await verifyPurchase(session, transactionId);
+  if (result === "expired") throw new Error("Oturumunuzun süresi doldu, yeniden giriş yapın");
+  if (!result) throw new Error("Satın alma doğrulanamadı");
+  const plan = result.plan as Plan;
+  saveEntitledPlan(plan);
+  return plan;
+}
+
+/** Geri yükleme: Apple Kimliğindeki aktif aboneliği, son satın alma kaydı üzerinden sunucuda doğrular */
 export async function restorePlan(): Promise<Plan> {
   if (!purchasesAvailable()) return "free";
   const { customerInfo } = await NativePurchases.restorePurchases();
-  let best: Plan = "free";
-  for (const id of customerInfo.activeSubscriptions) {
-    const plan = PRODUCT_PLAN[id];
-    if (plan && RANK[plan] > RANK[best]) best = plan;
+  const hasActive = customerInfo.activeSubscriptions.some((id) => PRODUCT_PLAN[id]);
+  if (!hasActive) {
+    saveEntitledPlan("free");
+    return "free";
   }
-  saveEntitledPlan(best);
-  return best;
+  let transactionId: string | null = null;
+  try {
+    transactionId = localStorage.getItem("hesabim:transaction");
+  } catch {
+    transactionId = null;
+  }
+  if (!transactionId) throw new Error("Geri yüklenecek işlem bu cihazda bulunamadı");
+  return await confirmWithServer(transactionId);
 }
 
 /** Plan değişince uygulama yeniden açılır ki tüm sınırlar yeni planla hesaplansın */
