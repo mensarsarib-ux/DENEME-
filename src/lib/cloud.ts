@@ -188,31 +188,33 @@ export interface RemoteData {
 /** Sunucudaki veriyi getirir; hiç kaydedilmemişse null. Oturum bittiyse "expired".
  *  businessId verilirse kişinin kendi verisi yerine ortak işletme verisi okunur. */
 /**
- * Satın almayı sunucuda Apple'a doğrulatır; onaylanan planı döner.
- * Hata ya da aktif abonelik yoksa null döner (plan açılmaz).
+ * Satın almayı sunucuda Apple'a doğrulatır; onaylanan planı döner. transactionId verilmezse
+ * sunucu hesabın kayıtlı son işlemini kullanır (geri yükleme ve yenileme). Hata olursa sebebi döner.
  */
 export async function verifyPurchase(
   session: Session,
-  transactionId: string,
-): Promise<{ plan: string; expiresAt: string } | "expired" | null> {
+  transactionId?: string,
+): Promise<{ plan: string; expiresAt: string } | { error: string } | "expired"> {
   const s = await fresh(session);
   if (!s) return "expired";
   const res = await call("/functions/v1/verify-purchase", {
     method: "POST",
     token: s.accessToken,
-    body: JSON.stringify({ transactionId }),
+    body: JSON.stringify(transactionId ? { transactionId } : {}),
   });
-  if (!res.ok) return null;
-  const body = (await res.json().catch(() => null)) as { plan?: string; expiresAt?: string } | null;
-  if (!body?.plan || !body.expiresAt) return null;
-  return { plan: body.plan, expiresAt: body.expiresAt };
+  const body = (await res.json().catch(() => null)) as
+    | { plan?: string; expiresAt?: string; error?: string; reason?: string }
+    | null;
+  if (res.ok && body?.plan && body.expiresAt) return { plan: body.plan, expiresAt: body.expiresAt };
+  return { error: body?.error ? `${body.error}${body.reason ? ` (${body.reason})` : ""}` : `http_${res.status}` };
 }
 
 /**
- * Hesabın sunucudaki planını okur. Kayıt yoksa ya da süresi dolmuşsa "free" döner.
+ * Hesabın sunucudaki planını okur. Kayıt yoksa ya da süresi dolmuşsa "free" döner;
+ * süresi dolmuş bir ücretli kayıt varsa expired true olur (yenilenmiş olabilir, tekrar doğrulanır).
  * Oturum bittiyse "expired", bağlantı yoksa null döner.
  */
-export async function fetchPlan(session: Session): Promise<{ plan: string } | "expired" | null> {
+export async function fetchPlan(session: Session): Promise<{ plan: string; expired: boolean } | "expired" | null> {
   const s = await fresh(session);
   if (!s) return "expired";
   const res = await call(`/rest/v1/entitlements?select=plan,expires_at&user_id=eq.${s.userId}`, {
@@ -222,8 +224,9 @@ export async function fetchPlan(session: Session): Promise<{ plan: string } | "e
   if (!res.ok) return null;
   const rows = (await res.json()) as { plan: string; expires_at: string | null }[];
   const row = rows[0];
-  if (!row || !row.expires_at || new Date(row.expires_at).getTime() <= Date.now()) return { plan: "free" };
-  return { plan: row.plan };
+  if (!row || row.plan === "free" || !row.expires_at) return { plan: "free", expired: false };
+  if (new Date(row.expires_at).getTime() <= Date.now()) return { plan: "free", expired: true };
+  return { plan: row.plan, expired: false };
 }
 
 export async function pull(session: Session, businessId?: string | null): Promise<RemoteData | null | "expired"> {

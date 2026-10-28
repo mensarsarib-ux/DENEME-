@@ -143,8 +143,10 @@ export default function PlansPage({
       await buyPlan(plan);
       // Yeni plan, sınırların hepsinde geçerli olsun diye uygulama yeniden açılır
       window.location.reload();
-    } catch {
-      setMessage(t("Satın alma tamamlanamadı."));
+    } catch (e) {
+      const reason = e instanceof Error ? e.message : String(e);
+      // Kullanıcı vazgeçtiyse hata gösterilmez
+      if (!/cancel/i.test(reason)) setMessage(`${t("Satın alma tamamlanamadı.")} ${reason}`);
     } finally {
       setBusy(false);
     }

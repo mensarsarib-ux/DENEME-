@@ -36,49 +36,43 @@ export async function buyPlan(plan: Exclude<Plan, "free">): Promise<void> {
     productIdentifier: PLAN_PRODUCT[plan],
     productType: PURCHASE_TYPE.SUBS,
   });
-  try {
-    localStorage.setItem("hesabim:transaction", tx.transactionId);
-  } catch {
-    /* geri yükleme için kayıt tutulamadı */
-  }
-  await confirmWithServer(tx.transactionId);
+  const confirmed = await confirmWithServer(String(tx.transactionId));
+  if (confirmed === "free") throw new Error("Apple bu hesap için aktif abonelik göstermedi");
 }
 
-/** Sunucuda doğrulanan planı kaydeder; doğrulanamazsa hata fırlatır */
-async function confirmWithServer(transactionId: string): Promise<Plan> {
+/**
+ * Sunucuda doğrulanan planı kaydeder. transactionId yoksa sunucu hesabın kayıtlı işlemini kullanır.
+ * Aktif abonelik ya da kayıtlı işlem yoksa plan ücretsizdir; diğer hatalarda sebep yazılır.
+ */
+async function confirmWithServer(transactionId?: string): Promise<Plan> {
   const session = loadSession();
   if (!session) throw new Error("Satın alma için giriş yapmanız gerekiyor");
   const result = await verifyPurchase(session, transactionId);
   if (result === "expired") throw new Error("Oturumunuzun süresi doldu, yeniden giriş yapın");
-  if (!result) throw new Error("Satın alma doğrulanamadı");
+  if ("error" in result) {
+    if (result.error.startsWith("aktif_abonelik_yok") || result.error.startsWith("islem_yok")) {
+      saveEntitledPlan("free");
+      return "free";
+    }
+    throw new Error(`Satın alma doğrulanamadı: ${result.error}`);
+  }
   const plan = result.plan as Plan;
   saveEntitledPlan(plan);
   return plan;
 }
 
-/** Geri yükleme: Apple Kimliğindeki aktif aboneliği, son satın alma kaydı üzerinden sunucuda doğrular */
+/**
+ * Geri yükleme: Apple ile eşitlenir, sonra hesabın sunucudaki işlemi Apple'a tekrar sorulur.
+ * (Eklentinin iOS'taki geri yükleme sonucu boş döndüğü için abonelik bilgisi oradan okunmaz.)
+ */
 export async function restorePlan(): Promise<Plan> {
   if (!purchasesAvailable()) return "free";
-  let customerInfo;
   try {
-    ({ customerInfo } = await NativePurchases.restorePurchases());
+    await NativePurchases.restorePurchases();
   } catch (e) {
     throw new Error(`Apple geri yükleme hatası: ${String(e)}`);
   }
-  const active = customerInfo.activeSubscriptions;
-  const hasActive = active.some((id) => PRODUCT_PLAN[id]);
-  if (!hasActive) {
-    saveEntitledPlan("free");
-    return "free";
-  }
-  let transactionId: string | null = null;
-  try {
-    transactionId = localStorage.getItem("hesabim:transaction");
-  } catch {
-    transactionId = null;
-  }
-  if (!transactionId) throw new Error(`İşlem kaydı yok (Apple aktif: ${active.join(", ") || "hiçbiri"})`);
-  return await confirmWithServer(transactionId);
+  return await confirmWithServer();
 }
 
 /** Plan değişince uygulama yeniden açılır ki tüm sınırlar yeni planla hesaplansın */
