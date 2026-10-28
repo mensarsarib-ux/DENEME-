@@ -56,22 +56,27 @@ async function appleJwt(): Promise<string> {
   return `${header}.${payload}.${b64url(new Uint8Array(sig))}`;
 }
 
-/** Abonelik durumunu önce production'dan, olmazsa sandbox'tan ister; her denemeyi günlüğe yazar */
-async function appleStatus(transactionId: string): Promise<{ data?: unknown; tried: string[] }> {
-  const token = await appleJwt();
+/** Apple'a önce production'dan, olmazsa sandbox'tan sorar; her denemeyi günlüğe yazar */
+async function appleGet(path: string, token: string): Promise<{ data?: Record<string, unknown>; tried: string[] }> {
   const tried: string[] = [];
   for (const host of HOSTS) {
-    const res = await fetch(`https://${host}/inApps/v1/subscriptions/${transactionId}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const res = await fetch(`https://${host}${path}`, { headers: { Authorization: `Bearer ${token}` } });
     const text = await res.text();
-    const line = `${host.includes("sandbox") ? "sandbox" : "production"} ${res.status} ${text.slice(0, 160)}`;
+    const line = `${host.includes("sandbox") ? "sandbox" : "production"} ${res.status} ${path.split("/")[3]} ${text.slice(0, 120)}`;
     console.log(`apple ${line}`);
     tried.push(line);
     if (res.ok) return { data: JSON.parse(text), tried };
   }
   return { tried };
 }
+
+type TxInfo = {
+  productId: string;
+  bundleId: string;
+  expiresDate?: number;
+  revocationDate?: number;
+  isUpgraded?: boolean;
+};
 
 /** Apple'ın imzalı bilgisinin (JWS) yük kısmını okur */
 function readJws(jws: string): Record<string, unknown> {
@@ -102,28 +107,40 @@ Deno.serve(async (req) => {
   if (!transactionId) return json({ error: "islem_yok" }, 404);
 
   try {
-    const apple = await appleStatus(transactionId);
-    if (!apple.data) return json({ error: "apple_reddetti", reason: apple.tried.join(" | ") }, 402);
-
-    // Gruptaki son işlemlerden bu uygulamanın en yüksek aktif planını seç (1: aktif, 4: ödeme ek süresi)
-    const body = apple.data as {
-      data?: { lastTransactions?: { status?: number; signedTransactionInfo: string }[] }[];
-    };
+    const token = await appleJwt();
+    const now = Date.now();
     let best: { plan: string; productId: string; expires: number } | null = null;
-    for (const group of body.data ?? []) {
+    const consider = (info: TxInfo, active: boolean, source: string) => {
+      console.log(`${source} ${info.productId} aktif=${active} bitis=${info.expiresDate} yukseltildi=${info.isUpgraded ?? false}`);
+      const plan = PRODUCT_PLAN[info.productId];
+      if (!plan || info.bundleId !== BUNDLE_ID || !active || info.revocationDate || info.isUpgraded) return;
+      const expires = Math.max(info.expiresDate ?? 0, now + 24 * 3600 * 1000);
+      if (!best || RANK[plan] > RANK[best.plan]) best = { plan, productId: info.productId, expires };
+    };
+
+    // 1) İşlemin kendisi: satın alınan ürün anında doğru gelir (yükseltmede durum servisi geride kalabilir)
+    const tx = await appleGet(`/inApps/v1/transactions/${transactionId}`, token);
+    if (tx.data?.signedTransactionInfo) {
+      const info = readJws(tx.data.signedTransactionInfo as string) as TxInfo;
+      consider(info, (info.expiresDate ?? 0) > now, "islem");
+    }
+
+    // 2) Abonelik durumu: yenilemeler ve geri yükleme için güncel durum (1: aktif, 4: ödeme ek süresi)
+    const status = await appleGet(`/inApps/v1/subscriptions/${transactionId}`, token);
+    const groups = (status.data?.data ?? []) as { lastTransactions?: { status?: number; signedTransactionInfo: string }[] }[];
+    for (const group of groups) {
       for (const last of group.lastTransactions ?? []) {
-        const info = readJws(last.signedTransactionInfo) as { productId: string; bundleId: string; expiresDate?: number };
-        console.log(`islem ${info.productId} durum=${last.status} bitis=${info.expiresDate}`);
-        const plan = PRODUCT_PLAN[info.productId];
-        if (!plan || info.bundleId !== BUNDLE_ID) continue;
-        if (last.status !== 1 && last.status !== 4) continue;
-        const expires = Math.max(info.expiresDate ?? 0, Date.now() + 24 * 3600 * 1000);
-        if (!best || RANK[plan] > RANK[best.plan]) best = { plan, productId: info.productId, expires };
+        consider(readJws(last.signedTransactionInfo) as TxInfo, last.status === 1 || last.status === 4, "durum");
       }
     }
 
-    const row = best
-      ? { plan: best.plan, product_id: best.productId, expires_at: new Date(best.expires).toISOString() }
+    if (!tx.data && !status.data) {
+      return json({ error: "apple_reddetti", reason: [...tx.tried, ...status.tried].join(" | ") }, 402);
+    }
+
+    const chosen = best as { plan: string; productId: string; expires: number } | null;
+    const row = chosen
+      ? { plan: chosen.plan, product_id: chosen.productId, expires_at: new Date(chosen.expires).toISOString() }
       : { plan: "free", product_id: null, expires_at: null };
     const { error } = await admin.from("entitlements").upsert({
       user_id: userId,
@@ -132,9 +149,9 @@ Deno.serve(async (req) => {
       updated_at: new Date().toISOString(),
     });
     if (error) return json({ error: "kayit_hatasi", reason: error.message }, 500);
-    if (!best) return json({ error: "aktif_abonelik_yok" }, 402);
+    if (!chosen) return json({ error: "aktif_abonelik_yok" }, 402);
 
-    return json({ plan: best.plan, expiresAt: row.expires_at });
+    return json({ plan: chosen.plan, expiresAt: row.expires_at });
   } catch (e) {
     console.log(`hata ${String(e)}`);
     return json({ error: "sunucu_hatasi", reason: String(e) }, 500);
