@@ -143,20 +143,18 @@ Deno.serve(async (req) => {
 
     const chosen = best as { plan: string; productId: string; expires: number; original: string } | null;
 
-    // Aynı Apple aboneliği başka bir Hesabım hesabında etkinse bu hesaba paket açılmaz
+    // Aynı Apple aboneliği en son hangi Hesabım hesabında satın alındı ya da geri yüklendiyse orada geçerlidir.
+    // Başka bir hesapta etkinse o hesaptan alınıp bu hesaba taşınır (aynı abonelik iki hesapta birden açık kalmaz).
     if (chosen?.original) {
-      const { data: other } = await admin
+      const { data: moved, error: moveError } = await admin
         .from("entitlements")
-        .select("user_id")
+        .update({ plan: "free", expires_at: new Date().toISOString(), updated_at: new Date().toISOString() })
         .eq("original_transaction_id", chosen.original)
         .neq("user_id", userId)
-        .gt("expires_at", new Date().toISOString())
         .neq("plan", "free")
-        .limit(1);
-      if (other && other.length > 0) {
-        console.log(`abonelik baska hesapta ${chosen.original}`);
-        return json({ error: "baska_hesapta" }, 409);
-      }
+        .select("user_id");
+      if (moveError) return json({ error: "kayit_hatasi", reason: moveError.message }, 500);
+      if (moved && moved.length > 0) console.log(`abonelik ${moved.length} hesaptan bu hesaba tasindi ${chosen.original}`);
     }
 
     const row = chosen
