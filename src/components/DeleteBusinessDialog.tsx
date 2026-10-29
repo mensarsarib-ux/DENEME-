@@ -37,7 +37,7 @@ export default function DeleteBusinessDialog({
       return;
     }
     if (email.trim().toLowerCase() !== session.email.toLowerCase()) {
-      setError(t("E-posta hesabınızla eşleşmiyor."));
+      setError(t("E-posta veya telefon hesabınızla eşleşmiyor."));
       return;
     }
     setBusy(true);
@@ -47,7 +47,7 @@ export default function DeleteBusinessDialog({
     } catch (e) {
       setBusy(false);
       setError(e instanceof CloudError && e.code === "invalid_credentials"
-        ? t("E-posta veya şifre hatalı.")
+        ? t("Giriş bilgileri veya şifre hatalı.")
         : t("Doğrulanamadı; bağlantınızı kontrol edin."));
       return;
     }
@@ -78,7 +78,7 @@ export default function DeleteBusinessDialog({
         <h2 className="sheet-title">{t("“{n}” silinsin mi?", { n: name })}</h2>
         <p className="sheet-note">{t("Bu işletmenin tüm müşteri, işlem ve notları kalıcı olarak silinir. Onaylamak için hesap e-postası ve şifrenizi girin.")}</p>
         <div className="field">
-          <label htmlFor="del-email">{t("E-posta")}</label>
+          <label htmlFor="del-email">{t("E-posta veya telefon")}</label>
           <input id="del-email" type="email" autoComplete="off" autoCapitalize="none" value={email} onChange={(e) => setEmail(e.target.value)} />
         </div>
         <div className="field">

@@ -647,6 +647,21 @@ const dict: Record<string, string> = {
   "İstek Bildirimler'e gelir; onayladığınızda işletmenizi birlikte kullanırsınız.": "O pedido chega em Notificações; quando você aprovar, vocês usam a empresa juntos.",
   "Davet mesajını paylaş": "Compartilhar convite",
   "Davet mesajı kopyalandı.": "Convite copiado.",
+  "Telefon numarası veya şifre hatalı.": "Número de telefone ou senha incorretos.",
+  "Bu telefon numarasıyla zaten bir hesap var; giriş yapın.": "Já existe uma conta com este número; entre.",
+  "Telefonunuz henüz doğrulanmadı. SMS ile gelen kodu girin.": "Seu telefone ainda não foi verificado. Digite o código recebido por SMS.",
+  "Hesabınız henüz doğrulanmadı. {m} numarasına SMS ile yeni bir doğrulama kodu gönderdik.": "Sua conta ainda não foi verificada. Enviamos um novo código por SMS para {m}.",
+  "{m} numarasına SMS ile 6 haneli bir doğrulama kodu gönderdik.": "Enviamos um código de 6 dígitos por SMS para {m}.",
+  "KOD GÖNDER": "ENVIAR CÓDIGO",
+  "Telefonunuzu doğrulayın": "Verifique seu telefone",
+  "Giriş yöntemi": "Forma de entrada",
+  "Yetkilinin e-postası veya telefonu": "E-mail ou telefone do responsável",
+  "E-posta veya telefon hesabınızla eşleşmiyor.": "O e-mail ou telefone não corresponde à sua conta.",
+  "Giriş bilgileri veya şifre hatalı.": "Dados de acesso ou senha incorretos.",
+  "E-posta veya telefon": "E-mail ou telefone",
+  "Hesabım Muhasebe'de işletmeme katıl: uygulamayı indir, giriş ekranında Katıl sekmesine benim telefon numaramı yaz: {m} — {url}": "Entre na minha empresa no Hesabım: baixe o app e, na tela de entrada, digite meu número na aba Entrar em empresa: {m} — {url}",
+  "Giriş ekranında Katıl sekmesine sizin telefon numaranızı yazsın: {m}": "Na tela de entrada, ele digita seu número na aba Entrar em empresa: {m}",
+  "Bu e-posta ya da telefona ait bir işletme bulunamadı.": "Nenhuma empresa encontrada para este e-mail ou telefone.",
 };
 
 export default dict;

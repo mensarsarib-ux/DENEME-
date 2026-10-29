@@ -647,6 +647,21 @@ const dict: Record<string, string> = {
   "İstek Bildirimler'e gelir; onayladığınızda işletmenizi birlikte kullanırsınız.": "Permintaan masuk ke Notifikasi; setelah Anda setujui, kalian memakai bisnis bersama.",
   "Davet mesajını paylaş": "Bagikan undangan",
   "Davet mesajı kopyalandı.": "Undangan disalin.",
+  "Telefon numarası veya şifre hatalı.": "Nomor telepon atau kata sandi salah.",
+  "Bu telefon numarasıyla zaten bir hesap var; giriş yapın.": "Sudah ada akun dengan nomor ini; silakan masuk.",
+  "Telefonunuz henüz doğrulanmadı. SMS ile gelen kodu girin.": "Telepon Anda belum diverifikasi. Masukkan kode yang dikirim lewat SMS.",
+  "Hesabınız henüz doğrulanmadı. {m} numarasına SMS ile yeni bir doğrulama kodu gönderdik.": "Akun Anda belum diverifikasi. Kami mengirim kode baru lewat SMS ke {m}.",
+  "{m} numarasına SMS ile 6 haneli bir doğrulama kodu gönderdik.": "Kami mengirim kode 6 digit lewat SMS ke {m}.",
+  "KOD GÖNDER": "KIRIM KODE",
+  "Telefonunuzu doğrulayın": "Verifikasi telepon Anda",
+  "Giriş yöntemi": "Cara masuk",
+  "Yetkilinin e-postası veya telefonu": "Email atau telepon pemilik",
+  "E-posta veya telefon hesabınızla eşleşmiyor.": "Email atau telepon tidak cocok dengan akun Anda.",
+  "Giriş bilgileri veya şifre hatalı.": "Data masuk atau kata sandi salah.",
+  "E-posta veya telefon": "Email atau telepon",
+  "Hesabım Muhasebe'de işletmeme katıl: uygulamayı indir, giriş ekranında Katıl sekmesine benim telefon numaramı yaz: {m} — {url}": "Gabung ke bisnis saya di Hesabım: unduh aplikasinya dan di layar masuk tulis nomor saya di tab Gabung: {m} — {url}",
+  "Giriş ekranında Katıl sekmesine sizin telefon numaranızı yazsın: {m}": "Di layar masuk, ia menulis nomor Anda di tab Gabung: {m}",
+  "Bu e-posta ya da telefona ait bir işletme bulunamadı.": "Tidak ada bisnis untuk email atau telepon ini.",
 };
 
 export default dict;

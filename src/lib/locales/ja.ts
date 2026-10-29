@@ -647,6 +647,21 @@ const dict: Record<string, string> = {
   "İstek Bildirimler'e gelir; onayladığınızda işletmenizi birlikte kullanırsınız.": "リクエストは通知に届きます。承認すると事業者を一緒に使えます。",
   "Davet mesajını paylaş": "招待を共有",
   "Davet mesajı kopyalandı.": "招待をコピーしました。",
+  "Telefon numarası veya şifre hatalı.": "電話番号またはパスワードが正しくありません。",
+  "Bu telefon numarasıyla zaten bir hesap var; giriş yapın.": "この電話番号のアカウントは既にあります。サインインしてください。",
+  "Telefonunuz henüz doğrulanmadı. SMS ile gelen kodu girin.": "電話番号がまだ確認されていません。SMSで届いたコードを入力してください。",
+  "Hesabınız henüz doğrulanmadı. {m} numarasına SMS ile yeni bir doğrulama kodu gönderdik.": "アカウントがまだ確認されていません。{m} にSMSで新しい確認コードを送信しました。",
+  "{m} numarasına SMS ile 6 haneli bir doğrulama kodu gönderdik.": "{m} にSMSで6桁の確認コードを送信しました。",
+  "KOD GÖNDER": "コードを送信",
+  "Telefonunuzu doğrulayın": "電話番号を確認",
+  "Giriş yöntemi": "サインイン方法",
+  "Yetkilinin e-postası veya telefonu": "オーナーのメールアドレスまたは電話番号",
+  "E-posta veya telefon hesabınızla eşleşmiyor.": "メールアドレスまたは電話番号がアカウントと一致しません。",
+  "Giriş bilgileri veya şifre hatalı.": "サインイン情報またはパスワードが正しくありません。",
+  "E-posta veya telefon": "メールアドレスまたは電話番号",
+  "Hesabım Muhasebe'de işletmeme katıl: uygulamayı indir, giriş ekranında Katıl sekmesine benim telefon numaramı yaz: {m} — {url}": "Hesabımで私の事業者に参加してください：アプリをダウンロードし、サインイン画面の「参加」タブに私の電話番号を入力：{m} — {url}",
+  "Giriş ekranında Katıl sekmesine sizin telefon numaranızı yazsın: {m}": "サインイン画面の「参加」タブにあなたの電話番号を入力してもらいます：{m}",
+  "Bu e-posta ya da telefona ait bir işletme bulunamadı.": "このメールアドレスまたは電話番号の事業者は見つかりませんでした。",
 };
 
 export default dict;

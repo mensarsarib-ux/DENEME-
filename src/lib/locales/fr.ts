@@ -647,6 +647,21 @@ const dict: Record<string, string> = {
   "İstek Bildirimler'e gelir; onayladığınızda işletmenizi birlikte kullanırsınız.": "La demande arrive dans Notifications ; une fois approuvée, vous utilisez l'entreprise ensemble.",
   "Davet mesajını paylaş": "Partager l'invitation",
   "Davet mesajı kopyalandı.": "Invitation copiée.",
+  "Telefon numarası veya şifre hatalı.": "Numéro de téléphone ou mot de passe incorrect.",
+  "Bu telefon numarasıyla zaten bir hesap var; giriş yapın.": "Un compte existe déjà avec ce numéro ; connectez-vous.",
+  "Telefonunuz henüz doğrulanmadı. SMS ile gelen kodu girin.": "Votre téléphone n'est pas encore vérifié. Saisissez le code reçu par SMS.",
+  "Hesabınız henüz doğrulanmadı. {m} numarasına SMS ile yeni bir doğrulama kodu gönderdik.": "Votre compte n'est pas encore vérifié. Nous avons envoyé un nouveau code par SMS au {m}.",
+  "{m} numarasına SMS ile 6 haneli bir doğrulama kodu gönderdik.": "Nous avons envoyé un code à 6 chiffres par SMS au {m}.",
+  "KOD GÖNDER": "ENVOYER LE CODE",
+  "Telefonunuzu doğrulayın": "Vérifiez votre téléphone",
+  "Giriş yöntemi": "Méthode de connexion",
+  "Yetkilinin e-postası veya telefonu": "E-mail ou téléphone du responsable",
+  "E-posta veya telefon hesabınızla eşleşmiyor.": "L'e-mail ou le téléphone ne correspond pas à votre compte.",
+  "Giriş bilgileri veya şifre hatalı.": "Identifiants ou mot de passe incorrects.",
+  "E-posta veya telefon": "E-mail ou téléphone",
+  "Hesabım Muhasebe'de işletmeme katıl: uygulamayı indir, giriş ekranında Katıl sekmesine benim telefon numaramı yaz: {m} — {url}": "Rejoins mon entreprise sur Hesabım : télécharge l'app et, sur l'écran de connexion, saisis mon numéro dans l'onglet Rejoindre : {m} — {url}",
+  "Giriş ekranında Katıl sekmesine sizin telefon numaranızı yazsın: {m}": "Sur l'écran de connexion, il saisit votre numéro dans l'onglet Rejoindre : {m}",
+  "Bu e-posta ya da telefona ait bir işletme bulunamadı.": "Aucune entreprise trouvée pour cet e-mail ou ce téléphone.",
 };
 
 export default dict;

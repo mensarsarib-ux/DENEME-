@@ -647,6 +647,21 @@ const dict: Record<string, string> = {
   "İstek Bildirimler'e gelir; onayladığınızda işletmenizi birlikte kullanırsınız.": "La solicitud llega a Notificaciones; cuando la apruebes, usaréis el negocio juntos.",
   "Davet mesajını paylaş": "Compartir invitación",
   "Davet mesajı kopyalandı.": "Invitación copiada.",
+  "Telefon numarası veya şifre hatalı.": "Número de teléfono o contraseña incorrectos.",
+  "Bu telefon numarasıyla zaten bir hesap var; giriş yapın.": "Ya existe una cuenta con este número; inicia sesión.",
+  "Telefonunuz henüz doğrulanmadı. SMS ile gelen kodu girin.": "Tu teléfono aún no está verificado. Introduce el código recibido por SMS.",
+  "Hesabınız henüz doğrulanmadı. {m} numarasına SMS ile yeni bir doğrulama kodu gönderdik.": "Tu cuenta aún no está verificada. Enviamos un nuevo código por SMS al {m}.",
+  "{m} numarasına SMS ile 6 haneli bir doğrulama kodu gönderdik.": "Enviamos un código de 6 dígitos por SMS al {m}.",
+  "KOD GÖNDER": "ENVIAR CÓDIGO",
+  "Telefonunuzu doğrulayın": "Verifica tu teléfono",
+  "Giriş yöntemi": "Método de acceso",
+  "Yetkilinin e-postası veya telefonu": "Correo o teléfono del responsable",
+  "E-posta veya telefon hesabınızla eşleşmiyor.": "El correo o teléfono no coincide con tu cuenta.",
+  "Giriş bilgileri veya şifre hatalı.": "Datos de acceso o contraseña incorrectos.",
+  "E-posta veya telefon": "Correo o teléfono",
+  "Hesabım Muhasebe'de işletmeme katıl: uygulamayı indir, giriş ekranında Katıl sekmesine benim telefon numaramı yaz: {m} — {url}": "Únete a mi negocio en Hesabım: descarga la app y en la pantalla de inicio escribe mi número en la pestaña Unirse: {m} — {url}",
+  "Giriş ekranında Katıl sekmesine sizin telefon numaranızı yazsın: {m}": "En la pantalla de inicio escribe tu número en la pestaña Unirse: {m}",
+  "Bu e-posta ya da telefona ait bir işletme bulunamadı.": "No se encontró ningún negocio para este correo o teléfono.",
 };
 
 export default dict;

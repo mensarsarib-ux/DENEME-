@@ -647,6 +647,21 @@ const dict: Record<string, string> = {
   "İstek Bildirimler'e gelir; onayladığınızda işletmenizi birlikte kullanırsınız.": "Het verzoek komt binnen bij Meldingen; na je goedkeuring gebruiken jullie het bedrijf samen.",
   "Davet mesajını paylaş": "Uitnodiging delen",
   "Davet mesajı kopyalandı.": "Uitnodiging gekopieerd.",
+  "Telefon numarası veya şifre hatalı.": "Telefoonnummer of wachtwoord onjuist.",
+  "Bu telefon numarasıyla zaten bir hesap var; giriş yapın.": "Er bestaat al een account met dit nummer; log in.",
+  "Telefonunuz henüz doğrulanmadı. SMS ile gelen kodu girin.": "Je telefoon is nog niet bevestigd. Voer de code uit de sms in.",
+  "Hesabınız henüz doğrulanmadı. {m} numarasına SMS ile yeni bir doğrulama kodu gönderdik.": "Je account is nog niet bevestigd. We hebben per sms een nieuwe code naar {m} gestuurd.",
+  "{m} numarasına SMS ile 6 haneli bir doğrulama kodu gönderdik.": "We hebben per sms een 6-cijferige code naar {m} gestuurd.",
+  "KOD GÖNDER": "CODE VERSTUREN",
+  "Telefonunuzu doğrulayın": "Bevestig je telefoon",
+  "Giriş yöntemi": "Inlogmethode",
+  "Yetkilinin e-postası veya telefonu": "E-mail of telefoon van de eigenaar",
+  "E-posta veya telefon hesabınızla eşleşmiyor.": "E-mail of telefoon komt niet overeen met je account.",
+  "Giriş bilgileri veya şifre hatalı.": "Inloggegevens of wachtwoord onjuist.",
+  "E-posta veya telefon": "E-mail of telefoon",
+  "Hesabım Muhasebe'de işletmeme katıl: uygulamayı indir, giriş ekranında Katıl sekmesine benim telefon numaramı yaz: {m} — {url}": "Word lid van mijn bedrijf in Hesabım: download de app en vul op het inlogscherm bij het tabblad Lid worden mijn nummer in: {m} — {url}",
+  "Giriş ekranında Katıl sekmesine sizin telefon numaranızı yazsın: {m}": "Op het inlogscherm vult hij bij het tabblad Lid worden jouw nummer in: {m}",
+  "Bu e-posta ya da telefona ait bir işletme bulunamadı.": "Geen bedrijf gevonden voor dit e-mailadres of telefoonnummer.",
 };
 
 export default dict;

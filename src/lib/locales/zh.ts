@@ -647,6 +647,21 @@ const dict: Record<string, string> = {
   "İstek Bildirimler'e gelir; onayladığınızda işletmenizi birlikte kullanırsınız.": "请求会出现在通知中；你批准后即可共同使用商户。",
   "Davet mesajını paylaş": "分享邀请",
   "Davet mesajı kopyalandı.": "邀请已复制。",
+  "Telefon numarası veya şifre hatalı.": "手机号或密码错误。",
+  "Bu telefon numarasıyla zaten bir hesap var; giriş yapın.": "该手机号已有账户，请登录。",
+  "Telefonunuz henüz doğrulanmadı. SMS ile gelen kodu girin.": "你的手机号尚未验证。请输入短信中的验证码。",
+  "Hesabınız henüz doğrulanmadı. {m} numarasına SMS ile yeni bir doğrulama kodu gönderdik.": "你的账户尚未验证。我们已通过短信向 {m} 发送了新的验证码。",
+  "{m} numarasına SMS ile 6 haneli bir doğrulama kodu gönderdik.": "我们已通过短信向 {m} 发送了 6 位验证码。",
+  "KOD GÖNDER": "发送验证码",
+  "Telefonunuzu doğrulayın": "验证手机号",
+  "Giriş yöntemi": "登录方式",
+  "Yetkilinin e-postası veya telefonu": "负责人的邮箱或手机号",
+  "E-posta veya telefon hesabınızla eşleşmiyor.": "邮箱或手机号与你的账户不符。",
+  "Giriş bilgileri veya şifre hatalı.": "登录信息或密码错误。",
+  "E-posta veya telefon": "邮箱或手机号",
+  "Hesabım Muhasebe'de işletmeme katıl: uygulamayı indir, giriş ekranında Katıl sekmesine benim telefon numaramı yaz: {m} — {url}": "加入我在 Hesabım 的商户：下载应用，在登录页面的「加入」标签中输入我的手机号：{m} — {url}",
+  "Giriş ekranında Katıl sekmesine sizin telefon numaranızı yazsın: {m}": "在登录页面的「加入」标签中输入你的手机号：{m}",
+  "Bu e-posta ya da telefona ait bir işletme bulunamadı.": "未找到该邮箱或手机号对应的商户。",
 };
 
 export default dict;

@@ -647,6 +647,21 @@ const dict: Record<string, string> = {
   "İstek Bildirimler'e gelir; onayladığınızda işletmenizi birlikte kullanırsınız.": "요청은 알림으로 도착하며, 승인하면 사업장을 함께 사용합니다.",
   "Davet mesajını paylaş": "초대 공유",
   "Davet mesajı kopyalandı.": "초대를 복사했습니다.",
+  "Telefon numarası veya şifre hatalı.": "전화번호 또는 비밀번호가 올바르지 않습니다.",
+  "Bu telefon numarasıyla zaten bir hesap var; giriş yapın.": "이 전화번호로 된 계정이 이미 있습니다. 로그인하세요.",
+  "Telefonunuz henüz doğrulanmadı. SMS ile gelen kodu girin.": "전화번호가 아직 인증되지 않았습니다. SMS로 받은 코드를 입력하세요.",
+  "Hesabınız henüz doğrulanmadı. {m} numarasına SMS ile yeni bir doğrulama kodu gönderdik.": "계정이 아직 인증되지 않았습니다. {m}(으)로 SMS 인증 코드를 새로 보냈습니다.",
+  "{m} numarasına SMS ile 6 haneli bir doğrulama kodu gönderdik.": "{m}(으)로 SMS 6자리 인증 코드를 보냈습니다.",
+  "KOD GÖNDER": "코드 보내기",
+  "Telefonunuzu doğrulayın": "전화번호 인증",
+  "Giriş yöntemi": "로그인 방법",
+  "Yetkilinin e-postası veya telefonu": "소유자 이메일 또는 전화번호",
+  "E-posta veya telefon hesabınızla eşleşmiyor.": "이메일 또는 전화번호가 계정과 일치하지 않습니다.",
+  "Giriş bilgileri veya şifre hatalı.": "로그인 정보 또는 비밀번호가 올바르지 않습니다.",
+  "E-posta veya telefon": "이메일 또는 전화번호",
+  "Hesabım Muhasebe'de işletmeme katıl: uygulamayı indir, giriş ekranında Katıl sekmesine benim telefon numaramı yaz: {m} — {url}": "Hesabım에서 내 사업장에 참여하세요: 앱을 내려받고 로그인 화면의 참여 탭에 내 전화번호를 입력하세요: {m} — {url}",
+  "Giriş ekranında Katıl sekmesine sizin telefon numaranızı yazsın: {m}": "로그인 화면의 참여 탭에 회원님의 전화번호를 입력합니다: {m}",
+  "Bu e-posta ya da telefona ait bir işletme bulunamadı.": "이 이메일 또는 전화번호의 사업장을 찾을 수 없습니다.",
 };
 
 export default dict;

@@ -4014,3 +4014,8 @@ a.action-btn:visited {
   color: var(--muted);
   line-height: 1.45;
 }
+
+/* Giriş ekranında e-posta / telefon seçimi */
+.auth-method {
+  margin-bottom: 4px;
+}

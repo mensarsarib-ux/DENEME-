@@ -647,6 +647,21 @@ const dict: Record<string, string> = {
   "İstek Bildirimler'e gelir; onayladığınızda işletmenizi birlikte kullanırsınız.": "يصل الطلب إلى الإشعارات؛ وبعد موافقتك تستخدمان النشاط معًا.",
   "Davet mesajını paylaş": "مشاركة الدعوة",
   "Davet mesajı kopyalandı.": "تم نسخ الدعوة.",
+  "Telefon numarası veya şifre hatalı.": "رقم الهاتف أو كلمة المرور غير صحيحة.",
+  "Bu telefon numarasıyla zaten bir hesap var; giriş yapın.": "يوجد حساب بهذا الرقم بالفعل؛ سجّل الدخول.",
+  "Telefonunuz henüz doğrulanmadı. SMS ile gelen kodu girin.": "لم يتم تأكيد هاتفك بعد. أدخل الرمز الذي وصلك برسالة SMS.",
+  "Hesabınız henüz doğrulanmadı. {m} numarasına SMS ile yeni bir doğrulama kodu gönderdik.": "لم يتم تأكيد حسابك بعد. أرسلنا رمزًا جديدًا برسالة SMS إلى {m}.",
+  "{m} numarasına SMS ile 6 haneli bir doğrulama kodu gönderdik.": "أرسلنا رمزًا من 6 أرقام برسالة SMS إلى {m}.",
+  "KOD GÖNDER": "إرسال الرمز",
+  "Telefonunuzu doğrulayın": "أكّد هاتفك",
+  "Giriş yöntemi": "طريقة الدخول",
+  "Yetkilinin e-postası veya telefonu": "بريد صاحب النشاط أو هاتفه",
+  "E-posta veya telefon hesabınızla eşleşmiyor.": "البريد أو الهاتف لا يطابق حسابك.",
+  "Giriş bilgileri veya şifre hatalı.": "بيانات الدخول أو كلمة المرور غير صحيحة.",
+  "E-posta veya telefon": "البريد الإلكتروني أو الهاتف",
+  "Hesabım Muhasebe'de işletmeme katıl: uygulamayı indir, giriş ekranında Katıl sekmesine benim telefon numaramı yaz: {m} — {url}": "انضم إلى نشاطي التجاري في Hesabım: نزّل التطبيق واكتب رقم هاتفي في تبويب انضمام بشاشة الدخول: {m} — {url}",
+  "Giriş ekranında Katıl sekmesine sizin telefon numaranızı yazsın: {m}": "في شاشة الدخول يكتب رقم هاتفك في تبويب انضمام: {m}",
+  "Bu e-posta ya da telefona ait bir işletme bulunamadı.": "لم يُعثر على نشاط تجاري لهذا البريد أو الهاتف.",
 };
 
 export default dict;

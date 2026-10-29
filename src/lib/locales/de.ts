@@ -647,6 +647,21 @@ const dict: Record<string, string> = {
   "İstek Bildirimler'e gelir; onayladığınızda işletmenizi birlikte kullanırsınız.": "Die Anfrage erscheint in den Benachrichtigungen; nach deiner Bestätigung nutzt ihr das Unternehmen gemeinsam.",
   "Davet mesajını paylaş": "Einladung teilen",
   "Davet mesajı kopyalandı.": "Einladung kopiert.",
+  "Telefon numarası veya şifre hatalı.": "Telefonnummer oder Passwort ist falsch.",
+  "Bu telefon numarasıyla zaten bir hesap var; giriş yapın.": "Mit dieser Telefonnummer gibt es bereits ein Konto; melde dich an.",
+  "Telefonunuz henüz doğrulanmadı. SMS ile gelen kodu girin.": "Dein Telefon ist noch nicht bestätigt. Gib den Code aus der SMS ein.",
+  "Hesabınız henüz doğrulanmadı. {m} numarasına SMS ile yeni bir doğrulama kodu gönderdik.": "Dein Konto ist noch nicht bestätigt. Wir haben per SMS einen neuen Bestätigungscode an {m} gesendet.",
+  "{m} numarasına SMS ile 6 haneli bir doğrulama kodu gönderdik.": "Wir haben per SMS einen 6-stelligen Bestätigungscode an {m} gesendet.",
+  "KOD GÖNDER": "CODE SENDEN",
+  "Telefonunuzu doğrulayın": "Bestätige dein Telefon",
+  "Giriş yöntemi": "Anmeldemethode",
+  "Yetkilinin e-postası veya telefonu": "E-Mail oder Telefon des Inhabers",
+  "E-posta veya telefon hesabınızla eşleşmiyor.": "E-Mail oder Telefon passt nicht zu deinem Konto.",
+  "Giriş bilgileri veya şifre hatalı.": "Anmeldedaten oder Passwort falsch.",
+  "E-posta veya telefon": "E-Mail oder Telefon",
+  "Hesabım Muhasebe'de işletmeme katıl: uygulamayı indir, giriş ekranında Katıl sekmesine benim telefon numaramı yaz: {m} — {url}": "Tritt meinem Unternehmen bei Hesabım bei: Lade die App herunter und gib auf dem Anmeldebildschirm im Tab Beitreten meine Telefonnummer ein: {m} — {url}",
+  "Giriş ekranında Katıl sekmesine sizin telefon numaranızı yazsın: {m}": "Auf dem Anmeldebildschirm gibt es im Tab Beitreten deine Telefonnummer ein: {m}",
+  "Bu e-posta ya da telefona ait bir işletme bulunamadı.": "Für diese E-Mail oder Telefonnummer wurde kein Unternehmen gefunden.",
 };
 
 export default dict;

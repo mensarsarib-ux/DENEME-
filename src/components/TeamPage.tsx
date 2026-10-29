@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Share } from "@capacitor/share";
-import { teamPeople, type Session, type TeamPerson } from "../lib/cloud";
+import { isEmailLogin, teamPeople, type Session, type TeamPerson } from "../lib/cloud";
 import { t } from "../lib/i18n";
 import { haptic } from "../lib/haptics";
 import { SUPPORT_ICON } from "../lib/menu";
@@ -40,10 +40,11 @@ export default function TeamPage({
       .catch(() => setFailed(true));
   }, [session, isMember]);
 
-  const inviteText = t(
-    "Hesabım Muhasebe'de işletmeme katıl: uygulamayı indir, giriş ekranında Katıl sekmesine benim e-postamı yaz: {m} — {url}",
-    { m: session.email, url: SITE_URL },
-  );
+  // Telefonla açılmış hesapta davet, e-posta yerine telefon numarasıyla yapılır
+  const byPhone = !isEmailLogin(session.email);
+  const inviteText = byPhone
+    ? t("Hesabım Muhasebe'de işletmeme katıl: uygulamayı indir, giriş ekranında Katıl sekmesine benim telefon numaramı yaz: {m} — {url}", { m: session.email, url: SITE_URL })
+    : t("Hesabım Muhasebe'de işletmeme katıl: uygulamayı indir, giriş ekranında Katıl sekmesine benim e-postamı yaz: {m} — {url}", { m: session.email, url: SITE_URL });
 
   async function shareInvite() {
     haptic("light");
@@ -87,7 +88,11 @@ export default function TeamPage({
             <h2 className="card-title">{t("Ekip arkadaşını davet et")}</h2>
             <ol className="invite-steps">
               <li>{t("Ekip arkadaşınız Hesabım uygulamasını indirsin.")}</li>
-              <li>{t("Giriş ekranında Katıl sekmesine sizin e-postanızı yazsın: {m}", { m: session.email })}</li>
+              <li>
+                {byPhone
+                  ? t("Giriş ekranında Katıl sekmesine sizin telefon numaranızı yazsın: {m}", { m: session.email })
+                  : t("Giriş ekranında Katıl sekmesine sizin e-postanızı yazsın: {m}", { m: session.email })}
+              </li>
               <li>{t("İstek Bildirimler'e gelir; onayladığınızda işletmenizi birlikte kullanırsınız.")}</li>
             </ol>
             <button type="button" className="primary-btn" onClick={() => void shareInvite()}>{t("Davet mesajını paylaş")}</button>

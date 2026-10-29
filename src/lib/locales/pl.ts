@@ -647,6 +647,21 @@ const dict: Record<string, string> = {
   "İstek Bildirimler'e gelir; onayladığınızda işletmenizi birlikte kullanırsınız.": "Prośba trafi do Powiadomień; po zatwierdzeniu korzystacie z firmy razem.",
   "Davet mesajını paylaş": "Udostępnij zaproszenie",
   "Davet mesajı kopyalandı.": "Zaproszenie skopiowane.",
+  "Telefon numarası veya şifre hatalı.": "Nieprawidłowy numer telefonu lub hasło.",
+  "Bu telefon numarasıyla zaten bir hesap var; giriş yapın.": "Konto z tym numerem już istnieje; zaloguj się.",
+  "Telefonunuz henüz doğrulanmadı. SMS ile gelen kodu girin.": "Twój telefon nie jest jeszcze potwierdzony. Wpisz kod z SMS-a.",
+  "Hesabınız henüz doğrulanmadı. {m} numarasına SMS ile yeni bir doğrulama kodu gönderdik.": "Twoje konto nie jest jeszcze potwierdzone. Wysłaliśmy nowy kod SMS-em na {m}.",
+  "{m} numarasına SMS ile 6 haneli bir doğrulama kodu gönderdik.": "Wysłaliśmy 6-cyfrowy kod SMS-em na {m}.",
+  "KOD GÖNDER": "WYŚLIJ KOD",
+  "Telefonunuzu doğrulayın": "Potwierdź telefon",
+  "Giriş yöntemi": "Sposób logowania",
+  "Yetkilinin e-postası veya telefonu": "E-mail lub telefon właściciela",
+  "E-posta veya telefon hesabınızla eşleşmiyor.": "E-mail lub telefon nie pasuje do Twojego konta.",
+  "Giriş bilgileri veya şifre hatalı.": "Nieprawidłowe dane logowania lub hasło.",
+  "E-posta veya telefon": "E-mail lub telefon",
+  "Hesabım Muhasebe'de işletmeme katıl: uygulamayı indir, giriş ekranında Katıl sekmesine benim telefon numaramı yaz: {m} — {url}": "Dołącz do mojej firmy w Hesabım: pobierz aplikację i na ekranie logowania w karcie Dołącz wpisz mój numer: {m} — {url}",
+  "Giriş ekranında Katıl sekmesine sizin telefon numaranızı yazsın: {m}": "Na ekranie logowania w karcie Dołącz wpisuje Twój numer: {m}",
+  "Bu e-posta ya da telefona ait bir işletme bulunamadı.": "Nie znaleziono firmy dla tego e-maila lub telefonu.",
 };
 
 export default dict;

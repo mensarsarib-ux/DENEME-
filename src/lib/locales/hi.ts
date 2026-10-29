@@ -647,6 +647,21 @@ const dict: Record<string, string> = {
   "İstek Bildirimler'e gelir; onayladığınızda işletmenizi birlikte kullanırsınız.": "अनुरोध सूचनाओं में आएगा; मंज़ूरी देने पर आप साथ मिलकर व्यवसाय चलाएँगे।",
   "Davet mesajını paylaş": "निमंत्रण साझा करें",
   "Davet mesajı kopyalandı.": "निमंत्रण कॉपी हो गया।",
+  "Telefon numarası veya şifre hatalı.": "फ़ोन नंबर या पासवर्ड गलत है।",
+  "Bu telefon numarasıyla zaten bir hesap var; giriş yapın.": "इस फ़ोन नंबर से पहले से खाता है; साइन इन करें।",
+  "Telefonunuz henüz doğrulanmadı. SMS ile gelen kodu girin.": "आपका फ़ोन अभी सत्यापित नहीं है। SMS में आया कोड डालें।",
+  "Hesabınız henüz doğrulanmadı. {m} numarasına SMS ile yeni bir doğrulama kodu gönderdik.": "आपका खाता अभी सत्यापित नहीं है। हमने {m} पर SMS से नया कोड भेजा है।",
+  "{m} numarasına SMS ile 6 haneli bir doğrulama kodu gönderdik.": "हमने {m} पर SMS से 6 अंकों का कोड भेजा है।",
+  "KOD GÖNDER": "कोड भेजें",
+  "Telefonunuzu doğrulayın": "अपना फ़ोन सत्यापित करें",
+  "Giriş yöntemi": "साइन-इन का तरीका",
+  "Yetkilinin e-postası veya telefonu": "मालिक का ईमेल या फ़ोन",
+  "E-posta veya telefon hesabınızla eşleşmiyor.": "ईमेल या फ़ोन आपके खाते से मेल नहीं खाता।",
+  "Giriş bilgileri veya şifre hatalı.": "साइन-इन जानकारी या पासवर्ड गलत है।",
+  "E-posta veya telefon": "ईमेल या फ़ोन",
+  "Hesabım Muhasebe'de işletmeme katıl: uygulamayı indir, giriş ekranında Katıl sekmesine benim telefon numaramı yaz: {m} — {url}": "Hesabım पर मेरे व्यवसाय से जुड़ो: ऐप डाउनलोड करो और साइन-इन स्क्रीन पर जुड़ें टैब में मेरा फ़ोन नंबर डालो: {m} — {url}",
+  "Giriş ekranında Katıl sekmesine sizin telefon numaranızı yazsın: {m}": "साइन-इन स्क्रीन पर जुड़ें टैब में वह आपका फ़ोन नंबर डाले: {m}",
+  "Bu e-posta ya da telefona ait bir işletme bulunamadı.": "इस ईमेल या फ़ोन से कोई व्यवसाय नहीं मिला।",
 };
 
 export default dict;

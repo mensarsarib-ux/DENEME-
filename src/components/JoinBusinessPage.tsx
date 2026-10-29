@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from "react";
-import { CloudError, findBusinessByOwnerEmail, loadSession, requestJoin, type FoundBusiness } from "../lib/cloud";
+import { CloudError, findBusinessByOwnerEmail, loadSession, normalizePhone, requestJoin, type FoundBusiness } from "../lib/cloud";
 import { t } from "../lib/i18n";
 import { haptic } from "../lib/haptics";
 import { SUPPORT_ICON } from "../lib/menu";
@@ -26,13 +26,14 @@ export default function JoinBusinessPage({ onBack }: { onBack: () => void }) {
     setBusy(true);
     setMessage(null);
     try {
-      const res = await findBusinessByOwnerEmail(session, email);
+      // Yetkili e-postasıyla ya da telefon numarasıyla aranır
+      const res = await findBusinessByOwnerEmail(session, email.includes("@") ? email : normalizePhone(email) ?? email);
       if (res === "expired") {
         setMessage({ ok: false, text: t("Oturumunuz sona ermiş; yeniden giriş yapın.") });
         return;
       }
       setFound(res);
-      if (res.length === 0) setMessage({ ok: false, text: t("Bu e-postaya ait bir işletme bulunamadı.") });
+      if (res.length === 0) setMessage({ ok: false, text: t("Bu e-posta ya da telefona ait bir işletme bulunamadı.") });
     } catch (e) {
       setMessage({ ok: false, text: e instanceof CloudError ? t("Sunucuya ulaşılamadı.") : t("Bir sorun oluştu.") });
     } finally {
@@ -65,10 +66,10 @@ export default function JoinBusinessPage({ onBack }: { onBack: () => void }) {
       <PageHeader title={t("Var olan işletmeye katıl")} subtitle={t("Yetkilinin e-postasını girin")} icon={SUPPORT_ICON} onBack={onBack} />
       <form className="form" onSubmit={search} noValidate>
         <div className="field">
-          <label htmlFor="jb-email">{t("Yetkilinin e-postası")}</label>
+          <label htmlFor="jb-email">{t("Yetkilinin e-postası veya telefonu")}</label>
           <input
             id="jb-email"
-            type="email"
+            type="text"
             inputMode="email"
             autoComplete="off"
             autoCapitalize="none"

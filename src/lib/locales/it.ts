@@ -647,6 +647,21 @@ const dict: Record<string, string> = {
   "İstek Bildirimler'e gelir; onayladığınızda işletmenizi birlikte kullanırsınız.": "La richiesta arriva in Notifiche; quando la approvi, usate l'attività insieme.",
   "Davet mesajını paylaş": "Condividi invito",
   "Davet mesajı kopyalandı.": "Invito copiato.",
+  "Telefon numarası veya şifre hatalı.": "Numero di telefono o password errati.",
+  "Bu telefon numarasıyla zaten bir hesap var; giriş yapın.": "Esiste già un account con questo numero; accedi.",
+  "Telefonunuz henüz doğrulanmadı. SMS ile gelen kodu girin.": "Il tuo telefono non è ancora verificato. Inserisci il codice ricevuto via SMS.",
+  "Hesabınız henüz doğrulanmadı. {m} numarasına SMS ile yeni bir doğrulama kodu gönderdik.": "Il tuo account non è ancora verificato. Abbiamo inviato un nuovo codice via SMS al {m}.",
+  "{m} numarasına SMS ile 6 haneli bir doğrulama kodu gönderdik.": "Abbiamo inviato un codice a 6 cifre via SMS al {m}.",
+  "KOD GÖNDER": "INVIA CODICE",
+  "Telefonunuzu doğrulayın": "Verifica il tuo telefono",
+  "Giriş yöntemi": "Metodo di accesso",
+  "Yetkilinin e-postası veya telefonu": "Email o telefono del titolare",
+  "E-posta veya telefon hesabınızla eşleşmiyor.": "Email o telefono non corrispondono al tuo account.",
+  "Giriş bilgileri veya şifre hatalı.": "Dati di accesso o password errati.",
+  "E-posta veya telefon": "Email o telefono",
+  "Hesabım Muhasebe'de işletmeme katıl: uygulamayı indir, giriş ekranında Katıl sekmesine benim telefon numaramı yaz: {m} — {url}": "Unisciti alla mia attività su Hesabım: scarica l'app e nella schermata di accesso inserisci il mio numero nella scheda Unisciti: {m} — {url}",
+  "Giriş ekranında Katıl sekmesine sizin telefon numaranızı yazsın: {m}": "Nella schermata di accesso inserisce il tuo numero nella scheda Unisciti: {m}",
+  "Bu e-posta ya da telefona ait bir işletme bulunamadı.": "Nessuna attività trovata per questa email o questo telefono.",
 };
 
 export default dict;
