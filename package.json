@@ -16,6 +16,7 @@
     "@capacitor/ios": "^6.2.2",
     "@capacitor/keyboard": "^6.0.4",
     "@capacitor/share": "^6.0.4",
+    "@capacitor/status-bar": "^6.0.3",
     "@capgo/native-purchases": "^6.0.42",
     "react": "18.3.1",
     "react-dom": "18.3.1"

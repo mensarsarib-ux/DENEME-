@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import AccountDeleteDialog from "./AccountDeleteDialog";
 import AccountCards from "./AccountCards";
+import { getThemeChoice, setThemeChoice, type ThemeChoice } from "../lib/theme";
 import { currentDeviceId, listDevices, removeDevice, type DeviceInfo, type Session } from "../lib/cloud";
 import type { Settings } from "../data/mock";
 import { LANGUAGES, currencyName, locale, t, type Language } from "../lib/i18n";
@@ -170,6 +171,8 @@ export default function SettingsPage({
 }) {
   /** Açık olan ayar grubu; null ise ana liste görünür */
   const [group, setGroup] = useState<SettingsGroup | null>(null);
+  // Tema bu telefona özel; seçim hemen uygulanır
+  const [theme, setTheme] = useState<ThemeChoice>(getThemeChoice);
   const [remoteText, setRemoteText] = useState<string | null>(null);
   useEffect(() => {
     if (group !== "hesap" || !account) return;
@@ -270,7 +273,7 @@ export default function SettingsPage({
               [
                 ["hesap", account ? account.email : t("Giriş yapılmadı")],
                 ["dil", LANGUAGES.find((l) => l.code === language)?.native ?? ""],
-                ["gorunum", t("Yazı boyutu, titreşim, liste sıralaması")],
+                ["gorunum", t("Tema, yazı boyutu, titreşim, liste sıralaması")],
                 ["para", t("Para birimi ve bildirim eşikleri")],
                 ["veriler", t("Yedek al, geri yükle, tüm verileri sil")],
                 ["destek", t("Destek, gizlilik, kullanım koşulları")],
@@ -398,6 +401,35 @@ export default function SettingsPage({
             checked={settings.haptics}
             onChange={(v) => set("haptics", v)}
           />
+        </section>
+
+        <section className="card" aria-label={t("Tema")}>
+          <h2 className="card-title">{t("Tema")}</h2>
+          <div className="sort-options" role="radiogroup" aria-label={t("Tema")}>
+            {(
+              [
+                ["dark", t("Koyu")],
+                ["light", t("Açık")],
+                ["system", t("Telefona göre")],
+              ] as const
+            ).map(([value, label]) => (
+              <button
+                key={value}
+                type="button"
+                role="radio"
+                aria-checked={theme === value}
+                className={`sort-btn ${theme === value ? "is-active" : ""}`}
+                onClick={() => {
+                  haptic("light");
+                  setTheme(value);
+                  setThemeChoice(value);
+                }}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+          <p className="field-hint">{t("Telefona göre seçilirse iPhone'un açık/koyu görünümü izlenir.")}</p>
         </section>
 
         <section className="card" aria-label={t("Yazı boyutu")}>

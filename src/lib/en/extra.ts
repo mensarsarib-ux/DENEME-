@@ -356,4 +356,12 @@ export const extra: Record<string, string> = {
   "Yeni şifre çok zayıf; daha uzun bir şifre seçin.": "The new password is too weak; choose a longer one.",
   "Yeni şifre eskisiyle aynı olamaz.": "The new password cannot be the same as the old one.",
   "Şifre değiştirilemedi; bağlantınızı kontrol edin.": "The password could not be changed; check your connection.",
+
+  // Tema
+  "Tema": "Theme",
+  "Koyu": "Dark",
+  "Açık": "Light",
+  "Telefona göre": "Match phone",
+  "Telefona göre seçilirse iPhone'un açık/koyu görünümü izlenir.": "With Match phone, the app follows your iPhone's light/dark appearance.",
+  "Tema, yazı boyutu, titreşim, liste sıralaması": "Theme, text size, haptics, list order",
 };

@@ -53,6 +53,7 @@ import type { MenuPage } from "./lib/menu";
 import { useSwipeBack } from "./lib/useSwipeBack";
 import { setCurrency } from "./lib/format";
 import { getLanguage, locale, setLanguage, t, type Language } from "./lib/i18n";
+import { setDarkHeader } from "./lib/theme";
 import AuthScreen from "./components/AuthScreen";
 import { cloudEnabled, heartbeat, loadSession, readRecoveryToken, signOut, type Session } from "./lib/cloud";
 import { useCloudSync } from "./lib/useCloudSync";
@@ -96,6 +97,10 @@ export default function App() {
   // Yazı boyutu kök yazı boyutunu değiştirir; tüm metinler rem ile ölçeklenir
   document.documentElement.style.fontSize = { small: "13px", medium: "16px", large: "20px" }[settings.textSize] ?? "16px";
   const [drawerOpen, setDrawerOpen] = useState(false);
+  // Durum çubuğu (saat, pil): ana ekranın koyu üst kısmında açık renk, açık temalı sayfalarda koyu renk
+  useEffect(() => {
+    setDarkHeader(view.name === "home" && !drawerOpen && (!cloudEnabled || !!session));
+  });
   // Dil bu telefona özel; değişince tüm ekran yeni dille yeniden çizilir
   const [language, setLanguageState] = useState<Language>(getLanguage);
   const changeLanguage = (code: Language) => {

@@ -3837,3 +3837,77 @@ a.action-btn:visited {
   color: var(--text);
   text-decoration: none;
 }
+
+/* ---------- Açık tema ----------
+   Ana ekranın üstündeki marka degradesi (grafik kartı, işletme seçici, arama) her iki temada da koyu kalır;
+   sayfalar, paneller, formlar ve listeler açık renge döner. */
+:root[data-theme="light"] {
+  --surface: #ffffff;
+  --surface-head: #f3f5f8;
+  --line: #e3e7ec;
+  --text: #111827;
+  --muted: #5f6b7a;
+  --blue: #2f7fd0;
+  --green: #1f9d63;
+  --red: #d64535;
+  color-scheme: light;
+}
+
+:root[data-theme="light"] .date-range input,
+:root[data-theme="light"] .entry-field input {
+  color-scheme: light;
+}
+
+/* Ana ekranın üst kısmı koyu degradede kalır: oradaki yazılar açık renkte kalsın */
+:root[data-theme="light"] .app > .topbar,
+:root[data-theme="light"] .summary {
+  --text: #f2f5f8;
+  --muted: #b8c3d1;
+  --line: #2b3a48;
+  --blue: #3c8fd9;
+  /* Değişkenler değişse de miras alınan yazı rengi body'den gelir; burada yeniden verilir */
+  color: var(--text);
+  color-scheme: dark;
+}
+
+/* Açık zemin üzerinde beyaz yarı saydam katmanlar görünmez; yerine koyu yarı saydam */
+:root[data-theme="light"] .sheet-handle,
+:root[data-theme="light"] .action-handle {
+  background: rgba(0, 0, 0, 0.18);
+}
+:root[data-theme="light"] .row:hover { background: rgba(0, 0, 0, 0.03); }
+:root[data-theme="light"] .tx-hit:active { background: rgba(0, 0, 0, 0.04); }
+:root[data-theme="light"] .action-btn { background: rgba(17, 24, 39, 0.05); }
+:root[data-theme="light"] .action-btn.is-active { background: rgba(47, 127, 208, 0.14); }
+:root[data-theme="light"] .header-add:disabled { background: rgba(0, 0, 0, 0.12); }
+:root[data-theme="light"] .biz-cancel-btn { background: rgba(0, 0, 0, 0.08); color: var(--text); }
+
+/* Koyu sabit renkli yüzeyler */
+:root[data-theme="light"] .round-btn,
+:root[data-theme="light"] .cust-tools { background: #eef1f5; }
+:root[data-theme="light"] .cust-avatar { background: #d8f3e4; color: #1d7a4c; }
+:root[data-theme="light"] .cust-name small { color: #1f9d63; }
+:root[data-theme="light"] .tx-info p { color: #4b5563; }
+:root[data-theme="light"] .tx-total { background: #f3f5f8; }
+:root[data-theme="light"] .entry,
+:root[data-theme="light"] .field input,
+:root[data-theme="light"] .field textarea { background: #f7f9fb; }
+:root[data-theme="light"] .save-btn:disabled,
+:root[data-theme="light"] .primary-btn:disabled { background: #d5dbe2; color: #6b7280; }
+:root[data-theme="light"] .keypad { background: #d1d4d9; }
+:root[data-theme="light"] .keypad button { background: #ffffff; color: #111827; box-shadow: 0 1px 0 rgba(0, 0, 0, 0.25); }
+:root[data-theme="light"] .keypad .key-fn { background: #b9bec6; }
+:root[data-theme="light"] .keypad button.is-down { background: #c9ccd1; }
+:root[data-theme="light"] .keypad .key-fn.is-down { background: #a3a8b0; }
+:root[data-theme="light"] .action-sheet { background: #ffffff; }
+:root[data-theme="light"] .action-backdrop,
+:root[data-theme="light"] .party-sheet-layer { background: rgba(0, 0, 0, 0.35); }
+:root[data-theme="light"] .drawer { box-shadow: 8px 0 32px rgba(0, 0, 0, 0.2); }
+:root[data-theme="light"] .tools-menu,
+:root[data-theme="light"] .auth-card,
+:root[data-theme="light"] .biz-plans { box-shadow: 0 10px 28px rgba(0, 0, 0, 0.14); }
+:root[data-theme="light"] .statement-preview { background: #e5e7eb; }
+:root[data-theme="light"] .paywall-card.tone-prem { background: linear-gradient(160deg, #fbf3e0, var(--surface-head)); }
+:root[data-theme="light"] .subscription-card.is-paid {
+  background: linear-gradient(160deg, rgba(217, 164, 65, 0.18), transparent 60%), var(--surface);
+}

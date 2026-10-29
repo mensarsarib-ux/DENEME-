@@ -2,6 +2,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App";
 import "./styles.css";
+import { applyTheme } from "./lib/theme";
 
 /**
  * ?sifirla bağlantısı: bu cihazdaki tüm Hesabım verisini (oturum, işletmeler, kayıtlar) siler
@@ -22,6 +23,8 @@ function resetLocalData() {
   window.location.replace(url.toString());
 }
 resetLocalData();
+// Tema ilk çizimden önce uygulanır ki ekran bir an yanlış renkte görünmesin
+applyTheme();
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
