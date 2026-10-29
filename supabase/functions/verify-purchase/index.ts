@@ -77,6 +77,8 @@ type TxInfo = {
   expiresDate?: number;
   revocationDate?: number;
   isUpgraded?: boolean;
+  /** Satın alma anında uygulamanın verdiği hesap kimliği (Hesabım kullanıcı kimliği) */
+  appAccountToken?: string;
 };
 
 /** Apple'ın imzalı bilgisinin (JWS) yük kısmını okur */
@@ -112,14 +114,20 @@ Deno.serve(async (req) => {
   try {
     const token = await appleJwt();
     const now = Date.now();
-    let best: { plan: string; productId: string; expires: number; original: string } | null = null;
+    let best: { plan: string; productId: string; expires: number; original: string; account: string } | null = null;
     const consider = (info: TxInfo, active: boolean, source: string) => {
       console.log(`${source} ${info.productId} aktif=${active} bitis=${info.expiresDate} yukseltildi=${info.isUpgraded ?? false}`);
       const plan = PRODUCT_PLAN[info.productId];
       if (!plan || info.bundleId !== BUNDLE_ID || !active || info.revocationDate || info.isUpgraded) return;
       const expires = Math.max(info.expiresDate ?? 0, now + 24 * 3600 * 1000);
       if (!best || RANK[plan] > RANK[best.plan]) {
-        best = { plan, productId: info.productId, expires, original: String(info.originalTransactionId ?? "") };
+        best = {
+          plan,
+          productId: info.productId,
+          expires,
+          original: String(info.originalTransactionId ?? ""),
+          account: String(info.appAccountToken ?? "").toLowerCase(),
+        };
       }
     };
 
@@ -140,10 +148,28 @@ Deno.serve(async (req) => {
     }
 
     if (!tx.data && !status.data) {
-      return json({ error: "apple_reddetti", reason: [...tx.tried, ...status.tried].join(" | ") }, 402);
+      // Ayrıntı yalnızca sunucu günlüğünde kalır; uygulamaya iç bilgi gönderilmez
+      console.log(`apple reddetti ${[...tx.tried, ...status.tried].join(" | ")}`);
+      return json({ error: "apple_reddetti" }, 402);
     }
 
-    const chosen = best as { plan: string; productId: string; expires: number; original: string } | null;
+    const chosen = best as { plan: string; productId: string; expires: number; original: string; account: string } | null;
+
+    // Abonelik satın alınırken başka bir Hesabım hesabına bağlandıysa ve o hesapta hâlâ geçerliyse
+    // bu hesaba taşınmaz. (İşlem numarasını bir şekilde ele geçiren biri başkasının aboneliğini alamaz.)
+    if (chosen?.account && chosen.account !== userId.toLowerCase()) {
+      const { data: holder } = await admin
+        .from("entitlements")
+        .select("user_id")
+        .eq("user_id", chosen.account)
+        .neq("plan", "free")
+        .gt("expires_at", new Date().toISOString())
+        .limit(1);
+      if (holder && holder.length > 0) {
+        console.log(`abonelik baska hesaba bagli ${chosen.original}`);
+        return json({ error: "baska_hesapta" }, 409);
+      }
+    }
 
     // Aynı Apple aboneliği en son hangi Hesabım hesabında satın alındı ya da geri yüklendiyse orada geçerlidir.
     // Başka bir hesapta etkinse o hesaptan alınıp bu hesaba taşınır (aynı abonelik iki hesapta birden açık kalmaz).
@@ -155,7 +181,10 @@ Deno.serve(async (req) => {
         .neq("user_id", userId)
         .neq("plan", "free")
         .select("user_id");
-      if (moveError) return json({ error: "kayit_hatasi", reason: moveError.message }, 500);
+      if (moveError) {
+        console.log(`tasima hatasi ${moveError.message}`);
+        return json({ error: "kayit_hatasi" }, 500);
+      }
       if (moved && moved.length > 0) console.log(`abonelik ${moved.length} hesaptan bu hesaba tasindi ${chosen.original}`);
     }
 
@@ -173,12 +202,15 @@ Deno.serve(async (req) => {
       transaction_id: transactionId,
       updated_at: new Date().toISOString(),
     });
-    if (error) return json({ error: "kayit_hatasi", reason: error.message }, 500);
+    if (error) {
+      console.log(`kayit hatasi ${error.message}`);
+      return json({ error: "kayit_hatasi" }, 500);
+    }
     if (!chosen) return json({ error: "aktif_abonelik_yok" }, 402);
 
     return json({ plan: chosen.plan, expiresAt: row.expires_at });
   } catch (e) {
     console.log(`hata ${String(e)}`);
-    return json({ error: "sunucu_hatasi", reason: String(e) }, 500);
+    return json({ error: "sunucu_hatasi" }, 500);
   }
 });

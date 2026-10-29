@@ -1,5 +1,8 @@
-// @capgo/native-purchases eklentisine iOS'ta telefondaki geçerli abonelikleri okuyan bir metot ekler
-// (StoreKit Transaction.currentEntitlements). Eklentinin geri yüklemesi abonelik bilgisi döndürmediği için gerekir.
+// @capgo/native-purchases eklentisine iOS'ta iki şey ekler:
+// 1) Telefondaki geçerli abonelikleri okuyan metot (StoreKit Transaction.currentEntitlements);
+//    eklentinin geri yüklemesi abonelik bilgisi döndürmediği için gerekir.
+// 2) Satın almaya hesap kimliği (appAccountToken) verilebilmesi; abonelik satın alan Hesabım hesabına bağlanır
+//    ve sunucu, aboneliği başka bir hesabın ele geçirmesini engeller.
 // npm install sonrasında çalışır; zaten ekliyse dokunmaz.
 const fs = require("fs");
 const path = require("path");
@@ -35,6 +38,17 @@ if (!swift.includes("getCurrentEntitlements")) {
 
 `;
   swift = swift.replace(anchor, method + anchor);
+  fs.writeFileSync(swiftPath, swift);
+}
+
+if (!swift.includes("appAccountToken")) {
+  const anchor = "                    purchaseOptions.insert(Product.PurchaseOption.quantity(quantity))";
+  if (!swift.includes(anchor)) throw new Error("native-purchases: satın alma seçenekleri bulunamadı");
+  const token = `
+                    if let token = call.getString("appAccountToken"), let uuid = UUID(uuidString: token) {
+                        purchaseOptions.insert(Product.PurchaseOption.appAccountToken(uuid))
+                    }`;
+  swift = swift.replace(anchor, anchor + token);
   fs.writeFileSync(swiftPath, swift);
 }
 

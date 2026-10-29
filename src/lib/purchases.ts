@@ -33,10 +33,20 @@ export async function loadProducts(): Promise<Product[]> {
 /** Seçilen paketi satın alır; Apple'dan gelen işlem sunucuda doğrulanır, plan ancak onaydan sonra açılır */
 export async function buyPlan(plan: Exclude<Plan, "free">): Promise<void> {
   // Ödeme alınmadan önce giriş kontrol edilir; paket hesaba bağlanacağı için giriş şarttır
-  if (!loadSession()) throw new Error("Paket almak için önce hesabınıza giriş yapın");
-  const tx = await NativePurchases.purchaseProduct({
+  const session = loadSession();
+  if (!session) throw new Error("Paket almak için önce hesabınıza giriş yapın");
+  // Abonelik bu hesaba bağlanır (appAccountToken); başka bir hesap işlem numarasıyla aboneliği alamaz
+  const plugin = NativePurchases as unknown as {
+    purchaseProduct(options: {
+      productIdentifier: string;
+      productType: PURCHASE_TYPE;
+      appAccountToken?: string;
+    }): Promise<{ transactionId: string }>;
+  };
+  const tx = await plugin.purchaseProduct({
     productIdentifier: PLAN_PRODUCT[plan],
     productType: PURCHASE_TYPE.SUBS,
+    appAccountToken: session.userId,
   });
   const id = String(tx.transactionId);
   // Sunucuya ulaşılamazsa satın alma kaybolmasın: işlem, doğrulanana kadar cihazda bekletilir
@@ -110,7 +120,8 @@ async function confirmWithServer(transactionId?: string): Promise<Plan> {
       savePendingTransaction(null);
       throw new Error("Bu Apple aboneliği başka bir Hesabım hesabında kullanılıyor.");
     }
-    throw new Error(`Satın alma doğrulanamadı: ${result.error}`);
+    // Hata kodu destek için gösterilir; satın alma telefonda saklı kalır ve sonra tekrar denenebilir
+    throw new Error(`Satın alma şu an doğrulanamadı (${result.error}). Biraz sonra "Satın alımı geri yükle" ile tekrar deneyin.`);
   }
   savePendingTransaction(null);
   const plan = result.plan as Plan;
@@ -127,7 +138,9 @@ export async function refreshPlan(fromDevice = false): Promise<Plan | null> {
   try {
     // fromDevice: kullanıcı satın almayı denediyse telefondaki geçerli abonelik bu hesaba bağlanır
     return await confirmWithServer(fromDevice ? await deviceTransactionId() : undefined);
-  } catch {
+  } catch (e) {
+    // Abonelik başka bir hesaba aitse kullanıcı bunu görmeli; diğer hatalar sessizce geçilir
+    if (fromDevice && e instanceof Error && e.message.includes("başka bir Hesabım")) throw e;
     return null;
   }
 }

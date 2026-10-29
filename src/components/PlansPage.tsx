@@ -156,7 +156,11 @@ export default function PlansPage({
       const reason = e instanceof Error ? e.message : String(e);
       if (/cancel/i.test(reason)) {
         // Vazgeçme ya da Apple'ın "Bu öğeye abonesiniz" penceresi: paket sunucuda tekrar kontrol edilir
-        showPlan(await refreshPlan(true));
+        try {
+          showPlan(await refreshPlan(true));
+        } catch (err) {
+          setMessage(err instanceof Error ? err.message : String(err));
+        }
       } else {
         setMessage(`${t("Satın alma tamamlanamadı.")} ${reason}`);
       }
