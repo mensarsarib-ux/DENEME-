@@ -3911,3 +3911,52 @@ a.action-btn:visited {
 :root[data-theme="light"] .subscription-card.is-paid {
   background: linear-gradient(160deg, rgba(217, 164, 65, 0.18), transparent 60%), var(--surface);
 }
+
+/* ---------- Uygulama kilidi ---------- */
+.app-lock {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  background: linear-gradient(180deg, var(--bg-top), var(--bg-mid) 50%, var(--bg-bottom));
+  color: #f2f5f8;
+}
+
+.app-lock-logo {
+  width: 84px;
+  height: 84px;
+  border-radius: 20px;
+}
+
+.app-lock-title {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 800;
+}
+
+.app-lock-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 18px;
+  min-height: 48px;
+  padding: 12px 26px;
+  border: 0;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+  font-weight: 700;
+}
+
+.app-lock-btn svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linejoin: round;
+}

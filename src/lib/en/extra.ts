@@ -364,4 +364,14 @@ export const extra: Record<string, string> = {
   "Telefona göre": "Match phone",
   "Telefona göre seçilirse iPhone'un açık/koyu görünümü izlenir.": "With Match phone, the app follows your iPhone's light/dark appearance.",
   "Tema, yazı boyutu, titreşim, liste sıralaması": "Theme, text size, haptics, list order",
+
+  // Uygulama kilidi
+  "Uygulama kilidi": "App lock",
+  "Uygulama kilitli": "App locked",
+  "Face ID ile kilitle": "Lock with Face ID",
+  "Touch ID / şifre ile kilitle": "Lock with Touch ID / passcode",
+  "Uygulama açılırken ve 30 saniyeden uzun ayrı kaldıktan sonra kimlik doğrulaması istenir.": "Authentication is required when the app opens and after you have been away for more than 30 seconds.",
+  "Hesabım'ı açmak için kimliğinizi doğrulayın": "Verify your identity to open Hesabım",
+  "Kilidi aç": "Unlock",
+  "Tema, uygulama kilidi, yazı boyutu, titreşim": "Theme, app lock, text size, haptics",
 };

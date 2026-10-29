@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import AccountDeleteDialog from "./AccountDeleteDialog";
 import AccountCards from "./AccountCards";
 import { getThemeChoice, setThemeChoice, type ThemeChoice } from "../lib/theme";
+import { isLockEnabled, lockAvailable, setLockEnabled, verifyOwner } from "../lib/appLock";
 import { currentDeviceId, listDevices, removeDevice, type DeviceInfo, type Session } from "../lib/cloud";
 import type { Settings } from "../data/mock";
 import { LANGUAGES, currencyName, locale, t, type Language } from "../lib/i18n";
@@ -173,6 +174,18 @@ export default function SettingsPage({
   const [group, setGroup] = useState<SettingsGroup | null>(null);
   // Tema bu telefona özel; seçim hemen uygulanır
   const [theme, setTheme] = useState<ThemeChoice>(getThemeChoice);
+  // Uygulama kilidi: yalnızca Face ID / Touch ID ya da cihaz şifresi olan telefonda gösterilir
+  const [lockOn, setLockOn] = useState(isLockEnabled);
+  const [lockInfo, setLockInfo] = useState<{ available: boolean; faceId: boolean } | null>(null);
+  useEffect(() => {
+    void lockAvailable().then(setLockInfo);
+  }, []);
+  async function toggleLock(on: boolean) {
+    // Açarken bir kez doğrulanır ki kullanıcı kilidi açabildiğinden emin olsun
+    if (on && !(await verifyOwner())) return;
+    setLockEnabled(on);
+    setLockOn(on);
+  }
   const [remoteText, setRemoteText] = useState<string | null>(null);
   useEffect(() => {
     if (group !== "hesap" || !account) return;
@@ -273,7 +286,7 @@ export default function SettingsPage({
               [
                 ["hesap", account ? account.email : t("Giriş yapılmadı")],
                 ["dil", LANGUAGES.find((l) => l.code === language)?.native ?? ""],
-                ["gorunum", t("Tema, yazı boyutu, titreşim, liste sıralaması")],
+                ["gorunum", t("Tema, uygulama kilidi, yazı boyutu, titreşim")],
                 ["para", t("Para birimi ve bildirim eşikleri")],
                 ["veriler", t("Yedek al, geri yükle, tüm verileri sil")],
                 ["destek", t("Destek, gizlilik, kullanım koşulları")],
@@ -393,6 +406,18 @@ export default function SettingsPage({
 
         {group === "gorunum" && (
           <>
+        {lockInfo?.available && (
+          <section className="card" aria-label={t("Uygulama kilidi")}>
+            <h2 className="card-title">{t("Uygulama kilidi")}</h2>
+            <Switch
+              label={lockInfo.faceId ? t("Face ID ile kilitle") : t("Touch ID / şifre ile kilitle")}
+              hint={t("Uygulama açılırken ve 30 saniyeden uzun ayrı kaldıktan sonra kimlik doğrulaması istenir.")}
+              checked={lockOn}
+              onChange={(v) => void toggleLock(v)}
+            />
+          </section>
+        )}
+
         <section className="card" aria-label={t("Genel")}>
           <h2 className="card-title">{t("Genel")}</h2>
           <Switch
