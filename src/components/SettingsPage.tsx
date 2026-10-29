@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import AccountDeleteDialog from "./AccountDeleteDialog";
+import AccountCards from "./AccountCards";
 import { currentDeviceId, listDevices, removeDevice, type DeviceInfo, type Session } from "../lib/cloud";
 import type { Settings } from "../data/mock";
 import { LANGUAGES, currencyName, locale, t, type Language } from "../lib/i18n";
@@ -131,6 +132,8 @@ export default function SettingsPage({
   onOpenPrivacy,
   onOpenTerms,
   onOpenSupport,
+  onOpenPlans,
+  onSessionExpired,
   onRemoteStatus,
 }: {
   settings: Settings;
@@ -160,6 +163,8 @@ export default function SettingsPage({
   onOpenPrivacy: () => void;
   onOpenTerms: () => void;
   onOpenSupport: () => void;
+  onOpenPlans: () => void;
+  onSessionExpired: () => void;
   /** Sunucudaki kaydın durumu (tanılama satırı için) */
   onRemoteStatus: () => Promise<string>;
 }) {
@@ -286,8 +291,7 @@ export default function SettingsPage({
           <>
         {account && (
           <section className="card" aria-label={t("Hesap")}>
-            <h2 className="card-title">{t("Hesap")}</h2>
-            <p className="account-email">{account.email}</p>
+            <h2 className="card-title">{t("Eşitleme")}</h2>
             <p className="card-empty" role="status">
               {account.status === "error"
                 ? t("Eşitlenemedi; internet gelince yeniden denenecek.")
@@ -302,6 +306,10 @@ export default function SettingsPage({
             </div>
             <p className="field-hint" role="status">{t("Sunucudaki durum")}: {remoteText ?? t("kontrol ediliyor…")}</p>
           </section>
+        )}
+
+        {account && (
+          <AccountCards session={account.session} email={account.email} onOpenPlans={onOpenPlans} onExpired={onSessionExpired} />
         )}
 
         {SHOW_DEVICES && account && (

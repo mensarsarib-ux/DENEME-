@@ -94,6 +94,7 @@ function authError(body: AuthBody): CloudError {
   const text = `${body.error_code ?? ""} ${body.msg ?? ""} ${body.error_description ?? ""} ${body.message ?? ""}`.toLowerCase();
   if (text.includes("already") || text.includes("registered")) return new CloudError("email_taken", text);
   if (text.includes("not confirmed")) return new CloudError("email_not_confirmed", text);
+  if (text.includes("different from the old")) return new CloudError("same_password", text);
   if (text.includes("password") && (text.includes("weak") || text.includes("least") || text.includes("short")))
     return new CloudError("weak_password", text);
   if (text.includes("invalid") || text.includes("credentials")) return new CloudError("invalid_credentials", text);
@@ -214,7 +215,9 @@ export async function verifyPurchase(
  * süresi dolmuş bir ücretli kayıt varsa expired true olur (yenilenmiş olabilir, tekrar doğrulanır).
  * Oturum bittiyse "expired", bağlantı yoksa null döner.
  */
-export async function fetchPlan(session: Session): Promise<{ plan: string; expired: boolean } | "expired" | null> {
+export async function fetchPlan(
+  session: Session,
+): Promise<{ plan: string; expired: boolean; expiresAt: string | null } | "expired" | null> {
   const s = await fresh(session);
   if (!s) return "expired";
   const res = await call(`/rest/v1/entitlements?select=plan,expires_at&user_id=eq.${s.userId}`, {
@@ -224,9 +227,60 @@ export async function fetchPlan(session: Session): Promise<{ plan: string; expir
   if (!res.ok) return null;
   const rows = (await res.json()) as { plan: string; expires_at: string | null }[];
   const row = rows[0];
-  if (!row || row.plan === "free" || !row.expires_at) return { plan: "free", expired: false };
-  if (new Date(row.expires_at).getTime() <= Date.now()) return { plan: "free", expired: true };
-  return { plan: row.plan, expired: false };
+  if (!row || row.plan === "free" || !row.expires_at) return { plan: "free", expired: false, expiresAt: null };
+  if (new Date(row.expires_at).getTime() <= Date.now()) return { plan: "free", expired: true, expiresAt: row.expires_at };
+  return { plan: row.plan, expired: false, expiresAt: row.expires_at };
+}
+
+/** Hesap bilgileri: ad, telefon (kayıtta girilen) ve e-postanın doğrulanıp doğrulanmadığı */
+export interface AccountProfile {
+  name: string;
+  phone: string;
+  emailConfirmed: boolean;
+}
+
+export async function getAccountProfile(session: Session): Promise<AccountProfile | "expired"> {
+  const s = await fresh(session);
+  if (!s) return "expired";
+  const res = await call("/auth/v1/user", { token: s.accessToken });
+  if (res.status === 401) return "expired";
+  if (!res.ok) throw new CloudError("unknown", String(res.status));
+  const user = (await res.json()) as {
+    email_confirmed_at?: string | null;
+    user_metadata?: { name?: string; phone?: string };
+  };
+  return {
+    name: user.user_metadata?.name ?? "",
+    phone: user.user_metadata?.phone ?? "",
+    emailConfirmed: !!user.email_confirmed_at,
+  };
+}
+
+/** Ad ve telefonu hesabın bilgilerine yazar */
+export async function updateAccountProfile(session: Session, name: string, phone: string): Promise<true | "expired"> {
+  const s = await fresh(session);
+  if (!s) return "expired";
+  const res = await call("/auth/v1/user", {
+    method: "PUT",
+    token: s.accessToken,
+    body: JSON.stringify({ data: { name, phone } }),
+  });
+  if (res.status === 401) return "expired";
+  if (!res.ok) throw authError((await res.json().catch(() => ({}))) as AuthBody);
+  return true;
+}
+
+/** Şifre değiştirme: önce mevcut şifre doğrulanır (oturum değiştirilmeden), sonra yeni şifre yazılır */
+export async function changePassword(session: Session, current: string, next: string): Promise<true | "expired"> {
+  const check = await call("/auth/v1/token?grant_type=password", {
+    method: "POST",
+    body: JSON.stringify({ email: session.email, password: current }),
+  });
+  if (!check.ok) throw authError((await check.json().catch(() => ({}))) as AuthBody);
+  const s = await fresh(session);
+  if (!s) return "expired";
+  await setPassword(s.accessToken, next);
+  return true;
 }
 
 export async function pull(session: Session, businessId?: string | null): Promise<RemoteData | null | "expired"> {

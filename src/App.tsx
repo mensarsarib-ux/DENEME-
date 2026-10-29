@@ -689,6 +689,8 @@ export default function App() {
             onOpenPrivacy={() => go({ name: "menu", page: "privacy" })}
             onOpenTerms={() => go({ name: "menu", page: "terms" })}
             onOpenSupport={() => go({ name: "menu", page: "support" })}
+            onOpenPlans={() => go({ name: "menu", page: "plans" })}
+            onSessionExpired={() => setSession(null)}
           />
         );
       case "privacy":
