@@ -4,6 +4,7 @@
  * VITE_SUPABASE_URL ve VITE_SUPABASE_ANON_KEY tanımlı değilse uygulama yalnızca bu cihazda çalışır.
  */
 
+import { defaultDialCode } from "./countries";
 import { Capacitor } from "@capacitor/core";
 import { t } from "./i18n";
 
@@ -101,10 +102,12 @@ function authError(body: AuthBody): CloudError {
   return new CloudError("unknown", text);
 }
 
-/** Telefon numarasını Supabase'in beklediği biçime (+90…) çevirir; geçersizse null */
+/** Telefon numarasını uluslararası biçime (+90…, +49…) çevirir; geçersizse null */
 export function normalizePhone(input: string): string | null {
   const digits = input.replace(/[^\d+]/g, "");
-  const plus = digits.startsWith("+") ? digits : digits.startsWith("0") ? `+90${digits.slice(1)}` : `+90${digits}`;
+  // Başında + yoksa telefonun bölgesinin alan kodu eklenir
+  const dial = defaultDialCode();
+  const plus = digits.startsWith("+") ? digits : digits.startsWith("0") ? `+${dial}${digits.slice(1)}` : `+${dial}${digits}`;
   return /^\+\d{10,15}$/.test(plus) ? plus : null;
 }
 

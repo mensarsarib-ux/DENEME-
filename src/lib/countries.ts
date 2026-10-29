@@ -1,3 +1,5 @@
+import { deviceRegion } from "./region";
+
 /** Ülkeler: [ISO kodu, Türkçe ad, alan kodu]. Öncelikli ülke Türkiye (+90). */
 export const COUNTRIES: [string, string, string][] = [
   ["TR", "Türkiye", "90"], ["AF", "Afganistan", "93"], ["AL", "Arnavutluk", "355"], ["DZ", "Cezayir", "213"],
@@ -76,5 +78,11 @@ export function splitPhone(value: string): { code: string; digits: string } {
       .find(([, , code]) => digitsAll.startsWith(code));
     if (match) return { code: match[2], digits: digitsAll.slice(match[2].length) };
   }
-  return { code: "90", digits: raw.replace(/\D/g, "").replace(/^0+/, "") };
+  return { code: defaultDialCode(), digits: raw.replace(/\D/g, "").replace(/^0+/, "") };
+}
+
+/** Telefonun bölgesinin alan kodu (ör. Türkiye 90, Almanya 49); bilinmiyorsa 90 */
+export function defaultDialCode(): string {
+  const region = deviceRegion();
+  return COUNTRIES.find(([iso]) => iso === region)?.[2] ?? "90";
 }

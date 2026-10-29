@@ -1,8 +1,17 @@
+import { useState } from "react";
 import { COUNTRIES, splitPhone } from "../lib/countries";
+import { deviceRegion } from "../lib/region";
 import { regionName, t } from "../lib/i18n";
 
+/** Listede önce telefonun bulunduğu ülke, sonra Türkiye, sonra diğerleri */
+const ORDERED = (() => {
+  const region = deviceRegion();
+  const first = COUNTRIES.filter(([iso]) => iso === region);
+  return [...first, ...COUNTRIES.filter(([iso]) => iso !== region)];
+})();
+
 /**
- * Telefon alanı: solda ülke alan kodu (varsayılan +90), sağda numara.
+ * Telefon alanı: solda ülke alan kodu (varsayılan: telefonun bölgesi), sağda numara.
  * Değer "+905551234567" biçiminde saklanır; boşsa "".
  * Numara başındaki 0 otomatik atılır, kullanıcı 0 yazmadan girer.
  */
@@ -17,10 +26,15 @@ export default function PhoneField({
   onChange: (next: string) => void;
   autoComplete?: string;
 }) {
-  const { code, digits } = splitPhone(value);
+  const parsed = splitPhone(value);
+  // Numara henüz boşken seçilen alan kodu kaybolmasın (boş değer kodu taşımaz)
+  const [emptyCode, setEmptyCode] = useState<string | null>(null);
+  const code = parsed.digits ? parsed.code : (emptyCode ?? parsed.code);
+  const digits = parsed.digits;
 
   function emit(nextCode: string, nextDigits: string) {
     const clean = nextDigits.replace(/\D/g, "").replace(/^0+/, "");
+    if (!clean) setEmptyCode(nextCode);
     onChange(clean ? `+${nextCode}${clean}` : "");
   }
 
@@ -32,7 +46,7 @@ export default function PhoneField({
         value={code}
         onChange={(e) => emit(e.target.value, digits)}
       >
-        {COUNTRIES.map(([iso, name, dial]) => (
+        {ORDERED.map(([iso, name, dial]) => (
           <option key={iso} value={dial}>
             +{dial} {regionName(iso, name)}
           </option>

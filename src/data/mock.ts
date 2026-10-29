@@ -1,3 +1,5 @@
+import { regionCurrency } from "../lib/currencies";
+import { deviceRegion } from "../lib/region";
 // Geçici örnek veriler. Gerçek veri katmanı eklendiğinde bu dosya değiştirilecek.
 
 export type Period = "daily" | "weekly" | "monthly" | "yearly";
@@ -321,7 +323,8 @@ export interface Settings {
 }
 
 export const DEFAULT_SETTINGS: Settings = {
-  currency: "TRY",
+  // İlk açılışta telefonun bölgesine göre (Türkiye'de ₺, Almanya'da €…); sonra ayarlardan değişir
+  currency: regionCurrency(deviceRegion()),
   textSize: "medium",
   listSort: "name",
   haptics: true,
