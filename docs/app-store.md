@@ -9,6 +9,14 @@
 | Pazarlama URL'si (isteğe bağlı) | https://hesabimmuhasebe.com |
 | Destek e-postası | destek@hesabimmuhasebe.com |
 
+Türkçe dışındaki dillerde (App Store Connect'te eklenen her yerelleştirme için) İngilizce sayfalar kullanılır:
+
+| Alan | Bağlantı |
+|---|---|
+| Support URL | https://hesabimmuhasebe.com/en/support.html |
+| Privacy Policy URL | https://hesabimmuhasebe.com/en/privacy.html |
+| Terms of use | https://hesabimmuhasebe.com/en/terms.html |
+
 ## Abonelikler
 | Seviye | Paket | Ürün kimliği | Fiyat (yıllık) | Açıklama |
 |---|---|---|---|---|

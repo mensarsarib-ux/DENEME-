@@ -6,7 +6,7 @@
 
 import { defaultDialCode } from "./countries";
 import { Capacitor } from "@capacitor/core";
-import { t } from "./i18n";
+import { getLanguage, t } from "./i18n";
 
 const URL_BASE = (import.meta.env.VITE_SUPABASE_URL as string | undefined)?.replace(/\/+$/, "") ?? "";
 const ANON = (import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined) ?? "";
@@ -115,7 +115,7 @@ export function normalizePhone(input: string): string | null {
 export async function signUp(email: string, phone: string, password: string): Promise<Session | "pending"> {
   const res = await call("/auth/v1/signup", {
     method: "POST",
-    body: JSON.stringify({ email, password, data: { phone } }),
+    body: JSON.stringify({ email, password, data: { phone, lang: getLanguage() } }),
   });
   const body = (await res.json().catch(() => ({}))) as AuthBody;
   if (!res.ok) throw authError(body);
@@ -257,6 +257,29 @@ export async function getAccountProfile(session: Session): Promise<AccountProfil
     phone: user.user_metadata?.phone ?? "",
     emailConfirmed: !!user.email_confirmed_at,
   };
+}
+
+/** E-postaların (doğrulama, şifre yenileme) gönderileceği dil hesaba yazılır; aynı dil tekrar gönderilmez */
+export async function syncAccountLanguage(session: Session, lang: string): Promise<void> {
+  const key = `hesabim:account-lang:${session.userId}`;
+  try {
+    if (localStorage.getItem(key) === lang) return;
+  } catch {
+    // Depolama kapalıysa her açılışta bir kez gönderilir
+  }
+  const s = await fresh(session);
+  if (!s) return;
+  const res = await call("/auth/v1/user", {
+    method: "PUT",
+    token: s.accessToken,
+    body: JSON.stringify({ data: { lang } }),
+  });
+  if (!res.ok) return;
+  try {
+    localStorage.setItem(key, lang);
+  } catch {
+    // önemsiz
+  }
 }
 
 /** Ad ve telefonu hesabın bilgilerine yazar */

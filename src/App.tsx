@@ -55,7 +55,7 @@ import { setCurrency } from "./lib/format";
 import { getLanguage, locale, setLanguage, t, type Language } from "./lib/i18n";
 import { setDarkHeader } from "./lib/theme";
 import AuthScreen from "./components/AuthScreen";
-import { cloudEnabled, heartbeat, loadSession, readRecoveryToken, signOut, type Session } from "./lib/cloud";
+import { cloudEnabled, heartbeat, loadSession, readRecoveryToken, signOut, syncAccountLanguage, type Session } from "./lib/cloud";
 import { useCloudSync } from "./lib/useCloudSync";
 import { clearStored, usePersistedState } from "./lib/storage";
 
@@ -109,6 +109,13 @@ export default function App() {
 
   // Hesap ve bulut eşitleme: Supabase tanımlıysa giriş gerekir; değilse uygulama yalnızca bu cihazda çalışır
   const [session, setSession] = useState<Session | null>(() => (cloudEnabled ? loadSession() : null));
+  // Hesaba gönderilen e-postalar uygulamanın diliyle gelsin diye dil hesaba da yazılır
+  const sessionUser = session?.userId;
+  useEffect(() => {
+    if (session) syncAccountLanguage(session, language).catch(() => undefined);
+    // Oturum nesnesi her yenilemede değişir; yalnızca kişi veya dil değişince gönderilir
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sessionUser, language]);
   // E-postadaki şifre sıfırlama bağlantısından gelindiyse yeni şifre ekranı açılır
   const [recoveryToken, setRecoveryToken] = useState<string | null>(() => (cloudEnabled ? readRecoveryToken() : null));
   // Titreşim cihaza özgüdür; diğer ayarlar hesapla birlikte eşitlenir

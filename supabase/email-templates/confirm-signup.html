@@ -1,3 +1,4 @@
+{{ $l := printf "%v" .Data.lang }}
 <table width="100%" cellpadding="0" cellspacing="0" style="background:#f2f5f8;padding:24px 0;font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif">
   <tr><td align="center">
     <table width="100%" cellpadding="0" cellspacing="0" style="max-width:480px;background:#ffffff;border-radius:16px;overflow:hidden">
@@ -5,6 +6,183 @@
         <img src="https://raw.githubusercontent.com/mensarsarib-ux/DENEME-/claude/hesabim-splash-dashboard/public/mail-logo.png" width="64" height="64" alt="Hesabım" style="display:block;border:0">
         <p style="margin:12px 0 0;color:#ffffff;font-size:20px;font-weight:700">Hesabım Muhasebe</p>
       </td></tr>
+{{ if eq $l "en" }}
+      <tr><td style="padding:28px 28px 8px;color:#1f2933;font-size:16px;line-height:1.6">
+        <p style="margin:0 0 12px;font-size:18px;font-weight:700">Welcome!</p>
+        <p style="margin:0 0 20px">Enter the code below in the app to verify your account:</p>
+      </td></tr>
+      <tr><td align="center" style="padding:0 28px">
+        <div style="background:#eef4fb;border-radius:12px;padding:16px;font-size:32px;font-weight:700;letter-spacing:8px;color:#1e3a5f">{{ .Token }}</div>
+      </td></tr>
+      <tr><td style="padding:20px 28px 28px;color:#52606d;font-size:14px;line-height:1.6">
+        <p style="margin:0">If you didn't request this code, you can ignore this email; nothing will change in your account.</p>
+      </td></tr>
+{{ else if eq $l "de" }}
+      <tr><td style="padding:28px 28px 8px;color:#1f2933;font-size:16px;line-height:1.6">
+        <p style="margin:0 0 12px;font-size:18px;font-weight:700">Willkommen!</p>
+        <p style="margin:0 0 20px">Gib den folgenden Code in der App ein, um dein Konto zu bestätigen:</p>
+      </td></tr>
+      <tr><td align="center" style="padding:0 28px">
+        <div style="background:#eef4fb;border-radius:12px;padding:16px;font-size:32px;font-weight:700;letter-spacing:8px;color:#1e3a5f">{{ .Token }}</div>
+      </td></tr>
+      <tr><td style="padding:20px 28px 28px;color:#52606d;font-size:14px;line-height:1.6">
+        <p style="margin:0">Wenn du diesen Code nicht angefordert hast, ignoriere diese E-Mail; an deinem Konto ändert sich nichts.</p>
+      </td></tr>
+{{ else if eq $l "fr" }}
+      <tr><td style="padding:28px 28px 8px;color:#1f2933;font-size:16px;line-height:1.6">
+        <p style="margin:0 0 12px;font-size:18px;font-weight:700">Bienvenue !</p>
+        <p style="margin:0 0 20px">Saisissez le code ci-dessous dans l'app pour vérifier votre compte :</p>
+      </td></tr>
+      <tr><td align="center" style="padding:0 28px">
+        <div style="background:#eef4fb;border-radius:12px;padding:16px;font-size:32px;font-weight:700;letter-spacing:8px;color:#1e3a5f">{{ .Token }}</div>
+      </td></tr>
+      <tr><td style="padding:20px 28px 28px;color:#52606d;font-size:14px;line-height:1.6">
+        <p style="margin:0">Si vous n'avez pas demandé ce code, ignorez cet e-mail ; votre compte ne sera pas modifié.</p>
+      </td></tr>
+{{ else if eq $l "es" }}
+      <tr><td style="padding:28px 28px 8px;color:#1f2933;font-size:16px;line-height:1.6">
+        <p style="margin:0 0 12px;font-size:18px;font-weight:700">¡Bienvenido!</p>
+        <p style="margin:0 0 20px">Introduce el siguiente código en la app para verificar tu cuenta:</p>
+      </td></tr>
+      <tr><td align="center" style="padding:0 28px">
+        <div style="background:#eef4fb;border-radius:12px;padding:16px;font-size:32px;font-weight:700;letter-spacing:8px;color:#1e3a5f">{{ .Token }}</div>
+      </td></tr>
+      <tr><td style="padding:20px 28px 28px;color:#52606d;font-size:14px;line-height:1.6">
+        <p style="margin:0">Si no solicitaste este código, ignora este correo; no se hará ningún cambio en tu cuenta.</p>
+      </td></tr>
+{{ else if eq $l "it" }}
+      <tr><td style="padding:28px 28px 8px;color:#1f2933;font-size:16px;line-height:1.6">
+        <p style="margin:0 0 12px;font-size:18px;font-weight:700">Benvenuto!</p>
+        <p style="margin:0 0 20px">Inserisci il codice qui sotto nell'app per verificare il tuo account:</p>
+      </td></tr>
+      <tr><td align="center" style="padding:0 28px">
+        <div style="background:#eef4fb;border-radius:12px;padding:16px;font-size:32px;font-weight:700;letter-spacing:8px;color:#1e3a5f">{{ .Token }}</div>
+      </td></tr>
+      <tr><td style="padding:20px 28px 28px;color:#52606d;font-size:14px;line-height:1.6">
+        <p style="margin:0">Se non hai richiesto questo codice, ignora questa email; il tuo account non verrà modificato.</p>
+      </td></tr>
+{{ else if eq $l "pt" }}
+      <tr><td style="padding:28px 28px 8px;color:#1f2933;font-size:16px;line-height:1.6">
+        <p style="margin:0 0 12px;font-size:18px;font-weight:700">Boas-vindas!</p>
+        <p style="margin:0 0 20px">Digite o código abaixo no app para verificar sua conta:</p>
+      </td></tr>
+      <tr><td align="center" style="padding:0 28px">
+        <div style="background:#eef4fb;border-radius:12px;padding:16px;font-size:32px;font-weight:700;letter-spacing:8px;color:#1e3a5f">{{ .Token }}</div>
+      </td></tr>
+      <tr><td style="padding:20px 28px 28px;color:#52606d;font-size:14px;line-height:1.6">
+        <p style="margin:0">Se você não pediu este código, ignore este e-mail; nada será alterado na sua conta.</p>
+      </td></tr>
+{{ else if eq $l "ru" }}
+      <tr><td style="padding:28px 28px 8px;color:#1f2933;font-size:16px;line-height:1.6">
+        <p style="margin:0 0 12px;font-size:18px;font-weight:700">Добро пожаловать!</p>
+        <p style="margin:0 0 20px">Введите этот код в приложении, чтобы подтвердить аккаунт:</p>
+      </td></tr>
+      <tr><td align="center" style="padding:0 28px">
+        <div style="background:#eef4fb;border-radius:12px;padding:16px;font-size:32px;font-weight:700;letter-spacing:8px;color:#1e3a5f">{{ .Token }}</div>
+      </td></tr>
+      <tr><td style="padding:20px 28px 28px;color:#52606d;font-size:14px;line-height:1.6">
+        <p style="margin:0">Если вы не запрашивали код, просто проигнорируйте это письмо — в вашем аккаунте ничего не изменится.</p>
+      </td></tr>
+{{ else if eq $l "uk" }}
+      <tr><td style="padding:28px 28px 8px;color:#1f2933;font-size:16px;line-height:1.6">
+        <p style="margin:0 0 12px;font-size:18px;font-weight:700">Ласкаво просимо!</p>
+        <p style="margin:0 0 20px">Введіть цей код у застосунку, щоб підтвердити обліковий запис:</p>
+      </td></tr>
+      <tr><td align="center" style="padding:0 28px">
+        <div style="background:#eef4fb;border-radius:12px;padding:16px;font-size:32px;font-weight:700;letter-spacing:8px;color:#1e3a5f">{{ .Token }}</div>
+      </td></tr>
+      <tr><td style="padding:20px 28px 28px;color:#52606d;font-size:14px;line-height:1.6">
+        <p style="margin:0">Якщо ви не запитували код, просто проігноруйте цей лист — у вашому обліковому записі нічого не зміниться.</p>
+      </td></tr>
+{{ else if eq $l "pl" }}
+      <tr><td style="padding:28px 28px 8px;color:#1f2933;font-size:16px;line-height:1.6">
+        <p style="margin:0 0 12px;font-size:18px;font-weight:700">Witaj!</p>
+        <p style="margin:0 0 20px">Wpisz poniższy kod w aplikacji, aby zweryfikować konto:</p>
+      </td></tr>
+      <tr><td align="center" style="padding:0 28px">
+        <div style="background:#eef4fb;border-radius:12px;padding:16px;font-size:32px;font-weight:700;letter-spacing:8px;color:#1e3a5f">{{ .Token }}</div>
+      </td></tr>
+      <tr><td style="padding:20px 28px 28px;color:#52606d;font-size:14px;line-height:1.6">
+        <p style="margin:0">Jeśli nie prosiłeś o ten kod, zignoruj tę wiadomość; na Twoim koncie nic się nie zmieni.</p>
+      </td></tr>
+{{ else if eq $l "nl" }}
+      <tr><td style="padding:28px 28px 8px;color:#1f2933;font-size:16px;line-height:1.6">
+        <p style="margin:0 0 12px;font-size:18px;font-weight:700">Welkom!</p>
+        <p style="margin:0 0 20px">Voer de onderstaande code in de app in om je account te verifiëren:</p>
+      </td></tr>
+      <tr><td align="center" style="padding:0 28px">
+        <div style="background:#eef4fb;border-radius:12px;padding:16px;font-size:32px;font-weight:700;letter-spacing:8px;color:#1e3a5f">{{ .Token }}</div>
+      </td></tr>
+      <tr><td style="padding:20px 28px 28px;color:#52606d;font-size:14px;line-height:1.6">
+        <p style="margin:0">Heb je deze code niet aangevraagd? Negeer dan deze e-mail; er verandert niets aan je account.</p>
+      </td></tr>
+{{ else if eq $l "id" }}
+      <tr><td style="padding:28px 28px 8px;color:#1f2933;font-size:16px;line-height:1.6">
+        <p style="margin:0 0 12px;font-size:18px;font-weight:700">Selamat datang!</p>
+        <p style="margin:0 0 20px">Masukkan kode di bawah ini di aplikasi untuk memverifikasi akun Anda:</p>
+      </td></tr>
+      <tr><td align="center" style="padding:0 28px">
+        <div style="background:#eef4fb;border-radius:12px;padding:16px;font-size:32px;font-weight:700;letter-spacing:8px;color:#1e3a5f">{{ .Token }}</div>
+      </td></tr>
+      <tr><td style="padding:20px 28px 28px;color:#52606d;font-size:14px;line-height:1.6">
+        <p style="margin:0">Jika Anda tidak meminta kode ini, abaikan email ini; tidak ada perubahan pada akun Anda.</p>
+      </td></tr>
+{{ else if eq $l "hi" }}
+      <tr><td style="padding:28px 28px 8px;color:#1f2933;font-size:16px;line-height:1.6">
+        <p style="margin:0 0 12px;font-size:18px;font-weight:700">स्वागत है!</p>
+        <p style="margin:0 0 20px">अपना खाता सत्यापित करने के लिए ऐप में नीचे दिया गया कोड डालें:</p>
+      </td></tr>
+      <tr><td align="center" style="padding:0 28px">
+        <div style="background:#eef4fb;border-radius:12px;padding:16px;font-size:32px;font-weight:700;letter-spacing:8px;color:#1e3a5f">{{ .Token }}</div>
+      </td></tr>
+      <tr><td style="padding:20px 28px 28px;color:#52606d;font-size:14px;line-height:1.6">
+        <p style="margin:0">अगर आपने यह कोड नहीं माँगा था, तो इस ईमेल को अनदेखा करें; आपके खाते में कोई बदलाव नहीं होगा।</p>
+      </td></tr>
+{{ else if eq $l "ja" }}
+      <tr><td style="padding:28px 28px 8px;color:#1f2933;font-size:16px;line-height:1.6">
+        <p style="margin:0 0 12px;font-size:18px;font-weight:700">ようこそ！</p>
+        <p style="margin:0 0 20px">アカウントを確認するには、以下のコードをアプリに入力してください：</p>
+      </td></tr>
+      <tr><td align="center" style="padding:0 28px">
+        <div style="background:#eef4fb;border-radius:12px;padding:16px;font-size:32px;font-weight:700;letter-spacing:8px;color:#1e3a5f">{{ .Token }}</div>
+      </td></tr>
+      <tr><td style="padding:20px 28px 28px;color:#52606d;font-size:14px;line-height:1.6">
+        <p style="margin:0">このコードに心当たりがない場合は、このメールを無視してください。アカウントは変更されません。</p>
+      </td></tr>
+{{ else if eq $l "ko" }}
+      <tr><td style="padding:28px 28px 8px;color:#1f2933;font-size:16px;line-height:1.6">
+        <p style="margin:0 0 12px;font-size:18px;font-weight:700">환영합니다!</p>
+        <p style="margin:0 0 20px">계정을 인증하려면 아래 코드를 앱에 입력하세요:</p>
+      </td></tr>
+      <tr><td align="center" style="padding:0 28px">
+        <div style="background:#eef4fb;border-radius:12px;padding:16px;font-size:32px;font-weight:700;letter-spacing:8px;color:#1e3a5f">{{ .Token }}</div>
+      </td></tr>
+      <tr><td style="padding:20px 28px 28px;color:#52606d;font-size:14px;line-height:1.6">
+        <p style="margin:0">이 코드를 요청하지 않았다면 이 이메일을 무시하세요. 계정에는 아무런 변경도 없습니다.</p>
+      </td></tr>
+{{ else if eq $l "zh" }}
+      <tr><td style="padding:28px 28px 8px;color:#1f2933;font-size:16px;line-height:1.6">
+        <p style="margin:0 0 12px;font-size:18px;font-weight:700">欢迎！</p>
+        <p style="margin:0 0 20px">请在应用中输入以下验证码以验证你的账户：</p>
+      </td></tr>
+      <tr><td align="center" style="padding:0 28px">
+        <div style="background:#eef4fb;border-radius:12px;padding:16px;font-size:32px;font-weight:700;letter-spacing:8px;color:#1e3a5f">{{ .Token }}</div>
+      </td></tr>
+      <tr><td style="padding:20px 28px 28px;color:#52606d;font-size:14px;line-height:1.6">
+        <p style="margin:0">如果你没有请求此验证码，请忽略这封邮件；你的账户不会有任何变化。</p>
+      </td></tr>
+{{ else if eq $l "ar" }}
+      <tr><td dir="rtl" align="right" style="padding:28px 28px 8px;color:#1f2933;font-size:16px;line-height:1.6">
+        <p style="margin:0 0 12px;font-size:18px;font-weight:700">مرحبًا بك!</p>
+        <p style="margin:0 0 20px">أدخل الرمز التالي في التطبيق لتأكيد حسابك:</p>
+      </td></tr>
+      <tr><td align="center" style="padding:0 28px">
+        <div style="background:#eef4fb;border-radius:12px;padding:16px;font-size:32px;font-weight:700;letter-spacing:8px;color:#1e3a5f">{{ .Token }}</div>
+      </td></tr>
+      <tr><td dir="rtl" align="right" style="padding:20px 28px 28px;color:#52606d;font-size:14px;line-height:1.6">
+        <p style="margin:0">إذا لم تطلب هذا الرمز فتجاهل هذه الرسالة؛ لن يتغير شيء في حسابك.</p>
+      </td></tr>
+{{ else }}
       <tr><td style="padding:28px 28px 8px;color:#1f2933;font-size:16px;line-height:1.6">
         <p style="margin:0 0 12px;font-size:18px;font-weight:700">Hoş geldiniz!</p>
         <p style="margin:0 0 20px">Hesabınızı doğrulamak için aşağıdaki kodu uygulamaya girin:</p>
@@ -15,7 +193,7 @@
       <tr><td style="padding:20px 28px 28px;color:#52606d;font-size:14px;line-height:1.6">
         <p style="margin:0">Bu kodu siz istemediyseniz bu e-postayı dikkate almayın; hesabınızda bir değişiklik yapılmaz.</p>
       </td></tr>
-      <tr><td align="center" style="background:#f7f9fb;padding:16px;color:#7b8794;font-size:12px">
+{{ end }}      <tr><td align="center" style="background:#f7f9fb;padding:16px;color:#7b8794;font-size:12px">
         Hesabım Muhasebe · <a href="mailto:destek@hesabimmuhasebe.com" style="color:#3c8fd9;text-decoration:none">destek@hesabimmuhasebe.com</a>
       </td></tr>
     </table>
