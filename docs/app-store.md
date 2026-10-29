@@ -17,6 +17,11 @@ Türkçe dışındaki dillerde (App Store Connect'te eklenen her yerelleştirme 
 | Privacy Policy URL | https://hesabimmuhasebe.com/en/privacy.html |
 | Terms of use | https://hesabimmuhasebe.com/en/terms.html |
 
+## Satış ülkeleri
+İlk sürüm yalnızca **Türkiye**'de satılır (App Store Connect → Fiyatlandırma ve Uygunluk). Fiyatlar TL olarak kalır.
+Sonra: önce AB dışındaki ülkeler, AB satıcı bilgisi kararından sonra AB. Dünyaya açılırken taban ülke ABD yapılır
+(Pro $19.99, Pro Plus $34.99, Premium $49.99) ve Türkiye fiyatı elle TL olarak girilir.
+
 ## Abonelikler
 | Seviye | Paket | Ürün kimliği | Fiyat (yıllık) | Açıklama |
 |---|---|---|---|---|
