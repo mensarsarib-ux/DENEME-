@@ -3,7 +3,7 @@ import { Capacitor } from "@capacitor/core";
 import { Keyboard } from "@capacitor/keyboard";
 import {
   CloudError,
-  findBusinessAnon,
+  findBusinessByOwnerEmail,
   normalizePhone,
   requestJoin,
   resendSignupCode,
@@ -15,11 +15,25 @@ import {
   type Session,
 } from "../lib/cloud";
 import { haptic } from "../lib/haptics";
-import { t } from "../lib/i18n";
+import { getLanguage, t } from "../lib/i18n";
 import PhoneField from "./PhoneField";
 
-/** Giriş ekranının modları: giriş, kayıt, şifremi unuttum, e-postadan gelen yeni şifre */
-type Mode = "login" | "register" | "join" | "forgot" | "recovery" | "code";
+/**
+ * Giriş ekranının modları: giriş, kayıt, katılma, şifremi unuttum, e-postadan gelen yeni şifre, doğrulama kodu
+ * ve "owner": hesap açıldıktan sonra katılınacak işletmenin yetkilisini arama (yetkili bulunamazsa)
+ */
+type Mode = "login" | "register" | "join" | "forgot" | "recovery" | "code" | "owner";
+
+/** Kelimeler arasına boşluk koymayan diller (onay cümlesinin parçaları bitişik yazılır) */
+const TIGHT = ["ja", "zh"];
+/** Cümle sonu parçası bir önceki kelimeye bitişen diller (Korecede ek, Japonca ve Çincede boşluksuz yazım) */
+const ATTACHED_END = ["ja", "zh", "ko"];
+
+/** Kayıt ekranındaki yasal sayfalar; Türkçe dışındaki dillerde İngilizce sayfalar açılır */
+const legalUrl = (page: "terms" | "privacy") =>
+  getLanguage() === "tr"
+    ? `https://hesabimmuhasebe.com/${page === "terms" ? "kullanim-kosullari" : "gizlilik"}.html`
+    : `https://hesabimmuhasebe.com/en/${page}.html`;
 
 /**
  * Giriş ve kayıt ekranı. Giriş yalnızca e-posta ve şifreyle yapılır.
@@ -65,12 +79,16 @@ export default function AuthScreen({
     vv.addEventListener("resize", update);
     return () => vv.removeEventListener("resize", update);
   }, []);
+  // Katılma akışında yetkilinin e-postası (kod doğrulandıktan sonra işletme bununla aranır)
   const [pendingJoin, setPendingJoin] = useState<string | null>(null);
+  // Hesap açıldı ama yetkilinin işletmesi bulunamadı: oturum burada bekler, e-posta düzeltilip tekrar aranır
+  const [joinSession, setJoinSession] = useState<Session | null>(null);
   const [code, setCode] = useState("");
 
   const mail = email.trim();
   const validMail = /^\S+@\S+\.\S+$/.test(mail);
-  const validPhone = normalizePhone(phone) !== null;
+  // Telefon isteğe bağlı; yazıldıysa geçerli olmalı
+  const validPhone = phone.trim() === "" || normalizePhone(phone) !== null;
   const strongEnough = password.length >= 6;
   const ownerMail = ownerEmail.trim();
   const validOwner = /^\S+@\S+\.\S+$/.test(ownerMail);
@@ -79,6 +97,8 @@ export default function AuthScreen({
     !busy &&
     (mode === "code"
       ? /^\d{6,8}$/.test(code)
+      : mode === "owner"
+      ? validOwner
       : mode === "login"
       ? validMail && password !== ""
       : mode === "register"
@@ -95,10 +115,31 @@ export default function AuthScreen({
       case "invalid_credentials": return t("E-posta veya şifre hatalı.");
       case "email_taken": return t("Bu e-posta ile zaten bir hesap var; giriş yapın.");
       case "weak_password": return t("Şifre en az 6 karakter olmalı.");
-      case "email_not_confirmed": return t("E-postanızı doğrulayın: size gönderilen bağlantıya dokunun.");
+      case "email_not_confirmed": return t("E-postanız henüz doğrulanmadı. E-postanıza gelen 6 haneli kodu girin.");
       case "network": return t("Sunucuya ulaşılamadı. İnternet bağlantınızı kontrol edin.");
       default: return t("Bir sorun oluştu; biraz sonra tekrar deneyin.");
     }
+  }
+
+  /**
+   * Hesap açıldıktan sonra yetkilinin işletmesini bulur ve katılma isteği gönderir.
+   * İşletme bulunamazsa oturum bekletilir; kişi e-postayı düzeltebilir ya da kendi işletmesini açabilir.
+   */
+  async function joinWith(session: Session, owner: string) {
+    const found = await findBusinessByOwnerEmail(session, owner);
+    if (found === "expired") throw new CloudError("unknown", "expired");
+    if (found.length === 0) {
+      haptic("warning");
+      setJoinSession(session);
+      setOwnerEmail(owner);
+      setMode("owner");
+      setInfo(null);
+      setError(t("Bu e-postaya ait bir işletme bulunamadı."));
+      return;
+    }
+    await requestJoin(session, found[0].id);
+    haptic("success");
+    onSession(session);
   }
 
   async function submit(event: FormEvent) {
@@ -114,11 +155,9 @@ export default function AuthScreen({
           setError(t("Kod hatalı ya da süresi dolmuş. Yeni kod isteyin."));
           return;
         }
-        // Katılma akışında isteği gönder; kayıt akışında yeni işletme açılır
+        // Katılma akışında işletme aranıp istek gönderilir; kayıt akışında yeni işletme açılır
         if (pendingJoin) {
-          await requestJoin(session, pendingJoin);
-          haptic("success");
-          onSession(session);
+          await joinWith(session, pendingJoin);
         } else {
           haptic("success");
           onSession(session, { isNew: true, businessName: business.trim() });
@@ -131,12 +170,38 @@ export default function AuthScreen({
       }
       return;
     }
+    if (mode === "owner") {
+      try {
+        if (joinSession) await joinWith(joinSession, ownerMail);
+      } catch (e) {
+        haptic("warning");
+        setError(describe(e));
+      } finally {
+        setBusy(false);
+      }
+      return;
+    }
     setInfo(null);
     try {
       if (mode === "login") {
-        onSession(await signIn(mail, password));
+        try {
+          onSession(await signIn(mail, password));
+        } catch (e) {
+          // Kayıt olup kodu girmeden çıkan kişi: yeni kod gönderilir ve kod ekranı açılır
+          if (e instanceof CloudError && e.code === "email_not_confirmed") {
+            await resendSignupCode(mail).catch(() => undefined);
+            haptic("warning");
+            setPendingMail(mail);
+            setPendingJoin(null);
+            setCode("");
+            setMode("code");
+            setInfo(t("Hesabınız henüz doğrulanmadı. {m} adresine yeni bir doğrulama kodu gönderdik.", { m: mail }));
+            return;
+          }
+          throw e;
+        }
       } else if (mode === "register") {
-        const result = await signUp(mail, phone.trim(), password);
+        const result = await signUp(mail, normalizePhone(phone) ?? "", password);
         if (result === "pending") {
           haptic("success");
           setPendingMail(mail);
@@ -148,27 +213,18 @@ export default function AuthScreen({
           onSession(result, { isNew: true, businessName: business.trim() });
         }
       } else if (mode === "join") {
-        // Önce yetkilinin işletmesi bulunur; bulunamazsa hesap açılmaz
-        const found = await findBusinessAnon(ownerMail);
-        if (!found || found.length === 0) {
-          haptic("warning");
-          setError(t("Bu e-postaya ait bir işletme bulunamadı."));
-          return;
-        }
-        const result = await signUp(mail, phone.trim(), password);
+        // İşletme, hesap açılıp e-posta doğrulandıktan sonra aranır (giriş yapmadan arama kapalıdır)
+        const result = await signUp(mail, normalizePhone(phone) ?? "", password);
         if (result === "pending") {
           haptic("success");
           setPendingMail(mail);
-          setPendingJoin(found[0].id);
+          setPendingJoin(ownerMail);
           setCode("");
           setMode("code");
           setInfo(t("{m} adresine 6 haneli bir doğrulama kodu gönderdik.", { m: mail }));
           return;
         }
-        // Oturum açıldı: katılma isteği gönderilir, yetkili onaylayınca erişim açılır
-        await requestJoin(result, found[0].id);
-        haptic("success");
-        onSession(result);
+        await joinWith(result, ownerMail);
       } else if (mode === "forgot") {
         await sendResetEmail(mail);
         haptic("success");
@@ -198,6 +254,7 @@ export default function AuthScreen({
 
   const submitLabel = {
     code: t("KODU ONAYLA"),
+    owner: t("KATILMA İSTEĞİ GÖNDER"),
     login: t("GİRİŞ YAP"),
     register: t("KAYIT OL"),
     join: t("KAYIT OL VE KATIL"),
@@ -207,12 +264,17 @@ export default function AuthScreen({
 
   const subtitle = {
     code: t("E-postanızı doğrulayın"),
+    owner: t("Var olan işletmeye katılın"),
     login: t("Hesabınıza giriş yapın"),
     register: t("Yeni hesap oluşturun"),
     join: t("Var olan işletmeye katılın"),
     forgot: t("Şifrenizi yenileyin"),
     recovery: t("Yeni şifrenizi belirleyin"),
   }[mode];
+
+  // Onay cümlesi parçalar hâlinde çevrilir; Japonca ve Çincede parçalar arasına boşluk konmaz
+  const gap = TIGHT.includes(getLanguage()) ? "" : " ";
+  const legalEnd = t("metinlerini okuyup kabul etmiş olursunuz.");
 
   const passwordField = (
     <div className="field">
@@ -287,7 +349,7 @@ export default function AuthScreen({
             </div>
             {emailField("auth-email")}
             <div className="field">
-              <label htmlFor="auth-phone">{t("Telefon")}</label>
+              <label htmlFor="auth-phone">{t("Telefon (isteğe bağlı)")}</label>
               <PhoneField id="auth-phone" value={phone} onChange={setPhone} />
               {phone.trim() !== "" && !validPhone && <p className="field-hint">{t("Geçerli bir telefon numarası yazın.")}</p>}
             </div>
@@ -311,12 +373,41 @@ export default function AuthScreen({
               />
             </div>
             <div className="field">
-              <label htmlFor="auth-phone-join">{t("Telefon")}</label>
+              <label htmlFor="auth-phone-join">{t("Telefon (isteğe bağlı)")}</label>
               <PhoneField id="auth-phone-join" value={phone} onChange={setPhone} />
               {phone.trim() !== "" && !validPhone && <p className="field-hint">{t("Geçerli bir telefon numarası yazın.")}</p>}
             </div>
             {passwordField}
           </>
+        )}
+
+        {mode === "owner" && (
+          <>
+            <p className="field-hint">{t("Hesabınız açıldı. Katılmak istediğiniz işletmenin yetkilisinin e-postasını kontrol edip tekrar deneyin.")}</p>
+            <div className="field">
+              <label htmlFor="auth-owner-again">{t("Yetkilinin e-postası")}</label>
+              <input
+                id="auth-owner-again"
+                type="email"
+                inputMode="email"
+                autoCapitalize="none"
+                autoCorrect="off"
+                value={ownerEmail}
+                onChange={(e) => setOwnerEmail(e.target.value)}
+              />
+            </div>
+          </>
+        )}
+
+        {(mode === "register" || mode === "join") && (
+          <p className="field-hint auth-legal">
+            {t("Kayıt olarak")}{gap}
+            <a href={legalUrl("terms")} target="_blank" rel="noreferrer">{t("Kullanım koşulları")}</a>{gap}
+            {t("ve")}{getLanguage() === "ar" ? "" : gap}
+            <a href={legalUrl("privacy")} target="_blank" rel="noreferrer">{t("Gizlilik politikası")}</a>
+            {/^[\p{L}\p{N}]/u.test(legalEnd) && !ATTACHED_END.includes(getLanguage()) ? " " : ""}
+            {legalEnd}
+          </p>
         )}
 
         {mode === "forgot" && emailField("auth-email-reset")}
@@ -366,6 +457,15 @@ export default function AuthScreen({
         {mode === "login" && (
           <button type="button" className="help-link" onClick={() => switchMode("forgot")}>
             {t("Şifremi unuttum")}
+          </button>
+        )}
+        {mode === "owner" && joinSession && (
+          <button
+            type="button"
+            className="help-link"
+            onClick={() => onSession(joinSession, { isNew: true, businessName: "" })}
+          >
+            {t("Bunun yerine kendi işletmemi açacağım")}
           </button>
         )}
         {mode === "forgot" && (

@@ -53,7 +53,7 @@ const GROUP_TITLES: Record<SettingsGroup, string> = {
   hesap: "Hesabım",
   dil: "Dil",
   gorunum: "Görünüm",
-  para: "Para ve bildirimler",
+  para: "Para birimi",
   veriler: "Veriler",
   destek: "Destek ve yasal",
 };
@@ -161,6 +161,8 @@ export default function SettingsPage({
     status: SyncStatus;
     lastSync: Date | null;
     onSync: () => void;
+    /** "Tüm verileri sıfırla" sonrası eşitleme durdu mu (hesaptan çekilene kadar) */
+    paused: boolean;
     onSignOut: () => void;
     /** Hesabı ve tüm verileri kalıcı olarak siler */
     onDeleteAccount: () => void;
@@ -296,7 +298,7 @@ export default function SettingsPage({
                 ["hesap", account ? account.email : t("Giriş yapılmadı")],
                 ["dil", LANGUAGES.find((l) => l.code === language)?.native ?? ""],
                 ["gorunum", t("Tema, uygulama kilidi, yazı boyutu, titreşim")],
-                ["para", t("Para birimi ve bildirim eşikleri")],
+                ["para", `${current.flag} ${currencyName(current.code, current.name)}`],
                 ["veriler", t("Yedek al, geri yükle, tüm verileri sil")],
                 ["destek", t("Destek, gizlilik, kullanım koşulları")],
               ] as const
@@ -318,7 +320,9 @@ export default function SettingsPage({
           <section className="card" aria-label={t("Hesap")}>
             <h2 className="card-title">{t("Eşitleme")}</h2>
             <p className="card-empty" role="status">
-              {account.status === "error"
+              {account.paused
+                ? t("Veriler sıfırlandığı için eşitleme durduruldu. Yeni kayıtlarınız hesaba ve ekibe gitmiyor. Hesaptaki verileri çekince eşitleme yeniden başlar.")
+                : account.status === "error"
                 ? t("Eşitlenemedi; internet gelince yeniden denenecek.")
                 : account.status === "syncing" || account.status === "loading"
                   ? t("Eşitleniyor…")
@@ -327,9 +331,14 @@ export default function SettingsPage({
                     : t("Verileriniz hesabınızla eşitlenir; aynı e-posta ve şifreyle başka telefondan da girebilirsiniz.")}
             </p>
             <div className="card-actions">
-              <button type="button" className="action-btn" onClick={account.onSync}>{t("Şimdi eşitle")}</button>
+              {account.paused ? (
+                <button type="button" className="action-btn" onClick={() => void pullFromAccount()}>{t("Hesaptan çek")}</button>
+              ) : (
+                <button type="button" className="action-btn" onClick={account.onSync}>{t("Şimdi eşitle")}</button>
+              )}
             </div>
             <p className="field-hint" role="status">{t("Sunucudaki durum")}: {remoteText ?? t("kontrol ediliyor…")}</p>
+            {restoreMsg && <p className={restoreMsg.ok ? "form-success" : "field-hint"} role="status">{restoreMsg.text}</p>}
           </section>
         )}
 
@@ -431,7 +440,7 @@ export default function SettingsPage({
           <h2 className="card-title">{t("Genel")}</h2>
           <Switch
             label={t("Titreşim")}
-            hint={t("Düğmelere ve işlemlere dokununca hafif titreşim (iPhone desteklemeyebilir)")}
+            hint={t("Düğmelere ve işlemlere dokununca hafif titreşim")}
             checked={settings.haptics}
             onChange={(v) => set("haptics", v)}
           />
@@ -523,21 +532,6 @@ export default function SettingsPage({
 
         {group === "destek" && (
           <>
-        <section className="card" aria-label={t("Destek")}>
-          <h2 className="card-title">{t("Destek e-postası")}</h2>
-          <div className="field">
-            <label htmlFor="support-email">{t("Destek mesajları bu adrese gönderilir")}</label>
-            <input
-              id="support-email"
-              type="email"
-              autoComplete="off"
-              placeholder={t("destek@sirketiniz.com")}
-              value={settings.supportEmail}
-              onChange={(e) => set("supportEmail", e.target.value)}
-            />
-          </div>
-        </section>
-
         <section className="card" aria-label={t("Yasal")}>
           <h2 className="card-title">{t("Yasal ve destek")}</h2>
           <div className="card-actions">
@@ -553,7 +547,11 @@ export default function SettingsPage({
           <>
         <section className="card" aria-label={t("Veriler")}>
           <h2 className="card-title">{t("Veriler")}</h2>
-          <p className="card-empty">{t("Veriler yalnızca bu tarayıcıda saklanır. Yedek alıp başka cihaza taşıyabilirsiniz.")}</p>
+          <p className="card-empty">
+            {account
+              ? t("Verileriniz hesabınızda saklanır ve aynı hesapla girdiğiniz telefonlar arasında eşitlenir. İsterseniz ayrıca yedek dosyası alabilirsiniz.")
+              : t("Veriler yalnızca bu tarayıcıda saklanır. Yedek alıp başka cihaza taşıyabilirsiniz.")}
+          </p>
           <div className="data-actions">
             <button type="button" className="action-btn is-center" onClick={() => { haptic("light"); void downloadBackup(); }}>
               {t("Yedekleme al")}

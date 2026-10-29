@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 /** Kapanış animasyonunun süresi (ms); menü bu süre dolunca gerçekten kapanır */
 const CLOSE_MS = 260;
 import { haptic } from "../lib/haptics";
-import { MENU_ITEMS, TEAM_ICON, type MenuPage } from "../lib/menu";
+import { MENU_ITEMS, SUPPORT_ICON, TEAM_ICON, type MenuPage } from "../lib/menu";
 import { CURRENT_PLAN, LIMITS, PLAN_NAME, canAddBusiness, canUseTeam } from "../lib/plan";
 
 /** Şimdilik menüde gösterilmeyen sayfalar; kodları durur, listeden çıkarılarak tekrar açılabilir */
@@ -24,6 +24,7 @@ export default function MenuDrawer({
   onNavigate,
   onClose,
   onSignOut,
+  isMember = false,
 }: {
   /** Okunmamış bildirim sayısı; Bildirimler satırında rozet olarak görünür */
   unread: number;
@@ -35,6 +36,8 @@ export default function MenuDrawer({
   onClose: () => void;
   /** Giriş yapılmışsa çıkış yapar; yoksa Çıkış yap satırı gösterilmez */
   onSignOut?: () => void;
+  /** Ortak işletmede üye: ekibi yetkili yönetir, Ekiplerim paketlere değil açıklamaya götürür */
+  isMember?: boolean;
 }) {
   const panelRef = useRef<HTMLElement>(null);
   const [bizOpen, setBizOpen] = useState(false);
@@ -69,8 +72,8 @@ export default function MenuDrawer({
 
   function open(page: MenuPage) {
     haptic("light");
-    // Ücretsiz planda Ekiplerim doğrudan paket seçeneklerini açar
-    const target = page === "team" && !canUseTeam() ? "plans" : page;
+    // Ücretsiz planda Ekiplerim doğrudan paket seçeneklerini açar (üye için paket alması işe yaramaz)
+    const target = page === "team" && !canUseTeam() && !isMember ? "plans" : page;
     requestClose(() => onNavigate(target));
   }
 
@@ -170,11 +173,16 @@ export default function MenuDrawer({
 
         <div className="drawer-spacer" />
 
-        {/* En altta: ekip arkadaşlarını davet et ve çıkış yap */}
+        {/* En altta: ekip arkadaşlarını davet et, destek al ve çıkış yap */}
         <nav className="drawer-nav drawer-footer" aria-label={t("Ekip ve hesap")}>
           <button type="button" className="drawer-item" onClick={() => open("team")}>
             <Svg d={TEAM_ICON} />
             <span className="drawer-label">{t("Ekip arkadaşlarını davet et")}</span>
+            <span className="drawer-chevron" aria-hidden="true">›</span>
+          </button>
+          <button type="button" className="drawer-item" onClick={() => open("support")}>
+            <Svg d={SUPPORT_ICON} />
+            <span className="drawer-label">{t("Destek al")}</span>
             <span className="drawer-chevron" aria-hidden="true">›</span>
           </button>
           {onSignOut && (

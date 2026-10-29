@@ -214,6 +214,22 @@ export async function verifyPurchase(
 }
 
 /**
+ * Ekip üyesi için: işletme sahibinin paketi süresi dolmuş görünüyorsa sunucu sahibin aboneliğini Apple'a
+ * yeniden sorar (sahip uygulamayı açmadan yenilenen abonelik üyelere de yansısın). Plan ya da null döner.
+ */
+export async function refreshOwnerPlan(session: Session, businessId: string): Promise<string | null> {
+  const s = await fresh(session);
+  if (!s) return null;
+  const res = await call("/functions/v1/verify-purchase", {
+    method: "POST",
+    token: s.accessToken,
+    body: JSON.stringify({ ownerOf: businessId }),
+  });
+  const body = (await res.json().catch(() => null)) as { plan?: string } | null;
+  return res.ok && typeof body?.plan === "string" ? body.plan : null;
+}
+
+/**
  * Hesabın sunucudaki planını okur. Kayıt yoksa ya da süresi dolmuşsa "free" döner;
  * süresi dolmuş bir ücretli kayıt varsa expired true olur (yenilenmiş olabilir, tekrar doğrulanır).
  * Oturum bittiyse "expired", bağlantı yoksa null döner.
@@ -502,16 +518,6 @@ export async function requestJoin(session: Session, businessId: string): Promise
   if (res.status === 401) return "expired";
   if (!res.ok) throw new CloudError("unknown", String(res.status));
   return true;
-}
-
-/** Giriş gerekmeden, yetkilinin e-postasıyla işletmeyi bulur (kayıt öncesi kontrol) */
-export async function findBusinessAnon(email: string): Promise<FoundBusiness[] | null> {
-  const res = await call("/rest/v1/rpc/find_business_by_owner_email", {
-    method: "POST",
-    body: JSON.stringify({ owner_email: email.trim() }),
-  });
-  if (!res.ok) return null;
-  return (await res.json()) as FoundBusiness[];
 }
 
 export interface PendingRequest {

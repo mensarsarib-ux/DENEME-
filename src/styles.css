@@ -3987,3 +3987,30 @@ a.action-btn:visited {
   stroke-width: 2;
   stroke-linejoin: round;
 }
+
+/* Kayıt ekranındaki kullanım koşulları ve gizlilik bağlantıları */
+.auth-legal {
+  margin-top: 4px;
+  line-height: 1.5;
+}
+
+.auth-legal a {
+  color: var(--blue);
+}
+
+/* Destek adresi seçilip kopyalanabilsin */
+.support-address {
+  user-select: text;
+  -webkit-user-select: text;
+  color: var(--text);
+}
+
+/* Ekip davet adımları */
+.invite-steps {
+  margin: 0 0 14px;
+  padding-inline-start: 20px;
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+  line-height: 1.45;
+}

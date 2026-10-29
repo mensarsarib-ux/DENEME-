@@ -27,7 +27,7 @@ import { renameBusiness } from "./lib/cloud";
 import { migrateLocalWorkspaces } from "./lib/migrate";
 import { canAddItem, canAddTab, type Plan } from "./lib/plan";
 import { syncPlanFromServer } from "./lib/entitlement";
-import { businessPlan, deleteMyAccount, pull } from "./lib/cloud";
+import { businessPlan, deleteMyAccount, pull, refreshOwnerPlan } from "./lib/cloud";
 import { businessList, listWorkspaces } from "./lib/storage";
 import { captureHome } from "./lib/homeSnapshot";
 import { activeWorkspace, MAIN_WORKSPACE } from "./lib/storage";
@@ -70,6 +70,12 @@ type View =
   | { name: "party"; id: string; back?: View }
   | { name: "new"; kind: PartyKind };
 
+/**
+ * Örnek kayıtlar yalnızca hesapsız (yerel) denemede gösterilir. Hesapla kullanımda uygulama boş başlar;
+ * aksi halde yeni kurulan telefonda örnek veriler hesaba ve ekibe yazılabilirdi.
+ */
+const SAMPLE_DATA = !cloudEnabled;
+
 export default function App() {
   const [view, setView] = useState<View>({ name: "home" });
   // Sekmeler: Müşteriler, Tedarikçiler ve kullanıcının açtıkları
@@ -77,17 +83,23 @@ export default function App() {
   // Ana ekranda hangi sekmenin listesi gösteriliyor; sayfalar arası gidip gelince korunur
   const [activeTab, setActiveTab] = useState<PartyKind>("customer");
   // Tüm kayıtlar tek listede tutulur; "kind" hangi sekmeye ait olduğunu belirtir
-  const [parties, setParties] = usePersistedState<Customer[]>("parties", [
-    ...initialCustomers,
-    ...initialSuppliers,
-  ]);
+  const [parties, setParties] = usePersistedState<Customer[]>(
+    "parties",
+    SAMPLE_DATA ? [...initialCustomers, ...initialSuppliers] : [],
+  );
   const [transactions, setTransactions] = usePersistedState<Transaction[]>(
     "transactions",
-    initialTransactions,
+    SAMPLE_DATA ? initialTransactions : [],
   );
-  const [accounts, setAccounts] = usePersistedState("accounts", initialAccounts);
-  const [profile, setProfile] = usePersistedState("profile", DEFAULT_PROFILE);
-  const [notes, setNotes] = usePersistedState("notes", initialNotes);
+  const [accounts, setAccounts] = usePersistedState(
+    "accounts",
+    SAMPLE_DATA ? initialAccounts : initialAccounts.map((a) => ({ ...a, opening: 0 })),
+  );
+  const [profile, setProfile] = usePersistedState(
+    "profile",
+    SAMPLE_DATA ? DEFAULT_PROFILE : { ...DEFAULT_PROFILE, name: "", owner: "" },
+  );
+  const [notes, setNotes] = usePersistedState("notes", SAMPLE_DATA ? initialNotes : []);
   const [readIds, setReadIds] = usePersistedState<string[]>("readIds", []);
   const [storedSettings, setSettings] = usePersistedState("settings", DEFAULT_SETTINGS);
   // Eski kayıtlarda bulunmayan alanlar varsayılanla tamamlanır
@@ -189,8 +201,15 @@ export default function App() {
     setOwnerPlan(null);
     if (!session || !memberBusinessId) return;
     let alive = true;
-    void businessPlan(session, memberBusinessId).then((plan) => {
-      if (alive && (plan === "free" || plan === "pro" || plan === "proplus" || plan === "premium")) setOwnerPlan(plan);
+    const isPlan = (p: string | null): p is Plan => p === "free" || p === "pro" || p === "proplus" || p === "premium";
+    void businessPlan(session, memberBusinessId).then(async (plan) => {
+      if (!alive || !isPlan(plan)) return;
+      setOwnerPlan(plan);
+      // Sahibin paketi bitmiş görünüyorsa yenilenmiş olabilir; sunucu Apple'a tekrar sorar
+      if (plan === "free") {
+        const again = await refreshOwnerPlan(session, memberBusinessId).catch(() => null);
+        if (alive && isPlan(again) && again !== "free") setOwnerPlan(again);
+      }
     });
     return () => {
       alive = false;
@@ -227,7 +246,7 @@ export default function App() {
       const nextParties = Array.isArray(d.parties) ? (d.parties as Customer[]) : [];
       const nextTx = Array.isArray(d.transactions) ? (d.transactions as Transaction[]) : [];
       const nextAccounts = Array.isArray(d.accounts) ? (d.accounts as typeof accounts) : initialAccounts;
-      const nextProfile = { ...DEFAULT_PROFILE, ...(d.profile as object) };
+      const nextProfile = { ...DEFAULT_PROFILE, name: "", owner: "", ...(d.profile as object) };
       const nextNotes = Array.isArray(d.notes) ? (d.notes as typeof notes) : [];
       const nextRead = Array.isArray(d.readIds) ? (d.readIds as string[]) : [];
       const nextSettings = { ...DEFAULT_SETTINGS, ...(d.settings as object), haptics: settings.haptics };
@@ -503,7 +522,7 @@ export default function App() {
   }
 
   // Yalnızca bu cihazdaki veriyi siler; hesap açık kalır. Eşitleme duraklatılır ki boş veri buluta yazılmasın
-  // ve silinen veri hemen geri gelmesin. Uygulama yeniden açılınca hesaptaki veri tekrar çekilir.
+  // ve silinen veri hemen geri gelmesin. Ayarlar'da "Hesaptan çek" ile veri geri gelir ve eşitleme sürer.
   function resetAll() {
     clearStored();
     if (session) setSyncPaused(true);
@@ -532,10 +551,22 @@ export default function App() {
     setActiveTab(id);
   }
 
+  /**
+   * Paket sınırı dolunca: sahip paketler sayfasına gider. Ekip üyesi paket alsa da işe yaramaz
+   * (sınır yetkilinin paketine bağlı), bu yüzden üyeye durum anlatılır.
+   */
+  function limitReached() {
+    if (memberBusinessId) {
+      window.alert(t("Bu işletmenin paket sınırına ulaşıldı. Daha fazlası için işletme yetkilisinin paketini yükseltmesi gerekir."));
+      return;
+    }
+    go({ name: "menu", page: "plans" });
+  }
+
   /** Yeni sekme oluştur ve listesini göster */
   function createTab(name: string) {
     if (!canAddTab(groups.length, limitPlan)) {
-      go({ name: "menu", page: "plans" });
+      limitReached();
       return;
     }
     const group: Group = { id: `g${Date.now()}`, name };
@@ -658,7 +689,7 @@ export default function App() {
             onOpenParty={openParty}
             onNewParty={(kind) => {
               if (!canAddItem(membersOf(kind).length, limitPlan)) {
-                go({ name: "menu", page: "plans" });
+                limitReached();
                 return;
               }
               setActiveTab(kind);
@@ -687,6 +718,7 @@ export default function App() {
                     status: sync.status,
                     lastSync: sync.lastSync,
                     onSync: sync.syncNow,
+                    paused: syncPaused,
                     onSignOut: logout,
                     onDeleteAccount: deleteAccountNow,
                   }
@@ -724,16 +756,20 @@ export default function App() {
           );
         }
         return session ? (
-          <TeamPage session={session} onOpen={setTeamPerson} onPlans={() => go({ name: "menu", page: "plans" })} onBack={toHome} />
+          <TeamPage
+            session={session}
+            isMember={!!memberBusinessId}
+            onOpen={setTeamPerson}
+            onPlans={() => go({ name: "menu", page: "plans" })}
+            onBack={toHome}
+          />
         ) : null;
       case "join":
         return <JoinBusinessPage onBack={toHome} />;
       case "support":
         return (
           <SupportPage
-            supportEmail={settings.supportEmail}
             diagnostics={t("Hesabım • {p} kişi, {x} işlem, {n} not • {ua}", { p: parties.length, x: transactions.length, n: notes.length, ua: navigator.userAgent })}
-            onOpenSettings={() => go({ name: "menu", page: "settings" })}
             onBack={toHome}
           />
         );
@@ -794,7 +830,7 @@ export default function App() {
       }}
       onNewParty={() => {
         if (!canAddItem(membersOf(currentTab).length, limitPlan)) {
-          go({ name: "menu", page: "plans" });
+          limitReached();
           return;
         }
         go({ name: "new", kind: currentTab });
@@ -815,6 +851,7 @@ export default function App() {
         }}
         onClose={() => setDrawerOpen(false)}
         onSignOut={session ? logout : undefined}
+        isMember={!!memberBusinessId}
       />
     )}
     </>

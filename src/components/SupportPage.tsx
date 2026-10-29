@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { t } from "../lib/i18n";
 import { haptic } from "../lib/haptics";
-import { SUPPORT_ICON } from "../lib/menu";
+import { SUPPORT_EMAIL, SUPPORT_ICON } from "../lib/menu";
 import PageHeader from "./PageHeader";
 
 /** Sık sorulan sorular; dile göre çizim anında çevrilir */
@@ -16,15 +16,11 @@ const faq = (): [string, string][] => [
 
 /** Destek: sık sorulan sorular ve sorun bildirme formu */
 export default function SupportPage({
-  supportEmail,
   diagnostics,
-  onOpenSettings,
   onBack,
 }: {
-  supportEmail: string;
   /** Mesaja eklenen teknik özet (kayıt sayıları vb.) */
   diagnostics: string;
-  onOpenSettings: () => void;
   onBack: () => void;
 }) {
   const [subject, setSubject] = useState("");
@@ -33,7 +29,7 @@ export default function SupportPage({
 
   const text = `${t("Konu")}: ${subject.trim()}\n\n${message.trim()}\n\n— ${diagnostics}`;
   const ready = subject.trim() !== "" && message.trim() !== "";
-  const mailto = `mailto:${supportEmail}?subject=${encodeURIComponent(subject.trim())}&body=${encodeURIComponent(`${message.trim()}\n\n— ${diagnostics}`)}`;
+  const mailto = `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent(subject.trim())}&body=${encodeURIComponent(`${message.trim()}\n\n— ${diagnostics}`)}`;
 
   async function copy() {
     try {
@@ -72,16 +68,13 @@ export default function SupportPage({
           <p className="field-hint">{t("Mesaja kayıt sayıları gibi teknik bir özet eklenir; tutarlar eklenmez.")}</p>
           <div className="card-actions">
             <button type="button" className="primary-btn" disabled={!ready} onClick={copy}>{t("MESAJI KOPYALA")}</button>
-            {supportEmail ? (
-              <a className={`action-btn ${ready ? "" : "is-disabled"}`} href={ready ? mailto : undefined} aria-disabled={!ready}>
-                {t("E-posta ile gönder")}
-              </a>
-            ) : (
-              <button type="button" className="help-link" onClick={onOpenSettings}>
-                {t("E-posta ile göndermek için destek adresi ekleyin")}
-              </button>
-            )}
+            <a className={`action-btn ${ready ? "" : "is-disabled"}`} href={ready ? mailto : undefined} aria-disabled={!ready}>
+              {t("E-posta ile gönder")}
+            </a>
           </div>
+          <p className="field-hint">
+            {t("Destek adresi")}: <span className="support-address">{SUPPORT_EMAIL}</span>
+          </p>
           {copied === "ok" && <p className="form-success" role="status">{t("Mesaj kopyalandı.")}</p>}
           {copied === "fail" && (
             <textarea className="copy-box" readOnly rows={5} value={text} onFocus={(e) => e.currentTarget.select()} />

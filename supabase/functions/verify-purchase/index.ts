@@ -87,6 +87,74 @@ function readJws(jws: string): Record<string, unknown> {
   return JSON.parse(atob(part.padEnd(part.length + ((4 - (part.length % 4)) % 4), "=")));
 }
 
+// deno-lint-ignore no-explicit-any
+type Admin = any;
+
+/**
+ * Sahibin paketi yıllık yenilendiğinde kayıt ancak sahip uygulamayı açınca güncellenir. Üyeler bu arada
+ * ücretsiz sınırlara düşmesin diye, üyenin isteğiyle sahibin kayıtlı aboneliği Apple'a sorulur.
+ * Yalnızca sahibin kendi kayıtlı aboneliği okunur; abonelik kimseye taşınmaz. Apple'a en fazla saatte bir sorulur.
+ */
+async function refreshOwner(admin: Admin, userId: string, businessId: string): Promise<Response> {
+  const { data: member } = await admin
+    .from("business_members")
+    .select("business_id")
+    .eq("business_id", businessId)
+    .eq("user_id", userId)
+    .maybeSingle();
+  if (!member) return json({ error: "yetkisiz" }, 403);
+  const { data: biz } = await admin.from("businesses").select("owner_id").eq("id", businessId).maybeSingle();
+  if (!biz?.owner_id) return json({ plan: "free" });
+  const owner = biz.owner_id as string;
+  const { data: ent } = await admin
+    .from("entitlements")
+    .select("plan, expires_at, transaction_id, original_transaction_id, updated_at")
+    .eq("user_id", owner)
+    .maybeSingle();
+  const now = Date.now();
+  if (!ent?.transaction_id) return json({ plan: "free" });
+  if (ent.plan !== "free" && ent.expires_at && new Date(ent.expires_at).getTime() > now) {
+    return json({ plan: ent.plan, expiresAt: ent.expires_at });
+  }
+  if (ent.updated_at && now - new Date(ent.updated_at).getTime() < 3600 * 1000) return json({ plan: "free" });
+
+  try {
+    const token = await appleJwt();
+    const status = await appleGet(`/inApps/v1/subscriptions/${ent.transaction_id}`, token);
+    const groups = (status.data?.data ?? []) as { lastTransactions?: { status?: number; signedTransactionInfo: string }[] }[];
+    let best: { plan: string; productId: string; expires: number } | null = null;
+    for (const group of groups) {
+      for (const last of group.lastTransactions ?? []) {
+        const info = readJws(last.signedTransactionInfo) as TxInfo;
+        const plan = PRODUCT_PLAN[info.productId];
+        const active = last.status === 1 || last.status === 4;
+        const same = !ent.original_transaction_id || String(info.originalTransactionId ?? "") === ent.original_transaction_id;
+        if (!plan || info.bundleId !== BUNDLE_ID || !active || !same || info.revocationDate || info.isUpgraded) continue;
+        if (!best || RANK[plan] > RANK[best.plan]) {
+          best = { plan, productId: info.productId, expires: Math.max(info.expiresDate ?? 0, now + 24 * 3600 * 1000) };
+        }
+      }
+    }
+    const stamp = new Date().toISOString();
+    if (!best) {
+      await admin.from("entitlements").update({ updated_at: stamp }).eq("user_id", owner);
+      console.log(`sahip yenileme: aktif abonelik yok ${owner}`);
+      return json({ plan: "free" });
+    }
+    const chosen = best as { plan: string; productId: string; expires: number };
+    const expiresAt = new Date(chosen.expires).toISOString();
+    await admin
+      .from("entitlements")
+      .update({ plan: chosen.plan, product_id: chosen.productId, expires_at: expiresAt, updated_at: stamp })
+      .eq("user_id", owner);
+    console.log(`sahip yenileme: ${chosen.plan} ${owner}`);
+    return json({ plan: chosen.plan, expiresAt });
+  } catch (e) {
+    console.log(`sahip yenileme hatası ${String(e)}`);
+    return json({ error: "sunucu_hatasi" }, 500);
+  }
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: cors });
   if (req.method !== "POST") return json({ error: "method" }, 405);
@@ -100,7 +168,9 @@ Deno.serve(async (req) => {
   const userId = userData.user.id;
 
   const admin = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
-  const input = (await req.json().catch(() => ({}))) as { transactionId?: string | number };
+  const input = (await req.json().catch(() => ({}))) as { transactionId?: string | number; ownerOf?: string };
+  // Ekip üyesi: işletme sahibinin paketi süresi dolmuş görünüyorsa sahibin aboneliği Apple'a yeniden sorulur
+  if (input.ownerOf) return await refreshOwner(admin, userId, String(input.ownerOf));
   let transactionId = input.transactionId != null ? String(input.transactionId) : "";
   if (!transactionId) {
     // Geri yükleme / yenileme: hesabın son doğrulanmış işlemi kullanılır

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { CURRENT_PLAN, PLAN_NAME, type Plan } from "../lib/plan";
 import { buyPlan, loadProducts, PLAN_PRODUCT, purchasesAvailable, refreshPlan, restorePlan } from "../lib/purchases";
 import { haptic } from "../lib/haptics";
-import { locale, t } from "../lib/i18n";
+import { getLanguage, locale, t } from "../lib/i18n";
 import { SUPPORT_ICON } from "../lib/menu";
 import PageHeader from "./PageHeader";
 
@@ -80,6 +80,18 @@ const price = (value: number) =>
   value === 0
     ? "₺0"
     : `₺${value.toLocaleString(locale(), { minimumFractionDigits: value % 1 ? 2 : 0, maximumFractionDigits: 2 })}`;
+
+/**
+ * "… geç" düğmesi. Türkçede yönelme eki adın son ünlüsüne göre değişir (Pro'ya, Pro Plus'a, Premium'a);
+ * diğer dillerde çeviri kullanılır.
+ */
+function switchLabel(name: string): string {
+  if (getLanguage() !== "tr") return t("{p}'ya geç", { p: name });
+  const vowels = name.toLowerCase().match(/[aeıioöuü]/g) ?? ["a"];
+  const back = "aıou".includes(vowels[vowels.length - 1]);
+  const endsWithVowel = /[aeıioöuü]$/i.test(name);
+  return `${name}'${endsWithVowel ? "y" : ""}${back ? "a" : "e"} geç`;
+}
 
 /** Üstteki görsel: mağaza, yükselen grafik ve taç; uygulamanın mavi tonlarında */
 function Hero() {
@@ -239,7 +251,7 @@ export default function PlansPage({
                   onClick={() => void purchase(p.id as Exclude<Plan, "free">)}
                 >
                   {storePrices[PLAN_PRODUCT[p.id as Exclude<Plan, "free">]]
-                    ? t("{p}'ya geç", { p: t(PLAN_NAME[p.id]) })
+                    ? switchLabel(t(PLAN_NAME[p.id]))
                     : t("Fiyat bekleniyor…")}
                 </button>
               )}
