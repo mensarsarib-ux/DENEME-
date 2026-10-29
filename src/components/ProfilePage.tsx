@@ -7,7 +7,7 @@ import CompanyLogo from "./CompanyLogo";
 import PageHeader from "./PageHeader";
 import PhoneField from "./PhoneField";
 
-const ICON = MENU_ITEMS[0].icon;
+const ICON = MENU_ITEMS.find((m) => m.page === "profile")!.icon;
 
 /** İşletme profili: ad ve iletişim bilgileri düzenlenir; ad ve yetkili üst çubukta görünür */
 export default function ProfilePage({

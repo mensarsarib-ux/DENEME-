@@ -13,7 +13,7 @@ import { t } from "../lib/i18n";
 import { MENU_ITEMS } from "../lib/menu";
 import PageHeader from "./PageHeader";
 
-const ICON = MENU_ITEMS[1].icon;
+const ICON = MENU_ITEMS.find((m) => m.page === "accounts")!.icon;
 
 /** Hesaplarım: nakit ve banka bakiyeleri, toplam giriş/çıkış, açılış bakiyesini düzenleme */
 export default function AccountsPage({

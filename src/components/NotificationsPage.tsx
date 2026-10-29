@@ -5,7 +5,7 @@ import type { AppNotification } from "../lib/notifications";
 import PageHeader from "./PageHeader";
 import { Svg } from "./Icon";
 
-const ICON = MENU_ITEMS[5].icon;
+const ICON = MENU_ITEMS.find((m) => m.page === "notifications")!.icon;
 
 const KIND_ICON: Record<AppNotification["kind"], string> = {
   activity: "M4 12h4l3-8 4 16 3-8h2",

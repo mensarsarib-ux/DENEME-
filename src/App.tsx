@@ -52,7 +52,7 @@ import { setHapticsEnabled } from "./lib/haptics";
 import type { MenuPage } from "./lib/menu";
 import { useSwipeBack } from "./lib/useSwipeBack";
 import { setCurrency } from "./lib/format";
-import { t } from "./lib/i18n";
+import { getLanguage, locale, setLanguage, t, type Language } from "./lib/i18n";
 import AuthScreen from "./components/AuthScreen";
 import { cloudEnabled, heartbeat, loadSession, readRecoveryToken, signOut, type Session } from "./lib/cloud";
 import { useCloudSync } from "./lib/useCloudSync";
@@ -96,6 +96,12 @@ export default function App() {
   // Yazı boyutu kök yazı boyutunu değiştirir; tüm metinler rem ile ölçeklenir
   document.documentElement.style.fontSize = { small: "13px", medium: "16px", large: "20px" }[settings.textSize] ?? "16px";
   const [drawerOpen, setDrawerOpen] = useState(false);
+  // Dil bu telefona özel; değişince tüm ekran yeni dille yeniden çizilir
+  const [language, setLanguageState] = useState<Language>(getLanguage);
+  const changeLanguage = (code: Language) => {
+    setLanguage(code);
+    setLanguageState(code);
+  };
 
   // Hesap ve bulut eşitleme: Supabase tanımlıysa giriş gerekir; değilse uygulama yalnızca bu cihazda çalışır
   const [session, setSession] = useState<Session | null>(() => (cloudEnabled ? loadSession() : null));
@@ -471,7 +477,7 @@ export default function App() {
     const remote = await pull(session, effMembership?.businessId ?? null);
     if (remote === "expired") return t("Oturum süresi dolmuş; yeniden giriş yapın");
     if (!remote) return t("Sunucuda kayıtlı veri yok");
-    return t("Sunucuda kayıtlı veri var · son güncelleme {d}", { d: new Date(remote.updatedAt).toLocaleString("tr-TR") });
+    return t("Sunucuda kayıtlı veri var · son güncelleme {d}", { d: new Date(remote.updatedAt).toLocaleString(locale()) });
   }
 
   async function restoreFromAccount(): Promise<string | null> {
@@ -658,6 +664,8 @@ export default function App() {
         return (
           <SettingsPage
             settings={settings}
+            language={language}
+            onLanguage={changeLanguage}
             backupText={backupText}
             onChange={setSettings}
             account={

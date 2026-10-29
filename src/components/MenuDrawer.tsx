@@ -88,7 +88,7 @@ export default function MenuDrawer({
         {/* Plan kartı: mevcut paket ve yükseltme */}
         <div className="plan-card">
           <div className="plan-card-text">
-            <span className="plan-card-label">{t("Paket: {p}", { p: PLAN_NAME[CURRENT_PLAN] })}</span>
+            <span className="plan-card-label">{t("Paket: {p}", { p: t(PLAN_NAME[CURRENT_PLAN]) })}</span>
             <small>{t("{b} işletme · {s} sekme · {k} kayıt", { b: LIMITS[CURRENT_PLAN].businesses === Infinity ? "∞" : LIMITS[CURRENT_PLAN].businesses, s: LIMITS[CURRENT_PLAN].tabs === Infinity ? "∞" : LIMITS[CURRENT_PLAN].tabs, k: LIMITS[CURRENT_PLAN].itemsPerTab === Infinity ? "∞" : LIMITS[CURRENT_PLAN].itemsPerTab })}</small>
           </div>
           <button type="button" className="plan-card-btn" onClick={() => open("plans")}>

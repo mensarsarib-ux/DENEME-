@@ -8,7 +8,7 @@ import ContactSheet, { type ContactPatch } from "./ContactSheet";
 import Highlight from "./Highlight";
 import PageHeader from "./PageHeader";
 
-const ICON = MENU_ITEMS[4].icon;
+const ICON = MENU_ITEMS.find((m) => m.page === "contacts")!.icon;
 
 /** Kişiler: tüm müşteri, tedarikçi ve özel sekme kayıtları; arama, arama/e-posta bağlantıları, iletişim düzenleme */
 export default function ContactsPage({

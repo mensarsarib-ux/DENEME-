@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import AccountDeleteDialog from "./AccountDeleteDialog";
 import { currentDeviceId, listDevices, removeDevice, type DeviceInfo, type Session } from "../lib/cloud";
 import type { Settings } from "../data/mock";
-import { locale, t } from "../lib/i18n";
+import { LANGUAGES, currencyName, locale, t, type Language } from "../lib/i18n";
 import { CURRENCIES, currencyOf } from "../lib/currencies";
 import { haptic } from "../lib/haptics";
 import { saveTextFile } from "../lib/saveBackup";
@@ -10,7 +10,7 @@ import { MENU_ITEMS } from "../lib/menu";
 import type { SyncStatus } from "../lib/useCloudSync";
 import PageHeader from "./PageHeader";
 
-const ICON = MENU_ITEMS[6].icon;
+const ICON = MENU_ITEMS.find((m) => m.page === "settings")!.icon;
 
 function Switch({
   label,
@@ -44,10 +44,12 @@ function Switch({
 }
 
 /** Ayarlar ana listesindeki gruplar */
-type SettingsGroup = "hesap" | "gorunum" | "para" | "veriler" | "destek";
+type SettingsGroup = "hesap" | "dil" | "gorunum" | "para" | "veriler" | "destek";
 
 const GROUP_TITLES: Record<SettingsGroup, string> = {
   hesap: "Hesabım",
+  // Dil satırı iki dilde yazılır ki yanlışlıkla seçilen dili bilmeyen biri de bulabilsin
+  dil: "Dil · Language",
   gorunum: "Görünüm",
   para: "Para ve bildirimler",
   veriler: "Veriler",
@@ -117,6 +119,8 @@ const SHOW_DEVICES = false;
 
 export default function SettingsPage({
   settings,
+  language,
+  onLanguage,
   backupText,
   onChange,
   account,
@@ -130,6 +134,9 @@ export default function SettingsPage({
   onRemoteStatus,
 }: {
   settings: Settings;
+  /** Uygulama dili (bu telefona özel) */
+  language: Language;
+  onLanguage: (code: Language) => void;
   /** Tüm verilerin JSON yedeği */
   backupText: string;
   onChange: (settings: Settings) => void;
@@ -257,6 +264,7 @@ export default function SettingsPage({
             {(
               [
                 ["hesap", account ? account.email : t("Giriş yapılmadı")],
+                ["dil", LANGUAGES.find((l) => l.code === language)?.native ?? ""],
                 ["gorunum", t("Yazı boyutu, titreşim, liste sıralaması")],
                 ["para", t("Para birimi ve bildirim eşikleri")],
                 ["veriler", t("Yedek al, geri yükle, tüm verileri sil")],
@@ -344,6 +352,34 @@ export default function SettingsPage({
           </>
         )}
 
+        {group === "dil" && (
+          <section className="card" aria-label={t("Dil")}>
+            <h2 className="card-title">{t("Dil")}</h2>
+            <div className="currency-list" role="radiogroup" aria-label={t("Dil")}>
+              {LANGUAGES.map((l) => (
+                <button
+                  key={l.code}
+                  type="button"
+                  role="radio"
+                  aria-checked={l.code === language}
+                  className={`currency-option ${l.code === language ? "is-active" : ""}`}
+                  onClick={() => {
+                    haptic("success");
+                    onLanguage(l.code);
+                  }}
+                >
+                  <span className="currency-badge" aria-hidden="true">{l.flag}</span>
+                  <span className="setting-text">
+                    <strong>{l.native}</strong>
+                  </span>
+                  {l.code === language && <span className="currency-check" aria-hidden="true">✓</span>}
+                </button>
+              ))}
+            </div>
+            <p className="field-hint">{t("Uygulamanın dili bu telefonda değişir.")}</p>
+          </section>
+        )}
+
         {group === "gorunum" && (
           <>
         <section className="card" aria-label={t("Genel")}>
@@ -400,7 +436,7 @@ export default function SettingsPage({
           <button type="button" className="currency-current" onClick={() => setPickingCurrency(true)}>
             <span className="currency-badge" aria-hidden="true">{current.symbol}</span>
             <span className="setting-text">
-              <strong>{current.flag} {t(current.name)}</strong>
+              <strong>{current.flag} {currencyName(current.code, current.name)}</strong>
               <small>{current.code}</small>
             </span>
             <span className="drawer-chevron" aria-hidden="true">›</span>
@@ -539,7 +575,7 @@ export default function SettingsPage({
                   >
                     <span className="currency-badge" aria-hidden="true">{c.symbol}</span>
                     <span className="setting-text">
-                      <strong>{c.flag} {t(c.name)}</strong>
+                      <strong>{c.flag} {currencyName(c.code, c.name)}</strong>
                       <small>{c.code}</small>
                     </span>
                     {c.code === settings.currency && <span className="currency-check" aria-hidden="true">✓</span>}

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { CURRENT_PLAN, PLAN_NAME, type Plan } from "../lib/plan";
 import { buyPlan, loadProducts, PLAN_PRODUCT, purchasesAvailable, refreshPlan, restorePlan } from "../lib/purchases";
 import { haptic } from "../lib/haptics";
-import { t } from "../lib/i18n";
+import { locale, t } from "../lib/i18n";
 import { SUPPORT_ICON } from "../lib/menu";
 import PageHeader from "./PageHeader";
 
@@ -79,7 +79,7 @@ const PURCHASES_OPEN = purchasesAvailable();
 const price = (value: number) =>
   value === 0
     ? "₺0"
-    : `₺${value.toLocaleString("tr-TR", { minimumFractionDigits: value % 1 ? 2 : 0, maximumFractionDigits: 2 })}`;
+    : `₺${value.toLocaleString(locale(), { minimumFractionDigits: value % 1 ? 2 : 0, maximumFractionDigits: 2 })}`;
 
 /** Üstteki görsel: mağaza, yükselen grafik ve taç; uygulamanın mavi tonlarında */
 function Hero() {
@@ -128,7 +128,7 @@ export default function PlansPage({
   function showPlan(plan: Plan | null) {
     if (plan && plan !== shownPlan) {
       setShownPlan(plan);
-      if (plan !== "free") setMessage(t("{p} paketiniz etkin.", { p: PLAN_NAME[plan] }));
+      if (plan !== "free") setMessage(t("{p} paketiniz etkin.", { p: t(PLAN_NAME[plan]) }));
     }
   }
   useEffect(() => {
@@ -179,7 +179,7 @@ export default function PlansPage({
       if (plan === "free") setMessage(t("Geri yüklenecek aktif abonelik bulunamadı."));
       else {
         showPlan(plan);
-        setMessage(t("{p} paketiniz geri yüklendi.", { p: PLAN_NAME[plan] }));
+        setMessage(t("{p} paketiniz geri yüklendi.", { p: t(PLAN_NAME[plan]) }));
       }
     } catch (e) {
       setMessage(`${t("Geri yükleme yapılamadı.")} ${String(e instanceof Error ? e.message : e)}`);
@@ -189,7 +189,7 @@ export default function PlansPage({
   }
   return (
     <div className="cust-page">
-      <PageHeader title={t("İşletme paketleri")} subtitle={t("{p} paketini kullanıyorsunuz", { p: PLAN_NAME[shownPlan] })} icon={SUPPORT_ICON} onBack={onBack} />
+      <PageHeader title={t("İşletme paketleri")} subtitle={t("{p} paketini kullanıyorsunuz", { p: t(PLAN_NAME[shownPlan]) })} icon={SUPPORT_ICON} onBack={onBack} />
       <div className="paywall">
         <div className="paywall-hero">
           <Hero />
@@ -200,7 +200,7 @@ export default function PlansPage({
         {PLANS.filter((p) => RANK[p.id] >= RANK[shownPlan] && (PURCHASES_OPEN || p.id === "free")).map((p) => {
           const current = p.id === shownPlan;
           return (
-            <section key={p.id} className={`paywall-card tone-${p.tone} ${current ? "is-current" : ""}`} aria-label={PLAN_NAME[p.id]}>
+            <section key={p.id} className={`paywall-card tone-${p.tone} ${current ? "is-current" : ""}`} aria-label={t(PLAN_NAME[p.id])}>
               {(current || p.badge) && (
                 <span className="paywall-badge">{current ? t("MEVCUT PAKET") : t(p.badge ?? "")}</span>
               )}
@@ -239,7 +239,7 @@ export default function PlansPage({
                   onClick={() => void purchase(p.id as Exclude<Plan, "free">)}
                 >
                   {storePrices[PLAN_PRODUCT[p.id as Exclude<Plan, "free">]]
-                    ? t("{p}'ya geç", { p: PLAN_NAME[p.id] })
+                    ? t("{p}'ya geç", { p: t(PLAN_NAME[p.id]) })
                     : t("Fiyat bekleniyor…")}
                 </button>
               )}

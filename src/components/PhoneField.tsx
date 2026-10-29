@@ -1,5 +1,5 @@
 import { COUNTRIES, splitPhone } from "../lib/countries";
-import { t } from "../lib/i18n";
+import { regionName, t } from "../lib/i18n";
 
 /**
  * Telefon alanı: solda ülke alan kodu (varsayılan +90), sağda numara.
@@ -34,7 +34,7 @@ export default function PhoneField({
       >
         {COUNTRIES.map(([iso, name, dial]) => (
           <option key={iso} value={dial}>
-            +{dial} {name}
+            +{dial} {regionName(iso, name)}
           </option>
         ))}
       </select>

@@ -2,6 +2,7 @@ import { Capacitor } from "@capacitor/core";
 import { NativePurchases, PURCHASE_TYPE, type Product } from "@capgo/native-purchases";
 import { setCurrentPlan, type Plan } from "./plan";
 import { loadSession, verifyPurchase } from "./cloud";
+import { t } from "./i18n";
 
 /** App Store Connect'teki abonelik kimlikleri ve karşılık gelen paketler */
 export const PRODUCT_PLAN: Record<string, Exclude<Plan, "free">> = {
@@ -34,7 +35,7 @@ export async function loadProducts(): Promise<Product[]> {
 export async function buyPlan(plan: Exclude<Plan, "free">): Promise<void> {
   // Ödeme alınmadan önce giriş kontrol edilir; paket hesaba bağlanacağı için giriş şarttır
   const session = loadSession();
-  if (!session) throw new Error("Paket almak için önce hesabınıza giriş yapın");
+  if (!session) throw new Error(t("Paket almak için önce hesabınıza giriş yapın"));
   // Abonelik bu hesaba bağlanır (appAccountToken); başka bir hesap işlem numarasıyla aboneliği alamaz
   const plugin = NativePurchases as unknown as {
     purchaseProduct(options: {
@@ -52,7 +53,7 @@ export async function buyPlan(plan: Exclude<Plan, "free">): Promise<void> {
   // Sunucuya ulaşılamazsa satın alma kaybolmasın: işlem, doğrulanana kadar cihazda bekletilir
   savePendingTransaction(id);
   const confirmed = await confirmWithServer(id);
-  if (confirmed === "free") throw new Error("Apple bu hesap için aktif abonelik göstermedi");
+  if (confirmed === "free") throw new Error(t("Apple bu hesap için aktif abonelik göstermedi"));
 }
 
 /**
@@ -77,6 +78,9 @@ async function deviceTransactionId(): Promise<string | undefined> {
     return undefined;
   }
 }
+
+/** Abonelik başka bir Hesabım hesabına bağlıysa gösterilen mesaj */
+const OTHER_ACCOUNT = () => t("Bu Apple aboneliği başka bir Hesabım hesabında kullanılıyor.");
 
 const PENDING_KEY = "hesabim:pending-transaction";
 
@@ -107,9 +111,9 @@ function savePendingTransaction(id: string | null) {
  */
 async function confirmWithServer(transactionId?: string): Promise<Plan> {
   const session = loadSession();
-  if (!session) throw new Error("Satın alma için giriş yapmanız gerekiyor");
+  if (!session) throw new Error(t("Satın alma için giriş yapmanız gerekiyor"));
   const result = await verifyPurchase(session, transactionId ?? pendingTransaction());
-  if (result === "expired") throw new Error("Oturumunuzun süresi doldu, yeniden giriş yapın");
+  if (result === "expired") throw new Error(t("Oturumunuzun süresi doldu, yeniden giriş yapın"));
   if ("error" in result) {
     if (result.error.startsWith("aktif_abonelik_yok") || result.error.startsWith("islem_yok")) {
       savePendingTransaction(null);
@@ -118,10 +122,10 @@ async function confirmWithServer(transactionId?: string): Promise<Plan> {
     }
     if (result.error.startsWith("baska_hesapta")) {
       savePendingTransaction(null);
-      throw new Error("Bu Apple aboneliği başka bir Hesabım hesabında kullanılıyor.");
+      throw new Error(OTHER_ACCOUNT());
     }
     // Hata kodu destek için gösterilir; satın alma telefonda saklı kalır ve sonra tekrar denenebilir
-    throw new Error(`Satın alma şu an doğrulanamadı (${result.error}). Biraz sonra "Satın alımı geri yükle" ile tekrar deneyin.`);
+    throw new Error(t('Satın alma şu an doğrulanamadı ({e}). Biraz sonra "Satın alımı geri yükle" ile tekrar deneyin.', { e: result.error }));
   }
   savePendingTransaction(null);
   const plan = result.plan as Plan;
@@ -140,7 +144,7 @@ export async function refreshPlan(fromDevice = false): Promise<Plan | null> {
     return await confirmWithServer(fromDevice ? await deviceTransactionId() : undefined);
   } catch (e) {
     // Abonelik başka bir hesaba aitse kullanıcı bunu görmeli; diğer hatalar sessizce geçilir
-    if (fromDevice && e instanceof Error && e.message.includes("başka bir Hesabım")) throw e;
+    if (fromDevice && e instanceof Error && e.message === OTHER_ACCOUNT()) throw e;
     return null;
   }
 }

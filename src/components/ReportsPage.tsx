@@ -13,7 +13,7 @@ import {
 } from "../lib/reports";
 import PageHeader from "./PageHeader";
 
-const ICON = MENU_ITEMS[2].icon;
+const ICON = MENU_ITEMS.find((m) => m.page === "reports")!.icon;
 
 function Ranking({
   title,

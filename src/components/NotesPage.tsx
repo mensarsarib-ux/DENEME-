@@ -7,7 +7,7 @@ import { fold } from "../lib/search";
 import PageHeader from "./PageHeader";
 import { Svg } from "./Icon";
 
-const ICON = MENU_ITEMS[3].icon;
+const ICON = MENU_ITEMS.find((m) => m.page === "notes")!.icon;
 const PIN_ICON = "M12 3l3 6 5 1-4 4 1 6-5-3-5 3 1-6-4-4 5-1z";
 
 const dateLabel = (iso: string) =>
