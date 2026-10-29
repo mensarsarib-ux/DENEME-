@@ -381,7 +381,7 @@ button {
 .month-mode {
   padding-left: 4px;
   color: var(--muted);
-  font-size: 0.62rem;
+  font-size: 0.7rem;
   letter-spacing: 0.1em;
 }
 
@@ -469,7 +469,7 @@ button {
 
 .month-net-label {
   color: var(--muted);
-  font-size: 0.62rem;
+  font-size: 0.7rem;
   letter-spacing: 0.1em;
 }
 
@@ -1473,7 +1473,7 @@ body {
   border: 1px solid var(--line);
   border-radius: 999px;
   color: var(--muted);
-  font-size: 0.65rem;
+  font-size: 0.7rem;
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
@@ -2981,7 +2981,7 @@ a.action-btn {
 }
 
 .col-label {
-  font-size: 0.66rem;
+  font-size: 0.7rem;
   color: var(--muted);
   padding-top: 3px;
 }
@@ -3729,4 +3729,45 @@ a.paywall-link {
   display: block;
   text-align: center;
   text-decoration: none;
+}
+
+/* ---------- Apple tasarım kuralları ---------- */
+
+/* Dokunma alanı en az 44×44 nokta: küçük görünen düğmelerin görünümü aynı kalır, dokunulabilen alanı büyür */
+.icon-btn,
+.round-btn,
+.search-clear,
+.month-nav button,
+.cust-tools button,
+.drawer-biz-add,
+.drawer-close {
+  position: relative;
+}
+
+.icon-btn::before,
+.round-btn::before,
+.search-clear::before,
+.month-nav button::before,
+.cust-tools button::before,
+.drawer-biz-add::before,
+.drawer-close::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: max(100%, 44px);
+  height: max(100%, 44px);
+  transform: translate(-50%, -50%);
+}
+
+/* "Hareketi azalt" açıkken tüm geçiş ve canlandırmalar kısalır */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
