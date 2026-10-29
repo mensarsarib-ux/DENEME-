@@ -1,0 +1,2 @@
+/* Face ID izin penceresinde görünen açıklama */
+"NSFaceIDUsageDescription" = "Hesabım uses Face ID to unlock the app.";

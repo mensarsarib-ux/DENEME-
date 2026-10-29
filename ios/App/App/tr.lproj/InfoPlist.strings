@@ -1,0 +1,2 @@
+/* Face ID izin penceresinde görünen açıklama */
+"NSFaceIDUsageDescription" = "Hesabım, uygulama kilidini açmak için Face ID kullanır.";

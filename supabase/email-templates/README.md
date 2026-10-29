@@ -11,4 +11,4 @@ hesaplara Türkçe gider.
 
 Dosyalar bir betikle üretilir; metni elle değiştirirken her iki dosyada da aynı dil bloğunu düzeltin.
 
-Logo: public/mail-logo.png, GitHub üzerinden (raw.githubusercontent.com) gösterilir. Gmail SVG göstermediği için PNG kullanılır.
+Logo: public/mail-logo.png, sitenin kendi adresinden (https://hesabimmuhasebe.com/mail-logo.png) gösterilir. Gmail SVG göstermediği için PNG kullanılır.
