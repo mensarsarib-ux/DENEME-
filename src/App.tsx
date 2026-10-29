@@ -104,8 +104,7 @@ export default function App() {
   // Dil bu telefona özel; değişince tüm ekran yeni dille yeniden çizilir
   const [language, setLanguageState] = useState<Language>(getLanguage);
   const changeLanguage = (code: Language) => {
-    setLanguage(code);
-    setLanguageState(code);
+    void setLanguage(code).then(() => setLanguageState(code));
   };
 
   // Hesap ve bulut eşitleme: Supabase tanımlıysa giriş gerekir; değilse uygulama yalnızca bu cihazda çalışır

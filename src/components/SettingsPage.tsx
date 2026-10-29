@@ -51,13 +51,22 @@ type SettingsGroup = "hesap" | "dil" | "gorunum" | "para" | "veriler" | "destek"
 
 const GROUP_TITLES: Record<SettingsGroup, string> = {
   hesap: "Hesabım",
-  // Dil satırı iki dilde yazılır ki yanlışlıkla seçilen dili bilmeyen biri de bulabilsin
-  dil: "Dil · Language",
+  dil: "Dil",
   gorunum: "Görünüm",
   para: "Para ve bildirimler",
   veriler: "Veriler",
   destek: "Destek ve yasal",
 };
+
+/**
+ * Grup başlığı. Dil satırı ayrıca İngilizce "Language" ile yazılır ki yanlışlıkla bilmediği bir dili
+ * seçen kişi de geri dönebileceği yeri bulabilsin.
+ */
+function groupTitle(group: SettingsGroup): string {
+  if (group !== "dil") return t(GROUP_TITLES[group]);
+  const local = t("Dil");
+  return local === "Language" ? local : `${local} · Language`;
+}
 
 /** Ayarlar: titreşim, destek e-postası, yedekleme ve sıfırlama */
 const SIZES = ["small", "medium", "large"] as const;
@@ -273,7 +282,7 @@ export default function SettingsPage({
   return (
     <div className="cust-page">
       <PageHeader
-        title={group ? t(GROUP_TITLES[group]) : t("Ayarlar")}
+        title={group ? groupTitle(group) : t("Ayarlar")}
         subtitle={group ? undefined : t("Tercihleriniz bu cihazda saklanır")}
         icon={ICON}
         onBack={group ? () => setGroup(null) : onBack}
@@ -294,7 +303,7 @@ export default function SettingsPage({
             ).map(([value, hint]) => (
               <button key={value} type="button" className="settings-row" onClick={() => setGroup(value)}>
                 <span className="settings-row-text">
-                  <strong>{t(GROUP_TITLES[value])}</strong>
+                  <strong>{groupTitle(value)}</strong>
                   <small>{hint}</small>
                 </span>
                 <span className="settings-row-chevron" aria-hidden="true">›</span>

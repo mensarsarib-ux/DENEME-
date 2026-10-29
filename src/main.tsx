@@ -4,6 +4,7 @@ import App from "./App";
 import AppLock from "./components/AppLock";
 import "./styles.css";
 import { applyTheme } from "./lib/theme";
+import { initLanguage } from "./lib/i18n";
 
 /**
  * ?sifirla bağlantısı: bu cihazdaki tüm Hesabım verisini (oturum, işletmeler, kayıtlar) siler
@@ -27,9 +28,12 @@ resetLocalData();
 // Tema ilk çizimden önce uygulanır ki ekran bir an yanlış renkte görünmesin
 applyTheme();
 
-createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <App />
-    <AppLock />
-  </StrictMode>,
+// Seçili dilin sözlüğü yüklenince çizilir (Türkçe ve İngilizce beklemeden hazırdır)
+void initLanguage().then(() =>
+  createRoot(document.getElementById("root")!).render(
+    <StrictMode>
+      <App />
+      <AppLock />
+    </StrictMode>,
+  ),
 );
