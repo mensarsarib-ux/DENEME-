@@ -21,7 +21,7 @@ export default function PageHeader({
 }) {
   return (
     <header className="cust-header">
-      <button className="round-btn" aria-label={t("Geri")} data-inner={innerBack ? "1" : undefined} onClick={onBack}>
+      <button className="round-btn" data-back aria-label={t("Geri")} data-inner={innerBack ? "1" : undefined} onClick={onBack}>
         <Svg d="M15 5l-7 7 7 7" />
       </button>
       <div className="cust-title">

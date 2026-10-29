@@ -64,7 +64,7 @@ export default function KasaPage({
   return (
     <div className="cust-page">
       <header className="cust-header">
-        <button className="round-btn" aria-label={t("Geri")} onClick={() => {
+        <button className="round-btn" data-back aria-label={t("Geri")} onClick={() => {
             haptic("light");
             onBack();
           }}>

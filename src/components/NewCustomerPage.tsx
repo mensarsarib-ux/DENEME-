@@ -111,7 +111,7 @@ export default function NewCustomerPage({
   return (
     <div className="cust-page">
       <header className="cust-header">
-        <button className="round-btn" aria-label={t("Geri")} onClick={onBack}>
+        <button className="round-btn" data-back aria-label={t("Geri")} onClick={onBack}>
           <Svg d="M15 5l-7 7 7 7" />
         </button>
         <div className="cust-title">

@@ -8,6 +8,21 @@
 	<array>
 		<string>tr</string>
 		<string>en</string>
+		<string>de</string>
+		<string>fr</string>
+		<string>es</string>
+		<string>it</string>
+		<string>pt</string>
+		<string>ru</string>
+		<string>uk</string>
+		<string>pl</string>
+		<string>nl</string>
+		<string>id</string>
+		<string>hi</string>
+		<string>ja</string>
+		<string>ko</string>
+		<string>zh-Hans</string>
+		<string>ar</string>
 	</array>
 	<key>CFBundleDisplayName</key>
         <string>Hesabım</string>

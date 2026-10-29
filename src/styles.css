@@ -1,3 +1,23 @@
+/* Sağdan sola dillerde (Arapça) yatay hareketler bu çarpanla aynalanır */
+:root {
+  --dir: 1;
+}
+
+:root[dir="rtl"] {
+  --dir: -1;
+}
+
+/* Kullanıcının yazdığı Latin harfli adlar Arapça ekranda da doğru sırada görünür ("A.Ş." sonundaki nokta başa kaçmaz) */
+[dir="rtl"] :is(.company-text strong, .row-name, .pie-name, .cust-name strong, .tx-info p, .drawer-biz-title, .drawer-biz-name) {
+  unicode-bidi: plaintext;
+  text-align: right;
+}
+
+/* Geri düğmesindeki ok sağdan sola dillerde sağı gösterir */
+[dir="rtl"] button[data-back] svg {
+  transform: scaleX(-1);
+}
+
 :root {
   --bg-top: #22707a;
   --bg-mid: #1c4a66;
@@ -379,7 +399,7 @@ button {
 }
 
 .month-mode {
-  padding-left: 4px;
+  padding-inline-start: 4px;
   color: var(--muted);
   font-size: 0.7rem;
   letter-spacing: 0.1em;
@@ -649,7 +669,7 @@ body {
   border: 0;
   border-bottom: 1px solid var(--line);
   background: transparent;
-  text-align: left;
+  text-align: start;
 }
 
 .row:hover {
@@ -680,7 +700,7 @@ body {
 }
 
 .row-big .row-chevron {
-  margin-left: 0;
+  margin-inline-start: 0;
   font-size: 1.3rem;
   line-height: 1;
 }
@@ -722,7 +742,7 @@ body {
   border: 1px solid var(--line);
   border-radius: 14px;
   background: var(--surface-head);
-  text-align: left;
+  text-align: start;
 }
 
 .party-add {
@@ -931,7 +951,7 @@ body {
   background: transparent;
   color: inherit;
   font: inherit;
-  text-align: left;
+  text-align: start;
 }
 
 .tx-hit:active {
@@ -1097,7 +1117,7 @@ body {
   border: 0;
   background: transparent;
   color: var(--muted);
-  text-align: left;
+  text-align: start;
 }
 
 .entry-icon {
@@ -1136,7 +1156,7 @@ body {
 
 .entry-attach {
   align-self: center;
-  margin-right: 8px;
+  margin-inline-end: 8px;
 }
 
 .entry-amount {
@@ -1153,7 +1173,7 @@ body {
   color: var(--text);
   font-size: 1.8rem;
   font-variant-numeric: tabular-nums;
-  text-align: right;
+  text-align: end;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -1227,7 +1247,7 @@ body {
 
 @keyframes page-in {
   from {
-    transform: translateX(28%);
+    transform: translateX(calc(28% * var(--dir)));
   }
   to {
     transform: none;
@@ -1257,7 +1277,12 @@ body {
   overflow: hidden;
 }
 
-.keypad-wrap .keypad {
+.keypad-wrap /* Rakamlar Arapçada da 1-2-3 sırasıyla dizilir (iOS tuş takımı gibi) */
+.keypad {
+  direction: ltr;
+}
+
+.keypad {
   opacity: 0;
   transform: translateY(14px);
   transition:
@@ -1364,7 +1389,7 @@ body {
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.06);
   font-size: 1rem;
-  text-align: left;
+  text-align: start;
 }
 
 .action-btn svg {
@@ -1463,7 +1488,7 @@ body {
 }
 
 .row-chevron {
-  margin-left: 8px;
+  margin-inline-start: 8px;
   color: var(--muted);
 }
 
@@ -1757,22 +1782,23 @@ body {
   position: absolute;
   top: 0;
   bottom: 0;
-  left: 0;
+  inset-inline-start: 0;
   width: min(82vw, 320px);
   display: flex;
   flex-direction: column;
   padding: calc(env(safe-area-inset-top, 0px) + 16px) 12px calc(env(safe-area-inset-bottom, 0px) + 16px);
   background: var(--surface);
-  border-right: 1px solid var(--line);
-  border-radius: 0 20px 20px 0;
-  box-shadow: 8px 0 32px rgba(0, 0, 0, 0.45);
+  border-inline-end: 1px solid var(--line);
+  border-start-end-radius: 20px;
+  border-end-end-radius: 20px;
+  box-shadow: calc(8px * var(--dir)) 0 32px rgba(0, 0, 0, 0.45);
   outline: none;
   overflow-y: auto;
   animation: drawer-in 0.25s cubic-bezier(0.22, 0.8, 0.3, 1);
 }
 
 @keyframes drawer-in {
-  from { transform: translateX(-100%); }
+  from { transform: translateX(calc(-100% * var(--dir))); }
   to { transform: none; }
 }
 
@@ -1826,7 +1852,7 @@ body {
   border: 0;
   background: none;
   font: inherit;
-  text-align: left;
+  text-align: start;
   cursor: pointer;
 }
 
@@ -1864,7 +1890,7 @@ body {
   background: var(--surface-head);
   color: var(--text);
   font: inherit;
-  text-align: left;
+  text-align: start;
   cursor: pointer;
 }
 
@@ -1927,7 +1953,7 @@ body {
   color: var(--text);
   font: inherit;
   font-size: 1rem;
-  text-align: left;
+  text-align: start;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
 }
@@ -2103,7 +2129,7 @@ body {
   background: transparent;
   color: var(--text);
   font: inherit;
-  text-align: left;
+  text-align: start;
   cursor: pointer;
 }
 
@@ -2228,7 +2254,7 @@ a.action-btn {
   background: transparent;
   color: var(--text);
   font: inherit;
-  text-align: left;
+  text-align: start;
   cursor: pointer;
 }
 
@@ -2261,7 +2287,7 @@ a.action-btn {
 .contact-main { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .contact-sub { display: flex; gap: 8px; color: var(--muted); font-size: 0.85rem; flex-wrap: wrap; }
 .contact-empty { opacity: 0.7; }
-.contact-actions { display: flex; gap: 6px; padding-right: 12px; }
+.contact-actions { display: flex; gap: 6px; padding-inline-end: 12px; }
 .contact-link {
   padding: 8px 12px;
   border-radius: 10px;
@@ -2308,7 +2334,7 @@ a.action-btn {
 .tools-menu {
   position: absolute;
   top: calc(100% + 8px);
-  right: 0;
+  inset-inline-end: 0;
   z-index: 30;
   min-width: 170px;
   padding: 6px;
@@ -2333,7 +2359,7 @@ a.action-btn {
   border-radius: 10px;
   color: var(--text);
   font: inherit;
-  text-align: left;
+  text-align: start;
 }
 
 .cust-tools .tools-menu button:active { background: var(--line); }
@@ -2358,7 +2384,7 @@ a.action-btn {
   background: var(--surface-head);
   color: var(--text);
   font: inherit;
-  text-align: left;
+  text-align: start;
   cursor: pointer;
 }
 
@@ -2463,7 +2489,7 @@ a.action-btn {
   background: transparent;
   color: var(--text);
   font: inherit;
-  text-align: left;
+  text-align: start;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
 }
@@ -2534,8 +2560,8 @@ a.action-btn {
 .auth-tabs button { flex: 1; padding: 10px; border: 0; border-radius: 9px; background: transparent; color: var(--muted); font: inherit; font-weight: 600; cursor: pointer; }
 .auth-tabs button.is-active { background: var(--blue); color: #fff; }
 .auth-password { position: relative; display: flex; }
-.auth-password input { flex: 1; padding-right: 84px; }
-.auth-password button { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); padding: 6px 10px; border: 0; background: transparent; color: var(--blue); font: inherit; cursor: pointer; }
+.auth-password input { flex: 1; padding-inline-end: 84px; }
+.auth-password button { position: absolute; inset-inline-end: 6px; top: 50%; transform: translateY(-50%); padding: 6px 10px; border: 0; background: transparent; color: var(--blue); font: inherit; cursor: pointer; }
 .sync-loading { min-height: calc(100dvh - env(safe-area-inset-top, 0px)); display: grid; place-items: center; color: var(--muted); background: var(--bg-bottom); }
 .account-email { margin: 0; font-weight: 600; word-break: break-all; }
 
@@ -2548,7 +2574,7 @@ a.action-btn {
 .device-dot.is-online { background: var(--green); opacity: 1; box-shadow: 0 0 0 4px rgba(63, 191, 130, 0.2); }
 .device-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .device-text small { color: var(--muted); }
-.device-tag { margin-left: 8px; padding: 2px 8px; border-radius: 999px; background: var(--surface-head); color: var(--blue); font-size: 0.72rem; font-weight: 600; }
+.device-tag { margin-inline-start: 8px; padding: 2px 8px; border-radius: 999px; background: var(--surface-head); color: var(--blue); font-size: 0.72rem; font-weight: 600; }
 
 /* Kasa: üç tür seçeneği ve takvim simgesi tek satırda */
 .kasa-filter-row { display: grid; grid-template-columns: 1fr 1fr 1fr 44px; gap: 8px; padding: 10px 16px 6px; align-items: stretch; }
@@ -2581,6 +2607,7 @@ a.action-btn {
 
 /* Yazı boyutu: yan yana üç seçenek, altında kayan vurgu */
 .size-picker { position: relative; display: grid; grid-template-columns: repeat(3, 1fr); padding: 4px; border-radius: 999px; background: var(--surface-head); touch-action: pan-y; user-select: none; -webkit-user-select: none; }
+.size-picker { direction: ltr; }
 .size-thumb { position: absolute; top: 4px; bottom: 4px; left: 4px; width: calc((100% - 8px) / 3); border-radius: 999px; background: var(--blue); transition: transform 0.28s cubic-bezier(0.22, 0.8, 0.3, 1); }
 .size-option { position: relative; z-index: 1; padding: 10px 6px; border: 0; background: transparent; color: var(--muted); font: inherit; font-weight: 600; cursor: pointer; transition: color 0.2s; }
 .size-option.is-active { color: #fff; }
@@ -2602,7 +2629,7 @@ a.action-btn {
 .stats-track::-webkit-scrollbar { display: none; }
 .stats-slide { flex: 0 0 100%; min-width: 0; scroll-snap-align: start; }
 .stats-slide > .card { margin: 0; height: 100%; box-sizing: border-box; }
-.stats-slide .stat-list dd { text-align: right; }
+.stats-slide .stat-list dd { text-align: end; }
 .stats-dots { display: flex; justify-content: center; gap: 6px; margin-top: 8px; }
 .stats-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--line); transition: background 0.2s; }
 .stats-dot.is-on { background: var(--blue); }
@@ -2687,7 +2714,7 @@ a.action-btn {
   border-radius: 10px;
   background: transparent;
   color: var(--text);
-  text-align: left;
+  text-align: start;
 }
 
 .biz-plan span {
@@ -2695,7 +2722,7 @@ a.action-btn {
 }
 
 .biz-plan small {
-  margin-left: 14px;
+  margin-inline-start: 14px;
   white-space: nowrap;
   color: var(--muted);
 }
@@ -2775,7 +2802,7 @@ a.action-btn {
   border-radius: 14px;
   background: rgba(20, 28, 36, 0.9);
   color: #fff;
-  text-align: left;
+  text-align: start;
   font-size: 0.95rem;
 }
 
@@ -2926,7 +2953,7 @@ a.action-btn {
   width: 8px;
   height: 8px;
   border-radius: 2px;
-  margin-left: 6px;
+  margin-inline-start: 6px;
 }
 
 .col-dot.in {
@@ -3072,7 +3099,7 @@ a.action-btn {
 /* Bağlı cihaz satırında Kaldır düğmesi */
 .device-remove {
   flex: none;
-  margin-left: auto;
+  margin-inline-start: auto;
   padding: 6px 10px;
   border: 1px solid rgba(228, 87, 74, 0.5);
   border-radius: 10px;
@@ -3203,7 +3230,7 @@ a.action-btn {
   border-bottom: 1px solid var(--line);
   background: transparent;
   color: var(--text);
-  text-align: left;
+  text-align: start;
 }
 
 .team-row-email {
@@ -3253,7 +3280,7 @@ a.action-btn {
 .plans-item-detail {
   display: grid;
   gap: 4px;
-  text-align: left;
+  text-align: start;
 }
 
 .plans-item-name {
@@ -3433,7 +3460,7 @@ a.action-btn {
 .paywall-badge {
   position: absolute;
   top: -10px;
-  right: 14px;
+  inset-inline-end: 14px;
   padding: 4px 10px;
   border-radius: 999px;
   background: var(--muted);
@@ -3484,7 +3511,7 @@ a.action-btn {
 
 .paywall-price {
   margin: 0;
-  text-align: right;
+  text-align: end;
   font-size: 1.3rem;
   font-weight: 700;
   color: var(--text);
@@ -3630,7 +3657,7 @@ a.action-btn {
 
 @keyframes drawer-out {
   from { transform: none; }
-  to { transform: translateX(-100%); }
+  to { transform: translateX(calc(-100% * var(--dir))); }
 }
 
 @keyframes drawer-fade-out {
@@ -3676,7 +3703,7 @@ textarea,
   background: transparent;
   color: var(--text);
   font: inherit;
-  text-align: left;
+  text-align: start;
   cursor: pointer;
 }
 
