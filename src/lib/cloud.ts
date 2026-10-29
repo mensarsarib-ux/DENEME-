@@ -43,7 +43,7 @@ export function loadSession(): Session | null {
   }
 }
 
-function saveSession(session: Session | null) {
+export function saveSession(session: Session | null) {
   try {
     if (session) localStorage.setItem(SESSION_KEY, JSON.stringify(session));
     else localStorage.removeItem(SESSION_KEY);
@@ -121,11 +121,15 @@ export function normalizePhone(input: string): string | null {
 }
 
 /**
- * Yeni hesap: e-posta ya da telefon ve şifre. E-postayla açılan hesapta telefon isteğe bağlı bilgi olarak saklanır.
+ * Yeni hesap: e-posta ya da telefon ve şifre; ad gibi bilgiler hesabın bilgilerine yazılır.
  * Doğrulama kodu e-postaya ya da SMS ile gönderilir; oturum dönmezse "pending".
  */
-export async function signUp(id: string, phone: string, password: string): Promise<Session | "pending"> {
-  const data = isEmailLogin(id) ? { phone, lang: getLanguage() } : { lang: getLanguage() };
+export async function signUp(
+  id: string,
+  password: string,
+  info: { name?: string; phone?: string } = {},
+): Promise<Session | "pending"> {
+  const data = { ...info, lang: getLanguage() };
   const res = await call("/auth/v1/signup", {
     method: "POST",
     body: JSON.stringify({ ...loginBody(id), password, data }),
@@ -267,8 +271,13 @@ export async function fetchPlan(
 /** Hesap bilgileri: ad, telefon (kayıtta girilen) ve e-postanın doğrulanıp doğrulanmadığı */
 export interface AccountProfile {
   name: string;
+  /** Kayıtta isteğe bağlı yazılan telefon (giriş için doğrulanmış telefon değil) */
   phone: string;
   emailConfirmed: boolean;
+  /** Girişte kullanılabilen e-posta ve telefon (+90…) ile doğrulanıp doğrulanmadıkları */
+  loginEmail: string;
+  loginPhone: string;
+  phoneConfirmed: boolean;
 }
 
 export async function getAccountProfile(session: Session): Promise<AccountProfile | "expired"> {
@@ -278,6 +287,8 @@ export async function getAccountProfile(session: Session): Promise<AccountProfil
   if (res.status === 401) return "expired";
   if (!res.ok) throw new CloudError("unknown", String(res.status));
   const user = (await res.json()) as {
+    email?: string | null;
+    phone?: string | null;
     email_confirmed_at?: string | null;
     phone_confirmed_at?: string | null;
     user_metadata?: { name?: string; phone?: string };
@@ -285,8 +296,10 @@ export async function getAccountProfile(session: Session): Promise<AccountProfil
   return {
     name: user.user_metadata?.name ?? "",
     phone: user.user_metadata?.phone ?? "",
-    // Telefonla açılan hesapta doğrulama SMS koduyla yapılır
-    emailConfirmed: !!(user.email_confirmed_at || user.phone_confirmed_at),
+    emailConfirmed: !!user.email && !!user.email_confirmed_at,
+    loginEmail: user.email ?? "",
+    loginPhone: user.phone ? `+${user.phone.replace(/^\+/, "")}` : "",
+    phoneConfirmed: !!user.phone && !!user.phone_confirmed_at,
   };
 }
 
@@ -311,6 +324,48 @@ export async function syncAccountLanguage(session: Session, lang: string): Promi
   } catch {
     // önemsiz
   }
+}
+
+/**
+ * Kayıtta şifre telefon doğrulandıktan sonra belirlenir. Hesap önce kimsenin bilmediği rastgele bir şifreyle açılır;
+ * kod doğrulanınca kişinin seçtiği şifre yazılır (yarıda bırakılırsa "Şifremi unuttum" ile girilebilir).
+ */
+export function temporaryPassword(): string {
+  const bytes = new Uint8Array(24);
+  crypto.getRandomValues(bytes);
+  return Array.from(bytes, (b) => b.toString(36).padStart(2, "0")).join("") + "A!";
+}
+
+/** Hesaba yeni e-posta ekler; adrese doğrulama kodu gider (e-posta değişikliği şablonu) */
+export async function startAddEmail(session: Session, email: string): Promise<true | "expired"> {
+  const s = await fresh(session);
+  if (!s) return "expired";
+  const res = await call("/auth/v1/user", { method: "PUT", token: s.accessToken, body: JSON.stringify({ email: email.trim() }) });
+  if (res.status === 401) return "expired";
+  if (!res.ok) throw authError((await res.json().catch(() => ({}))) as AuthBody);
+  return true;
+}
+
+/** Hesaba yeni telefon ekler; numaraya SMS ile doğrulama kodu gider */
+export async function startAddPhone(session: Session, phone: string): Promise<true | "expired"> {
+  const s = await fresh(session);
+  if (!s) return "expired";
+  const res = await call("/auth/v1/user", { method: "PUT", token: s.accessToken, body: JSON.stringify(loginBody(phone)) });
+  if (res.status === 401) return "expired";
+  if (!res.ok) throw authError((await res.json().catch(() => ({}))) as AuthBody);
+  return true;
+}
+
+/** Eklenen e-postanın ya da telefonun kodunu doğrular; doğrulanınca o yolla da giriş yapılabilir */
+export async function confirmAdded(session: Session, id: string, code: string): Promise<boolean | "expired"> {
+  const s = await fresh(session);
+  if (!s) return "expired";
+  const res = await call("/auth/v1/verify", {
+    method: "POST",
+    token: s.accessToken,
+    body: JSON.stringify({ type: isEmailLogin(id) ? "email_change" : "phone_change", ...loginBody(id), token: code.trim() }),
+  });
+  return res.ok;
 }
 
 /** Ad ve telefonu hesabın bilgilerine yazar */
@@ -594,8 +649,11 @@ export async function ensureOwnerBusiness(session: Session, name: string): Promi
   if (!res.ok) throw new CloudError("unknown", String(res.status));
 }
 
-/** Kayıt sonrası e-postaya ya da SMS ile gelen kodu doğrular; başarılıysa oturum döner */
-export async function verifySignupCode(id: string, code: string): Promise<Session | "invalid"> {
+/**
+ * Kayıt sonrası e-postaya ya da SMS ile gelen kodu doğrular; başarılıysa oturum döner.
+ * save false ise oturum cihaza henüz yazılmaz (kayıt sihirbazı şifre belirlenince yazar).
+ */
+export async function verifySignupCode(id: string, code: string, save = true): Promise<Session | "invalid"> {
   const res = await call("/auth/v1/verify", {
     method: "POST",
     body: JSON.stringify({ type: isEmailLogin(id) ? "signup" : "sms", ...loginBody(id), token: code.trim() }),
@@ -604,7 +662,7 @@ export async function verifySignupCode(id: string, code: string): Promise<Sessio
   if (!res.ok) return "invalid";
   const session = toSession(body, id);
   if (!session) return "invalid";
-  saveSession(session);
+  if (save) saveSession(session);
   return session;
 }
 

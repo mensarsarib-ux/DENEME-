@@ -2,9 +2,14 @@ import { useEffect, useState, type FormEvent } from "react";
 import {
   changePassword,
   CloudError,
+  confirmAdded,
   fetchPlan,
   getAccountProfile,
+  normalizePhone,
+  startAddEmail,
+  startAddPhone,
   updateAccountProfile,
+  type AccountProfile,
   type Session,
 } from "../lib/cloud";
 import { CURRENT_PLAN, PLAN_NAME, type Plan } from "../lib/plan";
@@ -15,64 +20,55 @@ import PhoneField from "./PhoneField";
 /** Ayarlar → Hesabım: kişisel bilgiler, şifre değiştirme ve abonelik durumu */
 export default function AccountCards({
   session,
-  email,
   onOpenPlans,
   onExpired,
 }: {
   session: Session;
-  email: string;
   onOpenPlans: () => void;
   onExpired: () => void;
 }) {
   return (
     <>
-      <ProfileCard session={session} email={email} onExpired={onExpired} />
+      <ProfileCard session={session} onExpired={onExpired} />
       <SubscriptionCard session={session} onOpenPlans={onOpenPlans} />
       <PasswordCard session={session} onExpired={onExpired} />
     </>
   );
 }
 
-/** Ad ve cep telefonu (hesabın bilgilerinde saklanır), e-posta ve doğrulandı işareti */
-function ProfileCard({ session, email, onExpired }: { session: Session; email: string; onExpired: () => void }) {
+/** Ad soyad ve giriş bilgileri (e-posta ve telefon, doğrulandı işaretiyle; eksik olan eklenip doğrulanabilir) */
+function ProfileCard({ session, onExpired }: { session: Session; onExpired: () => void }) {
   const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [saved, setSaved] = useState({ name: "", phone: "" });
-  const [confirmed, setConfirmed] = useState(false);
+  const [profile, setProfile] = useState<AccountProfile | null>(null);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);
 
+  function load() {
+    return getAccountProfile(session).then((p) => {
+      if (p === "expired") return onExpired();
+      setProfile(p);
+      setName((current) => current || p.name);
+    });
+  }
+
   useEffect(() => {
-    let alive = true;
-    getAccountProfile(session)
-      .then((p) => {
-        if (!alive) return;
-        if (p === "expired") return onExpired();
-        setName(p.name);
-        setPhone(p.phone);
-        setSaved({ name: p.name, phone: p.phone });
-        setConfirmed(p.emailConfirmed);
-      })
-      .catch(() => alive && setMessage({ ok: false, text: t("Bilgiler yüklenemedi.") }));
-    return () => {
-      alive = false;
-    };
+    load().catch(() => setMessage({ ok: false, text: t("Bilgiler yüklenemedi.") }));
     // Yalnızca sayfa açılınca okunur
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const changed = name.trim() !== saved.name || phone !== saved.phone;
+  const changed = profile !== null && name.trim() !== profile.name;
 
   async function save(event: FormEvent) {
     event.preventDefault();
-    if (busy || !changed) return;
+    if (busy || !changed || !profile) return;
     setBusy(true);
     setMessage(null);
     try {
-      const r = await updateAccountProfile(session, name.trim(), phone);
+      const r = await updateAccountProfile(session, name.trim(), profile.phone);
       if (r === "expired") return onExpired();
       haptic("success");
-      setSaved({ name: name.trim(), phone });
+      setProfile({ ...profile, name: name.trim() });
       setMessage({ ok: true, text: t("Bilgileriniz kaydedildi.") });
     } catch {
       haptic("warning");
@@ -83,41 +79,199 @@ function ProfileCard({ session, email, onExpired }: { session: Session; email: s
   }
 
   return (
-    <form className="card" aria-label={t("Kullanıcı bilgileri")} onSubmit={save} noValidate>
-      <h2 className="card-title">{t("Kullanıcı bilgileri")}</h2>
+    <>
+      <form className="card" aria-label={t("Kullanıcı bilgileri")} onSubmit={save} noValidate>
+        <h2 className="card-title">{t("Kullanıcı bilgileri")}</h2>
+        <div className="field">
+          <label htmlFor="acc-name">{t("Ad soyad")}</label>
+          <input id="acc-name" autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} />
+        </div>
+        <div className="card-actions">
+          <button type="submit" className="action-btn" disabled={busy || !changed}>
+            {busy ? t("Kaydediliyor…") : t("Kaydet")}
+          </button>
+        </div>
+        {message && (
+          <p className={`field-hint ${message.ok ? "" : "is-error"}`} role="status">
+            {message.text}
+          </p>
+        )}
+      </form>
+      {profile && <LoginCard session={session} profile={profile} onChanged={() => void load()} onExpired={onExpired} />}
+    </>
+  );
+}
+
+/** Doğrulandı işareti */
+function VerifiedBadge() {
+  return (
+    <span className="verified-badge" title={t("Doğrulandı")}>
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M5 12.5l4.5 4.5L19 7.5" />
+      </svg>
+      {t("Doğrulandı")}
+    </span>
+  );
+}
+
+/**
+ * Giriş bilgileri: hesabın e-postası ve telefonu. Eksik ya da doğrulanmamış olan buradan eklenir;
+ * kod e-postaya ya da SMS ile gelir, doğrulanınca o yolla da giriş yapılabilir.
+ */
+function LoginCard({
+  session,
+  profile,
+  onChanged,
+  onExpired,
+}: {
+  session: Session;
+  profile: AccountProfile;
+  onChanged: () => void;
+  onExpired: () => void;
+}) {
+  const [adding, setAdding] = useState<"email" | "phone" | null>(null);
+  const [value, setValue] = useState("");
+  const [code, setCode] = useState("");
+  const [sentTo, setSentTo] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);
+
+  const target = adding === "email" ? value.trim() : normalizePhone(value) ?? "";
+  const valid = adding === "email" ? /^\S+@\S+\.\S+$/.test(target) : target !== "";
+
+  function open(kind: "email" | "phone") {
+    setAdding(kind);
+    setValue(kind === "email" ? profile.loginEmail : profile.loginPhone || profile.phone);
+    setCode("");
+    setSentTo(null);
+    setMessage(null);
+  }
+
+  async function send(event: FormEvent) {
+    event.preventDefault();
+    if (busy || !adding) return;
+    setBusy(true);
+    setMessage(null);
+    try {
+      if (!sentTo) {
+        if (!valid) return;
+        const r = adding === "email" ? await startAddEmail(session, target) : await startAddPhone(session, target);
+        if (r === "expired") return onExpired();
+        haptic("success");
+        setSentTo(target);
+      } else {
+        const r = await confirmAdded(session, sentTo, code);
+        if (r === "expired") return onExpired();
+        if (!r) {
+          haptic("warning");
+          setMessage({ ok: false, text: t("Kod hatalı ya da süresi dolmuş. Yeni kod isteyin.") });
+          return;
+        }
+        haptic("success");
+        setMessage({
+          ok: true,
+          text: adding === "email"
+            ? t("E-postanız doğrulandı. Artık e-postayla da giriş yapabilirsiniz.")
+            : t("Telefonunuz doğrulandı. Artık telefonla da giriş yapabilirsiniz."),
+        });
+        setAdding(null);
+        onChanged();
+      }
+    } catch (e) {
+      haptic("warning");
+      setMessage({
+        ok: false,
+        text: e instanceof CloudError && e.code === "email_taken"
+          ? adding === "email"
+            ? t("Bu e-posta başka bir hesapta kullanılıyor.")
+            : t("Bu telefon numarası başka bir hesapta kullanılıyor.")
+          : t("Gönderilemedi; bağlantınızı kontrol edin."),
+      });
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  const row = (kind: "email" | "phone", shown: string, confirmed: boolean) => (
+    <div className="login-row">
+      <span className="login-row-value">
+        {shown || (kind === "email" ? t("E-posta eklenmedi") : t("Telefon eklenmedi"))}
+      </span>
+      {shown && confirmed ? (
+        <VerifiedBadge />
+      ) : (
+        <button type="button" className="action-btn" onClick={() => open(kind)}>
+          {shown ? t("Doğrula") : kind === "email" ? t("E-posta ekle") : t("Telefon ekle")}
+        </button>
+      )}
+    </div>
+  );
+
+  return (
+    <section className="card" aria-label={t("Giriş bilgileri")}>
+      <h2 className="card-title">{t("Giriş bilgileri")}</h2>
       <div className="field">
-        <label htmlFor="acc-name">{t("Ad soyad")}</label>
-        <input id="acc-name" autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} />
-      </div>
-      <div className="field">
-        <label htmlFor="acc-phone">{t("Cep telefonu")}</label>
-        <PhoneField id="acc-phone" value={phone} onChange={setPhone} />
+        <span className="field-label">{t("Telefon")}</span>
+        {row("phone", profile.loginPhone, profile.phoneConfirmed)}
       </div>
       <div className="field">
         <span className="field-label">{t("E-posta")}</span>
-        <p className="account-email account-email-row">
-          <span>{email}</span>
-          {confirmed && (
-            <span className="verified-badge" title={t("Doğrulandı")}>
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M5 12.5l4.5 4.5L19 7.5" />
-              </svg>
-              {t("Doğrulandı")}
-            </span>
+        {row("email", profile.loginEmail, profile.emailConfirmed)}
+      </div>
+      {adding && (
+        <form className="login-add" onSubmit={send} noValidate>
+          {!sentTo ? (
+            <div className="field">
+              <label htmlFor="login-add">{adding === "email" ? t("E-posta") : t("Telefon")}</label>
+              {adding === "email" ? (
+                <input
+                  id="login-add"
+                  type="email"
+                  inputMode="email"
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  value={value}
+                  onChange={(e) => setValue(e.target.value)}
+                />
+              ) : (
+                <PhoneField id="login-add" value={value} onChange={setValue} />
+              )}
+            </div>
+          ) : (
+            <div className="field">
+              <label htmlFor="login-code">
+                {adding === "email"
+                  ? t("{m} adresine 6 haneli bir doğrulama kodu gönderdik.", { m: sentTo })
+                  : t("{m} numarasına SMS ile 6 haneli bir doğrulama kodu gönderdik.", { m: sentTo })}
+              </label>
+              <input
+                id="login-code"
+                className="ob-code"
+                inputMode="numeric"
+                autoComplete="one-time-code"
+                maxLength={8}
+                value={code}
+                onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
+              />
+            </div>
           )}
-        </p>
-      </div>
-      <div className="card-actions">
-        <button type="submit" className="action-btn" disabled={busy || !changed}>
-          {busy ? t("Kaydediliyor…") : t("Kaydet")}
-        </button>
-      </div>
+          <div className="card-actions">
+            <button type="submit" className="action-btn" disabled={busy || (sentTo ? !/^\d{6,8}$/.test(code) : !valid)}>
+              {sentTo ? t("DOĞRULA") : t("KOD GÖNDER")}
+            </button>
+            <button type="button" className="help-link" onClick={() => setAdding(null)}>
+              {t("Vazgeç")}
+            </button>
+          </div>
+        </form>
+      )}
       {message && (
         <p className={`field-hint ${message.ok ? "" : "is-error"}`} role="status">
           {message.text}
         </p>
       )}
-    </form>
+      <p className="field-hint">{t("Doğrulanan e-posta ya da telefonla giriş yapabilirsiniz.")}</p>
+    </section>
   );
 }
 

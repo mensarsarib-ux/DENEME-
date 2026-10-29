@@ -74,12 +74,11 @@ Kullanım koşulları: https://hesabimmuhasebe.com/kullanim-kosullari.html
 İlk sürüm. Müşteri ve tedarikçi takibi, gelir gider kayıtları, kasa ve hesaplar, alacak takibi, raporlar, ekip çalışması, yedekleme ve geri yükleme, Face ID kilidi, açık/koyu tema ve 17 dil.
 
 ## İnceleme notu (App Store Connect → İnceleme bilgileri)
-Uygulamaya giriş için e-posta ve şifre gerekir.
+Girişte ilk ekranda "Giriş yap"a dokunup "E-posta ile"yi seçin ve aşağıdaki test hesabını girin. Yeni hesaplar SMS ile doğrulanan telefon numarasıyla açılır; test hesabıyla bu adım gerekmez.
 Test hesabı:
 E-posta: [inceleme e-postası]
 Şifre: [inceleme şifresi]
 
-Yeni kayıt olunursa e-postaya 6 haneli doğrulama kodu gönderilir.
 Hesap silme: Ayarlar sayfasının en altındaki "Hesabımı sil" (şifre istenir).
 Abonelikler: Menü → paket kartındaki "Üst pakete geç" ile Paketler sayfası açılır. Pro, Pro Plus ve Premium yıllık aboneliklerdir; satın alma sandbox hesabıyla denenebilir. Satın alma sunucuda App Store Server API ile doğrulanır. Aynı sayfada "Satın alımı geri yükle" düğmesi vardır.
 Test hesabı ücretsiz pakettedir; böylece satın alma akışı denenebilir.
@@ -139,12 +138,11 @@ First release. Customer and supplier accounts, income and expenses, cash and ban
 Subscription group display name (English): Hesabım Plans
 
 ### App Review notes (Apple reviewers read English — paste this, not the Turkish one)
-Sign-in requires an email and password.
+Sign-in: on the first screen tap "Giriş yap" (Sign in), choose "E-posta ile" (With email) and enter the test account below. New accounts are created with a phone number verified by SMS; the test account lets you skip that.
 Test account:
 Email: [review email]
 Password: [review password]
 
-New sign-ups receive a 6-digit verification code by email.
 Account deletion: Settings → "Delete my account" at the bottom of the page (password required).
 Subscriptions: Menu → "Upgrade" on the plan card opens the Plans page. Pro, Pro Plus and Premium are yearly subscriptions and can be tested with a sandbox account. Purchases are verified on our server with the App Store Server API. The same page has a "Restore purchases" button.
 The test account is on the Free plan so the purchase flow can be tested.

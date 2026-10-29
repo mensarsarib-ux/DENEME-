@@ -343,7 +343,7 @@ export default function SettingsPage({
         )}
 
         {account && (
-          <AccountCards session={account.session} email={account.email} onOpenPlans={onOpenPlans} onExpired={onSessionExpired} />
+          <AccountCards session={account.session} onOpenPlans={onOpenPlans} onExpired={onSessionExpired} />
         )}
 
         {SHOW_DEVICES && account && (

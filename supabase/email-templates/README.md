@@ -2,12 +2,14 @@
 
 Supabase → Authentication → Emails bölümüne yapıştırılır. Şablonlar 17 dildedir: kayıt sırasında
 uygulamanın dili hesabın bilgilerine (`lang`) yazılır, e-posta o dilde gider. Dili olmayan eski
-hesaplara Türkçe gider.
+hesaplara Türkçe gider. Change email address şablonu, telefonla açılan hesaba Ayarlar → Hesabım'dan
+e-posta eklenince doğrulama kodunu gönderir.
 
 | Şablon | Konu (Subject) | İçerik (Body) |
 |---|---|---|
 | Confirm signup | confirm-signup-subject.txt | confirm-signup.html |
 | Reset password | reset-password-subject.txt | reset-password.html |
+| Change email address | change-email-subject.txt | change-email.html |
 
 Dosyalar bir betikle üretilir; metni elle değiştirirken her iki dosyada da aynı dil bloğunu düzeltin.
 

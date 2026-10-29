@@ -370,16 +370,27 @@ export default function App() {
     if (!session || !isMainWorkspace) return;
     let alive = true;
     (async () => {
-      await ensureOwnerBusiness(session, profile.name).catch(() => undefined);
-      const m = await myMembership(session).catch(() => null);
+      let m = await myMembership(session).catch(() => null);
       if (m === "expired") {
         setSession(null);
         return;
       }
-      const st = m ? null : await myRequestStatus(session).catch(() => null);
+      let st = m ? null : await myRequestStatus(session).catch(() => null);
+      if (st === "expired") st = null;
+      // Ekibe katılmak için istek göndermiş kişiye kendi işletmesi açılmaz; onay bekleme ekranını görür.
+      // İsteği olmayan (ya da onaylanmış) kişinin işletmesi yoksa oluşturulur.
+      if (!m && st !== "pending" && st !== "rejected") {
+        await ensureOwnerBusiness(session, profile.name).catch(() => undefined);
+        m = await myMembership(session).catch(() => null);
+        if (m === "expired") {
+          setSession(null);
+          return;
+        }
+        st = null;
+      }
       if (!alive) return;
       setMembership(m);
-      setRequestStatus(st === "expired" ? null : st);
+      setRequestStatus(st);
     })();
     return () => {
       alive = false;
@@ -429,7 +440,18 @@ export default function App() {
 
   // Yükleme ekranı yalnızca ana işletmede, bulut verisi beklenirken gösterilir
   if (session && serverWs && waiting) {
-    return <WaitingScreen status={requestStatus} onRecheck={() => setRecheck((n) => n + 1)} onLogout={logout} />;
+    return (
+      <WaitingScreen
+        session={session}
+        status={requestStatus}
+        onRecheck={() => setRecheck((n) => n + 1)}
+        onOwnBusiness={async () => {
+          await ensureOwnerBusiness(session, "");
+          setRecheck((n) => n + 1);
+        }}
+        onLogout={logout}
+      />
+    );
   }
 
   if (session && wsKind === "pending") {

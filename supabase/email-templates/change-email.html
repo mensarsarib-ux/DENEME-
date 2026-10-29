@@ -1,0 +1,201 @@
+{{ $l := printf "%v" .Data.lang }}
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f2f5f8;padding:24px 0;font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif">
+  <tr><td align="center">
+    <table width="100%" cellpadding="0" cellspacing="0" style="max-width:480px;background:#ffffff;border-radius:16px;overflow:hidden">
+      <tr><td align="center" style="background:#1e3a5f;padding:28px 24px">
+        <img src="https://hesabimmuhasebe.com/mail-logo.png" width="64" height="64" alt="Hesabım" style="display:block;border:0">
+        <p style="margin:12px 0 0;color:#ffffff;font-size:20px;font-weight:700">Hesabım Muhasebe</p>
+      </td></tr>
+{{ if eq $l "en" }}
+      <tr><td style="padding:28px 28px 8px;color:#1f2933;font-size:16px;line-height:1.6">
+        <p style="margin:0 0 12px;font-size:18px;font-weight:700">Verify your email address</p>
+        <p style="margin:0 0 20px">To add this email address to your Hesabım account, enter the code below in the app:</p>
+      </td></tr>
+      <tr><td align="center" style="padding:0 28px">
+        <div style="background:#eef4fb;border-radius:12px;padding:16px;font-size:32px;font-weight:700;letter-spacing:8px;color:#1e3a5f">{{ .Token }}</div>
+      </td></tr>
+      <tr><td style="padding:20px 28px 28px;color:#52606d;font-size:14px;line-height:1.6">
+        <p style="margin:0">If you didn't make this request, you can ignore this email; nothing will change in your account.</p>
+      </td></tr>
+{{ else if eq $l "de" }}
+      <tr><td style="padding:28px 28px 8px;color:#1f2933;font-size:16px;line-height:1.6">
+        <p style="margin:0 0 12px;font-size:18px;font-weight:700">Bestätige deine E-Mail-Adresse</p>
+        <p style="margin:0 0 20px">Um diese E-Mail-Adresse zu deinem Hesabım-Konto hinzuzufügen, gib den folgenden Code in der App ein:</p>
+      </td></tr>
+      <tr><td align="center" style="padding:0 28px">
+        <div style="background:#eef4fb;border-radius:12px;padding:16px;font-size:32px;font-weight:700;letter-spacing:8px;color:#1e3a5f">{{ .Token }}</div>
+      </td></tr>
+      <tr><td style="padding:20px 28px 28px;color:#52606d;font-size:14px;line-height:1.6">
+        <p style="margin:0">Wenn du das nicht angefordert hast, ignoriere diese E-Mail; an deinem Konto ändert sich nichts.</p>
+      </td></tr>
+{{ else if eq $l "fr" }}
+      <tr><td style="padding:28px 28px 8px;color:#1f2933;font-size:16px;line-height:1.6">
+        <p style="margin:0 0 12px;font-size:18px;font-weight:700">Vérifiez votre adresse e-mail</p>
+        <p style="margin:0 0 20px">Pour ajouter cette adresse e-mail à votre compte Hesabım, saisissez le code ci-dessous dans l'app :</p>
+      </td></tr>
+      <tr><td align="center" style="padding:0 28px">
+        <div style="background:#eef4fb;border-radius:12px;padding:16px;font-size:32px;font-weight:700;letter-spacing:8px;color:#1e3a5f">{{ .Token }}</div>
+      </td></tr>
+      <tr><td style="padding:20px 28px 28px;color:#52606d;font-size:14px;line-height:1.6">
+        <p style="margin:0">Si vous n'êtes pas à l'origine de cette demande, ignorez cet e-mail ; votre compte ne sera pas modifié.</p>
+      </td></tr>
+{{ else if eq $l "es" }}
+      <tr><td style="padding:28px 28px 8px;color:#1f2933;font-size:16px;line-height:1.6">
+        <p style="margin:0 0 12px;font-size:18px;font-weight:700">Verifica tu correo</p>
+        <p style="margin:0 0 20px">Para añadir este correo a tu cuenta de Hesabım, introduce el siguiente código en la app:</p>
+      </td></tr>
+      <tr><td align="center" style="padding:0 28px">
+        <div style="background:#eef4fb;border-radius:12px;padding:16px;font-size:32px;font-weight:700;letter-spacing:8px;color:#1e3a5f">{{ .Token }}</div>
+      </td></tr>
+      <tr><td style="padding:20px 28px 28px;color:#52606d;font-size:14px;line-height:1.6">
+        <p style="margin:0">Si no hiciste esta solicitud, ignora este correo; no se hará ningún cambio en tu cuenta.</p>
+      </td></tr>
+{{ else if eq $l "it" }}
+      <tr><td style="padding:28px 28px 8px;color:#1f2933;font-size:16px;line-height:1.6">
+        <p style="margin:0 0 12px;font-size:18px;font-weight:700">Verifica il tuo indirizzo email</p>
+        <p style="margin:0 0 20px">Per aggiungere questo indirizzo email al tuo account Hesabım, inserisci il codice qui sotto nell'app:</p>
+      </td></tr>
+      <tr><td align="center" style="padding:0 28px">
+        <div style="background:#eef4fb;border-radius:12px;padding:16px;font-size:32px;font-weight:700;letter-spacing:8px;color:#1e3a5f">{{ .Token }}</div>
+      </td></tr>
+      <tr><td style="padding:20px 28px 28px;color:#52606d;font-size:14px;line-height:1.6">
+        <p style="margin:0">Se non hai fatto tu questa richiesta, ignora questa email; il tuo account non verrà modificato.</p>
+      </td></tr>
+{{ else if eq $l "pt" }}
+      <tr><td style="padding:28px 28px 8px;color:#1f2933;font-size:16px;line-height:1.6">
+        <p style="margin:0 0 12px;font-size:18px;font-weight:700">Verifique seu e-mail</p>
+        <p style="margin:0 0 20px">Para adicionar este e-mail à sua conta do Hesabım, digite o código abaixo no app:</p>
+      </td></tr>
+      <tr><td align="center" style="padding:0 28px">
+        <div style="background:#eef4fb;border-radius:12px;padding:16px;font-size:32px;font-weight:700;letter-spacing:8px;color:#1e3a5f">{{ .Token }}</div>
+      </td></tr>
+      <tr><td style="padding:20px 28px 28px;color:#52606d;font-size:14px;line-height:1.6">
+        <p style="margin:0">Se você não fez este pedido, ignore este e-mail; nada será alterado na sua conta.</p>
+      </td></tr>
+{{ else if eq $l "ru" }}
+      <tr><td style="padding:28px 28px 8px;color:#1f2933;font-size:16px;line-height:1.6">
+        <p style="margin:0 0 12px;font-size:18px;font-weight:700">Подтвердите адрес e-mail</p>
+        <p style="margin:0 0 20px">Чтобы добавить этот адрес в аккаунт Hesabım, введите этот код в приложении:</p>
+      </td></tr>
+      <tr><td align="center" style="padding:0 28px">
+        <div style="background:#eef4fb;border-radius:12px;padding:16px;font-size:32px;font-weight:700;letter-spacing:8px;color:#1e3a5f">{{ .Token }}</div>
+      </td></tr>
+      <tr><td style="padding:20px 28px 28px;color:#52606d;font-size:14px;line-height:1.6">
+        <p style="margin:0">Если вы не отправляли этот запрос, просто проигнорируйте письмо — в аккаунте ничего не изменится.</p>
+      </td></tr>
+{{ else if eq $l "uk" }}
+      <tr><td style="padding:28px 28px 8px;color:#1f2933;font-size:16px;line-height:1.6">
+        <p style="margin:0 0 12px;font-size:18px;font-weight:700">Підтвердьте адресу e-mail</p>
+        <p style="margin:0 0 20px">Щоб додати цю адресу до облікового запису Hesabım, введіть цей код у застосунку:</p>
+      </td></tr>
+      <tr><td align="center" style="padding:0 28px">
+        <div style="background:#eef4fb;border-radius:12px;padding:16px;font-size:32px;font-weight:700;letter-spacing:8px;color:#1e3a5f">{{ .Token }}</div>
+      </td></tr>
+      <tr><td style="padding:20px 28px 28px;color:#52606d;font-size:14px;line-height:1.6">
+        <p style="margin:0">Якщо ви не надсилали цей запит, проігноруйте лист — в обліковому записі нічого не зміниться.</p>
+      </td></tr>
+{{ else if eq $l "pl" }}
+      <tr><td style="padding:28px 28px 8px;color:#1f2933;font-size:16px;line-height:1.6">
+        <p style="margin:0 0 12px;font-size:18px;font-weight:700">Potwierdź adres e-mail</p>
+        <p style="margin:0 0 20px">Aby dodać ten adres do konta Hesabım, wpisz poniższy kod w aplikacji:</p>
+      </td></tr>
+      <tr><td align="center" style="padding:0 28px">
+        <div style="background:#eef4fb;border-radius:12px;padding:16px;font-size:32px;font-weight:700;letter-spacing:8px;color:#1e3a5f">{{ .Token }}</div>
+      </td></tr>
+      <tr><td style="padding:20px 28px 28px;color:#52606d;font-size:14px;line-height:1.6">
+        <p style="margin:0">Jeśli to nie Ty wysłałeś tę prośbę, zignoruj wiadomość; na koncie nic się nie zmieni.</p>
+      </td></tr>
+{{ else if eq $l "nl" }}
+      <tr><td style="padding:28px 28px 8px;color:#1f2933;font-size:16px;line-height:1.6">
+        <p style="margin:0 0 12px;font-size:18px;font-weight:700">Bevestig je e-mailadres</p>
+        <p style="margin:0 0 20px">Voer de onderstaande code in de app in om dit e-mailadres aan je Hesabım-account toe te voegen:</p>
+      </td></tr>
+      <tr><td align="center" style="padding:0 28px">
+        <div style="background:#eef4fb;border-radius:12px;padding:16px;font-size:32px;font-weight:700;letter-spacing:8px;color:#1e3a5f">{{ .Token }}</div>
+      </td></tr>
+      <tr><td style="padding:20px 28px 28px;color:#52606d;font-size:14px;line-height:1.6">
+        <p style="margin:0">Heb je dit niet aangevraagd? Negeer dan deze e-mail; er verandert niets aan je account.</p>
+      </td></tr>
+{{ else if eq $l "id" }}
+      <tr><td style="padding:28px 28px 8px;color:#1f2933;font-size:16px;line-height:1.6">
+        <p style="margin:0 0 12px;font-size:18px;font-weight:700">Verifikasi alamat email Anda</p>
+        <p style="margin:0 0 20px">Untuk menambahkan email ini ke akun Hesabım Anda, masukkan kode di bawah ini di aplikasi:</p>
+      </td></tr>
+      <tr><td align="center" style="padding:0 28px">
+        <div style="background:#eef4fb;border-radius:12px;padding:16px;font-size:32px;font-weight:700;letter-spacing:8px;color:#1e3a5f">{{ .Token }}</div>
+      </td></tr>
+      <tr><td style="padding:20px 28px 28px;color:#52606d;font-size:14px;line-height:1.6">
+        <p style="margin:0">Jika Anda tidak membuat permintaan ini, abaikan email ini; tidak ada perubahan pada akun Anda.</p>
+      </td></tr>
+{{ else if eq $l "hi" }}
+      <tr><td style="padding:28px 28px 8px;color:#1f2933;font-size:16px;line-height:1.6">
+        <p style="margin:0 0 12px;font-size:18px;font-weight:700">अपना ईमेल पता सत्यापित करें</p>
+        <p style="margin:0 0 20px">यह ईमेल अपने Hesabım खाते में जोड़ने के लिए ऐप में नीचे दिया गया कोड डालें:</p>
+      </td></tr>
+      <tr><td align="center" style="padding:0 28px">
+        <div style="background:#eef4fb;border-radius:12px;padding:16px;font-size:32px;font-weight:700;letter-spacing:8px;color:#1e3a5f">{{ .Token }}</div>
+      </td></tr>
+      <tr><td style="padding:20px 28px 28px;color:#52606d;font-size:14px;line-height:1.6">
+        <p style="margin:0">अगर आपने यह अनुरोध नहीं किया था, तो इस ईमेल को अनदेखा करें; आपके खाते में कोई बदलाव नहीं होगा।</p>
+      </td></tr>
+{{ else if eq $l "ja" }}
+      <tr><td style="padding:28px 28px 8px;color:#1f2933;font-size:16px;line-height:1.6">
+        <p style="margin:0 0 12px;font-size:18px;font-weight:700">メールアドレスを確認</p>
+        <p style="margin:0 0 20px">このメールアドレスをHesabımアカウントに追加するには、以下のコードをアプリに入力してください：</p>
+      </td></tr>
+      <tr><td align="center" style="padding:0 28px">
+        <div style="background:#eef4fb;border-radius:12px;padding:16px;font-size:32px;font-weight:700;letter-spacing:8px;color:#1e3a5f">{{ .Token }}</div>
+      </td></tr>
+      <tr><td style="padding:20px 28px 28px;color:#52606d;font-size:14px;line-height:1.6">
+        <p style="margin:0">このリクエストに心当たりがない場合は、このメールを無視してください。アカウントは変更されません。</p>
+      </td></tr>
+{{ else if eq $l "ko" }}
+      <tr><td style="padding:28px 28px 8px;color:#1f2933;font-size:16px;line-height:1.6">
+        <p style="margin:0 0 12px;font-size:18px;font-weight:700">이메일 주소 인증</p>
+        <p style="margin:0 0 20px">이 이메일 주소를 Hesabım 계정에 추가하려면 아래 코드를 앱에 입력하세요:</p>
+      </td></tr>
+      <tr><td align="center" style="padding:0 28px">
+        <div style="background:#eef4fb;border-radius:12px;padding:16px;font-size:32px;font-weight:700;letter-spacing:8px;color:#1e3a5f">{{ .Token }}</div>
+      </td></tr>
+      <tr><td style="padding:20px 28px 28px;color:#52606d;font-size:14px;line-height:1.6">
+        <p style="margin:0">요청하지 않았다면 이 이메일을 무시하세요. 계정에는 아무런 변경도 없습니다.</p>
+      </td></tr>
+{{ else if eq $l "zh" }}
+      <tr><td style="padding:28px 28px 8px;color:#1f2933;font-size:16px;line-height:1.6">
+        <p style="margin:0 0 12px;font-size:18px;font-weight:700">验证你的邮箱</p>
+        <p style="margin:0 0 20px">要将此邮箱添加到你的 Hesabım 账户，请在应用中输入以下验证码：</p>
+      </td></tr>
+      <tr><td align="center" style="padding:0 28px">
+        <div style="background:#eef4fb;border-radius:12px;padding:16px;font-size:32px;font-weight:700;letter-spacing:8px;color:#1e3a5f">{{ .Token }}</div>
+      </td></tr>
+      <tr><td style="padding:20px 28px 28px;color:#52606d;font-size:14px;line-height:1.6">
+        <p style="margin:0">如果这不是你发起的请求，请忽略这封邮件；你的账户不会有任何变化。</p>
+      </td></tr>
+{{ else if eq $l "ar" }}
+      <tr><td dir="rtl" align="right" style="padding:28px 28px 8px;color:#1f2933;font-size:16px;line-height:1.6">
+        <p style="margin:0 0 12px;font-size:18px;font-weight:700">أكّد بريدك الإلكتروني</p>
+        <p style="margin:0 0 20px">لإضافة هذا البريد إلى حسابك في Hesabım، أدخل الرمز التالي في التطبيق:</p>
+      </td></tr>
+      <tr><td align="center" style="padding:0 28px">
+        <div style="background:#eef4fb;border-radius:12px;padding:16px;font-size:32px;font-weight:700;letter-spacing:8px;color:#1e3a5f">{{ .Token }}</div>
+      </td></tr>
+      <tr><td dir="rtl" align="right" style="padding:20px 28px 28px;color:#52606d;font-size:14px;line-height:1.6">
+        <p style="margin:0">إذا لم تقدّم هذا الطلب فتجاهل هذه الرسالة؛ لن يتغير شيء في حسابك.</p>
+      </td></tr>
+{{ else }}
+      <tr><td style="padding:28px 28px 8px;color:#1f2933;font-size:16px;line-height:1.6">
+        <p style="margin:0 0 12px;font-size:18px;font-weight:700">E-posta adresinizi doğrulayın</p>
+        <p style="margin:0 0 20px">Bu e-posta adresini Hesabım hesabınıza eklemek için aşağıdaki kodu uygulamaya girin:</p>
+      </td></tr>
+      <tr><td align="center" style="padding:0 28px">
+        <div style="background:#eef4fb;border-radius:12px;padding:16px;font-size:32px;font-weight:700;letter-spacing:8px;color:#1e3a5f">{{ .Token }}</div>
+      </td></tr>
+      <tr><td style="padding:20px 28px 28px;color:#52606d;font-size:14px;line-height:1.6">
+        <p style="margin:0">Bu isteği siz yapmadıysanız bu e-postayı dikkate almayın; hesabınızda bir değişiklik yapılmaz.</p>
+      </td></tr>
+{{ end }}      <tr><td align="center" style="background:#f7f9fb;padding:16px;color:#7b8794;font-size:12px">
+        Hesabım Muhasebe · <a href="mailto:destek@hesabimmuhasebe.com" style="color:#3c8fd9;text-decoration:none">destek@hesabimmuhasebe.com</a>
+      </td></tr>
+    </table>
+  </td></tr>
+</table>
