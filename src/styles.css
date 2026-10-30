@@ -4123,6 +4123,7 @@ a.action-btn:visited {
   flex: 1;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   gap: 14px;
   margin-top: 8px;
   padding: 18px max(22px, env(safe-area-inset-right, 0px)) calc(env(safe-area-inset-bottom, 0px) + 24px) max(22px, env(safe-area-inset-left, 0px));

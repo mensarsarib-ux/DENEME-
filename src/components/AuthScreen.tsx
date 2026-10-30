@@ -152,6 +152,7 @@ export default function AuthScreen({
   const strongEnough = password.length >= 6;
 
   function go(next: Screen) {
+    haptic("light");
     setScreen(next);
     setError(null);
     setInfo(null);
@@ -217,6 +218,7 @@ export default function AuthScreen({
   async function submit(event: FormEvent) {
     event.preventDefault();
     if (busy) return;
+    haptic("light");
     switch (screen) {
       case "login":
         if (!validLogin || !password) return;
@@ -688,7 +690,6 @@ export default function AuthScreen({
         {info && <p className="form-success" role="status">{info}</p>}
         {!done && body}
         {error && <p className="form-error" role="alert">{error}</p>}
-        <div className="ob-spacer" />
         {action && (
           <button className="primary-btn" type="submit" disabled={busy || !ready}>
             {busy ? t("Bekleyin…") : action}
