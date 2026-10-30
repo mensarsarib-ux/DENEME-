@@ -34,13 +34,10 @@ type Screen =
   | "reset-code"
   | "new-password"
   | "reg-business"
-  | "reg-name"
   | "reg-email"
-  | "reg-phone"
   | "reg-password"
   | "reg-code"
   | "reg-done"
-  | "join-name"
   | "join-email"
   | "join-password"
   | "join-code"
@@ -48,8 +45,8 @@ type Screen =
   | "join-sent";
 
 /** Sihirbaz adımları (ilerleme çizgisi için) */
-const REGISTER: Screen[] = ["reg-business", "reg-name", "reg-email", "reg-phone", "reg-password", "reg-code"];
-const JOIN: Screen[] = ["join-name", "join-email", "join-password", "join-code", "join-owner"];
+const REGISTER: Screen[] = ["reg-business", "reg-email", "reg-code", "reg-password"];
+const JOIN: Screen[] = ["join-email", "join-code", "join-password", "join-owner"];
 
 /** Geri düğmesinin götürdüğü ekran; yoksa geri düğmesi gösterilmez */
 const BACK: Partial<Record<Screen, Screen>> = {
@@ -58,14 +55,12 @@ const BACK: Partial<Record<Screen, Screen>> = {
   forgot: "login",
   "reset-code": "forgot",
   "reg-business": "welcome",
-  "reg-name": "reg-business",
-  "reg-email": "reg-name",
-  "reg-phone": "reg-email",
-  "reg-password": "reg-phone",
-  "join-name": "welcome",
-  "join-email": "join-name",
-  "join-password": "join-email",
+  "reg-email": "reg-business",
+  "join-email": "welcome",
 };
+
+/** Hesap ilk açılışta rastgele bir şifreyle oluşturulur; gerçek şifre e-posta kodu doğrulandıktan sonra belirlenir */
+const randomPassword = () => Array.from(crypto.getRandomValues(new Uint8Array(24)), (b) => b.toString(36)).join("");
 
 /** Kod tekrar gönderilmeden önce beklenen süre (sn) */
 const RESEND_WAIT = 45;
@@ -99,9 +94,7 @@ export default function AuthScreen({
   // Girişte e-posta mı telefon mu kullanılıyor
   const [method, setMethod] = useState<"email" | "phone">("email");
   const [business, setBusiness] = useState("");
-  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
   const [password, setPassword1] = useState("");
   const [show, setShow] = useState(false);
   const [code, setCode] = useState("");
@@ -142,7 +135,6 @@ export default function AuthScreen({
   }, [resendIn]);
 
   // Girişte kimlik: e-posta ya da telefon (+90… biçiminde)
-  const phoneId = normalizePhone(phone) ?? "";
   const ownerId = owner.includes("@") ? owner.trim() : normalizePhone(owner) ?? "";
   const validEmail = /^\S+@\S+\.\S+$/.test(email.trim());
   const loginPhone = normalizePhone(email) ?? "";
@@ -195,16 +187,9 @@ export default function AuthScreen({
     setInfo(t("{m} adresine 6 haneli bir doğrulama kodu gönderdik.", { m: address }));
   }
 
-  /** Kayıt ya da katılma: hesap e-postayla açılır ve kod gönderilir */
+  /** Kayıt ya da katılma: hesap e-postayla açılır ve kod gönderilir. Gerçek şifre kodla doğrulamadan sonra alınır. */
   async function createAccount(next: Screen, afterCode: Screen) {
-    const result = await signUp(email.trim(), password, {
-      name: name.trim(),
-      phone: phoneId || undefined,
-    }).catch((e: unknown) => {
-      // Telefon başka hesapta: telefon adımına dönülür (numara değiştirilebilir ya da atlanabilir)
-      if (e instanceof CloudError && e.code === "phone_taken") go("reg-phone");
-      throw e;
-    });
+    const result = await signUp(email.trim(), randomPassword());
     haptic("success");
     if (result === "pending") {
       codeSent(email.trim(), next);
@@ -282,20 +267,11 @@ export default function AuthScreen({
           setInfo(t("Şifreniz yenilendi. Yeni şifrenizle giriş yapın."));
         });
       case "reg-business":
-        if (business.trim()) go("reg-name");
-        return;
-      case "reg-name":
-        if (name.trim()) go("reg-email");
+        if (business.trim()) go("reg-email");
         return;
       case "reg-email":
-        if (validEmail) go("reg-phone");
-        return;
-      case "reg-phone":
-        if (phone.trim() === "" || phoneId) go("reg-password");
-        return;
-      case "reg-password":
-        if (!strongEnough) return;
-        return run(() => createAccount("reg-code", "reg-done"));
+        if (!validEmail) return;
+        return run(() => createAccount("reg-code", "reg-password"));
       case "reg-code":
         if (!validCode) return;
         return run(async () => {
@@ -307,7 +283,17 @@ export default function AuthScreen({
           }
           haptic("success");
           setPendingSession(session);
-          go("reg-done");
+          setCode("");
+          go("reg-password");
+        });
+      case "reg-password":
+      case "join-password":
+        if (!strongEnough || !pendingSession) return;
+        return run(async () => {
+          await setPassword(pendingSession.accessToken, password);
+          haptic("success");
+          setPassword1("");
+          go(screen === "reg-password" ? "reg-done" : "join-owner");
         });
       case "reg-done":
         if (pendingSession) {
@@ -315,15 +301,9 @@ export default function AuthScreen({
           onSession(pendingSession, { isNew: true, businessName: business.trim() });
         }
         return;
-      case "join-name":
-        if (name.trim()) go("join-email");
-        return;
       case "join-email":
-        if (validEmail) go("join-password");
-        return;
-      case "join-password":
-        if (!strongEnough) return;
-        return run(() => createAccount("join-code", "join-owner"));
+        if (!validEmail) return;
+        return run(() => createAccount("join-code", "join-password"));
       case "join-code":
         if (!validCode) return;
         return run(async () => {
@@ -335,7 +315,8 @@ export default function AuthScreen({
           }
           haptic("success");
           setPendingSession(session);
-          go("join-owner");
+          setCode("");
+          go("join-password");
         });
       case "join-owner":
         if (!validOwner || !pendingSession) return;
@@ -390,7 +371,7 @@ export default function AuthScreen({
             <button type="button" className="ob-btn is-light" onClick={() => go("reg-business")}>
               {t("Üye ol")}
             </button>
-            <button type="button" className="ob-btn is-outline" onClick={() => go("join-name")}>
+            <button type="button" className="ob-btn is-outline" onClick={() => go("join-email")}>
               {t("Ekibe katıl")}
             </button>
           </div>
@@ -432,14 +413,6 @@ export default function AuthScreen({
         value={email}
         onChange={(e) => setEmail(e.target.value)}
       />
-    </div>
-  );
-
-  const phoneField = (
-    <div className="field">
-      <label htmlFor="auth-phone">{t("Telefon (isteğe bağlı)")}</label>
-      <PhoneField id="auth-phone" value={phone} onChange={setPhone} />
-      <p className="field-hint">{t("Telefon numaranızla da giriş yapabilirsiniz. Bu adımı atlayabilirsiniz.")}</p>
     </div>
   );
 
@@ -576,31 +549,12 @@ export default function AuthScreen({
       );
       ready = business.trim() !== "";
       break;
-    case "reg-name":
-    case "join-name":
-      title = t("Adınız soyadınız");
-      lead = screen === "reg-name" ? t("Ekip arkadaşlarınız sizi bu adla görür.") : t("Yetkili, isteğinizi bu adla görür.");
-      body = (
-        <div className="field">
-          <label htmlFor="auth-name">{t("Ad soyad")}</label>
-          <input id="auth-name" autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} />
-        </div>
-      );
-      ready = name.trim() !== "";
-      break;
     case "reg-email":
     case "join-email":
       title = t("E-posta adresiniz");
       lead = t("Hesabınızı bu adrese gelen kodla doğrulayacağız.");
       body = emailField(screen === "reg-email" ? "auth-email" : "auth-email-join");
       ready = validEmail;
-      break;
-    case "reg-phone":
-      title = t("Telefon numaranız");
-      lead = t("Girişte bu numara ve şifrenizle de giriş yapabilirsiniz. SMS gönderilmez.");
-      body = phoneField;
-      action = phone.trim() === "" ? t("ATLA") : t("DEVAM");
-      ready = true;
       break;
     case "reg-password":
     case "join-password":
