@@ -199,9 +199,11 @@ export default function Dashboard({
 
   const searching = searchOpen && query.trim() !== "";
   // Aramada isim başında eşleşenler öne gelir, sonra alfabetik sıra
+  // Arama tüm sekmelerde yapılır (arşivdekiler hariç); başka sekmedeki kayıt da bulunur
   const rows: Row[] = searching
-    ? allRows
-        .map((r) => ({ ...r, range: findMatch(r.name, query) }))
+    ? parties
+        .filter((c) => !c.archived)
+        .map((c) => ({ id: c.id, name: c.name, balance: balanceOf(transactions, c.id), range: findMatch(c.name, query) }))
         .filter((r) => r.range !== null)
         .sort(
           (a, b) =>
@@ -411,7 +413,7 @@ export default function Dashboard({
           <div className="search-empty">
             <p>
               {searching
-                ? labels.noMatch(query.trim())
+                ? t("“{q}” ile eşleşen kayıt yok.", { q: query.trim() })
                 : labels.empty}
             </p>
             <button type="button" className="help-link" onClick={onNewParty}>
