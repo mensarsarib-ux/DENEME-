@@ -5,6 +5,7 @@ import {
   listChangeNotices,
   listPendingRequests,
   loadSession,
+  myBusinesses,
   markChangeNoticesRead,
   type ChangeNotice,
   type PendingRequest,
@@ -23,6 +24,8 @@ export default function BusinessRequestsPage({ onBack }: { onBack: () => void })
   const [busyId, setBusyId] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [changes, setChanges] = useState<ChangeNotice[]>([]);
+  // Onaylanan istek için işletme seçimi: yetkilinin işletmeleri ve üyenin göreceği işaretli olanlar
+  const [picking, setPicking] = useState<{ requestId: string; options: { id: string; name: string }[]; chosen: string[] } | null>(null);
 
   async function refresh() {
     if (!session) {
@@ -52,25 +55,43 @@ export default function BusinessRequestsPage({ onBack }: { onBack: () => void })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  async function decide(item: PendingRequest, approve: boolean) {
+  /** Onayla: ekip sınırı uygunsa yetkilinin işletmeleri listelenir; seçim yapılınca onay gönderilir */
+  async function startApprove(item: PendingRequest) {
+    if (!session) return;
+    setBusyId(item.request_id);
+    setNotice(null);
+    try {
+      const people = await teamPeople(session);
+      if (Array.isArray(people) && !canAddTeamMember(people.length)) {
+        setNotice(t("Ekip sınırına ulaşıldı. Daha fazla üye için paketi yükseltin."));
+        return;
+      }
+      const list = await myBusinesses(session);
+      if (list === "expired") return setFailed(true);
+      const options = list.filter((b) => b.role === "owner").map((b) => ({ id: b.businessId, name: b.name }));
+      // Tek işletme varsa sormaya gerek yok
+      if (options.length <= 1) return await decide(item, true, options.map((o) => o.id));
+      // Başlangıçta yalnızca katılmak istediği işletme işaretlidir
+      setPicking({ requestId: item.request_id, options, chosen: [item.business_id] });
+    } catch {
+      setFailed(true);
+    } finally {
+      setBusyId(null);
+    }
+  }
+
+  async function decide(item: PendingRequest, approve: boolean, only?: string[]) {
     if (!session) return;
     setBusyId(item.request_id);
     try {
-      // Ekip sınırı: onaylamadan önce mevcut üye sayısına bakılır
-      if (approve) {
-        const people = await teamPeople(session);
-        if (Array.isArray(people) && !canAddTeamMember(people.length)) {
-          setNotice(t("Ekip sınırına ulaşıldı. Daha fazla üye için paketi yükseltin."));
-          return;
-        }
-      }
-      const res = await decideJoin(session, item.request_id, approve);
+      const res = await decideJoin(session, item.request_id, approve, only && only.length > 0 ? only : undefined);
       if (res === "limit") {
         setNotice(t("Ekip sınırına ulaşıldı. Daha fazla üye için paketi yükseltin."));
         return;
       }
       if (res === true) {
         haptic(approve ? "success" : "light");
+        setPicking(null);
         setItems((list) => (list ? list.filter((x) => x.request_id !== item.request_id) : list));
       }
     } catch {
@@ -122,14 +143,52 @@ export default function BusinessRequestsPage({ onBack }: { onBack: () => void })
                   <strong>{item.requester_email}</strong>
                   <small>{t("{name} işletmenize katılmak istiyor", { name: item.business_name })}</small>
                 </div>
-                <div className="request-actions">
-                  <button type="button" className="request-approve" disabled={busyId === item.request_id} onClick={() => decide(item, true)}>
-                    {t("Onayla")}
-                  </button>
-                  <button type="button" className="request-reject" disabled={busyId === item.request_id} onClick={() => decide(item, false)}>
-                    {t("Reddet")}
-                  </button>
-                </div>
+                {picking?.requestId === item.request_id ? (
+                  <div className="request-pick">
+                    <p className="request-pick-title">{t("Hangi işletmeleri görsün?")}</p>
+                    {picking.options.map((o) => (
+                      <label key={o.id} className="setting-row">
+                        <span className="setting-text">
+                          <strong>{o.name}</strong>
+                          <small>{picking.chosen.includes(o.id) ? t("Görebilir") : t("Göremez")}</small>
+                        </span>
+                        <input
+                          type="checkbox"
+                          checked={picking.chosen.includes(o.id)}
+                          onChange={(e) => {
+                            haptic("light");
+                            const on = e.target.checked;
+                            setPicking((p) =>
+                              p && { ...p, chosen: on ? [...p.chosen, o.id] : p.chosen.filter((x) => x !== o.id) },
+                            );
+                          }}
+                        />
+                      </label>
+                    ))}
+                    <div className="request-actions">
+                      <button
+                        type="button"
+                        className="request-approve"
+                        disabled={busyId === item.request_id || picking.chosen.length === 0}
+                        onClick={() => decide(item, true, picking.chosen)}
+                      >
+                        {t("Onayla")}
+                      </button>
+                      <button type="button" className="request-reject" disabled={busyId === item.request_id} onClick={() => setPicking(null)}>
+                        {t("Vazgeç")}
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="request-actions">
+                    <button type="button" className="request-approve" disabled={busyId === item.request_id} onClick={() => startApprove(item)}>
+                      {t("Onayla")}
+                    </button>
+                    <button type="button" className="request-reject" disabled={busyId === item.request_id} onClick={() => decide(item, false)}>
+                      {t("Reddet")}
+                    </button>
+                  </div>
+                )}
               </div>
             ))}
         </section>

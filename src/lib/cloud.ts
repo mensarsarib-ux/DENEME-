@@ -619,14 +619,22 @@ export async function listPendingRequests(session: Session): Promise<PendingRequ
   return (await res.json()) as PendingRequest[];
 }
 
-/** İsteği onaylar ya da reddeder; paketin ekip sınırı doluysa sunucu onaylamaz ("limit") */
-export async function decideJoin(session: Session, requestId: string, approve: boolean): Promise<true | "expired" | "limit"> {
+/**
+ * İsteği onaylar ya da reddeder; paketin ekip sınırı doluysa sunucu onaylamaz ("limit").
+ * only: onayda üyenin göreceği işletmeler (verilmezse yetkilinin tüm işletmeleri)
+ */
+export async function decideJoin(
+  session: Session,
+  requestId: string,
+  approve: boolean,
+  only?: string[],
+): Promise<true | "expired" | "limit"> {
   const s = await fresh(session);
   if (!s) return "expired";
   const res = await call("/rest/v1/rpc/decide_join", {
     method: "POST",
     token: s.accessToken,
-    body: JSON.stringify({ req: requestId, approve }),
+    body: JSON.stringify(only ? { req: requestId, approve, chosen: only } : { req: requestId, approve }),
   });
   if (res.status === 401) return "expired";
   if (!res.ok) {
