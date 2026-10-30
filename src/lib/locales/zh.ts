@@ -722,6 +722,8 @@ const dict: Record<string, string> = {
   "Yeni e-posta": "新邮箱",
   "{b} açıldı. Telefon ve e-posta bilgilerinizi istediğiniz zaman Ayarlar → Hesabım bölümünden düzenleyebilirsiniz.": "{b} 已创建。你可以随时在 设置 → 我的账户 中更改手机号和邮箱。",
   "Hesabınızın e-posta adresini yazın; size 6 haneli bir kod göndereceğiz.": "输入账户邮箱，我们会发送 6 位验证码。",
+  "Satın alma onay bekliyor. Onaylandığında paketiniz otomatik açılır.": "购买正在等待批准。批准后套餐将自动开通。",
+  "Tekrar dene": "重试",
 };
 
 export default dict;

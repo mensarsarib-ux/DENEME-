@@ -25,7 +25,7 @@ import TeamMemberPage from "./components/TeamMemberPage";
 import type { TeamPerson } from "./lib/cloud";
 import { renameBusiness } from "./lib/cloud";
 import { migrateLocalWorkspaces } from "./lib/migrate";
-import { canAddItem, canAddTab, type Plan } from "./lib/plan";
+import { canAddItem, canAddTab, onPlanChange, type Plan } from "./lib/plan";
 import { syncPlanFromServer } from "./lib/entitlement";
 import { businessPlan, deleteMyAccount, pull, refreshOwnerPlan } from "./lib/cloud";
 import { businessList, listWorkspaces } from "./lib/storage";
@@ -192,8 +192,21 @@ export default function App() {
     .map((b) => ({ id: b.businessId, name: b.name }));
   // Hesabın paketi sunucudan okunur: açılışta ve her girişte (arka planda, açılışı bekletmez)
   useEffect(() => {
-    if (session?.userId) void syncPlanFromServer();
+    if (!session?.userId) return;
+    void syncPlanFromServer();
+    // Uygulamaya dönüldüğünde de (en fazla dakikada bir): onaylanan ya da yenilenen abonelik yansısın
+    let last = Date.now();
+    const onVisible = () => {
+      if (document.visibilityState !== "visible" || Date.now() - last < 60_000) return;
+      last = Date.now();
+      void syncPlanFromServer();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => document.removeEventListener("visibilitychange", onVisible);
   }, [session?.userId]);
+  // Paket değişince (satın alma, geri yükleme, sunucudan okuma) menü ve sınırlar hemen güncellenir
+  const [, setPlanTick] = useState(0);
+  useEffect(() => onPlanChange(() => setPlanTick((n) => n + 1)), []);
   // Ortak işletmede (üye olarak) liste ve sekme sınırları işletme sahibinin paketine göre uygulanır
   const [ownerPlan, setOwnerPlan] = useState<Plan | null>(null);
   const memberBusinessId = effMembership?.role === "member" ? effMembership.businessId : null;

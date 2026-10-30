@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { CURRENT_PLAN, PLAN_NAME, type Plan } from "../lib/plan";
-import { buyPlan, loadProducts, PLAN_PRODUCT, purchasesAvailable, refreshPlan, restorePlan } from "../lib/purchases";
+import { buyPlan, loadProducts, ownsOnDevice, PENDING_MESSAGE, PLAN_PRODUCT, purchasesAvailable, refreshPlan, restorePlan } from "../lib/purchases";
 import { haptic } from "../lib/haptics";
 import { getLanguage, locale, t } from "../lib/i18n";
 import { SUPPORT_ICON } from "../lib/menu";
@@ -147,14 +147,26 @@ export default function PlansPage({
     if (!PURCHASES_OPEN) return;
     // Sayfa açılınca paket Apple'dan tekrar okunur; farklıysa uygulama yeni paketle açılır
     void refreshPlan().then(showPlan);
+    loadPrices();
+  }, []);
+
+  // Fiyatlar gelmezse düğmeler kilitli kalmasın: "Tekrar dene" ile yeniden istenir
+  const [pricesFailed, setPricesFailed] = useState(false);
+  function loadPrices() {
+    setPricesFailed(false);
     loadProducts()
       .then((products) => {
+        if (products.length === 0) throw new Error("bos");
         const map: Record<string, string> = {};
         for (const p of products) map[p.identifier] = p.priceString;
         setStorePrices(map);
+        setMessage(null);
       })
-      .catch(() => setMessage(t("Fiyatlar alınamadı; bağlantınızı kontrol edin.")));
-  }, []);
+      .catch(() => {
+        setPricesFailed(true);
+        setMessage(t("Fiyatlar alınamadı; bağlantınızı kontrol edin."));
+      });
+  }
 
   async function purchase(plan: Exclude<Plan, "free">) {
     if (busy) return;
@@ -167,12 +179,16 @@ export default function PlansPage({
     } catch (e) {
       const reason = e instanceof Error ? e.message : String(e);
       if (/cancel/i.test(reason)) {
-        // Vazgeçme ya da Apple'ın "Bu öğeye abonesiniz" penceresi: paket sunucuda tekrar kontrol edilir
+        // Vazgeçme ya da Apple'ın "Bu öğeye abonesiniz" penceresi: paket sunucuda tekrar kontrol edilir.
+        // "Başka hesapta" uyarısı yalnızca bu paket telefonda zaten etkinse gösterilir (düz vazgeçmede değil).
+        const owned = await ownsOnDevice(plan);
         try {
           showPlan(await refreshPlan(true));
         } catch (err) {
-          setMessage(err instanceof Error ? err.message : String(err));
+          if (owned) setMessage(err instanceof Error ? err.message : String(err));
         }
+      } else if (reason === PENDING_MESSAGE()) {
+        setMessage(reason);
       } else {
         setMessage(`${t("Satın alma tamamlanamadı.")} ${reason}`);
       }
@@ -271,6 +287,11 @@ export default function PlansPage({
               {t("Satın alımı geri yükle")}
             </button>
             {message && <p className="field-hint" role="status">{message}</p>}
+            {pricesFailed && (
+              <button type="button" className="paywall-restore" onClick={loadPrices}>
+                {t("Tekrar dene")}
+              </button>
+            )}
           </>
         )}
         {PURCHASES_OPEN && shownPlan !== "free" && (

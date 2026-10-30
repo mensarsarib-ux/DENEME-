@@ -473,4 +473,6 @@ export const extra: Record<string, string> = {
   "Yeni e-posta": "New email",
   "{b} açıldı. Telefon ve e-posta bilgilerinizi istediğiniz zaman Ayarlar → Hesabım bölümünden düzenleyebilirsiniz.": "{b} is ready. You can change your phone and email any time in Settings → My account.",
   "Hesabınızın e-posta adresini yazın; size 6 haneli bir kod göndereceğiz.": "Enter your account's email address; we'll send you a 6-digit code.",
+  "Satın alma onay bekliyor. Onaylandığında paketiniz otomatik açılır.": "Your purchase is waiting for approval. Your plan will turn on automatically once it's approved.",
+  "Tekrar dene": "Try again",
 };

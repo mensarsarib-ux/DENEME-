@@ -24,7 +24,17 @@ export let CURRENT_PLAN: Plan = storedPlan() ?? "free";
 
 /** Satın alma ya da geri yüklemeden sonra paketi uygulamayı yeniden başlatmadan değiştirir */
 export function setCurrentPlan(plan: Plan): void {
+  if (plan === CURRENT_PLAN) return;
   CURRENT_PLAN = plan;
+  listeners.forEach((fn) => fn());
+}
+
+const listeners = new Set<() => void>();
+
+/** Paket değişince ekranların yeniden çizilmesi için; aboneliği bırakan fonksiyon döner */
+export function onPlanChange(fn: () => void): () => void {
+  listeners.add(fn);
+  return () => listeners.delete(fn);
 }
 
 /** Plan sınırları. Infinity = sınırsız. */

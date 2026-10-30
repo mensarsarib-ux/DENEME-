@@ -1,5 +1,6 @@
 import { fetchPlan, loadSession, verifyPurchase } from "./cloud";
 import { setCurrentPlan, type Plan } from "./plan";
+import { claimFromDevice } from "./purchases";
 
 /**
  * Hesabın planını sunucudan okuyup uygular ve cihaza kaydeder (açılışta ve girişten sonra, arka planda).
@@ -17,6 +18,11 @@ export async function syncPlanFromServer(): Promise<void> {
     const again = new Promise<null>((resolve) => window.setTimeout(() => resolve(null), 10000));
     const refreshed = await Promise.race([verifyPurchase(session), again]);
     if (refreshed && refreshed !== "expired" && "plan" in refreshed) plan = refreshed.plan;
+  }
+  if (plan === "free") {
+    // Doğrulanamamış ya da sonradan onaylanan satın alma varsa hesaba bağlanır (plan orada kaydedilir)
+    const claimed = await claimFromDevice();
+    if (claimed && claimed !== "free") return;
   }
   setCurrentPlan(plan as Plan);
   try {

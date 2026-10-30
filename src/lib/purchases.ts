@@ -44,11 +44,17 @@ export async function buyPlan(plan: Exclude<Plan, "free">): Promise<void> {
       appAccountToken?: string;
     }): Promise<{ transactionId: string }>;
   };
-  const tx = await plugin.purchaseProduct({
-    productIdentifier: PLAN_PRODUCT[plan],
-    productType: PURCHASE_TYPE.SUBS,
-    appAccountToken: session.userId,
-  });
+  const tx = await plugin
+    .purchaseProduct({
+      productIdentifier: PLAN_PRODUCT[plan],
+      productType: PURCHASE_TYPE.SUBS,
+      appAccountToken: session.userId,
+    })
+    .catch((e: unknown) => {
+      // Onay bekleyen satın alma, onaylanınca açılışta ya da uygulamaya dönüldüğünde hesaba bağlanır
+      if (/pending/i.test(e instanceof Error ? e.message : String(e))) throw new Error(PENDING_MESSAGE());
+      throw e;
+    });
   const id = String(tx.transactionId);
   // Sunucuya ulaşılamazsa satın alma kaybolmasın: işlem, doğrulanana kadar cihazda bekletilir
   savePendingTransaction(id);
@@ -56,28 +62,45 @@ export async function buyPlan(plan: Exclude<Plan, "free">): Promise<void> {
   if (confirmed === "free") throw new Error(t("Apple bu hesap için aktif abonelik göstermedi"));
 }
 
+type DeviceEntitlement = { transactionId: string; productIdentifier: string; appAccountToken?: string };
+
+/** Telefondaki Apple hesabının şu an geçerli abonelikleri (Transaction.currentEntitlements) */
+async function deviceEntitlements(): Promise<DeviceEntitlement[]> {
+  try {
+    const plugin = NativePurchases as unknown as {
+      getCurrentEntitlements(): Promise<{ entitlements: DeviceEntitlement[] }>;
+    };
+    const { entitlements } = await plugin.getCurrentEntitlements();
+    return (entitlements ?? []).filter((e) => PRODUCT_PLAN[e.productIdentifier]);
+  } catch {
+    return [];
+  }
+}
+
 /**
  * Telefondaki Apple hesabının şu an geçerli aboneliği (en üst paket). Hesabın sunucudaki kaydı eski ya da
  * başka bir Apple hesabına ait olabilir; geri yüklemede ve "zaten abonesiniz" durumunda asıl kaynak budur.
  * (Metot, scripts/patch-native-purchases.cjs ile eklentiye eklenir.)
  */
-async function deviceTransactionId(): Promise<string | undefined> {
+async function deviceTransactionId(onlyAccount?: string): Promise<string | undefined> {
   const RANK: Record<string, number> = { pro: 1, proplus: 2, premium: 3 };
-  try {
-    const plugin = NativePurchases as unknown as {
-      getCurrentEntitlements(): Promise<{ entitlements: { transactionId: string; productIdentifier: string }[] }>;
-    };
-    const { entitlements } = await plugin.getCurrentEntitlements();
-    let best: { id: string; rank: number } | undefined;
-    for (const e of entitlements ?? []) {
-      const plan = PRODUCT_PLAN[e.productIdentifier];
-      if (plan && (!best || RANK[plan] > best.rank)) best = { id: String(e.transactionId), rank: RANK[plan] };
-    }
-    return best?.id;
-  } catch {
-    return undefined;
+  let best: { id: string; rank: number } | undefined;
+  for (const e of await deviceEntitlements()) {
+    // onlyAccount: yalnızca bu hesapla satın alınmış abonelik (başka hesabın aboneliği kendiliğinden alınmaz)
+    if (onlyAccount && (e.appAccountToken ?? "").toLowerCase() !== onlyAccount.toLowerCase()) continue;
+    const rank = RANK[PRODUCT_PLAN[e.productIdentifier]];
+    if (!best || rank > best.rank) best = { id: String(e.transactionId), rank };
   }
+  return best?.id;
 }
+
+/** Bu paket telefondaki Apple hesabında zaten etkin mi? (Apple'ın "Bu öğeye abonesiniz" penceresi) */
+export async function ownsOnDevice(plan: Exclude<Plan, "free">): Promise<boolean> {
+  return (await deviceEntitlements()).some((e) => e.productIdentifier === PLAN_PRODUCT[plan]);
+}
+
+/** Aile onayı ya da banka onayı bekleyen satın alma için gösterilen mesaj */
+export const PENDING_MESSAGE = () => t("Satın alma onay bekliyor. Onaylandığında paketiniz otomatik açılır.");
 
 /** Abonelik başka bir Hesabım hesabına bağlıysa gösterilen mesaj */
 const OTHER_ACCOUNT = () => t("Bu Apple aboneliği başka bir Hesabım hesabında kullanılıyor.");
@@ -145,6 +168,22 @@ export async function refreshPlan(fromDevice = false): Promise<Plan | null> {
   } catch (e) {
     // Abonelik başka bir hesaba aitse kullanıcı bunu görmeli; diğer hatalar sessizce geçilir
     if (fromDevice && e instanceof Error && e.message === OTHER_ACCOUNT()) throw e;
+    return null;
+  }
+}
+
+/**
+ * Açılışta ve uygulamaya dönüldüğünde, sunucuda ücretsiz görünen hesap için: doğrulanamamış son satın alma
+ * ya da bu hesapla satın alınıp sonradan onaylanan abonelik sessizce sunucuya bildirilir. Plan ya da null döner.
+ */
+export async function claimFromDevice(): Promise<Plan | null> {
+  const session = loadSession();
+  if (!purchasesAvailable() || !session) return null;
+  const id = pendingTransaction() ?? (await deviceTransactionId(session.userId));
+  if (!id) return null;
+  try {
+    return await confirmWithServer(id);
+  } catch {
     return null;
   }
 }

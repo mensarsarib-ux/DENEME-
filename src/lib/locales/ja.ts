@@ -722,6 +722,8 @@ const dict: Record<string, string> = {
   "Yeni e-posta": "新しいメールアドレス",
   "{b} açıldı. Telefon ve e-posta bilgilerinizi istediğiniz zaman Ayarlar → Hesabım bölümünden düzenleyebilirsiniz.": "{b}の準備ができました。電話番号とメールアドレスは 設定 → アカウント からいつでも変更できます。",
   "Hesabınızın e-posta adresini yazın; size 6 haneli bir kod göndereceğiz.": "アカウントのメールアドレスを入力してください。6桁のコードを送信します。",
+  "Satın alma onay bekliyor. Onaylandığında paketiniz otomatik açılır.": "購入は承認待ちです。承認されるとプランは自動的に有効になります。",
+  "Tekrar dene": "再試行",
 };
 
 export default dict;

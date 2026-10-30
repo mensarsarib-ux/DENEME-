@@ -1,5 +1,5 @@
 // @capgo/native-purchases eklentisine iOS'ta iki şey ekler:
-// 1) Telefondaki geçerli abonelikleri okuyan metot (StoreKit Transaction.currentEntitlements);
+// 1) Telefondaki geçerli abonelikleri (hesap kimliğiyle) okuyan metot (StoreKit Transaction.currentEntitlements);
 //    eklentinin geri yüklemesi abonelik bilgisi döndürmediği için gerekir.
 // 2) Satın almaya hesap kimliği (appAccountToken) verilebilmesi; abonelik satın alan Hesabım hesabına bağlanır
 //    ve sunucu, aboneliği başka bir hesabın ele geçirmesini engeller.
@@ -25,7 +25,8 @@ if (!swift.includes("getCurrentEntitlements")) {
                         list.append([
                             "transactionId": String(transaction.id),
                             "originalTransactionId": String(transaction.originalID),
-                            "productIdentifier": transaction.productID
+                            "productIdentifier": transaction.productID,
+                            "appAccountToken": transaction.appAccountToken?.uuidString ?? ""
                         ])
                     }
                 }
@@ -41,7 +42,18 @@ if (!swift.includes("getCurrentEntitlements")) {
   fs.writeFileSync(swiftPath, swift);
 }
 
-if (!swift.includes("appAccountToken")) {
+// Önceki yamada abonelikle birlikte hesap kimliği dönmüyordu; eklenir
+if (swift.includes("getCurrentEntitlements") && !swift.includes("transaction.appAccountToken")) {
+  const anchor = `"productIdentifier": transaction.productID
+                        ])`;
+  if (!swift.includes(anchor)) throw new Error("native-purchases: abonelik listesi bulunamadı");
+  swift = swift.replace(anchor, `"productIdentifier": transaction.productID,
+                            "appAccountToken": transaction.appAccountToken?.uuidString ?? ""
+                        ])`);
+  fs.writeFileSync(swiftPath, swift);
+}
+
+if (!swift.includes("PurchaseOption.appAccountToken")) {
   const anchor = "                    purchaseOptions.insert(Product.PurchaseOption.quantity(quantity))";
   if (!swift.includes(anchor)) throw new Error("native-purchases: satın alma seçenekleri bulunamadı");
   const token = `
