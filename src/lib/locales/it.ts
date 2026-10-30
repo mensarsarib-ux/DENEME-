@@ -728,6 +728,7 @@ const dict: Record<string, string> = {
   "Hesabım Muhasebe'de işletmeme katıl: uygulamayı indir, açılışta Ekibe katıl'a dokun ve yetkili olarak şunu yaz: {m} — {url}": "Unisciti alla mia attività su Hesabım Muhasebe: scarica l'app, tocca Unisciti a un team nella prima schermata e inserisci questo come titolare: {m} — {url}",
   "Açılışta Ekibe katıl'a dokunsun ve yetkili olarak şunu yazsın: {m}": "Nella prima schermata tocca Unisciti a un team e inserisce questo come titolare: {m}",
   "Ekip üyeleri yedek dosyası yükleyemez. Yedeği işletme yetkilisi yükleyebilir.": "I membri del team non possono caricare un backup. Può farlo il titolare.",
+  "KVKK Aydınlatma Metni": "Informativa KVKK (Turchia)",
 };
 
 export default dict;

@@ -78,6 +78,9 @@ const TIGHT = ["ja", "zh"];
 const ATTACHED_END = ["ja", "zh", "ko"];
 
 /** Kayıt ekranındaki yasal sayfalar; Türkçe dışındaki dillerde İngilizce sayfalar açılır */
+/** 6698 sayılı KVKK aydınlatma metni (Türkçe; Türkiye'deki kullanıcılar için zorunlu bilgilendirme) */
+const KVKK_URL = "https://hesabimmuhasebe.com/kvkk.html";
+
 const legalUrl = (page: "terms" | "privacy") =>
   getLanguage() === "tr"
     ? `https://hesabimmuhasebe.com/${page === "terms" ? "kullanim-kosullari" : "gizlilik"}.html`
@@ -473,7 +476,8 @@ export default function AuthScreen({
       {t("ve")}{getLanguage() === "ar" ? "" : gap}
       <a href={legalUrl("privacy")} target="_blank" rel="noreferrer">{t("Gizlilik politikası")}</a>
       {/^[\p{L}\p{N}]/u.test(legalEnd) && !ATTACHED_END.includes(getLanguage()) ? " " : ""}
-      {legalEnd}
+      {legalEnd}{" "}
+      <a href={KVKK_URL} target="_blank" rel="noreferrer">{t("KVKK Aydınlatma Metni")}</a>
     </p>
   );
 

@@ -479,4 +479,5 @@ export const extra: Record<string, string> = {
   "Hesabım Muhasebe'de işletmeme katıl: uygulamayı indir, açılışta Ekibe katıl'a dokun ve yetkili olarak şunu yaz: {m} — {url}": "Join my business on Hesabım Muhasebe: download the app, tap Join a team on the first screen and enter this as the owner: {m} — {url}",
   "Açılışta Ekibe katıl'a dokunsun ve yetkili olarak şunu yazsın: {m}": "On the first screen they tap Join a team and enter this as the owner: {m}",
   "Ekip üyeleri yedek dosyası yükleyemez. Yedeği işletme yetkilisi yükleyebilir.": "Team members can't load a backup file. The business owner can load it.",
+  "KVKK Aydınlatma Metni": "KVKK privacy notice (Turkey)",
 };

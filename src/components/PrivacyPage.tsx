@@ -25,6 +25,9 @@ export default function PrivacyPage({ onBack }: { onBack: () => void }) {
           <p>{t("Satın alma işlemleri Apple, veri barındırma Supabase üzerinden yapılır. Bunların dışında verileriniz paylaşılmaz.")}</p>
           <h2 className="card-title">{t("İletişim")}</h2>
           <p>{t("Sorularınız için Destek al bölümünü kullanabilirsiniz.")}</p>
+          <p>
+            <a href="https://hesabimmuhasebe.com/kvkk.html" target="_blank" rel="noreferrer">{t("KVKK Aydınlatma Metni")}</a>
+          </p>
         </section>
       </div>
     </div>
