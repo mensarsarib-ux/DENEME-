@@ -188,6 +188,16 @@ export async function setPassword(accessToken: string, password: string): Promis
 }
 
 /** E-posta bağlantısıyla dönüldüyse adresteki kurtarma belirtecini okur (#access_token=…&type=recovery) */
+/** Şifre yenileme e-postasındaki 6 haneli kodu doğrular; geçerliyse şifreyi değiştirmek için geçici anahtar döner */
+export async function verifyRecoveryCode(email: string, code: string): Promise<string | "invalid"> {
+  const res = await call("/auth/v1/verify", {
+    method: "POST",
+    body: JSON.stringify({ type: "recovery", email: email.trim(), token: code.trim() }),
+  });
+  const body = (await res.json().catch(() => ({}))) as AuthBody;
+  return res.ok && body.access_token ? body.access_token : "invalid";
+}
+
 export function readRecoveryToken(): string | null {
   const hash = new URLSearchParams(window.location.hash.slice(1));
   if (hash.get("type") !== "recovery") return null;

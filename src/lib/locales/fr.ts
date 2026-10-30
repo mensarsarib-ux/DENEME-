@@ -721,6 +721,7 @@ const dict: Record<string, string> = {
   "Telefon numaranızla da giriş yapabilirsiniz. Bu adımı atlayabilirsiniz.": "Vous pouvez aussi vous connecter avec votre numéro de téléphone. Vous pouvez passer cette étape.",
   "Yeni e-posta": "Nouvel e-mail",
   "{b} açıldı. Telefon ve e-posta bilgilerinizi istediğiniz zaman Ayarlar → Hesabım bölümünden düzenleyebilirsiniz.": "{b} est prête. Vous pouvez modifier votre téléphone et votre e-mail à tout moment dans Réglages → Mon compte.",
+  "Hesabınızın e-posta adresini yazın; size 6 haneli bir kod göndereceğiz.": "Saisissez l'e-mail de votre compte ; nous vous enverrons un code à 6 chiffres.",
 };
 
 export default dict;

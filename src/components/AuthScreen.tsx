@@ -12,6 +12,7 @@ import {
   setPassword,
   signIn,
   signUp,
+  verifyRecoveryCode,
   verifySignupCode,
   type Session,
 } from "../lib/cloud";
@@ -30,6 +31,7 @@ type Screen =
   | "login"
   | "verify"
   | "forgot"
+  | "reset-code"
   | "new-password"
   | "reg-business"
   | "reg-name"
@@ -55,6 +57,7 @@ const BACK: Partial<Record<Screen, Screen>> = {
   login: "welcome",
   verify: "login",
   forgot: "login",
+  "reset-code": "forgot",
   "reg-business": "welcome",
   "reg-name": "reg-business",
   "reg-email": "reg-name",
@@ -242,7 +245,21 @@ export default function AuthScreen({
         return run(async () => {
           await sendResetEmail(email.trim());
           haptic("success");
-          setInfo(t("Şifre yenileme bağlantısı e-postanıza gönderildi."));
+          codeSent(email.trim(), "reset-code");
+        });
+      case "reset-code":
+        if (!validCode) return;
+        return run(async () => {
+          const token = await verifyRecoveryCode(pendingEmail ?? email.trim(), code);
+          if (token === "invalid") {
+            haptic("warning");
+            setError(t("Kod hatalı ya da süresi dolmuş. Yeni kod isteyin."));
+            return;
+          }
+          haptic("success");
+          setResetToken(token);
+          setPassword1("");
+          go("new-password");
         });
       case "new-password":
         if (!strongEnough) return;
@@ -519,10 +536,16 @@ export default function AuthScreen({
       break;
     case "forgot":
       title = t("Şifremi unuttum");
-      lead = t("Hesabınızın e-posta adresini yazın; yenileme bağlantısı göndereceğiz.");
+      lead = t("Hesabınızın e-posta adresini yazın; size 6 haneli bir kod göndereceğiz.");
       body = emailField("auth-email-reset");
-      action = t("BAĞLANTI GÖNDER");
+      action = t("KOD GÖNDER");
       ready = validEmail;
+      break;
+    case "reset-code":
+      title = t("Şifrenizi yenileyin");
+      body = codeField;
+      action = t("DOĞRULA");
+      ready = validCode;
       break;
     case "new-password":
       title = t("Yeni şifrenizi belirleyin");

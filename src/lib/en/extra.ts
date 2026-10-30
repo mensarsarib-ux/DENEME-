@@ -472,4 +472,5 @@ export const extra: Record<string, string> = {
   "Telefon numaranızla da giriş yapabilirsiniz. Bu adımı atlayabilirsiniz.": "You can also sign in with your phone number. You can skip this step.",
   "Yeni e-posta": "New email",
   "{b} açıldı. Telefon ve e-posta bilgilerinizi istediğiniz zaman Ayarlar → Hesabım bölümünden düzenleyebilirsiniz.": "{b} is ready. You can change your phone and email any time in Settings → My account.",
+  "Hesabınızın e-posta adresini yazın; size 6 haneli bir kod göndereceğiz.": "Enter your account's email address; we'll send you a 6-digit code.",
 };

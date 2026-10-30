@@ -721,6 +721,7 @@ const dict: Record<string, string> = {
   "Telefon numaranızla da giriş yapabilirsiniz. Bu adımı atlayabilirsiniz.": "Можна входити й за номером телефону. Цей крок можна пропустити.",
   "Yeni e-posta": "Новий e-mail",
   "{b} açıldı. Telefon ve e-posta bilgilerinizi istediğiniz zaman Ayarlar → Hesabım bölümünden düzenleyebilirsiniz.": "{b} готовий. Телефон і e-mail можна змінити будь-коли в Налаштування → Мій обліковий запис.",
+  "Hesabınızın e-posta adresini yazın; size 6 haneli bir kod göndereceğiz.": "Введіть e-mail облікового запису; ми надішлемо 6-значний код.",
 };
 
 export default dict;
