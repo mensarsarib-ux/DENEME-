@@ -56,7 +56,10 @@ const BACK: Partial<Record<Screen, Screen>> = {
   "reset-code": "forgot",
   "reg-business": "welcome",
   "reg-email": "reg-business",
+  // Kod ekranından e-postaya dönülür: yanlış yazılan adres düzeltilip yeni kod istenir
+  "reg-code": "reg-email",
   "join-email": "welcome",
+  "join-code": "join-email",
 };
 
 /** Hesap ilk açılışta rastgele bir şifreyle oluşturulur; gerçek şifre e-posta kodu doğrulandıktan sonra belirlenir */
