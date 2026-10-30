@@ -161,6 +161,8 @@ export default function AuthScreen({
     switch (reason) {
       case "invalid_credentials": return t("Bilgiler veya şifre hatalı.");
       case "email_taken": return t("Bu e-posta ile zaten bir hesap var; giriş yapın.");
+      case "phone_taken": return t("Bu telefon numarası başka bir hesapta kullanılıyor.");
+      case "too_many_attempts": return t("Çok fazla hatalı deneme yapıldı. 15 dakika sonra tekrar deneyin.");
       case "weak_password": return t("Şifre en az 6 karakter olmalı.");
       case "email_not_confirmed": return t("E-postanız henüz doğrulanmadı. E-postanıza gelen 6 haneli kodu girin.");
       case "network": return t("Sunucuya ulaşılamadı. İnternet bağlantınızı kontrol edin.");
@@ -196,6 +198,10 @@ export default function AuthScreen({
     const result = await signUp(email.trim(), password, {
       name: name.trim(),
       phone: phoneId || undefined,
+    }).catch((e: unknown) => {
+      // Telefon başka hesapta: telefon adımına dönülür (numara değiştirilebilir ya da atlanabilir)
+      if (e instanceof CloudError && e.code === "phone_taken") go(next === "join-code" ? "join-phone" : "reg-phone");
+      throw e;
     });
     haptic("success");
     if (result === "pending") {

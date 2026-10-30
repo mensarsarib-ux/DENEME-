@@ -188,7 +188,9 @@ function LoginCard({
         ok: false,
         text: e instanceof CloudError && e.code === "email_taken"
           ? t("Bu e-posta başka bir hesapta kullanılıyor.")
-          : t("Gönderilemedi; bağlantınızı kontrol edin."),
+          : e instanceof CloudError && e.code === "phone_taken"
+            ? t("Bu telefon numarası başka bir hesapta kullanılıyor.")
+            : t("Gönderilemedi; bağlantınızı kontrol edin."),
       });
     } finally {
       setBusy(false);

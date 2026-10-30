@@ -724,6 +724,7 @@ const dict: Record<string, string> = {
   "Hesabınızın e-posta adresini yazın; size 6 haneli bir kod göndereceğiz.": "アカウントのメールアドレスを入力してください。6桁のコードを送信します。",
   "Satın alma onay bekliyor. Onaylandığında paketiniz otomatik açılır.": "購入は承認待ちです。承認されるとプランは自動的に有効になります。",
   "Tekrar dene": "再試行",
+  "Çok fazla hatalı deneme yapıldı. 15 dakika sonra tekrar deneyin.": "失敗した試行が多すぎます。15分後にもう一度お試しください。",
 };
 
 export default dict;

@@ -24,7 +24,7 @@ export interface Session {
 
 export class CloudError extends Error {
   constructor(
-    /** invalid_credentials | email_taken | weak_password | email_not_confirmed | network | unknown */
+    /** invalid_credentials | email_taken | phone_taken | too_many_attempts | weak_password | email_not_confirmed | network | unknown */
     public code: string,
     message: string,
   ) {
@@ -100,6 +100,13 @@ function loginBody(id: string): { email: string } {
   return { email: id.trim() };
 }
 
+/** Telefon başka bir hesapta kayıtlıysa veritabanı kaydı reddeder (phone-security.sql); Supabase bunu genel hata olarak döndürür */
+function phoneError(body: AuthBody, phone: string | undefined): CloudError {
+  const e = authError(body);
+  const rejected = ["database error", "updating user", "unexpected_failure"].some((m) => e.message.includes(m));
+  return phone && rejected ? new CloudError("phone_taken", e.message) : e;
+}
+
 function authError(body: AuthBody): CloudError {
   const text = `${body.error_code ?? ""} ${body.msg ?? ""} ${body.error_description ?? ""} ${body.message ?? ""}`.toLowerCase();
   if (text.includes("already") || text.includes("registered")) return new CloudError("email_taken", text);
@@ -135,7 +142,7 @@ export async function signUp(
     body: JSON.stringify({ email: email.trim(), password, data }),
   });
   const body = (await res.json().catch(() => ({}))) as AuthBody;
-  if (!res.ok) throw authError(body);
+  if (!res.ok) throw phoneError(body, info.phone);
   const session = toSession(body, email.trim());
   if (!session) return "pending";
   saveSession(session);
@@ -158,6 +165,7 @@ export async function signIn(id: string, password: string): Promise<Session> {
         body: JSON.stringify({ email: id.trim(), password }),
       });
   const body = (await res.json().catch(() => ({}))) as AuthBody;
+  if (byPhone && res.status === 429) throw new CloudError("too_many_attempts", "too many");
   if (!res.ok) throw byPhone && res.status === 401 ? new CloudError("invalid_credentials", "invalid") : authError(body);
   const session = toSession(body, id.trim());
   if (!session) throw new CloudError("unknown", "no session");
@@ -377,7 +385,7 @@ export async function updateAccountProfile(session: Session, name: string, phone
     body: JSON.stringify({ data: { name, phone } }),
   });
   if (res.status === 401) return "expired";
-  if (!res.ok) throw authError((await res.json().catch(() => ({}))) as AuthBody);
+  if (!res.ok) throw phoneError((await res.json().catch(() => ({}))) as AuthBody, phone);
   return true;
 }
 

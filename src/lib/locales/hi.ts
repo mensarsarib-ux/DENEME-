@@ -724,6 +724,7 @@ const dict: Record<string, string> = {
   "Hesabınızın e-posta adresini yazın; size 6 haneli bir kod göndereceğiz.": "अपने खाते का ईमेल डालें; हम 6 अंकों का कोड भेजेंगे।",
   "Satın alma onay bekliyor. Onaylandığında paketiniz otomatik açılır.": "आपकी खरीद स्वीकृति की प्रतीक्षा में है। स्वीकृत होते ही आपका प्लान अपने-आप चालू हो जाएगा।",
   "Tekrar dene": "फिर से कोशिश करें",
+  "Çok fazla hatalı deneme yapıldı. 15 dakika sonra tekrar deneyin.": "बहुत अधिक असफल प्रयास। 15 मिनट बाद फिर कोशिश करें।",
 };
 
 export default dict;
