@@ -42,7 +42,6 @@ type Screen =
   | "reg-done"
   | "join-name"
   | "join-email"
-  | "join-phone"
   | "join-password"
   | "join-code"
   | "join-owner"
@@ -50,7 +49,7 @@ type Screen =
 
 /** Sihirbaz adımları (ilerleme çizgisi için) */
 const REGISTER: Screen[] = ["reg-business", "reg-name", "reg-email", "reg-phone", "reg-password", "reg-code"];
-const JOIN: Screen[] = ["join-name", "join-email", "join-phone", "join-password", "join-code", "join-owner"];
+const JOIN: Screen[] = ["join-name", "join-email", "join-password", "join-code", "join-owner"];
 
 /** Geri düğmesinin götürdüğü ekran; yoksa geri düğmesi gösterilmez */
 const BACK: Partial<Record<Screen, Screen>> = {
@@ -65,8 +64,7 @@ const BACK: Partial<Record<Screen, Screen>> = {
   "reg-password": "reg-phone",
   "join-name": "welcome",
   "join-email": "join-name",
-  "join-phone": "join-email",
-  "join-password": "join-phone",
+  "join-password": "join-email",
 };
 
 /** Kod tekrar gönderilmeden önce beklenen süre (sn) */
@@ -203,7 +201,7 @@ export default function AuthScreen({
       phone: phoneId || undefined,
     }).catch((e: unknown) => {
       // Telefon başka hesapta: telefon adımına dönülür (numara değiştirilebilir ya da atlanabilir)
-      if (e instanceof CloudError && e.code === "phone_taken") go(next === "join-code" ? "join-phone" : "reg-phone");
+      if (e instanceof CloudError && e.code === "phone_taken") go("reg-phone");
       throw e;
     });
     haptic("success");
@@ -319,10 +317,7 @@ export default function AuthScreen({
         if (name.trim()) go("join-email");
         return;
       case "join-email":
-        if (validEmail) go("join-phone");
-        return;
-      case "join-phone":
-        if (phone.trim() === "" || phoneId) go("join-password");
+        if (validEmail) go("join-password");
         return;
       case "join-password":
         if (!strongEnough) return;
@@ -386,17 +381,17 @@ export default function AuthScreen({
           <img className="ob-logo" src="/logo.svg" alt="" />
           <h1 className="ob-title">Hesabım Muhasebe</h1>
           <p className="ob-tagline">{t("Cari hesap, kasa ve ekibiniz tek uygulamada")}</p>
-        </div>
-        <div className="ob-actions">
-          <button type="button" className="ob-btn is-primary" onClick={() => go("login")}>
-            {t("Giriş yap")}
-          </button>
-          <button type="button" className="ob-btn is-light" onClick={() => go("reg-business")}>
-            {t("Üye ol")}
-          </button>
-          <button type="button" className="ob-btn is-outline" onClick={() => go("join-name")}>
-            {t("Ekibe katıl")}
-          </button>
+          <div className="ob-actions">
+            <button type="button" className="ob-btn is-primary" onClick={() => go("login")}>
+              {t("Giriş yap")}
+            </button>
+            <button type="button" className="ob-btn is-light" onClick={() => go("reg-business")}>
+              {t("Üye ol")}
+            </button>
+            <button type="button" className="ob-btn is-outline" onClick={() => go("join-name")}>
+              {t("Ekibe katıl")}
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -599,7 +594,6 @@ export default function AuthScreen({
       ready = validEmail;
       break;
     case "reg-phone":
-    case "join-phone":
       title = t("Telefon numaranız");
       lead = t("Girişte bu numara ve şifrenizle de giriş yapabilirsiniz. SMS gönderilmez.");
       body = phoneField;
