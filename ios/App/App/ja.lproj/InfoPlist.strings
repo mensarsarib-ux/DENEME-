@@ -1,2 +1,3 @@
 /* Face ID izin penceresinde görünen açıklama */
 "NSFaceIDUsageDescription" = "Hesabım はアプリのロック解除に Face ID を使用します。";
+"NSContactsUsageDescription" = "Hesabım は選択した連絡先を使って顧客・仕入先・招待の情報を入力します。選択した連絡先だけが使われます。";

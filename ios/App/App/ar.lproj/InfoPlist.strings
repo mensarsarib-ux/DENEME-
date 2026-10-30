@@ -1,2 +1,3 @@
 /* Face ID izin penceresinde görünen açıklama */
 "NSFaceIDUsageDescription" = "يستخدم Hesabım بصمة الوجه Face ID لفتح قفل التطبيق.";
+"NSContactsUsageDescription" = "يستخدم Hesabım جهة الاتصال التي تختارها لتعبئة بيانات العميل أو المورّد أو الدعوة. تُستخدم جهة الاتصال المختارة فقط.";

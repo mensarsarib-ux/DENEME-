@@ -3,6 +3,9 @@ import type { Customer, PartyKind } from "../data/mock";
 import { t } from "../lib/i18n";
 import { Svg } from "./Icon";
 import PhoneField from "./PhoneField";
+import { haptic } from "../lib/haptics";
+import { normalizePhone } from "../lib/cloud";
+import { contactPickerAvailable, pickContact } from "../lib/contacts";
 
 interface FormText {
   title: string;
@@ -108,6 +111,17 @@ export default function NewCustomerPage({
     });
   }
 
+  /** Rehberden seçilen kişinin adı, telefonu ve e-postası forma yazılır (boş alanlar değişmez) */
+  async function fromContacts() {
+    haptic("light");
+    const picked = await pickContact();
+    if (!picked) return;
+    if (picked.name) setName(picked.name);
+    if (picked.phone) setPhone(normalizePhone(picked.phone) ?? picked.phone.replace(/[^\d+]/g, ""));
+    if (picked.email) setEmail(picked.email);
+    haptic("success");
+  }
+
   return (
     <div className="cust-page">
       <header className="cust-header">
@@ -136,6 +150,12 @@ export default function NewCustomerPage({
       </header>
 
       <form id="party-form" className="form" onSubmit={submit} noValidate>
+        {contactPickerAvailable() && (
+          <button type="button" className="action-btn is-center contact-pick" onClick={() => void fromContacts()}>
+            <Svg d="M9 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM3 20a6 6 0 0 1 12 0M17 8v6M14 11h6" />
+            {t("Rehberden seç")}
+          </button>
+        )}
         <div className="field">
           <label htmlFor="customer-name">{t("Firma adı *")}</label>
           <input

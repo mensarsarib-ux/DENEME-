@@ -729,6 +729,8 @@ const dict: Record<string, string> = {
   "Açılışta Ekibe katıl'a dokunsun ve yetkili olarak şunu yazsın: {m}": "На першому екрані натиснути «Приєднатися до команди» і вказати власника: {m}",
   "Ekip üyeleri yedek dosyası yükleyemez. Yedeği işletme yetkilisi yükleyebilir.": "Учасники команди не можуть завантажувати резервну копію. Це може зробити власник.",
   "KVKK Aydınlatma Metni": "Повідомлення KVKK (Туреччина)",
+  "Rehberden seç": "Вибрати з контактів",
+  "Rehberden davet et": "Запросити з контактів",
 };
 
 export default dict;

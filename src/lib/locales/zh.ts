@@ -729,6 +729,8 @@ const dict: Record<string, string> = {
   "Açılışta Ekibe katıl'a dokunsun ve yetkili olarak şunu yazsın: {m}": "在首页点按“加入团队”，并将以下内容填写为负责人：{m}",
   "Ekip üyeleri yedek dosyası yükleyemez. Yedeği işletme yetkilisi yükleyebilir.": "团队成员无法载入备份文件，可由企业负责人载入。",
   "KVKK Aydınlatma Metni": "KVKK 告知（土耳其）",
+  "Rehberden seç": "从通讯录选择",
+  "Rehberden davet et": "从通讯录邀请",
 };
 
 export default dict;

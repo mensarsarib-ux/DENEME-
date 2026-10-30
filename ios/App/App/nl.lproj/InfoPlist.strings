@@ -1,2 +1,3 @@
 /* Face ID izin penceresinde görünen açıklama */
 "NSFaceIDUsageDescription" = "Hesabım gebruikt Face ID om de app te ontgrendelen.";
+"NSContactsUsageDescription" = "Hesabım gebruikt het gekozen contact om klant-, leverancier- of uitnodigingsgegevens in te vullen. Alleen dat contact wordt gebruikt.";

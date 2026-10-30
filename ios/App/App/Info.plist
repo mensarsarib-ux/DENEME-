@@ -42,6 +42,8 @@
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<key>NSContactsUsageDescription</key>
+	<string>Hesabım lets you pick a contact to fill in customer, supplier or invite details. Only the contact you choose is used.</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Hesabım uses Face ID to unlock the app.</string>
 	<key>LSRequiresIPhoneOS</key>

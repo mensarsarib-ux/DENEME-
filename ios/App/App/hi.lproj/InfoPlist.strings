@@ -1,2 +1,3 @@
 /* Face ID izin penceresinde görünen açıklama */
 "NSFaceIDUsageDescription" = "Hesabım ऐप अनलॉक करने के लिए Face ID का उपयोग करता है।";
+"NSContactsUsageDescription" = "Hesabım ग्राहक, आपूर्तिकर्ता या आमंत्रण की जानकारी भरने के लिए आपका चुना हुआ संपर्क उपयोग करता है। केवल वही संपर्क उपयोग होता है।";

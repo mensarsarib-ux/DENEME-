@@ -1,2 +1,3 @@
 /* Face ID izin penceresinde görünen açıklama */
 "NSFaceIDUsageDescription" = "Hesabım використовує Face ID для розблокування застосунку.";
+"NSContactsUsageDescription" = "Hesabım використовує вибраний контакт, щоб заповнити дані клієнта, постачальника або запрошення. Використовується лише цей контакт.";

@@ -1,2 +1,3 @@
 /* Face ID izin penceresinde görünen açıklama */
 "NSFaceIDUsageDescription" = "Hesabım, uygulama kilidini açmak için Face ID kullanır.";
+"NSContactsUsageDescription" = "Hesabım, müşteri, tedarikçi ya da davet bilgilerini doldurmak için seçtiğiniz kişiyi kullanır. Yalnızca seçtiğiniz kişi kullanılır.";

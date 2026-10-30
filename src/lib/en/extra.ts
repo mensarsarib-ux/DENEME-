@@ -480,4 +480,6 @@ export const extra: Record<string, string> = {
   "Açılışta Ekibe katıl'a dokunsun ve yetkili olarak şunu yazsın: {m}": "On the first screen they tap Join a team and enter this as the owner: {m}",
   "Ekip üyeleri yedek dosyası yükleyemez. Yedeği işletme yetkilisi yükleyebilir.": "Team members can't load a backup file. The business owner can load it.",
   "KVKK Aydınlatma Metni": "KVKK privacy notice (Turkey)",
+  "Rehberden seç": "Choose from contacts",
+  "Rehberden davet et": "Invite from contacts",
 };

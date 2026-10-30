@@ -1,2 +1,3 @@
 /* Face ID izin penceresinde görünen açıklama */
 "NSFaceIDUsageDescription" = "Hesabım menggunakan Face ID untuk membuka kunci aplikasi.";
+"NSContactsUsageDescription" = "Hesabım memakai kontak yang Anda pilih untuk mengisi data pelanggan, pemasok, atau undangan. Hanya kontak itu yang dipakai.";

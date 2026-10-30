@@ -5,6 +5,7 @@ import { t } from "../lib/i18n";
 import { haptic } from "../lib/haptics";
 import { SUPPORT_ICON } from "../lib/menu";
 import { canUseTeam } from "../lib/plan";
+import { contactPickerAvailable, pickContact } from "../lib/contacts";
 import PageHeader from "./PageHeader";
 
 /** Davet mesajındaki bağlantı */
@@ -42,6 +43,17 @@ export default function TeamPage({
 
   // Ekip arkadaşı açılışta "Ekibe katıl"ı seçip yetkili olarak bu e-postayı ya da telefonu yazar
   const inviteText = t("Hesabım Muhasebe'de işletmeme katıl: uygulamayı indir, açılışta Ekibe katıl'a dokun ve yetkili olarak şunu yaz: {m} — {url}", { m: session.email, url: SITE_URL });
+  /** Rehberden seçilen kişiye davet: telefonu varsa SMS, yoksa e-posta taslağı açılır */
+  async function inviteFromContacts() {
+    haptic("light");
+    const picked = await pickContact();
+    if (!picked) return;
+    const body = encodeURIComponent(inviteText);
+    if (picked.phone) window.location.href = `sms:${picked.phone.replace(/[^\d+]/g, "")}&body=${body}`;
+    else if (picked.email) window.location.href = `mailto:${picked.email}?subject=${encodeURIComponent(t("Ekip davetiyesi"))}&body=${body}`;
+    else void shareInvite();
+  }
+
   async function shareInvite() {
     haptic("light");
     try {
@@ -89,7 +101,10 @@ export default function TeamPage({
               </li>
               <li>{t("İstek Bildirimler'e gelir; onayladığınızda işletmenizi birlikte kullanırsınız.")}</li>
             </ol>
-            <button type="button" className="primary-btn" onClick={() => void shareInvite()}>{t("Davet mesajını paylaş")}</button>
+            {contactPickerAvailable() && (
+              <button type="button" className="primary-btn" onClick={() => void inviteFromContacts()}>{t("Rehberden davet et")}</button>
+            )}
+            <button type="button" className={contactPickerAvailable() ? "action-btn is-center" : "primary-btn"} onClick={() => void shareInvite()}>{t("Davet mesajını paylaş")}</button>
             {copied && <p className="form-success" role="status">{t("Davet mesajı kopyalandı.")}</p>}
           </section>
         )}

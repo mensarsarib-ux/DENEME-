@@ -4277,3 +4277,12 @@ a.action-btn:visited {
 .ob-sheet .ob-forgot {
   align-self: flex-end;
 }
+
+/* Yeni kişi formu: rehberden seç düğmesi */
+.contact-pick {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.contact-pick svg { width: 20px; height: 20px; }
