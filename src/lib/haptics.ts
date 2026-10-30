@@ -114,8 +114,12 @@ function nativeHaptic(kind: Haptic): void {
   }
 }
 
+/** Son titreşim zamanı: aynı dokunuşta ikinci kez titreşmesin diye */
+let lastHapticAt = 0;
+
 export function haptic(kind: Haptic = "light"): void {
   if (!hapticsEnabled) return;
+  lastHapticAt = Date.now();
   playSound(kind);
   if (Capacitor.isNativePlatform()) {
     nativeHaptic(kind);
@@ -130,4 +134,21 @@ export function haptic(kind: Haptic = "light"): void {
     /* tarayıcı titreşimi engelliyorsa sessizce geç */
   }
   iosTick();
+}
+
+/**
+ * Genel dokunma titreşimi: düğme, seçenek, anahtar ve bağlantılara dokununca hafif titreşim verilir.
+ * Düğme kendi titreşimini az önce verdiyse (ör. kaydetme, uyarı) ikinci kez titreşmez. Böylece yeni
+ * eklenen düğmeler de ayrıca kod yazmadan titreşir. data-no-haptic taşıyan öğeler hariç tutulur.
+ */
+const TAPPABLE = 'button, a[href], [role="button"], [role="radio"], [role="switch"], [role="tab"], input[type="checkbox"], input[type="radio"], select, summary';
+if (typeof document !== "undefined") {
+  // React olayları kök öğede işlenir; belge düzeyindeki bu dinleyici onlardan sonra çalışır
+  document.addEventListener("click", (event) => {
+    const target = (event.target as Element | null)?.closest?.(TAPPABLE);
+    if (!target || target.closest("[data-no-haptic]")) return;
+    if ((target as HTMLButtonElement).disabled) return;
+    if (Date.now() - lastHapticAt < 350) return;
+    haptic("light");
+  });
 }
