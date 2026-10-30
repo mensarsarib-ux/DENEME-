@@ -19,12 +19,7 @@ workflows:
         bundle_identifier: com.mensar.hesabim
       xcode: latest
       node: 20
-    triggering:
-      events:
-        - push
-      branch_patterns:
-        - pattern: "claude/hesabim-splash-dashboard"
-          include: true
+    # Derleme yalnızca Codemagic'te elle başlatılır (dala gönderim otomatik derleme başlatmaz)
     scripts:
       - name: Paketleri kur
         script: npm ci
