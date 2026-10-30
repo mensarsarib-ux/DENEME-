@@ -95,9 +95,9 @@ function toSession(body: AuthBody, fallbackEmail: string): Session | null {
 /** Giriş kimliği e-posta mı (değilse telefon numarasıdır) */
 export const isEmailLogin = (id: string) => id.includes("@");
 
-/** Giriş kimliğini Supabase'in beklediği alana koyar: e-posta ya da +90… biçiminde telefon */
-function loginBody(id: string): { email: string } | { phone: string } {
-  return isEmailLogin(id) ? { email: id.trim() } : { phone: id.replace(/[^\d+]/g, "") };
+/** Giriş kimliğini Supabase'in beklediği alana koyar: e-posta (telefonla girişte sunucu çevirir) */
+function loginBody(id: string): { email: string } {
+  return { email: id.trim() };
 }
 
 function authError(body: AuthBody): CloudError {
@@ -121,36 +121,45 @@ export function normalizePhone(input: string): string | null {
 }
 
 /**
- * Yeni hesap: e-posta ya da telefon ve şifre; ad gibi bilgiler hesabın bilgilerine yazılır.
- * Doğrulama kodu e-postaya ya da SMS ile gönderilir; oturum dönmezse "pending".
+ * Yeni hesap: e-posta ve şifre; ad ve telefon hesabın bilgilerine yazılır (telefon, telefonla girişte kullanılır).
+ * Doğrulama kodu e-postaya gider; oturum dönmezse "pending".
  */
 export async function signUp(
-  id: string,
+  email: string,
   password: string,
   info: { name?: string; phone?: string } = {},
 ): Promise<Session | "pending"> {
   const data = { ...info, lang: getLanguage() };
   const res = await call("/auth/v1/signup", {
     method: "POST",
-    body: JSON.stringify({ ...loginBody(id), password, data }),
+    body: JSON.stringify({ email: email.trim(), password, data }),
   });
   const body = (await res.json().catch(() => ({}))) as AuthBody;
   if (!res.ok) throw authError(body);
-  const session = toSession(body, id);
+  const session = toSession(body, email.trim());
   if (!session) return "pending";
   saveSession(session);
   return session;
 }
 
-/** Giriş: e-posta ya da telefon ve şifreyle */
+/**
+ * Giriş: e-posta ile doğrudan; telefon ile sunucu (phone-login) numarayı hesabın e-postasına çevirip şifreyle girer.
+ * Hangi bilginin yanlış olduğu söylenmez.
+ */
 export async function signIn(id: string, password: string): Promise<Session> {
-  const res = await call("/auth/v1/token?grant_type=password", {
-    method: "POST",
-    body: JSON.stringify({ ...loginBody(id), password }),
-  });
+  const byPhone = !isEmailLogin(id);
+  const res = byPhone
+    ? await call("/functions/v1/phone-login", {
+        method: "POST",
+        body: JSON.stringify({ phone: normalizePhone(id) ?? id, password }),
+      })
+    : await call("/auth/v1/token?grant_type=password", {
+        method: "POST",
+        body: JSON.stringify({ email: id.trim(), password }),
+      });
   const body = (await res.json().catch(() => ({}))) as AuthBody;
-  if (!res.ok) throw authError(body);
-  const session = toSession(body, id);
+  if (!res.ok) throw byPhone && res.status === 401 ? new CloudError("invalid_credentials", "invalid") : authError(body);
+  const session = toSession(body, id.trim());
   if (!session) throw new CloudError("unknown", "no session");
   saveSession(session);
   return session;
@@ -326,16 +335,6 @@ export async function syncAccountLanguage(session: Session, lang: string): Promi
   }
 }
 
-/**
- * Kayıtta şifre telefon doğrulandıktan sonra belirlenir. Hesap önce kimsenin bilmediği rastgele bir şifreyle açılır;
- * kod doğrulanınca kişinin seçtiği şifre yazılır (yarıda bırakılırsa "Şifremi unuttum" ile girilebilir).
- */
-export function temporaryPassword(): string {
-  const bytes = new Uint8Array(24);
-  crypto.getRandomValues(bytes);
-  return Array.from(bytes, (b) => b.toString(36).padStart(2, "0")).join("") + "A!";
-}
-
 /** Hesaba yeni e-posta ekler; adrese doğrulama kodu gider (e-posta değişikliği şablonu) */
 export async function startAddEmail(session: Session, email: string): Promise<true | "expired"> {
   const s = await fresh(session);
@@ -346,24 +345,14 @@ export async function startAddEmail(session: Session, email: string): Promise<tr
   return true;
 }
 
-/** Hesaba yeni telefon ekler; numaraya SMS ile doğrulama kodu gider */
-export async function startAddPhone(session: Session, phone: string): Promise<true | "expired"> {
-  const s = await fresh(session);
-  if (!s) return "expired";
-  const res = await call("/auth/v1/user", { method: "PUT", token: s.accessToken, body: JSON.stringify(loginBody(phone)) });
-  if (res.status === 401) return "expired";
-  if (!res.ok) throw authError((await res.json().catch(() => ({}))) as AuthBody);
-  return true;
-}
-
-/** Eklenen e-postanın ya da telefonun kodunu doğrular; doğrulanınca o yolla da giriş yapılabilir */
-export async function confirmAdded(session: Session, id: string, code: string): Promise<boolean | "expired"> {
+/** E-posta değişikliğinde yeni adrese gelen kodu doğrular */
+export async function confirmEmailChange(session: Session, email: string, code: string): Promise<boolean | "expired"> {
   const s = await fresh(session);
   if (!s) return "expired";
   const res = await call("/auth/v1/verify", {
     method: "POST",
     token: s.accessToken,
-    body: JSON.stringify({ type: isEmailLogin(id) ? "email_change" : "phone_change", ...loginBody(id), token: code.trim() }),
+    body: JSON.stringify({ type: "email_change", email: email.trim(), token: code.trim() }),
   });
   return res.ok;
 }
@@ -649,51 +638,26 @@ export async function ensureOwnerBusiness(session: Session, name: string): Promi
   if (!res.ok) throw new CloudError("unknown", String(res.status));
 }
 
-/**
- * Kayıt sonrası e-postaya ya da SMS ile gelen kodu doğrular; başarılıysa oturum döner.
- * save false ise oturum cihaza henüz yazılmaz (kayıt sihirbazı şifre belirlenince yazar).
- */
-export async function verifySignupCode(id: string, code: string, save = true): Promise<Session | "invalid"> {
+/** Kayıt sonrası e-postaya gelen kodu doğrular; başarılıysa oturum döner */
+export async function verifySignupCode(email: string, code: string, save = true): Promise<Session | "invalid"> {
   const res = await call("/auth/v1/verify", {
     method: "POST",
-    body: JSON.stringify({ type: isEmailLogin(id) ? "signup" : "sms", ...loginBody(id), token: code.trim() }),
+    body: JSON.stringify({ type: "signup", email: email.trim(), token: code.trim() }),
   });
   const body = (await res.json().catch(() => ({}))) as AuthBody;
   if (!res.ok) return "invalid";
-  const session = toSession(body, id);
+  const session = toSession(body, email.trim());
   if (!session) return "invalid";
   if (save) saveSession(session);
   return session;
 }
 
-/** Doğrulama kodunu yeniden gönderir (e-postaya ya da SMS ile) */
-export async function resendSignupCode(id: string): Promise<void> {
+/** Doğrulama kodunu e-postaya yeniden gönderir */
+export async function resendSignupCode(email: string): Promise<void> {
   await call("/auth/v1/resend", {
     method: "POST",
-    body: JSON.stringify({ type: isEmailLogin(id) ? "signup" : "sms", ...loginBody(id) }),
+    body: JSON.stringify({ type: "signup", email: email.trim() }),
   });
-}
-
-/** Telefonla açılmış hesapta şifremi unuttum: numaraya SMS ile tek kullanımlık kod gönderir (yeni hesap açmaz) */
-export async function sendResetSms(phone: string): Promise<void> {
-  const res = await call("/auth/v1/otp", {
-    method: "POST",
-    body: JSON.stringify({ ...loginBody(phone), create_user: false }),
-  });
-  if (!res.ok) throw authError((await res.json().catch(() => ({}))) as AuthBody);
-}
-
-/**
- * Şifre sıfırlama SMS kodunu doğrular; geçerliyse yeni şifreyi belirlemek için geçici erişim anahtarı döner.
- * Oturum cihazda saklanmaz: kişi yeni şifresiyle giriş yapar.
- */
-export async function verifyResetSms(phone: string, code: string): Promise<string | "invalid"> {
-  const res = await call("/auth/v1/verify", {
-    method: "POST",
-    body: JSON.stringify({ type: "sms", ...loginBody(phone), token: code.trim() }),
-  });
-  const body = (await res.json().catch(() => ({}))) as AuthBody;
-  return res.ok && body.access_token ? body.access_token : "invalid";
 }
 
 export interface Membership {

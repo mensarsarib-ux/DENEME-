@@ -709,6 +709,18 @@ const dict: Record<string, string> = {
   "İşletmenizin adı": "事業者名",
   "Şifre belirleyin": "パスワードを設定",
   "Şifrenizi nasıl yenilemek istersiniz?": "パスワードの再設定方法を選んでください",
+  "ATLA": "スキップ",
+  "Bilgiler veya şifre hatalı.": "情報またはパスワードが正しくありません。",
+  "Değiştir": "変更",
+  "E-posta adresiniz": "メールアドレス",
+  "E-posta ve şifrenizle giriş yaparsınız.": "メールアドレスとパスワードでサインインします。",
+  "E-postanız değiştirildi ve doğrulandı.": "メールアドレスが変更され、確認されました。",
+  "Girişte bu numara ve şifrenizle de giriş yapabilirsiniz. SMS gönderilmez.": "この番号とパスワードでもサインインできます。SMSは送信されません。",
+  "Hesabınızı bu adrese gelen kodla doğrulayacağız.": "このアドレスに送信されたコードでアカウントを確認します。",
+  "Telefon numaranız kaydedildi. Artık bu numara ve şifrenizle de giriş yapabilirsiniz.": "電話番号が保存されました。この番号とパスワードでもサインインできます。",
+  "Telefon numaranızla da giriş yapabilirsiniz. Bu adımı atlayabilirsiniz.": "電話番号でもサインインできます。この手順はスキップできます。",
+  "Yeni e-posta": "新しいメールアドレス",
+  "{b} açıldı. Telefon ve e-posta bilgilerinizi istediğiniz zaman Ayarlar → Hesabım bölümünden düzenleyebilirsiniz.": "{b}の準備ができました。電話番号とメールアドレスは 設定 → アカウント からいつでも変更できます。",
 };
 
 export default dict;

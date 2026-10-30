@@ -4,18 +4,14 @@ import { Keyboard } from "@capacitor/keyboard";
 import {
   CloudError,
   findBusinessByOwnerEmail,
-  isEmailLogin,
   normalizePhone,
   requestJoin,
   resendSignupCode,
   saveSession,
   sendResetEmail,
-  sendResetSms,
   setPassword,
   signIn,
   signUp,
-  temporaryPassword,
-  verifyResetSms,
   verifySignupCode,
   type Session,
 } from "../lib/cloud";
@@ -26,50 +22,48 @@ import PhoneField from "./PhoneField";
 
 /**
  * Açılış ve hesap ekranları. Açılışta logo, ardından Giriş yap / Üye ol / Ekibe katıl.
- * Üye ol ve Ekibe katıl her adımda tek soru soran sihirbazlardır; kayıt telefonla yapılır ve SMS koduyla doğrulanır.
- * E-posta sonradan Ayarlar → Hesabım'dan eklenir; giriş e-posta ya da telefonla yapılabilir.
+ * Üye ol ve Ekibe katıl her adımda tek soru soran sihirbazlardır. Doğrulama e-postayla yapılır;
+ * telefon isteğe bağlıdır ve SMS gerektirmez: girişte telefon numarası ve şifreyle de girilebilir.
  */
 type Screen =
   | "welcome"
   | "login"
   | "verify"
   | "forgot"
-  | "forgot-email"
-  | "forgot-phone"
-  | "reset-code"
   | "new-password"
   | "reg-business"
   | "reg-name"
+  | "reg-email"
   | "reg-phone"
-  | "reg-code"
   | "reg-password"
+  | "reg-code"
   | "reg-done"
   | "join-name"
+  | "join-email"
   | "join-phone"
-  | "join-code"
   | "join-password"
+  | "join-code"
   | "join-owner"
   | "join-sent";
 
 /** Sihirbaz adımları (ilerleme çizgisi için) */
-const REGISTER: Screen[] = ["reg-business", "reg-name", "reg-phone", "reg-code", "reg-password"];
-const JOIN: Screen[] = ["join-name", "join-phone", "join-code", "join-password", "join-owner"];
+const REGISTER: Screen[] = ["reg-business", "reg-name", "reg-email", "reg-phone", "reg-password", "reg-code"];
+const JOIN: Screen[] = ["join-name", "join-email", "join-phone", "join-password", "join-code", "join-owner"];
 
 /** Geri düğmesinin götürdüğü ekran; yoksa geri düğmesi gösterilmez */
 const BACK: Partial<Record<Screen, Screen>> = {
   login: "welcome",
   verify: "login",
   forgot: "login",
-  "forgot-email": "forgot",
-  "forgot-phone": "forgot",
-  "reset-code": "forgot-phone",
   "reg-business": "welcome",
   "reg-name": "reg-business",
-  "reg-phone": "reg-name",
-  "reg-code": "reg-phone",
+  "reg-email": "reg-name",
+  "reg-phone": "reg-email",
+  "reg-password": "reg-phone",
   "join-name": "welcome",
-  "join-phone": "join-name",
-  "join-code": "join-phone",
+  "join-email": "join-name",
+  "join-phone": "join-email",
+  "join-password": "join-phone",
 };
 
 /** Kod tekrar gönderilmeden önce beklenen süre (sn) */
@@ -99,7 +93,7 @@ export default function AuthScreen({
 }) {
   const [screen, setScreen] = useState<Screen>(recoveryToken ? "new-password" : "welcome");
   // Girişte e-posta mı telefon mu kullanılıyor
-  const [method, setMethod] = useState<"email" | "phone">("phone");
+  const [method, setMethod] = useState<"email" | "phone">("email");
   const [business, setBusiness] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -111,11 +105,10 @@ export default function AuthScreen({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
-  // Kodun gönderildiği e-posta ya da telefon
-  const [pendingId, setPendingId] = useState<string | null>(null);
-  // Kod doğrulandı, şifre henüz belirlenmedi (kayıt ve katılma sihirbazında)
+  // Kodun gönderildiği e-posta ve doğrulanmış oturum (şifre belirlenip cihaza yazılana kadar)
+  const [pendingEmail, setPendingEmail] = useState<string | null>(null);
   const [pendingSession, setPendingSession] = useState<Session | null>(null);
-  // Şifre sıfırlama: e-postadaki bağlantının ya da SMS kodunun verdiği geçici anahtar
+  // Şifre sıfırlama: e-postadaki bağlantının verdiği geçici anahtar
   const [resetToken, setResetToken] = useState<string | null>(recoveryToken ?? null);
   // Kod tekrar gönderilebilene kadar kalan süre
   const [resendIn, setResendIn] = useState(0);
@@ -144,12 +137,12 @@ export default function AuthScreen({
     return () => window.clearTimeout(timer);
   }, [resendIn]);
 
-  // Giriş kimliği: e-posta ya da +90… biçiminde telefon numarası
+  // Girişte kimlik: e-posta ya da telefon (+90… biçiminde)
   const phoneId = normalizePhone(phone) ?? "";
-  const loginId = method === "email" ? email.trim() : phoneId;
-  const validEmail = /^\S+@\S+\.\S+$/.test(email.trim());
-  const validLogin = method === "email" ? validEmail : phoneId !== "";
   const ownerId = owner.includes("@") ? owner.trim() : normalizePhone(owner) ?? "";
+  const validEmail = /^\S+@\S+\.\S+$/.test(email.trim());
+  const loginPhone = normalizePhone(email) ?? "";
+  const validLogin = method === "email" ? validEmail : loginPhone !== "";
   const validOwner = ownerId.includes("@") ? /^\S+@\S+\.\S+$/.test(ownerId) : ownerId !== "";
   const validCode = /^\d{6,8}$/.test(code);
   const strongEnough = password.length >= 6;
@@ -160,64 +153,55 @@ export default function AuthScreen({
     setInfo(null);
   }
 
-  function describe(e: unknown, byPhone: boolean): string {
+  function describe(e: unknown): string {
     const reason = e instanceof CloudError ? e.code : "unknown";
     switch (reason) {
-      case "invalid_credentials": return byPhone ? t("Telefon numarası veya şifre hatalı.") : t("E-posta veya şifre hatalı.");
-      case "email_taken": return byPhone ? t("Bu telefon numarasıyla zaten bir hesap var; giriş yapın.") : t("Bu e-posta ile zaten bir hesap var; giriş yapın.");
+      case "invalid_credentials": return t("Bilgiler veya şifre hatalı.");
+      case "email_taken": return t("Bu e-posta ile zaten bir hesap var; giriş yapın.");
       case "weak_password": return t("Şifre en az 6 karakter olmalı.");
-      case "email_not_confirmed": return byPhone ? t("Telefonunuz henüz doğrulanmadı. SMS ile gelen kodu girin.") : t("E-postanız henüz doğrulanmadı. E-postanıza gelen 6 haneli kodu girin.");
+      case "email_not_confirmed": return t("E-postanız henüz doğrulanmadı. E-postanıza gelen 6 haneli kodu girin.");
       case "network": return t("Sunucuya ulaşılamadı. İnternet bağlantınızı kontrol edin.");
       default: return t("Bir sorun oluştu; biraz sonra tekrar deneyin.");
     }
   }
 
-  /** Kod gönderildi bilgisi: e-postaya ya da SMS ile */
-  const sentInfo = (id: string) =>
-    isEmailLogin(id)
-      ? t("{m} adresine 6 haneli bir doğrulama kodu gönderdik.", { m: id })
-      : t("{m} numarasına SMS ile 6 haneli bir doğrulama kodu gönderdik.", { m: id });
-
   /** Bir işlemi meşgul göstergesi ve hata mesajıyla çalıştırır */
-  async function run(action: () => Promise<void>, byPhone = true) {
+  async function run(action: () => Promise<void>) {
     setBusy(true);
     setError(null);
     try {
       await action();
     } catch (e) {
       haptic("warning");
-      setError(describe(e, byPhone));
+      setError(describe(e));
     } finally {
       setBusy(false);
     }
   }
 
-  /** Kod ekranına geçer ve kodun gittiği yeri yazar */
-  function codeSent(id: string, next: Screen) {
-    setPendingId(id);
+  /** Doğrulama kodu ekranına geçer; kod e-postaya gönderildi */
+  function codeSent(address: string, next: Screen) {
+    setPendingEmail(address);
     setCode("");
     setResendIn(RESEND_WAIT);
     go(next);
-    setInfo(sentInfo(id));
+    setInfo(t("{m} adresine 6 haneli bir doğrulama kodu gönderdik.", { m: address }));
   }
 
-  /** Kayıt ve katılmada telefona SMS kodu gönderir (hesap rastgele bir şifreyle açılır, şifre sonra belirlenir) */
-  async function sendSignupCode(next: Screen, afterVerify: Screen) {
-    const result = await signUp(phoneId, temporaryPassword(), { name: name.trim() });
+  /** Kayıt ya da katılma: hesap e-postayla açılır ve kod gönderilir */
+  async function createAccount(next: Screen, afterCode: Screen) {
+    const result = await signUp(email.trim(), password, {
+      name: name.trim(),
+      phone: phoneId || undefined,
+    });
     haptic("success");
     if (result === "pending") {
-      codeSent(phoneId, next);
+      codeSent(email.trim(), next);
     } else {
       setPendingSession(result);
       setPassword1("");
-      go(afterVerify);
+      go(afterCode);
     }
-  }
-
-  /** Kod doğrulanamadıysa uyarı gösterir */
-  function wrongCode() {
-    haptic("warning");
-    setError(t("Kod hatalı ya da süresi dolmuş. Yeni kod isteyin."));
   }
 
   async function submit(event: FormEvent) {
@@ -227,50 +211,38 @@ export default function AuthScreen({
       case "login":
         if (!validLogin || !password) return;
         return run(async () => {
+          const login = method === "email" ? email.trim() : loginPhone;
           try {
-            onSession(await signIn(loginId, password));
+            onSession(await signIn(login, password));
           } catch (e) {
             // Kayıt olup kodu girmeden çıkan kişi: yeni kod gönderilir ve kod ekranı açılır
-            if (e instanceof CloudError && e.code === "email_not_confirmed") {
-              await resendSignupCode(loginId).catch(() => undefined);
+            if (e instanceof CloudError && e.code === "email_not_confirmed" && method === "email") {
+              await resendSignupCode(login).catch(() => undefined);
               haptic("warning");
-              codeSent(loginId, "verify");
+              codeSent(login, "verify");
               return;
             }
             throw e;
           }
-        }, method === "phone");
+        });
       case "verify":
         if (!validCode) return;
         return run(async () => {
-          const session = await verifySignupCode(pendingId ?? loginId, code);
-          if (session === "invalid") return wrongCode();
+          const session = await verifySignupCode(pendingEmail ?? email.trim(), code);
+          if (session === "invalid") {
+            haptic("warning");
+            setError(t("Kod hatalı ya da süresi dolmuş. Yeni kod isteyin."));
+            return;
+          }
           haptic("success");
-          onSession(session, { isNew: true, businessName: "" });
-        }, method === "phone");
-      case "forgot-email":
+          onSession(session);
+        });
+      case "forgot":
         if (!validEmail) return;
         return run(async () => {
           await sendResetEmail(email.trim());
           haptic("success");
           setInfo(t("Şifre yenileme bağlantısı e-postanıza gönderildi."));
-        }, false);
-      case "forgot-phone":
-        if (!phoneId) return;
-        return run(async () => {
-          await sendResetSms(phoneId);
-          haptic("success");
-          codeSent(phoneId, "reset-code");
-        });
-      case "reset-code":
-        if (!validCode) return;
-        return run(async () => {
-          const token = await verifyResetSms(pendingId ?? phoneId, code);
-          if (token === "invalid") return wrongCode();
-          haptic("success");
-          setResetToken(token);
-          setPassword1("");
-          go("new-password");
         });
       case "new-password":
         if (!strongEnough) return;
@@ -287,37 +259,60 @@ export default function AuthScreen({
         if (business.trim()) go("reg-name");
         return;
       case "reg-name":
-        if (name.trim()) go("reg-phone");
+        if (name.trim()) go("reg-email");
         return;
-      case "join-name":
-        if (name.trim()) go("join-phone");
+      case "reg-email":
+        if (validEmail) go("reg-phone");
         return;
       case "reg-phone":
-        if (!phoneId) return;
-        return run(() => sendSignupCode("reg-code", "reg-password"));
-      case "join-phone":
-        if (!phoneId) return;
-        return run(() => sendSignupCode("join-code", "join-password"));
+        if (phone.trim() === "" || phoneId) go("reg-password");
+        return;
+      case "reg-password":
+        if (!strongEnough) return;
+        return run(() => createAccount("reg-code", "reg-done"));
       case "reg-code":
+        if (!validCode) return;
+        return run(async () => {
+          const session = await verifySignupCode(pendingEmail ?? email.trim(), code, false);
+          if (session === "invalid") {
+            haptic("warning");
+            setError(t("Kod hatalı ya da süresi dolmuş. Yeni kod isteyin."));
+            return;
+          }
+          haptic("success");
+          setPendingSession(session);
+          go("reg-done");
+        });
+      case "reg-done":
+        if (pendingSession) {
+          saveSession(pendingSession);
+          onSession(pendingSession, { isNew: true, businessName: business.trim() });
+        }
+        return;
+      case "join-name":
+        if (name.trim()) go("join-email");
+        return;
+      case "join-email":
+        if (validEmail) go("join-phone");
+        return;
+      case "join-phone":
+        if (phone.trim() === "" || phoneId) go("join-password");
+        return;
+      case "join-password":
+        if (!strongEnough) return;
+        return run(() => createAccount("join-code", "join-owner"));
       case "join-code":
         if (!validCode) return;
         return run(async () => {
-          // Oturum, şifre belirlenince cihaza yazılır
-          const session = await verifySignupCode(pendingId ?? phoneId, code, false);
-          if (session === "invalid") return wrongCode();
+          const session = await verifySignupCode(pendingEmail ?? email.trim(), code, false);
+          if (session === "invalid") {
+            haptic("warning");
+            setError(t("Kod hatalı ya da süresi dolmuş. Yeni kod isteyin."));
+            return;
+          }
           haptic("success");
           setPendingSession(session);
-          setPassword1("");
-          go(screen === "reg-code" ? "reg-password" : "join-password");
-        });
-      case "reg-password":
-      case "join-password":
-        if (!strongEnough || !pendingSession) return;
-        return run(async () => {
-          await setPassword(pendingSession.accessToken, password);
-          saveSession(pendingSession);
-          haptic("success");
-          go(screen === "reg-password" ? "reg-done" : "join-owner");
+          go("join-owner");
         });
       case "join-owner":
         if (!validOwner || !pendingSession) return;
@@ -334,21 +329,20 @@ export default function AuthScreen({
           setBusiness(found[0].name);
           go("join-sent");
         });
-      case "reg-done":
-        if (pendingSession) onSession(pendingSession, { isNew: true, businessName: business.trim() });
-        return;
       case "join-sent":
-        if (pendingSession) onSession(pendingSession);
+        if (pendingSession) {
+          saveSession(pendingSession);
+          onSession(pendingSession);
+        }
         return;
     }
   }
 
-  /** Kodu tekrar gönderir: şifre sıfırlamada giriş kodu, diğerlerinde doğrulama kodu */
+  /** Kodu e-postaya yeniden gönderir */
   async function resend() {
-    if (!pendingId || resendIn > 0) return;
+    if (!pendingEmail || resendIn > 0) return;
     try {
-      if (screen === "reset-code") await sendResetSms(pendingId);
-      else await resendSignupCode(pendingId);
+      await resendSignupCode(pendingEmail);
       setResendIn(RESEND_WAIT);
       setError(null);
       setInfo(t("Yeni doğrulama kodu gönderildi."));
@@ -402,11 +396,11 @@ export default function AuthScreen({
     </div>
   );
 
-  const emailField = (
+  const emailField = (id: string) => (
     <div className="field">
-      <label htmlFor="auth-email">{t("E-posta")}</label>
+      <label htmlFor={id}>{t("E-posta")}</label>
       <input
-        id="auth-email"
+        id={id}
         type="email"
         inputMode="email"
         autoComplete="email"
@@ -420,8 +414,9 @@ export default function AuthScreen({
 
   const phoneField = (
     <div className="field">
-      <label htmlFor="auth-phone">{t("Telefon")}</label>
+      <label htmlFor="auth-phone">{t("Telefon (isteğe bağlı)")}</label>
       <PhoneField id="auth-phone" value={phone} onChange={setPhone} />
+      <p className="field-hint">{t("Telefon numaranızla da giriş yapabilirsiniz. Bu adımı atlayabilirsiniz.")}</p>
     </div>
   );
 
@@ -499,7 +494,14 @@ export default function AuthScreen({
               </button>
             ))}
           </div>
-          {method === "email" ? emailField : phoneField}
+          {method === "email" ? (
+            emailField("auth-email-login")
+          ) : (
+            <div className="field">
+              <label htmlFor="auth-email-login">{t("Telefon")}</label>
+              <PhoneField id="auth-email-login" value={email} onChange={setEmail} />
+            </div>
+          )}
           {passwordField(t("Şifre"), "current-password")}
           <button type="button" className="help-link ob-forgot" onClick={() => go("forgot")}>
             {t("Şifremi unuttum")}
@@ -510,55 +512,17 @@ export default function AuthScreen({
       ready = validLogin && password !== "";
       break;
     case "verify":
-      title = method === "phone" ? t("Telefonunuzu doğrulayın") : t("E-postanızı doğrulayın");
+      title = t("E-postanızı doğrulayın");
       body = codeField;
       action = t("DOĞRULA");
       ready = validCode;
       break;
     case "forgot":
       title = t("Şifremi unuttum");
-      lead = t("Şifrenizi nasıl yenilemek istersiniz?");
-      body = (
-        <div className="ob-choices">
-          <button type="button" className="ob-choice" onClick={() => go("forgot-email")}>
-            <span className="ob-choice-icon" aria-hidden="true">✉️</span>
-            <span>
-              <strong>{t("E-posta ile")}</strong>
-              <small>{t("Adresinize yenileme bağlantısı gönderilir")}</small>
-            </span>
-          </button>
-          <button type="button" className="ob-choice" onClick={() => go("forgot-phone")}>
-            <span className="ob-choice-icon" aria-hidden="true">💬</span>
-            <span>
-              <strong>{t("Telefon ile")}</strong>
-              <small>{t("Numaranıza SMS ile kod gönderilir")}</small>
-            </span>
-          </button>
-        </div>
-      );
-      action = null;
-      break;
-    case "forgot-email":
-      title = t("Şifremi unuttum");
       lead = t("Hesabınızın e-posta adresini yazın; yenileme bağlantısı göndereceğiz.");
-      body = emailField;
+      body = emailField("auth-email-reset");
       action = t("BAĞLANTI GÖNDER");
       ready = validEmail;
-      break;
-    case "forgot-phone":
-      title = t("Şifremi unuttum");
-      lead = t("Hesabınızın telefon numarasını yazın; SMS ile kod göndereceğiz.");
-      body = phoneField;
-      action = t("KOD GÖNDER");
-      ready = phoneId !== "";
-      break;
-    case "reset-code":
-    case "reg-code":
-    case "join-code":
-      title = t("SMS kodunu girin");
-      body = codeField;
-      action = t("DOĞRULA");
-      ready = validCode;
       break;
     case "new-password":
       title = t("Yeni şifrenizi belirleyin");
@@ -594,18 +558,25 @@ export default function AuthScreen({
       );
       ready = name.trim() !== "";
       break;
+    case "reg-email":
+    case "join-email":
+      title = t("E-posta adresiniz");
+      lead = t("Hesabınızı bu adrese gelen kodla doğrulayacağız.");
+      body = emailField(screen === "reg-email" ? "auth-email" : "auth-email-join");
+      ready = validEmail;
+      break;
     case "reg-phone":
     case "join-phone":
       title = t("Telefon numaranız");
-      lead = t("Numaranızı doğrulamak için SMS ile kod göndereceğiz.");
+      lead = t("Girişte bu numara ve şifrenizle de giriş yapabilirsiniz. SMS gönderilmez.");
       body = phoneField;
-      action = t("KOD GÖNDER");
-      ready = phoneId !== "";
+      action = phone.trim() === "" ? t("ATLA") : t("DEVAM");
+      ready = true;
       break;
     case "reg-password":
     case "join-password":
       title = t("Şifre belirleyin");
-      lead = t("Girişte telefon numaranız ve bu şifreyle girersiniz.");
+      lead = t("E-posta ve şifrenizle giriş yaparsınız.");
       body = (
         <>
           {passwordField(t("Şifre"), "new-password")}
@@ -615,6 +586,13 @@ export default function AuthScreen({
       );
       action = screen === "reg-password" ? t("KAYDI TAMAMLA") : t("DEVAM");
       ready = strongEnough;
+      break;
+    case "reg-code":
+    case "join-code":
+      title = t("E-postanızı doğrulayın");
+      body = codeField;
+      action = t("DOĞRULA");
+      ready = validCode;
       break;
     case "join-owner":
       title = t("Kimin ekibine katılıyorsunuz?");
@@ -641,7 +619,7 @@ export default function AuthScreen({
       break;
     case "reg-done":
       title = t("Hesabınız hazır");
-      lead = t("{b} açıldı. E-posta adresinizi istediğiniz zaman Ayarlar → Hesabım bölümünden ekleyebilirsiniz.", { b: business.trim() });
+      lead = t("{b} açıldı. Telefon ve e-posta bilgilerinizi istediğiniz zaman Ayarlar → Hesabım bölümünden düzenleyebilirsiniz.", { b: business.trim() });
       body = <div className="ob-check" aria-hidden="true">✓</div>;
       action = t("BAŞLA");
       break;

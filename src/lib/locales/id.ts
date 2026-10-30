@@ -709,6 +709,18 @@ const dict: Record<string, string> = {
   "İşletmenizin adı": "Nama bisnis Anda",
   "Şifre belirleyin": "Buat kata sandi",
   "Şifrenizi nasıl yenilemek istersiniz?": "Bagaimana Anda ingin mengatur ulang kata sandi?",
+  "ATLA": "LEWATI",
+  "Bilgiler veya şifre hatalı.": "Data atau kata sandi salah.",
+  "Değiştir": "Ubah",
+  "E-posta adresiniz": "Alamat email Anda",
+  "E-posta ve şifrenizle giriş yaparsınız.": "Anda masuk dengan email dan kata sandi.",
+  "E-postanız değiştirildi ve doğrulandı.": "Email Anda sudah diubah dan diverifikasi.",
+  "Girişte bu numara ve şifrenizle de giriş yapabilirsiniz. SMS gönderilmez.": "Anda juga bisa masuk dengan nomor ini dan kata sandi. Tidak ada SMS yang dikirim.",
+  "Hesabınızı bu adrese gelen kodla doğrulayacağız.": "Kami akan memverifikasi akun dengan kode yang dikirim ke alamat ini.",
+  "Telefon numaranız kaydedildi. Artık bu numara ve şifrenizle de giriş yapabilirsiniz.": "Nomor telepon Anda tersimpan. Sekarang Anda juga bisa masuk dengan nomor ini dan kata sandi.",
+  "Telefon numaranızla da giriş yapabilirsiniz. Bu adımı atlayabilirsiniz.": "Anda juga bisa masuk dengan nomor telepon. Anda bisa melewati langkah ini.",
+  "Yeni e-posta": "Email baru",
+  "{b} açıldı. Telefon ve e-posta bilgilerinizi istediğiniz zaman Ayarlar → Hesabım bölümünden düzenleyebilirsiniz.": "{b} siap. Anda bisa mengubah telepon dan email kapan saja di Pengaturan → Akun saya.",
 };
 
 export default dict;

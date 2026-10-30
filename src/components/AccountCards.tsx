@@ -2,12 +2,11 @@ import { useEffect, useState, type FormEvent } from "react";
 import {
   changePassword,
   CloudError,
-  confirmAdded,
+  confirmEmailChange,
   fetchPlan,
   getAccountProfile,
-  normalizePhone,
   startAddEmail,
-  startAddPhone,
+  normalizePhone,
   updateAccountProfile,
   type AccountProfile,
   type Session,
@@ -115,8 +114,8 @@ function VerifiedBadge() {
 }
 
 /**
- * Giriş bilgileri: hesabın e-postası ve telefonu. Eksik ya da doğrulanmamış olan buradan eklenir;
- * kod e-postaya ya da SMS ile gelir, doğrulanınca o yolla da giriş yapılabilir.
+ * Giriş bilgileri: e-posta (doğrulanmış, girişin ana kimliği) ve telefon (telefonla girişte kullanılır).
+ * Telefon SMS ile doğrulanmaz; kayıtlı numara ile giriş yapılır.
  */
 function LoginCard({
   session,
@@ -141,7 +140,7 @@ function LoginCard({
 
   function open(kind: "email" | "phone") {
     setAdding(kind);
-    setValue(kind === "email" ? profile.loginEmail : profile.loginPhone || profile.phone);
+    setValue(kind === "email" ? profile.loginEmail : profile.loginPhone);
     setCode("");
     setSentTo(null);
     setMessage(null);
@@ -153,14 +152,25 @@ function LoginCard({
     setBusy(true);
     setMessage(null);
     try {
+      if (adding === "phone") {
+        // Telefon doğrulama kodu gerektirmez; numara hesabın bilgilerine yazılır
+        if (!valid) return;
+        const r = await updateAccountProfile(session, profile.name, target);
+        if (r === "expired") return onExpired();
+        haptic("success");
+        setMessage({ ok: true, text: t("Telefon numaranız kaydedildi. Artık bu numara ve şifrenizle de giriş yapabilirsiniz.") });
+        setAdding(null);
+        onChanged();
+        return;
+      }
       if (!sentTo) {
         if (!valid) return;
-        const r = adding === "email" ? await startAddEmail(session, target) : await startAddPhone(session, target);
+        const r = await startAddEmail(session, target);
         if (r === "expired") return onExpired();
         haptic("success");
         setSentTo(target);
       } else {
-        const r = await confirmAdded(session, sentTo, code);
+        const r = await confirmEmailChange(session, sentTo, code);
         if (r === "expired") return onExpired();
         if (!r) {
           haptic("warning");
@@ -168,12 +178,7 @@ function LoginCard({
           return;
         }
         haptic("success");
-        setMessage({
-          ok: true,
-          text: adding === "email"
-            ? t("E-postanız doğrulandı. Artık e-postayla da giriş yapabilirsiniz.")
-            : t("Telefonunuz doğrulandı. Artık telefonla da giriş yapabilirsiniz."),
-        });
+        setMessage({ ok: true, text: t("E-postanız değiştirildi ve doğrulandı.") });
         setAdding(null);
         onChanged();
       }
@@ -182,9 +187,7 @@ function LoginCard({
       setMessage({
         ok: false,
         text: e instanceof CloudError && e.code === "email_taken"
-          ? adding === "email"
-            ? t("Bu e-posta başka bir hesapta kullanılıyor.")
-            : t("Bu telefon numarası başka bir hesapta kullanılıyor.")
+          ? t("Bu e-posta başka bir hesapta kullanılıyor.")
           : t("Gönderilemedi; bağlantınızı kontrol edin."),
       });
     } finally {
@@ -192,37 +195,34 @@ function LoginCard({
     }
   }
 
-  const row = (kind: "email" | "phone", shown: string, confirmed: boolean) => (
-    <div className="login-row">
-      <span className="login-row-value">
-        {shown || (kind === "email" ? t("E-posta eklenmedi") : t("Telefon eklenmedi"))}
-      </span>
-      {shown && confirmed ? (
-        <VerifiedBadge />
-      ) : (
-        <button type="button" className="action-btn" onClick={() => open(kind)}>
-          {shown ? t("Doğrula") : kind === "email" ? t("E-posta ekle") : t("Telefon ekle")}
-        </button>
-      )}
-    </div>
-  );
-
   return (
     <section className="card" aria-label={t("Giriş bilgileri")}>
       <h2 className="card-title">{t("Giriş bilgileri")}</h2>
       <div className="field">
-        <span className="field-label">{t("Telefon")}</span>
-        {row("phone", profile.loginPhone, profile.phoneConfirmed)}
+        <span className="field-label">{t("E-posta")}</span>
+        <div className="login-row">
+          <span className="login-row-value">{profile.loginEmail}</span>
+          {profile.emailConfirmed ? (
+            <VerifiedBadge />
+          ) : (
+            <button type="button" className="action-btn" onClick={() => open("email")}>{t("Değiştir")}</button>
+          )}
+        </div>
       </div>
       <div className="field">
-        <span className="field-label">{t("E-posta")}</span>
-        {row("email", profile.loginEmail, profile.emailConfirmed)}
+        <span className="field-label">{t("Telefon")}</span>
+        <div className="login-row">
+          <span className="login-row-value">{profile.loginPhone || t("Telefon eklenmedi")}</span>
+          <button type="button" className="action-btn" onClick={() => open("phone")}>
+            {profile.loginPhone ? t("Değiştir") : t("Telefon ekle")}
+          </button>
+        </div>
       </div>
       {adding && (
         <form className="login-add" onSubmit={send} noValidate>
-          {!sentTo ? (
+          {adding === "phone" || !sentTo ? (
             <div className="field">
-              <label htmlFor="login-add">{adding === "email" ? t("E-posta") : t("Telefon")}</label>
+              <label htmlFor="login-add">{adding === "email" ? t("Yeni e-posta") : t("Telefon")}</label>
               {adding === "email" ? (
                 <input
                   id="login-add"
@@ -239,11 +239,7 @@ function LoginCard({
             </div>
           ) : (
             <div className="field">
-              <label htmlFor="login-code">
-                {adding === "email"
-                  ? t("{m} adresine 6 haneli bir doğrulama kodu gönderdik.", { m: sentTo })
-                  : t("{m} numarasına SMS ile 6 haneli bir doğrulama kodu gönderdik.", { m: sentTo })}
-              </label>
+              <label htmlFor="login-code">{t("{m} adresine 6 haneli bir doğrulama kodu gönderdik.", { m: sentTo })}</label>
               <input
                 id="login-code"
                 className="ob-code"
@@ -256,8 +252,12 @@ function LoginCard({
             </div>
           )}
           <div className="card-actions">
-            <button type="submit" className="action-btn" disabled={busy || (sentTo ? !/^\d{6,8}$/.test(code) : !valid)}>
-              {sentTo ? t("DOĞRULA") : t("KOD GÖNDER")}
+            <button
+              type="submit"
+              className="action-btn"
+              disabled={busy || (adding === "email" && sentTo ? !/^\d{6,8}$/.test(code) : !valid)}
+            >
+              {adding === "email" && sentTo ? t("DOĞRULA") : adding === "email" ? t("KOD GÖNDER") : t("KAYDET")}
             </button>
             <button type="button" className="help-link" onClick={() => setAdding(null)}>
               {t("Vazgeç")}
@@ -270,7 +270,6 @@ function LoginCard({
           {message.text}
         </p>
       )}
-      <p className="field-hint">{t("Doğrulanan e-posta ya da telefonla giriş yapabilirsiniz.")}</p>
     </section>
   );
 }

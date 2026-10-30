@@ -709,6 +709,18 @@ const dict: Record<string, string> = {
   "İşletmenizin adı": "Naam van je bedrijf",
   "Şifre belirleyin": "Kies een wachtwoord",
   "Şifrenizi nasıl yenilemek istersiniz?": "Hoe wil je je wachtwoord herstellen?",
+  "ATLA": "OVERSLAAN",
+  "Bilgiler veya şifre hatalı.": "Gegevens of wachtwoord onjuist.",
+  "Değiştir": "Wijzigen",
+  "E-posta adresiniz": "Je e-mailadres",
+  "E-posta ve şifrenizle giriş yaparsınız.": "Je logt in met je e-mail en wachtwoord.",
+  "E-postanız değiştirildi ve doğrulandı.": "Je e-mail is gewijzigd en bevestigd.",
+  "Girişte bu numara ve şifrenizle de giriş yapabilirsiniz. SMS gönderilmez.": "Je kunt ook inloggen met dit nummer en je wachtwoord. Er wordt geen sms verstuurd.",
+  "Hesabınızı bu adrese gelen kodla doğrulayacağız.": "We bevestigen je account met de code die naar dit adres is gestuurd.",
+  "Telefon numaranız kaydedildi. Artık bu numara ve şifrenizle de giriş yapabilirsiniz.": "Je telefoonnummer is opgeslagen. Je kunt nu ook inloggen met dit nummer en je wachtwoord.",
+  "Telefon numaranızla da giriş yapabilirsiniz. Bu adımı atlayabilirsiniz.": "Je kunt ook inloggen met je telefoonnummer. Je kunt deze stap overslaan.",
+  "Yeni e-posta": "Nieuwe e-mail",
+  "{b} açıldı. Telefon ve e-posta bilgilerinizi istediğiniz zaman Ayarlar → Hesabım bölümünden düzenleyebilirsiniz.": "{b} is klaar. Je telefoon en e-mail kun je altijd wijzigen via Instellingen → Mijn account.",
 };
 
 export default dict;

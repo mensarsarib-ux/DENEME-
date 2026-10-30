@@ -709,6 +709,18 @@ const dict: Record<string, string> = {
   "İşletmenizin adı": "사업장 이름",
   "Şifre belirleyin": "비밀번호 설정",
   "Şifrenizi nasıl yenilemek istersiniz?": "비밀번호를 어떻게 재설정하시겠어요?",
+  "ATLA": "건너뛰기",
+  "Bilgiler veya şifre hatalı.": "정보 또는 비밀번호가 올바르지 않습니다.",
+  "Değiştir": "변경",
+  "E-posta adresiniz": "이메일 주소",
+  "E-posta ve şifrenizle giriş yaparsınız.": "이메일과 비밀번호로 로그인합니다.",
+  "E-postanız değiştirildi ve doğrulandı.": "이메일이 변경되고 인증되었습니다.",
+  "Girişte bu numara ve şifrenizle de giriş yapabilirsiniz. SMS gönderilmez.": "이 번호와 비밀번호로도 로그인할 수 있습니다. SMS는 보내지지 않습니다.",
+  "Hesabınızı bu adrese gelen kodla doğrulayacağız.": "이 주소로 보낸 코드로 계정을 인증합니다.",
+  "Telefon numaranız kaydedildi. Artık bu numara ve şifrenizle de giriş yapabilirsiniz.": "전화번호가 저장되었습니다. 이제 이 번호와 비밀번호로도 로그인할 수 있습니다.",
+  "Telefon numaranızla da giriş yapabilirsiniz. Bu adımı atlayabilirsiniz.": "전화번호로도 로그인할 수 있습니다. 이 단계는 건너뛸 수 있습니다.",
+  "Yeni e-posta": "새 이메일",
+  "{b} açıldı. Telefon ve e-posta bilgilerinizi istediğiniz zaman Ayarlar → Hesabım bölümünden düzenleyebilirsiniz.": "{b} 준비가 끝났습니다. 전화번호와 이메일은 설정 → 내 계정에서 언제든지 바꿀 수 있습니다.",
 };
 
 export default dict;

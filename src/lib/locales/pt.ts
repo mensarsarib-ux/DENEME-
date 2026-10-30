@@ -709,6 +709,18 @@ const dict: Record<string, string> = {
   "İşletmenizin adı": "Nome da sua empresa",
   "Şifre belirleyin": "Defina uma senha",
   "Şifrenizi nasıl yenilemek istersiniz?": "Como você quer redefinir a senha?",
+  "ATLA": "PULAR",
+  "Bilgiler veya şifre hatalı.": "Dados ou senha incorretos.",
+  "Değiştir": "Alterar",
+  "E-posta adresiniz": "Seu e-mail",
+  "E-posta ve şifrenizle giriş yaparsınız.": "Você entra com seu e-mail e senha.",
+  "E-postanız değiştirildi ve doğrulandı.": "Seu e-mail foi alterado e verificado.",
+  "Girişte bu numara ve şifrenizle de giriş yapabilirsiniz. SMS gönderilmez.": "Você também pode entrar com este número e sua senha. Nenhum SMS é enviado.",
+  "Hesabınızı bu adrese gelen kodla doğrulayacağız.": "Vamos verificar sua conta com o código enviado a este endereço.",
+  "Telefon numaranız kaydedildi. Artık bu numara ve şifrenizle de giriş yapabilirsiniz.": "Seu telefone foi salvo. Agora você também pode entrar com este número e sua senha.",
+  "Telefon numaranızla da giriş yapabilirsiniz. Bu adımı atlayabilirsiniz.": "Você também pode entrar com seu número de telefone. Você pode pular esta etapa.",
+  "Yeni e-posta": "Novo e-mail",
+  "{b} açıldı. Telefon ve e-posta bilgilerinizi istediğiniz zaman Ayarlar → Hesabım bölümünden düzenleyebilirsiniz.": "{b} está pronta. Você pode alterar telefone e e-mail a qualquer momento em Ajustes → Minha conta.",
 };
 
 export default dict;

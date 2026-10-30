@@ -709,6 +709,18 @@ const dict: Record<string, string> = {
   "İşletmenizin adı": "你的商户名称",
   "Şifre belirleyin": "设置密码",
   "Şifrenizi nasıl yenilemek istersiniz?": "你想如何重置密码？",
+  "ATLA": "跳过",
+  "Bilgiler veya şifre hatalı.": "信息或密码错误。",
+  "Değiştir": "更改",
+  "E-posta adresiniz": "你的邮箱地址",
+  "E-posta ve şifrenizle giriş yaparsınız.": "你使用邮箱和密码登录。",
+  "E-postanız değiştirildi ve doğrulandı.": "邮箱已更改并验证。",
+  "Girişte bu numara ve şifrenizle de giriş yapabilirsiniz. SMS gönderilmez.": "你也可以使用此手机号和密码登录。不会发送短信。",
+  "Hesabınızı bu adrese gelen kodla doğrulayacağız.": "我们会用发送到此地址的验证码验证你的账户。",
+  "Telefon numaranız kaydedildi. Artık bu numara ve şifrenizle de giriş yapabilirsiniz.": "手机号已保存。现在你也可以使用此手机号和密码登录。",
+  "Telefon numaranızla da giriş yapabilirsiniz. Bu adımı atlayabilirsiniz.": "你也可以使用手机号登录。可以跳过此步骤。",
+  "Yeni e-posta": "新邮箱",
+  "{b} açıldı. Telefon ve e-posta bilgilerinizi istediğiniz zaman Ayarlar → Hesabım bölümünden düzenleyebilirsiniz.": "{b} 已创建。你可以随时在 设置 → 我的账户 中更改手机号和邮箱。",
 };
 
 export default dict;

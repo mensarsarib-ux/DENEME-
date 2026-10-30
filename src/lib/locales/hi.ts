@@ -709,6 +709,18 @@ const dict: Record<string, string> = {
   "İşletmenizin adı": "आपके व्यवसाय का नाम",
   "Şifre belirleyin": "पासवर्ड बनाएँ",
   "Şifrenizi nasıl yenilemek istersiniz?": "आप अपना पासवर्ड कैसे रीसेट करना चाहते हैं?",
+  "ATLA": "छोड़ें",
+  "Bilgiler veya şifre hatalı.": "जानकारी या पासवर्ड गलत है।",
+  "Değiştir": "बदलें",
+  "E-posta adresiniz": "आपका ईमेल पता",
+  "E-posta ve şifrenizle giriş yaparsınız.": "आप ईमेल और पासवर्ड से साइन इन करते हैं।",
+  "E-postanız değiştirildi ve doğrulandı.": "आपका ईमेल बदल दिया गया और सत्यापित हो गया।",
+  "Girişte bu numara ve şifrenizle de giriş yapabilirsiniz. SMS gönderilmez.": "आप इस नंबर और पासवर्ड से भी साइन इन कर सकते हैं। कोई SMS नहीं भेजा जाता।",
+  "Hesabınızı bu adrese gelen kodla doğrulayacağız.": "हम इस पते पर भेजे गए कोड से खाता सत्यापित करेंगे।",
+  "Telefon numaranız kaydedildi. Artık bu numara ve şifrenizle de giriş yapabilirsiniz.": "आपका फ़ोन नंबर सहेजा गया। अब आप इस नंबर और पासवर्ड से भी साइन इन कर सकते हैं।",
+  "Telefon numaranızla da giriş yapabilirsiniz. Bu adımı atlayabilirsiniz.": "आप फ़ोन नंबर से भी साइन इन कर सकते हैं। यह चरण छोड़ सकते हैं।",
+  "Yeni e-posta": "नया ईमेल",
+  "{b} açıldı. Telefon ve e-posta bilgilerinizi istediğiniz zaman Ayarlar → Hesabım bölümünden düzenleyebilirsiniz.": "{b} तैयार है। आप सेटिंग्स → मेरा खाता में कभी भी फ़ोन और ईमेल बदल सकते हैं।",
 };
 
 export default dict;
