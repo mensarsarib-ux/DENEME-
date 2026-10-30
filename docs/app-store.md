@@ -74,15 +74,16 @@ Kullanım koşulları: https://hesabimmuhasebe.com/kullanim-kosullari.html
 İlk sürüm. Müşteri ve tedarikçi takibi, gelir gider kayıtları, kasa ve hesaplar, alacak takibi, raporlar, ekip çalışması, yedekleme ve geri yükleme, Face ID kilidi, açık/koyu tema ve 17 dil.
 
 ## İnceleme notu (App Store Connect → İnceleme bilgileri)
-Girişte ilk ekranda "Giriş yap"a dokunup "E-posta ile"yi seçin ve aşağıdaki test hesabını girin. Yeni hesaplar SMS ile doğrulanan telefon numarasıyla açılır; test hesabıyla bu adım gerekmez.
+Giriş: ilk ekranda "Giriş yap"a dokunun, "E-posta ile"yi seçin ve aşağıdaki test hesabını girin. Yeni hesaplar e-posta adresine gönderilen 6 haneli kodla doğrulanır; test hesabıyla bu adım gerekmez.
 Test hesabı:
 E-posta: [inceleme e-postası]
 Şifre: [inceleme şifresi]
 
-Hesap silme: Ayarlar sayfasının en altındaki "Hesabımı sil" (şifre istenir).
-Abonelikler: Menü → paket kartındaki "Üst pakete geç" ile Paketler sayfası açılır. Pro, Pro Plus ve Premium yıllık aboneliklerdir; satın alma sandbox hesabıyla denenebilir. Satın alma sunucuda App Store Server API ile doğrulanır. Aynı sayfada "Satın alımı geri yükle" düğmesi vardır.
-Test hesabı ücretsiz pakettedir; böylece satın alma akışı denenebilir.
-Ekip özelliği (Pro ve üzeri): İkinci bir hesap "Katıl" sekmesinden işletme sahibinin e-postasını girerek katılma isteği gönderir; sahip, bildirimlerden isteği onaylar.
+Hesap silme: Menü → Ayarlar → sayfanın en altındaki "Hesabımı sil" (şifre istenir). Hesap, işletmeler ve tüm bulut verileri kalıcı olarak silinir.
+Abonelikler: Menü → paket kartındaki "Üst pakete geç" Paketler sayfasını açar. Pro, Pro Plus ve Premium yıllık otomatik yenilenen aboneliklerdir; sandbox hesabıyla denenebilir. Satın almalar sunucuda App Store Server API ile doğrulanır; iade ve yenilemeler App Store Server Notifications ile işlenir. Aynı sayfada "Satın alımı geri yükle" vardır. Test hesabı ücretsiz pakettedir; satın alma akışı denenebilir.
+Ekip (Pro ve üzeri): ikinci bir kişi ilk ekranda "Ekibe katıl"a dokunur, e-postasını kodla doğrular, şifre belirler ve işletme sahibinin e-postasını yazar. Sahip, Menü → Bildirimler'de isteği onaylar ve kişinin hangi işletmeleri göreceğini seçer.
+Rehber: Yeni müşteri/tedarikçi formundaki "Rehberden seç" ve Ekiplerim'deki "Rehberden davet et", iOS'un kişi seçicisini (CNContactPickerViewController) açar. Rehber izni istenmez; yalnızca kullanıcının seçtiği kişinin adı, telefonu ve e-postası forma yazılır.
+Uygulamanın dili iPhone diline göre açılır; Ayarlar → Dil'den değiştirilebilir.
 
 ## English (U.S.) — App Store Connect'te "English (U.S.)" yerelleştirmesi olarak eklenir
 Diğer dillerde ayrı metin girilmezse mağaza bu İngilizce metni gösterir. Bu dilde bağlantılar /en sayfalarıdır.
@@ -138,15 +139,15 @@ First release. Customer and supplier accounts, income and expenses, cash and ban
 Subscription group display name (English): Hesabım Plans
 
 ### App Review notes (Apple reviewers read English — paste this, not the Turkish one)
-Sign-in: on the first screen tap "Giriş yap" (Sign in), choose "E-posta ile" (With email) and enter the test account below. New accounts are created with a phone number verified by SMS; the test account lets you skip that.
+Sign-in: on the first screen tap "Giriş yap" (Sign in), choose "E-posta ile" (With email) and enter the test account below. New accounts are verified with a 6-digit code sent to their email; the test account lets you skip that.
 Test account:
 Email: [review email]
 Password: [review password]
 
-Account deletion: Settings → "Delete my account" at the bottom of the page (password required).
-Subscriptions: Menu → "Upgrade" on the plan card opens the Plans page. Pro, Pro Plus and Premium are yearly subscriptions and can be tested with a sandbox account. Purchases are verified on our server with the App Store Server API. The same page has a "Restore purchases" button.
-The test account is on the Free plan so the purchase flow can be tested.
-Team feature (Pro and above): a second account sends a join request from the "Join" tab by entering the owner's email; the owner approves it from notifications.
+Account deletion: Menu → Settings → "Delete my account" at the bottom of the page (password required). The account, its businesses and all cloud data are permanently deleted.
+Subscriptions: Menu → "Upgrade" on the plan card opens the Plans page. Pro, Pro Plus and Premium are yearly auto-renewable subscriptions and can be tested with a sandbox account. Purchases are verified on our server with the App Store Server API; renewals and refunds are processed with App Store Server Notifications. The same page has a "Restore purchases" button. The test account is on the Free plan so the purchase flow can be tested.
+Team (Pro and above): a second person taps "Join a team" on the first screen, verifies their email with a code, sets a password and enters the owner's email. The owner approves the request in Menu → Notifications and chooses which businesses that person can see.
+Contacts: "Choose from contacts" on the new customer/supplier form and "Invite from contacts" on the Teams page open the iOS contact picker (CNContactPickerViewController). No Contacts permission is requested; only the name, phone and email of the contact the user picks are filled into the form.
 The app language follows the iPhone language and can be changed in Settings → Language.
 
 ## Yayından önce doldurulacaklar
