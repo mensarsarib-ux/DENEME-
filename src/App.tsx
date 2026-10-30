@@ -76,6 +76,23 @@ type View =
  */
 const SAMPLE_DATA = !cloudEnabled;
 
+/** Telefondaki işletme verisinin hangi hesaba ait olduğu */
+const DATA_OWNER_KEY = "hesabim:data-owner";
+function dataOwner(): string | null {
+  try {
+    return localStorage.getItem(DATA_OWNER_KEY);
+  } catch {
+    return null;
+  }
+}
+function setDataOwner(userId: string) {
+  try {
+    localStorage.setItem(DATA_OWNER_KEY, userId);
+  } catch {
+    /* depolama erişilemiyorsa kontrol atlanır */
+  }
+}
+
 export default function App() {
   const [view, setView] = useState<View>({ name: "home" });
   // Sekmeler: Müşteriler, Tedarikçiler ve kullanıcının açtıkları
@@ -121,6 +138,8 @@ export default function App() {
 
   // Hesap ve bulut eşitleme: Supabase tanımlıysa giriş gerekir; değilse uygulama yalnızca bu cihazda çalışır
   const [session, setSession] = useState<Session | null>(() => (cloudEnabled ? loadSession() : null));
+  // Önceki sürümlerden gelen oturumda telefondaki verinin sahibi bu hesaptır
+  if (session && !dataOwner()) setDataOwner(session.userId);
   // Hesaba gönderilen e-postalar uygulamanın diliyle gelsin diye dil hesaba da yazılır
   const sessionUser = session?.userId;
   useEffect(() => {
@@ -296,23 +315,30 @@ export default function App() {
     setActiveTab("customer");
   }
 
-  function logout() {
-    setSyncPaused(false);
-    signOut();
+  /**
+   * Hesabın planı, eşitleme işaretleri ve tüm işletmelerin verisi bu cihazdan silinir: aynı telefonda
+   * giriş yapan bir sonraki hesap önceki hesabın işletmelerini görmez ve kendi hesabına taşımaz
+   */
+  function clearAccountData() {
     clearStored();
-    // Hesabın planı, eşitleme işaretleri ve tüm işletmelerin verisi bu cihazda kalmasın: aynı telefonda
-    // giriş yapan bir sonraki hesap önceki hesabın işletmelerini görmesin ve kendi hesabına taşımasın
     try {
       localStorage.removeItem("hesabim:plan");
       localStorage.removeItem("hesabim:pending-transaction");
       localStorage.removeItem("hesabim:workspace");
       localStorage.removeItem("hesabim:workspaces");
+      localStorage.removeItem(DATA_OWNER_KEY);
       Object.keys(localStorage)
         .filter((k) => k.startsWith("hesabim:dirty:") || k.startsWith("hesabim:base:") || k.startsWith("hesabim:v1:"))
         .forEach((k) => localStorage.removeItem(k));
     } catch {
       /* erişilemiyorsa sayfa yenilemesi yeterli */
     }
+  }
+
+  function logout() {
+    setSyncPaused(false);
+    signOut();
+    clearAccountData();
     emptyWorkspace("");
     setDrawerOpen(false);
     setView({ name: "home" });
@@ -351,13 +377,21 @@ export default function App() {
   useEffect(() => {
     if (!session) return;
     let alive = true;
-    myBusinesses(session)
-      .then((r) => {
-        if (alive && Array.isArray(r)) setServerBiz(r);
-      })
-      .catch(() => undefined);
+    const load = () =>
+      myBusinesses(session)
+        .then((r) => {
+          if (alive && Array.isArray(r)) setServerBiz(r);
+        })
+        .catch(() => undefined);
+    void load();
+    // Yetkili yeni bir işletme paylaştığında ya da erişimi kaldırdığında liste kendiliğinden güncellenir
+    const timer = window.setInterval(load, 60_000);
+    const onVisible = () => document.visibilityState === "visible" && void load();
+    document.addEventListener("visibilitychange", onVisible);
     return () => {
       alive = false;
+      window.clearInterval(timer);
+      document.removeEventListener("visibilitychange", onVisible);
     };
   }, [session, recheck]);
 
@@ -446,6 +480,15 @@ export default function App() {
           window.history.replaceState(null, "", window.location.pathname);
         }}
         onSession={(next, info) => {
+          // Oturum süresi dolduğu için çıkış yapılmadan giriş ekranına dönülmüş olabilir: telefondaki veri
+          // başka bir hesaba aitse silinir ve uygulama temiz açılır (oturum kayıtlı kalır)
+          if (dataOwner() && dataOwner() !== next.userId) {
+            clearAccountData();
+            setDataOwner(next.userId);
+            window.location.reload();
+            return;
+          }
+          setDataOwner(next.userId);
           if (info?.isNew) emptyWorkspace(info.businessName);
           setSession(next);
           setView({ name: "home" });
