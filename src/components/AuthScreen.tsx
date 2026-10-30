@@ -58,8 +58,14 @@ const BACK: Partial<Record<Screen, Screen>> = {
   "reg-email": "reg-business",
   // Kod ekranından e-postaya dönülür: yanlış yazılan adres düzeltilip yeni kod istenir
   "reg-code": "reg-email",
+  // Kod doğrulandıktan sonraki adımlardan geri: kayıt yarıda bırakılır, açılışa dönülür.
+  // E-posta doğrulanmış kalır; aynı adresle "Giriş yap → Şifremi unuttum" ile devam edilebilir.
+  "reg-password": "welcome",
   "join-email": "welcome",
   "join-code": "join-email",
+  "join-password": "welcome",
+  "join-owner": "welcome",
+  "new-password": "login",
 };
 
 /** Hesap ilk açılışta rastgele bir şifreyle oluşturulur; gerçek şifre e-posta kodu doğrulandıktan sonra belirlenir */
@@ -641,17 +647,20 @@ export default function AuthScreen({
             </>
           )}
         </div>
-        {done && body}
-        <h2 className="ob-heading">{title}</h2>
-        {lead && <p className="ob-lead">{lead}</p>}
-        {info && <p className="form-success" role="status">{info}</p>}
-        {!done && body}
-        {error && <p className="form-error" role="alert">{error}</p>}
-        {action && (
-          <button className="primary-btn" type="submit" disabled={busy || !ready}>
-            {busy ? t("Bekleyin…") : action}
-          </button>
-        )}
+        {/* Geri düğmesi üstte sabit; içerik altında ortalanır (klavye açılınca kesilmez, kaydırılır) */}
+        <div className="ob-body">
+          {done && body}
+          <h2 className="ob-heading">{title}</h2>
+          {lead && <p className="ob-lead">{lead}</p>}
+          {info && <p className="form-success" role="status">{info}</p>}
+          {!done && body}
+          {error && <p className="form-error" role="alert">{error}</p>}
+          {action && (
+            <button className="primary-btn" type="submit" disabled={busy || !ready}>
+              {busy ? t("Bekleyin…") : action}
+            </button>
+          )}
+        </div>
       </form>
     </div>
   );

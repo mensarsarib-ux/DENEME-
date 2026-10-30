@@ -4128,8 +4128,8 @@ a.action-btn:visited {
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   gap: 14px;
+  overflow-y: auto;
   margin-top: 8px;
   padding: 18px max(22px, env(safe-area-inset-right, 0px)) calc(env(safe-area-inset-bottom, 0px) + 24px) max(22px, env(safe-area-inset-left, 0px));
   border-radius: 26px 26px 0 0;
@@ -4139,6 +4139,7 @@ a.action-btn:visited {
 }
 
 .ob-top {
+  flex: none;
   display: flex;
   align-items: center;
   gap: 12px;
@@ -4286,3 +4287,13 @@ a.action-btn:visited {
   gap: 8px;
 }
 .contact-pick svg { width: 20px; height: 20px; }
+
+/* Sihirbaz içeriği: geri düğmesinin altında dikey ortalanır; sığmazsa üstten başlar ve kaydırılır */
+.ob-body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-block: auto;
+}
+.ob-sheet.is-done .ob-body { align-items: center; text-align: center; }
+.ob-sheet.is-done .ob-body .primary-btn { align-self: stretch; }
