@@ -731,6 +731,13 @@ const dict: Record<string, string> = {
   "KVKK Aydınlatma Metni": "Повідомлення KVKK (Туреччина)",
   "Rehberden seç": "Вибрати з контактів",
   "Rehberden davet et": "Запросити з контактів",
+  "Merhaba {name},": "Вітаємо, {name}!",
+  "{date} itibarıyla cari hesap özetiniz:": "Підсумок вашого рахунку станом на {date}:",
+  "Güncel bakiye: {amount} (ödenecek)": "Поточний залишок: {amount} (до сплати)",
+  "Güncel bakiye: {amount} (lehinize)": "Поточний залишок: {amount} (на вашу користь)",
+  "Hesabınızda açık bakiye bulunmuyor.": "На вашому рахунку немає відкритого залишку.",
+  "Son hareketler:": "Останні операції:",
+  "Sorularınız için bize yazabilirsiniz.": "Якщо маєте запитання, напишіть нам.",
 };
 
 export default dict;

@@ -731,6 +731,13 @@ const dict: Record<string, string> = {
   "KVKK Aydınlatma Metni": "KVKK-Datenschutzhinweis (Türkei)",
   "Rehberden seç": "Aus Kontakten wählen",
   "Rehberden davet et": "Aus Kontakten einladen",
+  "Merhaba {name},": "Hallo {name},",
+  "{date} itibarıyla cari hesap özetiniz:": "Ihre Kontoübersicht zum {date}:",
+  "Güncel bakiye: {amount} (ödenecek)": "Aktueller Saldo: {amount} (offen)",
+  "Güncel bakiye: {amount} (lehinize)": "Aktueller Saldo: {amount} (zu Ihren Gunsten)",
+  "Hesabınızda açık bakiye bulunmuyor.": "Auf Ihrem Konto ist kein offener Saldo.",
+  "Son hareketler:": "Letzte Buchungen:",
+  "Sorularınız için bize yazabilirsiniz.": "Bei Fragen melden Sie sich gern bei uns.",
 };
 
 export default dict;

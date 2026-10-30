@@ -482,4 +482,11 @@ export const extra: Record<string, string> = {
   "KVKK Aydınlatma Metni": "KVKK privacy notice (Turkey)",
   "Rehberden seç": "Choose from contacts",
   "Rehberden davet et": "Invite from contacts",
+  "Merhaba {name},": "Hello {name},",
+  "{date} itibarıyla cari hesap özetiniz:": "Your account summary as of {date}:",
+  "Güncel bakiye: {amount} (ödenecek)": "Current balance: {amount} (due)",
+  "Güncel bakiye: {amount} (lehinize)": "Current balance: {amount} (in your favour)",
+  "Hesabınızda açık bakiye bulunmuyor.": "There is no open balance on your account.",
+  "Son hareketler:": "Recent transactions:",
+  "Sorularınız için bize yazabilirsiniz.": "Feel free to contact us with any questions.",
 };

@@ -116,26 +116,40 @@ export function balanceText(balance: number): string {
   return t("Bakiye: {amount}", { amount: money.format(0) });
 }
 
-/** Paylaşılacak düz metin özeti (son 25 hareket) */
+/**
+ * Kişiye gönderilen kısa hesap özeti (WhatsApp, SMS, e-posta). Karşı tarafın gözünden yazılır:
+ * bakiye, ödemesi gereken mi yoksa lehine mi olduğu ve son 5 hareket. Ayrıntı için PDF ekstre gönderilir.
+ */
 export function statementText(input: StatementInput): string {
   const data = buildStatement(input);
+  const day = (iso: string) => new Date(iso).toLocaleDateString(locale(), { day: "numeric", month: "long" });
+  const title = (word: string) => {
+    const lower = word.toLocaleLowerCase(locale());
+    return lower.charAt(0).toLocaleUpperCase(locale()) + lower.slice(1);
+  };
+  const recent = transactionsOf(input.transactions, input.party.id).slice(-5);
+  const balanceLine =
+    data.balance > 0
+      ? t("Güncel bakiye: {amount} (ödenecek)", { amount: money.format(data.balance) })
+      : data.balance < 0
+        ? t("Güncel bakiye: {amount} (lehinize)", { amount: money.format(-data.balance) })
+        : t("Hesabınızda açık bakiye bulunmuyor.");
+  const business = input.profile.name.trim();
   const lines = [
-    `${t("Cari hesap ekstresi")} — ${input.party.name}`,
-    input.profile.name,
+    t("Merhaba {name},", { name: input.party.name }),
     "",
-    ...data.rows.filter((r) => !r.carry).slice(-25).map((r) => {
-      const amount = r.debit ?? r.credit ?? 0;
-      const sign = r.credit !== null ? "-" : "";
-      return `${r.date} · ${r.type}${r.description ? ` · ${r.description}` : ""} · ${sign}${money.format(amount)}`;
-    }),
+    t("{date} itibarıyla cari hesap özetiniz:", { date: new Date().toLocaleDateString(locale(), { day: "numeric", month: "long", year: "numeric" }) }),
     "",
-    `${t("Toplam borç")}: ${money.format(data.totalDebit)}`,
-    `${t("Toplam alacak")}: ${money.format(data.totalCredit)}`,
-    balanceText(data.balance),
+    balanceLine,
   ];
+  if (recent.length > 0) {
+    lines.push("", t("Son hareketler:"));
+    for (const tx of recent) lines.push(`• ${day(tx.date)} · ${title(t(tx.type))} · ${money.format(tx.amount)}`);
+  }
+  lines.push("", t("Sorularınız için bize yazabilirsiniz."));
+  if (business) lines.push(business);
   return lines.join("\n");
 }
-
 
 function wrap(ctx: CanvasRenderingContext2D, text: string, width: number, maxLines: number): string[] {
   const words = text.split(/\s+/).filter(Boolean);
