@@ -725,6 +725,9 @@ const dict: Record<string, string> = {
   "Satın alma onay bekliyor. Onaylandığında paketiniz otomatik açılır.": "Pembelian Anda menunggu persetujuan. Paket akan aktif otomatis setelah disetujui.",
   "Tekrar dene": "Coba lagi",
   "Çok fazla hatalı deneme yapıldı. 15 dakika sonra tekrar deneyin.": "Terlalu banyak percobaan gagal. Coba lagi dalam 15 menit.",
+  "Hesabım Muhasebe'de işletmeme katıl: uygulamayı indir, açılışta Ekibe katıl'a dokun ve yetkili olarak şunu yaz: {m} — {url}": "Bergabunglah dengan usaha saya di Hesabım Muhasebe: unduh aplikasinya, ketuk Gabung ke tim di layar pertama dan tulis ini sebagai pemilik: {m} — {url}",
+  "Açılışta Ekibe katıl'a dokunsun ve yetkili olarak şunu yazsın: {m}": "Di layar pertama ketuk Gabung ke tim dan tulis ini sebagai pemilik: {m}",
+  "Ekip üyeleri yedek dosyası yükleyemez. Yedeği işletme yetkilisi yükleyebilir.": "Anggota tim tidak dapat memuat file cadangan. Pemilik usaha dapat memuatnya.",
 };
 
 export default dict;

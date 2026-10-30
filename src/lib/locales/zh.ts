@@ -725,6 +725,9 @@ const dict: Record<string, string> = {
   "Satın alma onay bekliyor. Onaylandığında paketiniz otomatik açılır.": "购买正在等待批准。批准后套餐将自动开通。",
   "Tekrar dene": "重试",
   "Çok fazla hatalı deneme yapıldı. 15 dakika sonra tekrar deneyin.": "失败次数过多，请 15 分钟后再试。",
+  "Hesabım Muhasebe'de işletmeme katıl: uygulamayı indir, açılışta Ekibe katıl'a dokun ve yetkili olarak şunu yaz: {m} — {url}": "加入我在 Hesabım Muhasebe 的企业：下载应用，在首页点按“加入团队”，并将以下内容填写为负责人：{m} — {url}",
+  "Açılışta Ekibe katıl'a dokunsun ve yetkili olarak şunu yazsın: {m}": "在首页点按“加入团队”，并将以下内容填写为负责人：{m}",
+  "Ekip üyeleri yedek dosyası yükleyemez. Yedeği işletme yetkilisi yükleyebilir.": "团队成员无法载入备份文件，可由企业负责人载入。",
 };
 
 export default dict;

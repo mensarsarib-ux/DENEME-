@@ -215,7 +215,7 @@ export default function SettingsPage({
 
   // Bağlı cihazlar: açıkken yarım dakikada bir yenilenir
   useEffect(() => {
-    if (!session) return;
+    if (!session || !SHOW_DEVICES) return;
     let alive = true;
     const load = () =>
       listDevices(session)

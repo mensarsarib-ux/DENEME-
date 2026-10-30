@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Share } from "@capacitor/share";
-import { isEmailLogin, teamPeople, type Session, type TeamPerson } from "../lib/cloud";
+import { teamPeople, type Session, type TeamPerson } from "../lib/cloud";
 import { t } from "../lib/i18n";
 import { haptic } from "../lib/haptics";
 import { SUPPORT_ICON } from "../lib/menu";
@@ -40,12 +40,8 @@ export default function TeamPage({
       .catch(() => setFailed(true));
   }, [session, isMember]);
 
-  // Telefonla açılmış hesapta davet, e-posta yerine telefon numarasıyla yapılır
-  const byPhone = !isEmailLogin(session.email);
-  const inviteText = byPhone
-    ? t("Hesabım Muhasebe'de işletmeme katıl: uygulamayı indir, giriş ekranında Katıl sekmesine benim telefon numaramı yaz: {m} — {url}", { m: session.email, url: SITE_URL })
-    : t("Hesabım Muhasebe'de işletmeme katıl: uygulamayı indir, giriş ekranında Katıl sekmesine benim e-postamı yaz: {m} — {url}", { m: session.email, url: SITE_URL });
-
+  // Ekip arkadaşı açılışta "Ekibe katıl"ı seçip yetkili olarak bu e-postayı ya da telefonu yazar
+  const inviteText = t("Hesabım Muhasebe'de işletmeme katıl: uygulamayı indir, açılışta Ekibe katıl'a dokun ve yetkili olarak şunu yaz: {m} — {url}", { m: session.email, url: SITE_URL });
   async function shareInvite() {
     haptic("light");
     try {
@@ -89,9 +85,7 @@ export default function TeamPage({
             <ol className="invite-steps">
               <li>{t("Ekip arkadaşınız Hesabım uygulamasını indirsin.")}</li>
               <li>
-                {byPhone
-                  ? t("Giriş ekranında Katıl sekmesine sizin telefon numaranızı yazsın: {m}", { m: session.email })
-                  : t("Giriş ekranında Katıl sekmesine sizin e-postanızı yazsın: {m}", { m: session.email })}
+                {t("Açılışta Ekibe katıl'a dokunsun ve yetkili olarak şunu yazsın: {m}", { m: session.email })}
               </li>
               <li>{t("İstek Bildirimler'e gelir; onayladığınızda işletmenizi birlikte kullanırsınız.")}</li>
             </ol>

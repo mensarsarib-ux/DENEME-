@@ -300,12 +300,15 @@ export default function App() {
     setSyncPaused(false);
     signOut();
     clearStored();
-    // Hesabın planı ve eşitleme işaretleri bu cihazda kalmasın; yeniden açılışta yeni hesabınki okunur
+    // Hesabın planı, eşitleme işaretleri ve tüm işletmelerin verisi bu cihazda kalmasın: aynı telefonda
+    // giriş yapan bir sonraki hesap önceki hesabın işletmelerini görmesin ve kendi hesabına taşımasın
     try {
       localStorage.removeItem("hesabim:plan");
       localStorage.removeItem("hesabim:pending-transaction");
+      localStorage.removeItem("hesabim:workspace");
+      localStorage.removeItem("hesabim:workspaces");
       Object.keys(localStorage)
-        .filter((k) => k.startsWith("hesabim:dirty:") || k.startsWith("hesabim:base:"))
+        .filter((k) => k.startsWith("hesabim:dirty:") || k.startsWith("hesabim:base:") || k.startsWith("hesabim:v1:"))
         .forEach((k) => localStorage.removeItem(k));
     } catch {
       /* erişilemiyorsa sayfa yenilemesi yeterli */
@@ -759,7 +762,12 @@ export default function App() {
                   }
                 : undefined
             }
-            onRestore={restore}
+            onRestore={(text) =>
+              // Ekip üyesinin yüklediği yedek ortak işletmenin verisinin yerine geçer ve tüm ekibe gider; bunu yalnızca yetkili yapar
+              effMembership?.role === "member"
+                ? t("Ekip üyeleri yedek dosyası yükleyemez. Yedeği işletme yetkilisi yükleyebilir.")
+                : restore(text)
+            }
             onReset={resetAll}
             onRestoreFromAccount={restoreFromAccount}
             onRemoteStatus={remoteStatus}
