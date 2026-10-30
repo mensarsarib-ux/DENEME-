@@ -7,7 +7,7 @@ import { MENU_ITEMS, SUPPORT_ICON, type MenuPage } from "../lib/menu";
 import { CURRENT_PLAN, LIMITS, PLAN_NAME, canAddBusiness, canUseTeam } from "../lib/plan";
 
 /** Şimdilik menüde gösterilmeyen sayfalar; kodları durur, listeden çıkarılarak tekrar açılabilir */
-const HIDDEN_PAGES: MenuPage[] = ["contacts", "reports"];
+const HIDDEN_PAGES: MenuPage[] = ["reports"];
 import { Svg } from "./Icon";
 import { t } from "../lib/i18n";
 import { activeWorkspace, switchWorkspace } from "../lib/storage";
