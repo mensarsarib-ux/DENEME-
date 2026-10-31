@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "jsx": "preserve",
+    "jsxImportSource": "@motion-canvas/2d/lib",
+    "isolatedModules": true,
+    "lib": ["ESNext", "DOM"],
+    "types": ["@motion-canvas/core/project", "vite/client"]
+  },
+  "include": ["src"]
+}
