@@ -1,0 +1,3 @@
+# Video üretim araçları (Python). Sürümler iki haftadan eski, sabitlendi.
+openai-whisper==20250625
+yt-dlp==2026.8.19
