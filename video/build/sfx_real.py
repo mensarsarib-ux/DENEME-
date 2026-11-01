@@ -59,6 +59,33 @@ bell = sum(np.sin(2*np.pi*f*t_c) * a for f, a in [(1047, 0.5), (1568, 0.2)]) * n
 drawer = bandpass(rng.standard_normal(n_c), 400, 1800) * np.exp(-t_c / 0.03) * 0.5
 place(drawer + bell * 0.6, 8.55, 0.22)
 
+
+# 7) Telefon içi hareketler
+# Kaydırma (swipe): alçak geçiren gürültü, kesme frekansı yükselip alçalır; ekran değişimine denk gelir.
+def swipe(dur, gain):
+    n = int(dur * SR); p = np.arange(n) / n
+    x = rng.standard_normal(n)
+    alpha = 0.015 + 0.22 * np.sin(np.pi * p) ** 2
+    y = np.zeros(n); acc = 0.0
+    for i in range(n):
+        acc += alpha[i] * (x[i] - acc); y[i] = acc
+    return y * np.sin(np.pi * p) ** 2 * gain * 6.0
+
+tick_small = lambda: burst(0.012, 1500, 4000, 0.001, 0.004)
+# Ekran kaydırmaları (ekran değişimlerinden hemen önce)
+for at in [5.6, 9.2, 12.6]:
+    place(swipe(0.42, 0.11), at)
+# Liste kaydırma tıkları (müşteri listesi, kart açılmadan önce)
+for at in [9.75, 9.88, 10.0, 10.12]:
+    place(tick_small(), at, 0.05)
+# Kasa sayacı tıkları (6.2–8.6 sn arası, sayı artarken)
+for at in [6.5, 6.75, 7.0, 7.25, 7.5, 7.75, 8.0, 8.25]:
+    place(tick_small(), at, 0.045)
+# Kart açılışları: kısa hava + yumuşak tık
+for at in [10.2, 13.4]:
+    place(swipe(0.3, 0.07), at)
+    place(burst(0.02, 1200, 3000, 0.001, 0.006), at + 0.25, 0.05)
+
 # Ses seviyesi: tepe değer sınırı
 peak = np.max(np.abs(out))
 out = out / max(peak, 1e-9) * 0.5
