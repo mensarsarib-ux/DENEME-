@@ -1,0 +1,64 @@
+# Doğal ses efektleri (prosedürel "foley"): kağıt çevirme, kalem sürtünmesi, yumuşak dokunma, sayaç tıkları, oda sesi.
+# Hiçbir kayıt indirilmez; her ses burada üretilir ve lisans sorunu oluşturmaz.
+import numpy as np, wave
+SR = 44100; DUR = 18.05
+rng = np.random.default_rng(11)
+out = np.zeros(int((DUR + 1) * SR))
+
+def place(seg, at, gain=1.0):
+    i0 = int(at * SR)
+    if i0 < 0 or i0 >= len(out): return
+    n = min(len(seg), len(out) - i0)
+    out[i0:i0 + n] += seg[:n] * gain
+
+def bandpass(x, lo, hi):
+    # FFT ile basit bant geçiren filtre
+    X = np.fft.rfft(x)
+    f = np.fft.rfftfreq(len(x), 1 / SR)
+    X[(f < lo) | (f > hi)] = 0
+    return np.fft.irfft(X, len(x))
+
+def burst(dur, lo, hi, attack=0.002, decay=0.05):
+    n = int(dur * SR); t = np.arange(n) / SR
+    env = np.minimum(t / attack, 1.0) * np.exp(-t / decay)
+    return bandpass(rng.standard_normal(n), lo, hi) * env
+
+# 1) Oda sesi: çok düşük seviyede sürekli arka plan (dijital sessizlik olmasın)
+room = bandpass(rng.standard_normal(len(out)), 60, 900) * 0.0025
+out += room
+
+# 2) Kalem sürtünmesi: defter yazısı boyunca (0.2–1.9 sn), harf başına küçük tıklar
+for k in range(33):
+    at = 0.2 + k * (1.7 / 33) + rng.uniform(-0.01, 0.01)
+    place(burst(0.03, 2500, 7000, 0.001, 0.012), at, 0.10)
+    place(burst(0.06, 900, 2400, 0.003, 0.03), at, 0.035)
+
+# 3) Sayfa çevirme: sahne 1'den 2'ye geçişte kağıt sesi (iki kısa sürtünme ve bir kağıt hışırtısı)
+for at in [2.85]:
+    place(burst(0.35, 1500, 6000, 0.004, 0.09), at, 0.20)
+    place(burst(0.22, 800, 3000, 0.01, 0.06), at + 0.12, 0.12)
+
+# 4) Sahne geçişleri: sert değil, çok kısa kumaş/hava sesi (yumuşak dolgu)
+for at in [5.85, 9.35, 12.85, 15.85]:
+    place(burst(0.18, 400, 1800, 0.02, 0.06), at, 0.07)
+
+# 5) Yumuşak dokunma: logo ve buton görünürken cam/plastik tıkı
+for at in [3.25, 16.25]:
+    d = 0.12; n = int(d * SR); t = np.arange(n) / SR
+    tap = (np.sin(2*np.pi*1100*t) * 0.25 + np.sin(2*np.pi*2600*t) * 0.1) * np.exp(-t / 0.012)
+    b = burst(0.03, 3000, 8000, 0.001, 0.01); b = np.pad(b, (0, max(0, n - len(b))))[:n]
+    place(tap * 0.5 + b * 0.3, at, 0.18)
+
+# 6) Sayaç tıkları: kasa toplamı sayarken (6.2–8.6 sn), hafif ve seyrek
+t_k = np.arange(6.2, 8.6, 0.09)
+for at in t_k:
+    place(burst(0.02, 2000, 6000, 0.001, 0.006), at + rng.uniform(-0.005, 0.005), 0.06)
+
+# Ses seviyesi: tepe değer sınırı
+peak = np.max(np.abs(out))
+out = out / max(peak, 1e-9) * 0.5
+pcm = (np.clip(out, -1, 1) * 32767).astype(np.int16)
+with wave.open('assets/sfx.wav', 'wb') as w:
+    w.setnchannels(1); w.setsampwidth(2); w.setframerate(SR)
+    w.writeframes(pcm.tobytes())
+print('sfx tepe=%.3f sure=%.2f' % (peak, len(out) / SR))

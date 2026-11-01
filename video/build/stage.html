@@ -105,7 +105,7 @@ const SCENES = [...document.querySelectorAll('.scene')].map(e => ({el:e, s:+e.da
 const clamp = (x,a=0,b=1) => Math.max(a, Math.min(b, x));
 const ease = x => x<0?0:x>1?1:1-Math.pow(1-x,3);
 const easeBack = x => { const c=1.4; return 1 + (c+1)*Math.pow(x-1,3) + c*Math.pow(x-1,2); };
-const fadeIO = (t, s, e, d=0.4) => clamp((t - (s - d*0.5)) / d) * clamp(((e + d*0.5) - t) / d);
+const fadeIO = (t, s, e, d=0.3) => clamp((t - (s - d*0.5)) / d) * clamp(((e + d*0.5) - t) / d);
 
 // Altyazı kelimeleri
 const subsEl = document.getElementById('subs');
@@ -128,12 +128,12 @@ const pen = document.getElementById('pen');
 function seek(t) {
   // Sahneler
   for (const sc of SCENES) {
-    const a = fadeIO(t, sc.s, sc.e, 0.5);
+    const a = fadeIO(t, sc.s, sc.e, 0.3);
     sc.el.style.opacity = a;
     // Sahne girişinde hafif kayma
     const inT = clamp((t - sc.s) / 0.5), outT = clamp((sc.e - t) / 0.5);
     const dx = (1 - ease(inT)) * 90 - (1 - ease(outT)) * 90;
-    sc.el.style.transform = `translateX(${dx}px)`;
+    sc.el.style.transform = 'none';
   }
 
   // 1: defter yazısı (0.2 - 1.9 sn)
@@ -155,10 +155,10 @@ function seek(t) {
   // 2: logo büyüme ve yazılar
   const logoT = clamp((t - 3.0) / 0.9);
   const logo = document.getElementById('logo');
-  logo.style.transform = `scale(${0.5 + 0.5*easeBack(logoT)})`;
+  logo.style.transform = `scale(${1 - 0.04*(1-logoT)})`;
   logo.style.opacity = logoT;
   document.getElementById('brand').style.opacity = clamp((t - 3.5) / 0.6);
-  document.getElementById('brand').style.transform = `translateY(${(1 - clamp((t-3.5)/0.6))*40}px)`;
+  document.getElementById('brand').style.transform = 'none';
   document.getElementById('tag').style.opacity = clamp((t - 4.0) / 0.6);
 
   // 3: kasa sayısı artar (6.2 - 8.6 sn)
@@ -168,7 +168,7 @@ function seek(t) {
 
   // 4: müşteri kartı kayarak gelir
   const cc = clamp((t - 10.2) / 0.6);
-  document.getElementById('custCard').style.transform = `translateY(${(1-ease(cc))*120}px)`;
+  document.getElementById('custCard').style.transform = 'none';
   document.getElementById('custCard').style.opacity = cc;
 
   // 5: rapor kartı
@@ -177,7 +177,7 @@ function seek(t) {
 
   // 6: CTA
   const cq = clamp((t - 16.2) / 0.6);
-  document.getElementById('cta').style.transform = `scale(${0.85 + 0.15*easeBack(cq)})`;
+  document.getElementById('cta').style.transform = 'none';
   document.getElementById('cta').style.opacity = cq;
   document.getElementById('url').style.opacity = clamp((t - 16.8) / 0.6);
   document.getElementById('ctaLogo').style.opacity = clamp((t - 16.0) / 0.6);
