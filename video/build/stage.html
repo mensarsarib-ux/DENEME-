@@ -93,16 +93,273 @@ html,body{margin:0;width:1080px;height:1920px;overflow:hidden;background:#0B1420
 
 <script>
 const SENTENCES = [
-  {t0:0.05, t1:1.85, text:"Hala deftere mi yazıyorsunuz?"},
-  {t0:2.30, t1:2.75, text:"Hesabım Muhasebe."},
-  {t0:3.15, t1:5.50, text:"Cari hesap, kasa ve ekibiniz tek uygulamada."},
-  {t0:5.70, t1:7.60, text:"Kasanızdaki para, nakit ve bankada tek ekranda."},
-  {t0:8.05, t1:9.75, text:"Gelirleriniz ve giderleriniz otomatik takip edilir."},
-  {t0:10.10, t1:12.90, text:"Her müşterinin cari hesabı ayrı, bakiye tek dokunuşla."},
-  {t0:13.20, t1:15.30, text:"Gelir ve giderlerinizi bir bakışta görün."},
-  {t0:15.50, t1:16.80, text:"Hemen deneyin."}
-];
-const SCENES = [...document.querySelectorAll('.scene')].map(e => ({el:e, s:+e.dataset.start, e:+e.dataset.end}));
+ {
+  "text": "Hala deftere mi yazıyorsunuz?",
+  "t0": 0.0,
+  "t1": 1.866,
+  "words": [
+   {
+    "w": "Hala",
+    "t0": 0.0,
+    "t1": 0.329
+   },
+   {
+    "w": "deftere",
+    "t0": 0.329,
+    "t1": 0.823
+   },
+   {
+    "w": "mi",
+    "t0": 0.823,
+    "t1": 1.043
+   },
+   {
+    "w": "yazıyorsunuz?",
+    "t0": 1.043,
+    "t1": 1.866
+   }
+  ]
+ },
+ {
+  "text": "Hesabım Muhasebe.",
+  "t0": 2.275,
+  "t1": 2.764,
+  "words": [
+   {
+    "w": "Hesabım",
+    "t0": 2.275,
+    "t1": 2.495
+   },
+   {
+    "w": "Muhasebe.",
+    "t0": 2.495,
+    "t1": 2.764
+   }
+  ]
+ },
+ {
+  "text": "Cari hesap, kasa ve ekibiniz tek uygulamada.",
+  "t0": 3.15,
+  "t1": 5.524,
+  "words": [
+   {
+    "w": "Cari",
+    "t0": 3.15,
+    "t1": 3.424
+   },
+   {
+    "w": "hesap,",
+    "t0": 3.424,
+    "t1": 3.789
+   },
+   {
+    "w": "kasa",
+    "t0": 3.789,
+    "t1": 4.063
+   },
+   {
+    "w": "ve",
+    "t0": 4.063,
+    "t1": 4.246
+   },
+   {
+    "w": "ekibiniz",
+    "t0": 4.246,
+    "t1": 4.703
+   },
+   {
+    "w": "tek",
+    "t0": 4.703,
+    "t1": 4.931
+   },
+   {
+    "w": "uygulamada.",
+    "t0": 4.931,
+    "t1": 5.524
+   }
+  ]
+ },
+ {
+  "text": "Kasanızdaki para, nakit ve bankada tek ekranda.",
+  "t0": 5.682,
+  "t1": 7.617,
+  "words": [
+   {
+    "w": "Kasanızdaki",
+    "t0": 5.682,
+    "t1": 6.139
+   },
+   {
+    "w": "para,",
+    "t0": 6.139,
+    "t1": 6.386
+   },
+   {
+    "w": "nakit",
+    "t0": 6.386,
+    "t1": 6.632
+   },
+   {
+    "w": "ve",
+    "t0": 6.632,
+    "t1": 6.773
+   },
+   {
+    "w": "bankada",
+    "t0": 6.773,
+    "t1": 7.089
+   },
+   {
+    "w": "tek",
+    "t0": 7.089,
+    "t1": 7.265
+   },
+   {
+    "w": "ekranda.",
+    "t0": 7.265,
+    "t1": 7.617
+   }
+  ]
+ },
+ {
+  "text": "Gelirleriniz ve giderleriniz otomatik takip edilir.",
+  "t0": 8.034,
+  "t1": 9.78,
+  "words": [
+   {
+    "w": "Gelirleriniz",
+    "t0": 8.034,
+    "t1": 8.455
+   },
+   {
+    "w": "ve",
+    "t0": 8.455,
+    "t1": 8.576
+   },
+   {
+    "w": "giderleriniz",
+    "t0": 8.576,
+    "t1": 8.997
+   },
+   {
+    "w": "otomatik",
+    "t0": 8.997,
+    "t1": 9.298
+   },
+   {
+    "w": "takip",
+    "t0": 9.298,
+    "t1": 9.509
+   },
+   {
+    "w": "edilir.",
+    "t0": 9.509,
+    "t1": 9.78
+   }
+  ]
+ },
+ {
+  "text": "Her müşterinin cari hesabı ayrı, bakiye tek dokunuşla.",
+  "t0": 10.097,
+  "t1": 12.896,
+  "words": [
+   {
+    "w": "Her",
+    "t0": 10.097,
+    "t1": 10.319
+   },
+   {
+    "w": "müşterinin",
+    "t0": 10.319,
+    "t1": 10.852
+   },
+   {
+    "w": "cari",
+    "t0": 10.852,
+    "t1": 11.118
+   },
+   {
+    "w": "hesabı",
+    "t0": 11.118,
+    "t1": 11.474
+   },
+   {
+    "w": "ayrı,",
+    "t0": 11.474,
+    "t1": 11.785
+   },
+   {
+    "w": "bakiye",
+    "t0": 11.785,
+    "t1": 12.14
+   },
+   {
+    "w": "tek",
+    "t0": 12.14,
+    "t1": 12.362
+   },
+   {
+    "w": "dokunuşla.",
+    "t0": 12.362,
+    "t1": 12.896
+   }
+  ]
+ },
+ {
+  "text": "Gelir ve giderlerinizi bir bakışta görün.",
+  "t0": 13.223,
+  "t1": 15.277,
+  "words": [
+   {
+    "w": "Gelir",
+    "t0": 13.223,
+    "t1": 13.522
+   },
+   {
+    "w": "ve",
+    "t0": 13.522,
+    "t1": 13.693
+   },
+   {
+    "w": "giderlerinizi",
+    "t0": 13.693,
+    "t1": 14.335
+   },
+   {
+    "w": "bir",
+    "t0": 14.335,
+    "t1": 14.549
+   },
+   {
+    "w": "bakışta",
+    "t0": 14.549,
+    "t1": 14.935
+   },
+   {
+    "w": "görün.",
+    "t0": 14.935,
+    "t1": 15.277
+   }
+  ]
+ },
+ {
+  "text": "Hemen deneyin.",
+  "t0": 15.486,
+  "t1": 16.812,
+  "words": [
+   {
+    "w": "Hemen",
+    "t0": 15.486,
+    "t1": 16.032
+   },
+   {
+    "w": "deneyin.",
+    "t0": 16.032,
+    "t1": 16.812
+   }
+  ]
+ }
+];const SCENES = [...document.querySelectorAll('.scene')].map(e => ({el:e, s:+e.dataset.start, e:+e.dataset.end}));
 const clamp = (x,a=0,b=1) => Math.max(a, Math.min(b, x));
 const ease = x => x<0?0:x>1?1:1-Math.pow(1-x,3);
 const easeBack = x => { const c=1.4; return 1 + (c+1)*Math.pow(x-1,3) + c*Math.pow(x-1,2); };
@@ -112,9 +369,7 @@ const fadeIO = (t, s, e, d=0.3) => clamp((t - (s - d*0.5)) / d) * clamp(((e + d*
 const subsEl = document.getElementById('subs');
 const WORDS = [];
 for (const sn of SENTENCES) {
-  const ws = sn.text.split(' ');
-  const dur = (sn.t1 - sn.t0) / ws.length;
-  ws.forEach((w, i) => WORDS.push({w, t0: sn.t0 + i*dur, t1: sn.t0 + (i+1)*dur, sent: sn}));
+  sn.words.forEach(o => WORDS.push({w: o.w, t0: o.t0, t1: o.t1, sent: sn}));
 }
 subsEl.innerHTML = '';
 const inner = document.createElement('div'); inner.id='subsInner'; subsEl.appendChild(inner);
