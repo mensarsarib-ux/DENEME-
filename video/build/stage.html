@@ -20,24 +20,25 @@ html,body{margin:0;width:1080px;height:1920px;overflow:hidden;background:#0B1420
 #brand{position:absolute;left:0;right:0;top:960px;text-align:center;font:800 104px/1 Inter;letter-spacing:-.02em}
 #tag{position:absolute;left:0;right:0;top:1100px;text-align:center;font:500 46px/1.35 Inter;color:#94A3B8}
 /* telefon */
-.phone{position:absolute;left:250px;top:190px;width:580px;height:1080px;border-radius:92px;background:#05070A;padding:20px;box-sizing:border-box;box-shadow:0 0 0 3px #2B333D,0 60px 140px rgba(0,0,0,.6),0 0 200px rgba(34,112,122,.3)}
+.phone{position:absolute;left:250px;top:420px;width:580px;height:960px;border-radius:92px;background:#05070A;padding:20px;box-sizing:border-box;box-shadow:0 0 0 3px #2B333D,0 60px 140px rgba(0,0,0,.6),0 0 200px rgba(34,112,122,.3)}
 .phone .screen{width:100%;height:100%;border-radius:76px;overflow:hidden;background:#161B22;position:relative}
 .phone img{width:100%;height:100%;object-fit:cover;object-position:top;display:block}
 /* kart */
 .card{box-sizing:border-box;position:absolute;background:#141E2E;border:2px solid rgba(127,227,238,.25);border-radius:34px;padding:34px 40px;box-shadow:0 30px 80px rgba(0,0,0,.5);font:700 56px/1.2 Inter}
-#kasaCard{left:60px;top:1300px;width:960px}
+#kasaCard{left:60px;top:1400px;width:960px}
 #kasaCard .l{font:600 30px Inter;color:#94A3B8;letter-spacing:.12em}
 #kasaCard .v{font:800 96px Inter;color:#34D399;margin-top:8px}
-#custCard{left:60px;top:1300px;width:960px;display:flex;justify-content:space-between;align-items:center}
+#custCard{left:60px;top:1400px;width:960px;display:flex;justify-content:space-between;align-items:center}
 #custCard .n{font:700 44px Inter}
 #custCard .a{font:800 44px Inter;color:#3B82F6;white-space:nowrap}
-#rapCard{left:60px;top:1300px;width:960px}
+#rapCard{left:60px;top:1400px;width:960px}
 #rapCard .l{font:600 30px Inter;color:#94A3B8;letter-spacing:.12em}
 #rapCard .v{font:800 46px Inter;color:#F1F5F9;margin-top:10px}
 /* altyazı */
-#subs{position:absolute;left:60px;right:60px;bottom:70px;min-height:230px;display:block;line-height:1.35;padding:34px 40px;border-radius:32px;background:rgba(8,14,22,.78);backdrop-filter:blur(6px);text-align:center;font:700 54px/1.35 Inter}
+#subs{position:absolute;left:60px;right:60px;top:120px;height:260px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.35;padding:34px 40px;border-radius:32px;background:rgba(8,14,22,.8);border:2px solid rgba(127,227,238,.18);font:700 58px/1.35 Inter}
 #subs .w{display:none}
-#subs .w.show{display:inline}
+#subs .w.show{display:inline;transition:none}
+#subsInner{max-width:920px}
 #subs .w.on{color:#7FE3EE}
 #subs .w.done{color:#F1F5F9}
 /* CTA */
@@ -116,7 +117,8 @@ for (const sn of SENTENCES) {
   ws.forEach((w, i) => WORDS.push({w, t0: sn.t0 + i*dur, t1: sn.t0 + (i+1)*dur, sent: sn}));
 }
 subsEl.innerHTML = '';
-WORDS.forEach((o, i) => { const s = document.createElement('span'); s.className='w'; s.textContent = o.w + (i < WORDS.length-1 && WORDS[i+1].sent === o.sent ? ' ' : ' '); s.id='w'+i; subsEl.appendChild(s); });
+const inner = document.createElement('div'); inner.id='subsInner'; subsEl.appendChild(inner);
+WORDS.forEach((o, i) => { const s = document.createElement('span'); s.className='w'; s.textContent = o.w + (i < WORDS.length-1 && WORDS[i+1].sent === o.sent ? ' ' : ' '); s.id='w'+i; inner.appendChild(s); });
 
 // Defter yazısı: harf harf
 const hand = document.getElementById('hand');
@@ -188,6 +190,7 @@ function seek(t) {
     const el = document.getElementById('w'+i);
     const show = active && o.sent === active;
     el.className = 'w' + (show ? ' show' : '') + (show && t >= o.t1 ? ' done' : (show && t >= o.t0 ? ' on' : ''));
+    if (show) { const a = clamp((t - o.t0) / 0.18); el.style.opacity = a; el.style.filter = `blur(${(1-a)*6}px)`; }
   });
   subsEl.style.opacity = active ? 1 : 0;
 }
