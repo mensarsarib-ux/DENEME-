@@ -28,31 +28,35 @@ room = bandpass(rng.standard_normal(len(out)), 60, 900) * 0.0025
 out += room
 
 # 2) Kalem sürtünmesi: defter yazısı boyunca (0.2–1.9 sn), harf başına küçük tıklar
-for k in range(33):
-    at = 0.2 + k * (1.7 / 33) + rng.uniform(-0.01, 0.01)
-    place(burst(0.03, 2500, 7000, 0.001, 0.012), at, 0.10)
-    place(burst(0.06, 900, 2400, 0.003, 0.03), at, 0.035)
+n_w = int(1.7 * SR)
+scr = bandpass(rng.standard_normal(n_w), 1800, 6500)
+env_w = (0.6 + 0.4 * np.sin(np.linspace(0, 60 * np.pi, n_w))) * np.minimum(np.linspace(0, 1, n_w) * 20, 1)
+place(scr * env_w, 0.2, 0.09)
 
 # 3) Sayfa çevirme: sahne 1'den 2'ye geçişte kağıt sesi (iki kısa sürtünme ve bir kağıt hışırtısı)
-for at in [2.85]:
-    place(burst(0.35, 1500, 6000, 0.004, 0.09), at, 0.20)
-    place(burst(0.22, 800, 3000, 0.01, 0.06), at + 0.12, 0.12)
+n_p = int(0.5 * SR); t_p = np.arange(n_p) / SR
+rustle = bandpass(rng.standard_normal(n_p), 900, 5000) * np.exp(-t_p / 0.14) * np.minimum(t_p / 0.01, 1)
+place(rustle, 2.85, 0.16)
 
 # 4) Sahne geçişleri: sert değil, çok kısa kumaş/hava sesi (yumuşak dolgu)
 for at in [5.85, 9.35, 12.85, 15.85]:
     place(burst(0.18, 400, 1800, 0.02, 0.06), at, 0.07)
 
 # 5) Yumuşak dokunma: logo ve buton görünürken cam/plastik tıkı
-for at in [3.25, 16.25]:
+n_z = int(0.9 * SR); t_z = np.arange(n_z) / SR
+chime = (np.sin(2*np.pi*1568*t_z) + 0.3*np.sin(2*np.pi*2352*t_z)) * np.exp(-t_z / 0.4)
+place(chime, 16.25, 0.12)
+for at in [3.25]:
     d = 0.12; n = int(d * SR); t = np.arange(n) / SR
     tap = (np.sin(2*np.pi*1100*t) * 0.25 + np.sin(2*np.pi*2600*t) * 0.1) * np.exp(-t / 0.012)
     b = burst(0.03, 3000, 8000, 0.001, 0.01); b = np.pad(b, (0, max(0, n - len(b))))[:n]
     place(tap * 0.5 + b * 0.3, at, 0.18)
 
 # 6) Sayaç tıkları: kasa toplamı sayarken (6.2–8.6 sn), hafif ve seyrek
-t_k = np.arange(6.2, 8.6, 0.09)
-for at in t_k:
-    place(burst(0.02, 2000, 6000, 0.001, 0.006), at + rng.uniform(-0.005, 0.005), 0.06)
+n_c = int(1.2 * SR); t_c = np.arange(n_c) / SR
+bell = sum(np.sin(2*np.pi*f*t_c) * a for f, a in [(2093, 0.5), (3136, 0.3), (4186, 0.15)]) * np.exp(-t_c / 0.35)
+drawer = bandpass(rng.standard_normal(n_c), 1500, 5000) * np.exp(-t_c / 0.03) * 0.5
+place(drawer + bell * 0.6, 8.55, 0.22)
 
 # Ses seviyesi: tepe değer sınırı
 peak = np.max(np.abs(out))
