@@ -39,8 +39,9 @@ rustle = bandpass(rng.standard_normal(n_p), 900, 5000) * np.exp(-t_p / 0.14) * n
 place(rustle, 2.85, 0.16)
 
 # 4) Sahne geçişleri: sert değil, çok kısa kumaş/hava sesi (yumuşak dolgu)
+# Geçiş sesi: kısa ve yumuşak bir tık (önceki uzun hava/kumaş sesi kaldırıldı)
 for at in [5.85, 9.35, 12.85, 15.85]:
-    place(burst(0.18, 400, 1800, 0.02, 0.06), at, 0.07)
+    place(burst(0.025, 2500, 6000, 0.001, 0.008), at, 0.10)
 
 # 5) Yumuşak dokunma: logo ve buton görünürken cam/plastik tıkı
 n_z = int(0.9 * SR); t_z = np.arange(n_z) / SR
