@@ -10,6 +10,6 @@ cmd = ['ffmpeg', '-y', '-v', 'error', '-framerate', '30', '-i', 'frames/%05d.jpg
        '-c:v', 'libx264', '-profile:v', 'high', '-level', '4.1', '-preset', 'medium', '-crf', '19', '-pix_fmt', 'yuv420p', '-r', '30',
        '-c:a', 'aac', '-b:a', '192k', '-movflags', '+faststart', 'out/hesabim-tanitim.mp4']
 # Ses normalizasyonu (Reels için yaklaşık -14 LUFS, tepe -1 dBTP)
-subprocess.run(['ffmpeg','-y','-v','error','-i','out/hesabim-tanitim.mp4','-c:v','copy','-af','loudnorm=I=-14:TP=-1:LRA=11','-c:a','aac','-b:a','192k','out/hesabim-reels.mp4'],check=True)
 subprocess.run(cmd, check=True)
+subprocess.run(['ffmpeg','-y','-v','error','-i','out/hesabim-tanitim.mp4','-c:v','copy','-af','loudnorm=I=-14:TP=-1:LRA=11','-c:a','aac','-b:a','192k','out/hesabim-reels.mp4'],check=True)
 print('tamam')

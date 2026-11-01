@@ -447,7 +447,7 @@ function seek(t) {
     el.className = 'w' + (show ? ' show' : '') + (show && t >= o.t1 ? ' done' : (show && t >= o.t0 ? ' on' : ''));
     if (show) { const a = clamp((t - o.t0) / 0.18); el.style.opacity = a; el.style.filter = `blur(${(1-a)*6}px)`; }
   });
-  subsEl.style.opacity = active ? 1 : 0;
+  subsEl.style.opacity = 0; // altyazı kapalı
 }
 seek(0);
 </script>
