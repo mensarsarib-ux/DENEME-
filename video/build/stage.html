@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="tr"><head><meta charset="utf-8">
+<style>
+@font-face { font-family: "Caveat"; src: url("assets/Caveat.ttf"); }
+html,body{margin:0;width:1080px;height:1920px;overflow:hidden;background:#0B1420}
+#stage{position:relative;width:1080px;height:1920px;overflow:hidden;
+  background:radial-gradient(900px 700px at 20% 10%,rgba(34,112,122,.45),transparent 70%),
+             radial-gradient(800px 900px at 90% 85%,rgba(28,74,102,.5),transparent 70%),#0B1420;
+  font-family:Inter,sans-serif;color:#F1F5F9}
+.scene{position:absolute;inset:0;opacity:0}
+/* defter */
+#notebook{position:absolute;left:90px;top:520px;width:900px;height:700px;border-radius:24px;background:#F7F4EC;box-shadow:0 40px 90px rgba(0,0,0,.5)}
+#notebook .lines{position:absolute;inset:0;background:repeating-linear-gradient(to bottom,transparent 0 79px,#C9D6E6 79px 80px);border-radius:24px;opacity:.9}
+#notebook .margin{position:absolute;left:120px;top:0;bottom:0;width:3px;background:#F3A6A6}
+#hand{position:absolute;left:150px;top:560px;width:800px;font-family:Caveat,cursive;font-size:84px;line-height:1.25;color:#1E2A3B;white-space:nowrap}
+#hand span{opacity:0}
+#pen{position:absolute;width:120px;height:120px;transform-origin:0 100%;pointer-events:none}
+/* logo */
+#logo{position:absolute;left:340px;top:520px;width:400px;height:400px}
+#brand{position:absolute;left:0;right:0;top:960px;text-align:center;font:800 104px/1 Inter;letter-spacing:-.02em}
+#tag{position:absolute;left:0;right:0;top:1100px;text-align:center;font:500 46px/1.35 Inter;color:#94A3B8}
+/* telefon */
+.phone{position:absolute;left:250px;top:190px;width:580px;height:1080px;border-radius:92px;background:#05070A;padding:20px;box-sizing:border-box;box-shadow:0 0 0 3px #2B333D,0 60px 140px rgba(0,0,0,.6),0 0 200px rgba(34,112,122,.3)}
+.phone .screen{width:100%;height:100%;border-radius:76px;overflow:hidden;background:#161B22;position:relative}
+.phone img{width:100%;height:100%;object-fit:cover;object-position:top;display:block}
+/* kart */
+.card{box-sizing:border-box;position:absolute;background:#141E2E;border:2px solid rgba(127,227,238,.25);border-radius:34px;padding:34px 40px;box-shadow:0 30px 80px rgba(0,0,0,.5);font:700 56px/1.2 Inter}
+#kasaCard{left:60px;top:1300px;width:960px}
+#kasaCard .l{font:600 30px Inter;color:#94A3B8;letter-spacing:.12em}
+#kasaCard .v{font:800 96px Inter;color:#34D399;margin-top:8px}
+#custCard{left:60px;top:1300px;width:960px;display:flex;justify-content:space-between;align-items:center}
+#custCard .n{font:700 44px Inter}
+#custCard .a{font:800 44px Inter;color:#3B82F6;white-space:nowrap}
+#rapCard{left:60px;top:1300px;width:960px}
+#rapCard .l{font:600 30px Inter;color:#94A3B8;letter-spacing:.12em}
+#rapCard .v{font:800 46px Inter;color:#F1F5F9;margin-top:10px}
+/* altyazı */
+#subs{position:absolute;left:60px;right:60px;bottom:70px;min-height:230px;display:block;line-height:1.35;padding:34px 40px;border-radius:32px;background:rgba(8,14,22,.78);backdrop-filter:blur(6px);text-align:center;font:700 54px/1.35 Inter}
+#subs .w{display:none}
+#subs .w.show{display:inline}
+#subs .w.on{color:#7FE3EE}
+#subs .w.done{color:#F1F5F9}
+/* CTA */
+#ctaLogo{position:absolute;left:340px;top:460px;width:400px;height:400px}
+#cta{position:absolute;left:190px;top:1120px;width:700px;height:150px;border-radius:75px;background:#34D399;color:#0B1420;font:800 64px/150px Inter;text-align:center}
+#url{position:absolute;left:0;right:0;top:1330px;text-align:center;font:600 42px Inter;color:#7FE3EE}
+</style></head>
+<body>
+<div id="stage">
+
+  <!-- 1: defter -->
+  <div class="scene" data-start="0" data-end="3.0" id="s1">
+    <div id="notebook"><div class="lines"></div><div class="margin"></div></div>
+    <div id="hand"></div>
+    <svg id="pen" viewBox="0 0 24 24"><path d="M3 21l3-1 12-12-2-2L4 18z" fill="#2F7FD0"/><path d="M16 5l3 3" stroke="#2F7FD0" stroke-width="2"/></svg>
+  </div>
+
+  <!-- 2: logo ve marka -->
+  <div class="scene" data-start="3.0" data-end="6.0" id="s2">
+    <img id="logo" src="assets/logo.svg" alt="">
+    <div id="brand">Hesabım Muhasebe</div>
+    <div id="tag">Cari hesap, kasa ve ekibiniz tek uygulamada</div>
+  </div>
+
+  <!-- 3: kasa -->
+  <div class="scene" data-start="6.0" data-end="9.5" id="s3">
+    <div class="phone"><div class="screen"><img src="assets/raw-kasa.jpg" alt=""></div></div>
+    <div class="card" id="kasaCard"><div class="l">KASA TOPLAMI</div><div class="v" id="kasaV">₺0,00</div></div>
+  </div>
+
+  <!-- 4: müşteri -->
+  <div class="scene" data-start="9.5" data-end="13.0" id="s4">
+    <div class="phone"><div class="screen"><img src="assets/raw-musteri.jpg" alt=""></div></div>
+    <div class="card" id="custCard"><div class="n">Akdeniz Gıda Ltd.</div><div class="a">₺133.500,00</div></div>
+  </div>
+
+  <!-- 5: rapor -->
+  <div class="scene" data-start="13.0" data-end="16.0" id="s5">
+    <div class="phone"><div class="screen"><img src="assets/raw-rapor.jpg" alt=""></div></div>
+    <div class="card" id="rapCard"><div class="l">AYLIK GELİR · GİDER</div><div class="v">Ekim 2026 · Gelir ₺492.790,00</div></div>
+  </div>
+
+  <!-- 6: çağrı -->
+  <div class="scene" data-start="16.0" data-end="18.05" id="s6">
+    <img id="ctaLogo" src="assets/logo.svg" alt="">
+    <div id="cta">Hemen deneyin</div>
+    <div id="url">hesabimmuhasebe.com</div>
+  </div>
+
+  <div id="subs"></div>
+</div>
+
+<script>
+const SENTENCES = [
+  {t0:0.05, t1:1.85, text:"Hala deftere mi yazıyorsunuz?"},
+  {t0:2.30, t1:2.75, text:"Hesabım Muhasebe."},
+  {t0:3.15, t1:5.50, text:"Cari hesap, kasa ve ekibiniz tek uygulamada."},
+  {t0:5.70, t1:7.60, text:"Kasanızdaki para, nakit ve bankada tek ekranda."},
+  {t0:8.05, t1:9.75, text:"Gelirleriniz ve giderleriniz otomatik takip edilir."},
+  {t0:10.10, t1:12.90, text:"Her müşterinin cari hesabı ayrı, bakiye tek dokunuşla."},
+  {t0:13.20, t1:15.30, text:"Gelir ve giderlerinizi bir bakışta görün."},
+  {t0:15.50, t1:16.80, text:"Hemen deneyin."}
+];
+const SCENES = [...document.querySelectorAll('.scene')].map(e => ({el:e, s:+e.dataset.start, e:+e.dataset.end}));
+const clamp = (x,a=0,b=1) => Math.max(a, Math.min(b, x));
+const ease = x => x<0?0:x>1?1:1-Math.pow(1-x,3);
+const easeBack = x => { const c=1.4; return 1 + (c+1)*Math.pow(x-1,3) + c*Math.pow(x-1,2); };
+const fadeIO = (t, s, e, d=0.4) => clamp((t - (s - d*0.5)) / d) * clamp(((e + d*0.5) - t) / d);
+
+// Altyazı kelimeleri
+const subsEl = document.getElementById('subs');
+const WORDS = [];
+for (const sn of SENTENCES) {
+  const ws = sn.text.split(' ');
+  const dur = (sn.t1 - sn.t0) / ws.length;
+  ws.forEach((w, i) => WORDS.push({w, t0: sn.t0 + i*dur, t1: sn.t0 + (i+1)*dur, sent: sn}));
+}
+subsEl.innerHTML = '';
+WORDS.forEach((o, i) => { const s = document.createElement('span'); s.className='w'; s.textContent = o.w + (i < WORDS.length-1 && WORDS[i+1].sent === o.sent ? ' ' : ' '); s.id='w'+i; subsEl.appendChild(s); });
+
+// Defter yazısı: harf harf
+const hand = document.getElementById('hand');
+const HAND_TEXT = 'Hala deftere mi yazıyorsunuz?';
+for (const ch of HAND_TEXT) { const s=document.createElement('span'); s.textContent = ch; hand.appendChild(s); }
+const handSpans = [...hand.querySelectorAll('span')];
+const pen = document.getElementById('pen');
+
+function seek(t) {
+  // Sahneler
+  for (const sc of SCENES) {
+    const a = fadeIO(t, sc.s, sc.e, 0.5);
+    sc.el.style.opacity = a;
+    // Sahne girişinde hafif kayma
+    const inT = clamp((t - sc.s) / 0.5), outT = clamp((sc.e - t) / 0.5);
+    const dx = (1 - ease(inT)) * 90 - (1 - ease(outT)) * 90;
+    sc.el.style.transform = `translateX(${dx}px)`;
+  }
+
+  // 1: defter yazısı (0.2 - 1.9 sn)
+  const p = clamp((t - 0.2) / 1.7);
+  const n = handSpans.length;
+  const shown = Math.floor(p * n);
+  handSpans.forEach((s, i) => s.style.opacity = i < shown ? 1 : 0);
+  if (shown > 0 && shown <= n) {
+    const last = handSpans[Math.min(shown, n) - 1].getBoundingClientRect();
+    const hr = hand.getBoundingClientRect();
+    const stage = document.getElementById('stage').getBoundingClientRect();
+    const x = last.right - stage.left, y = last.top - stage.top + 40;
+    pen.style.left = (x - 10) + 'px'; pen.style.top = (y - 110) + 'px';
+    pen.style.opacity = t < 2.2 ? 1 : 0;
+  } else {
+    pen.style.opacity = 0;
+  }
+
+  // 2: logo büyüme ve yazılar
+  const logoT = clamp((t - 3.0) / 0.9);
+  const logo = document.getElementById('logo');
+  logo.style.transform = `scale(${0.5 + 0.5*easeBack(logoT)})`;
+  logo.style.opacity = logoT;
+  document.getElementById('brand').style.opacity = clamp((t - 3.5) / 0.6);
+  document.getElementById('brand').style.transform = `translateY(${(1 - clamp((t-3.5)/0.6))*40}px)`;
+  document.getElementById('tag').style.opacity = clamp((t - 4.0) / 0.6);
+
+  // 3: kasa sayısı artar (6.2 - 8.6 sn)
+  const kq = clamp((t - 6.2) / 2.4);
+  const kv = Math.round(1015600 * ease(kq));
+  document.getElementById('kasaV').textContent = '₺' + (kv/100).toLocaleString('tr-TR', {minimumFractionDigits:2, maximumFractionDigits:2});
+
+  // 4: müşteri kartı kayarak gelir
+  const cc = clamp((t - 10.2) / 0.6);
+  document.getElementById('custCard').style.transform = `translateY(${(1-ease(cc))*120}px)`;
+  document.getElementById('custCard').style.opacity = cc;
+
+  // 5: rapor kartı
+  const rc = clamp((t - 13.4) / 0.6);
+  document.getElementById('rapCard').style.opacity = rc;
+
+  // 6: CTA
+  const cq = clamp((t - 16.2) / 0.6);
+  document.getElementById('cta').style.transform = `scale(${0.85 + 0.15*easeBack(cq)})`;
+  document.getElementById('cta').style.opacity = cq;
+  document.getElementById('url').style.opacity = clamp((t - 16.8) / 0.6);
+  document.getElementById('ctaLogo').style.opacity = clamp((t - 16.0) / 0.6);
+
+  // Altyazı: geçmiş kelimeler, aktif kelime, gelecek kelimeler
+  const active = SENTENCES.find(sn => t >= sn.t0 - 0.1 && t <= sn.t1 + 0.35);
+  WORDS.forEach((o, i) => {
+    const el = document.getElementById('w'+i);
+    const show = active && o.sent === active;
+    el.className = 'w' + (show ? ' show' : '') + (show && t >= o.t1 ? ' done' : (show && t >= o.t0 ? ' on' : ''));
+  });
+  subsEl.style.opacity = active ? 1 : 0;
+}
+seek(0);
+</script>
+</body></html>
