@@ -33,3 +33,17 @@ Her senaryo için iki sürüm: altyazılı ve altyazısız.
 
 ## Hafta 1
 Takvim: `docs/icerik-takvimi-hafta1.csv` (9–15 Kasım 2026, 21 satır).
+
+## Reklam kullanımı (Meta)
+Aynı videolar Meta reklamında da kullanılacak. Organik paylaşımdan farklı kurallar geçerli:
+- **Formatlar:** Reels/Stories yerleşimi için 9:16 (1080×1920, mevcut sürüm). Feed için 4:5 (1080×1350). Kare (1:1) isteğe bağlı.
+- **Durum:** Kampanyalar önce durdurulmuş (PAUSED) olarak oluşturulur. Sen onaylamadan yayına alınmaz.
+- **Bütçe:** Günlük ve toplam üst sınır sen belirler. Test bütçesiyle başlanır.
+- **Politika:** Reklam metni Meta reklam standartlarına uyar. Finansal ürün kısıtlamalarını kontrol etmek gerekir (önceki değerlendirmeye bak). Kanıtlanamayan iddia kullanılmaz.
+- **Bağlantı:** Meta reklam hesabının resmi connector ile bağlanması gerekir. Bağlantıyı sen yaparsın, ben Meta hesabına giriş yapmam.
+- **Etiketleme:** Kendi reklamın olduğu için "İş birliği" etiketi gerekmez.
+
+### Gereken onaylar
+1. Meta connector bağlantısı (sen).
+2. Aylık ve günlük bütçe (sen).
+3. Her kampanyanın hedef kitlesi, metni ve videosu (ben hazırlarım, sen onaylarsın).
