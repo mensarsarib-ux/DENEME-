@@ -1,0 +1,67 @@
+<!doctype html><html lang="tr"><head><meta charset="utf-8">
+<style>
+@font-face{font-family:Hand;src:url(assets/Caveat.ttf)}
+html,body{margin:0;background:#F6F3EA}
+#s{position:relative;width:1080px;height:1920px;overflow:hidden;background:#F6F3EA;font-family:Inter,sans-serif}
+.grid{position:absolute;inset:0;background-image:linear-gradient(#d9e3ea 1px,transparent 1px),linear-gradient(90deg,#d9e3ea 1px,transparent 1px);background-size:60px 60px;opacity:.55}
+.margin{position:absolute;top:0;bottom:0;left:170px;width:2px;background:#f1a5a0}
+.holes{position:absolute;top:0;left:0;right:0;height:60px;background:radial-gradient(circle,#2b2b2b 5px,transparent 6px) 0 20px/44px 44px repeat-x}
+.hand{position:absolute;font-family:Hand;color:#1d3c6b;text-align:center;width:1080px;left:0}
+.q{position:absolute;left:0;width:1080px;top:520px;text-align:center}
+.num{position:absolute;left:0;width:1080px;top:820px;text-align:center;font:800 230px/1 Inter;color:#D9562B}
+.num small{font:700 60px Hand;color:#D9562B;margin-left:12px}
+.box{position:absolute;left:0;width:1080px;text-align:center}
+.box span{display:inline-block;border:4px solid #1d3c6b;border-radius:14px;padding:14px 38px;font:700 52px/1.2 Inter;color:#1d3c6b;background:#fff}
+.pill{position:absolute;left:150px;width:780px;height:100px;border-radius:50px;background:#1d3c6b;color:#fff;font:700 48px/100px Inter;text-align:center;opacity:0}
+.ph{position:absolute;left:250px;top:560px;width:580px;height:1000px;border-radius:70px;border:14px solid #1b2430;overflow:hidden;background:#000;box-shadow:0 40px 90px rgba(0,0,0,.25)}
+.ph img{width:100%;height:100%;object-fit:cover;object-position:top}
+#cta{position:absolute;left:0;width:1080px;top:1280px;text-align:center}
+#cta .b{font:800 100px/1.1 Inter;color:#1d3c6b}
+#cta .h{font:700 70px Hand;color:#D9562B;margin-top:30px}
+#cta img{width:220px;height:220px;border-radius:44px}
+.x{position:absolute;left:0;width:1080px;text-align:center;font:700 66px Hand}
+</style></head><body><div id="s">
+<div class="grid"></div><div class="margin"></div><div class="holes"></div>
+<svg id="qm" style="position:absolute;left:440px;top:260px" width="200" height="260" viewBox="0 0 200 260"><path id="qp" d="M40 60 C40 10 160 10 160 70 C160 120 100 120 100 160 L100 185" fill="none" stroke="#D9562B" stroke-width="14" stroke-linecap="round"/><circle cx="100" cy="230" r="9" fill="#D9562B"/></svg>
+<div class="hand" id="l1" style="top:420px;font-size:64px;opacity:0">Hâlâ deftere mi yazıyorsunuz?</div>
+<div class="num" id="num">0<small>kez</small></div>
+<div class="hand" id="l2" style="top:1060px;font-size:50px;opacity:0">her gün aynı defter, aynı hesap…</div>
+<div class="box" id="bx" style="top:1180px;opacity:0"><span>Hesabım Muhasebe</span></div>
+<div class="pill" id="p1" style="top:1330px">Cari hesap</div>
+<div class="pill" id="p2" style="top:1450px">Kasa ve banka</div>
+<div class="pill" id="p3" style="top:1570px">Aylık rapor</div>
+<div class="ph" id="ph" style="opacity:0"><img src="assets/raw-kasa.jpg" alt=""></div>
+<div id="cta" style="opacity:0"><img src="assets/logo.svg" alt=""><div class="b">Hesabım Muhasebe</div><div class="h">Defteri bırak, tek ekrana geç</div></div>
+</div>
+<script>
+const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x));
+const S=document.getElementById('s');
+const path=document.getElementById('qp'); const L=path.getTotalLength();
+path.style.strokeDasharray=L; path.style.strokeDashoffset=L;
+function fadeIn(id,t,t0,d=0.5){document.getElementById(id).style.opacity=clamp((t-t0)/d);}
+function seek(t){
+  // 0-2.6 s: soru işareti çizilir
+  path.style.strokeDashoffset=L*(1-clamp(t/2.2));
+  // 1.2-2.5: başlık yazılır
+  const l1=document.getElementById('l1'); l1.style.opacity=clamp((t-1.2)/0.5);
+  // 3-5.5: sayaç 0'dan 31'e
+  const n=Math.round(31*clamp((t-3)/2.2,0,1)); const ne=document.getElementById('num');
+  if(t>=3){ne.innerHTML=n+'<small>kez</small>';}else{ne.style.opacity=0;}
+  ne.style.opacity = t>=3 ? 1 : 0;
+  // soru işareti ve başlık solar: 5.6
+  document.getElementById('qm').style.opacity=1-clamp((t-5.4)/0.4);
+  l1.style.opacity = t>=5.4 ? clamp(1-(t-5.4)/0.4) : l1.style.opacity;
+  ne.style.opacity = t>=5.8 ? 0 : (t>=3?1:0);
+  // 5.8-7.6: ikinci satır
+  fadeIn('l2',t,5.8,0.5); document.getElementById('l2').style.opacity = t>=8.6 ? clamp(1-(t-8.6)/0.4) : clamp((t-5.8)/0.5);
+  // 8.8-10: marka kutusu
+  document.getElementById('bx').style.opacity=clamp((t-8.8)/0.5)*(t<11.2?1:clamp(1-(t-11.2)/0.4));
+  // 9.8-14: özellik hapları
+  ['p1','p2','p3'].forEach((id,i)=>{const t0=10+i*0.7; const el=document.getElementById(id); el.style.opacity=clamp((t-t0)/0.4)*(t<14.2?1:clamp(1-(t-14.2)/0.4)); el.style.transform=`translateY(${(1-clamp((t-t0)/0.4))*30}px)`;});
+  // 14.5-17.5: telefon ekranı
+  document.getElementById('ph').style.opacity=clamp((t-14.5)/0.5)*(t<17.6?1:clamp(1-(t-17.6)/0.4));
+  // 17.8-22: CTA
+  document.getElementById('cta').style.opacity=clamp((t-17.8)/0.6);
+}
+seek(0);
+</script></body></html>
