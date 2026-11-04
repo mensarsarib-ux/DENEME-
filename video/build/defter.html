@@ -44,14 +44,14 @@ function seek(t){
   path.style.strokeDashoffset=L*(1-clamp(t/2.2));
   // 1.2-2.5: başlık yazılır
   const l1=document.getElementById('l1'); l1.style.opacity=clamp((t-1.2)/0.5);
-  // 3-5.5: sayaç 0'dan 31'e
-  const n=Math.round(31*clamp((t-3)/2.2,0,1)); const ne=document.getElementById('num');
-  if(t>=3){ne.innerHTML=n+'<small>kez</small>';}else{ne.style.opacity=0;}
-  ne.style.opacity = t>=3 ? 1 : 0;
+  // 3-5.6: "Defter" üstü çizili olarak görünür (sayı yerine anlamlı bir mesaj)
+  const ne=document.getElementById('num');
+  ne.innerHTML='<span style="text-decoration:line-through;text-decoration-thickness:10px;color:#8a8a8a">Defter</span>';
+  ne.style.font='800 150px/1 Inter'; ne.style.top='860px';
+  ne.style.opacity = (t>=3 && t<5.8) ? clamp((t-3)/0.4) : 0;
   // soru işareti ve başlık solar: 5.6
   document.getElementById('qm').style.opacity=1-clamp((t-5.4)/0.4);
   l1.style.opacity = t>=5.4 ? clamp(1-(t-5.4)/0.4) : l1.style.opacity;
-  ne.style.opacity = t>=5.8 ? 0 : (t>=3?1:0);
   // 5.8-7.6: ikinci satır
   fadeIn('l2',t,5.8,0.5); document.getElementById('l2').style.opacity = t>=8.6 ? clamp(1-(t-8.6)/0.4) : clamp((t-5.8)/0.5);
   // 8.8-10: marka kutusu
