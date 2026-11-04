@@ -1,0 +1,20 @@
+KLING İSTEMLERİ - Bölüm 1 (Oran: 9:16, Süre: 5 sn)
+Her sahneyi AYRI ayrı üret. Her birini kutuya tek başına yapıştır.
+
+=== SAHNE 1 ===
+Vertical 9:16 cinematic shot inside a small Turkish neighborhood grocery store (bakkal), warm afternoon light through a dusty window. A middle-aged Turkish shopkeeper with a mustache, wearing a dark cardigan, sits behind a wooden counter writing in a thick paper ledger with a pen. Shelves of tea tins and bread behind him. Slow push-in, shallow depth of field, realistic skin texture, natural movement, no camera shake.
+
+=== SAHNE 2 ===
+Vertical 9:16 cinematic shot, same grocery store interior, warm light. The shop door opens and a confident Turkish woman in her early 30s, dark hair tied back, wearing a beige coat, steps in and smiles slightly. She says in Turkish: "Hâlâ deftere mi yazıyorsunuz?" The shopkeeper looks up from the ledger, surprised. Medium shot, natural lip movement, realistic facial expressions, consistent with the previous shot's character and lighting.
+
+=== SAHNE 3 ===
+Vertical 9:16 medium shot, same grocery store, same shopkeeper and woman. The shopkeeper leans back, shrugs slightly and says in Turkish: "Ne var bunda?" The woman smiles and says: "Hesabım Muhasebe'den haberiniz yok mu?" Natural lip movement, consistent characters and lighting, no camera shake.
+
+=== SAHNE 5 ===
+Vertical 9:16 close-up of the Turkish shopkeeper, same store, warm light. He looks down at a phone screen held by the woman (out of frame), raises his eyebrows slowly with a curious expression. Subtle natural movement, realistic skin texture, consistent character.
+
+=== SAHNE 6 ===
+Vertical 9:16 medium shot, same grocery store. The woman holds a phone and says in Turkish: "Her müşterinin hesabı ayrı, tek dokunuşla." The shopkeeper nods slowly, impressed. Natural lip movement, consistent characters and lighting.
+
+NEGATİF İSTEM (her sahnede ayrı kutuya):
+text, watermark, logo, extra fingers, distorted face, blurry, subtitles
