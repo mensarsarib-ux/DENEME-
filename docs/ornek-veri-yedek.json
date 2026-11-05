@@ -1,0 +1,697 @@
+{
+  "version": 1,
+  "groups": [
+    {
+      "id": "customer",
+      "name": "Müşteriler"
+    },
+    {
+      "id": "supplier",
+      "name": "Tedarikçiler"
+    }
+  ],
+  "parties": [
+    {
+      "id": "c1",
+      "name": "Örnek Gıda Market",
+      "kind": "customer",
+      "phone": "0500 000 0001"
+    },
+    {
+      "id": "c2",
+      "name": "Örnek Mobilya Evi",
+      "kind": "customer",
+      "phone": "0500 000 0002"
+    },
+    {
+      "id": "c3",
+      "name": "Örnek İnşaat Ltd.",
+      "kind": "customer",
+      "phone": "0500 000 0003"
+    },
+    {
+      "id": "c4",
+      "name": "Örnek Tekstil A.Ş.",
+      "kind": "customer",
+      "phone": "0500 000 0004"
+    },
+    {
+      "id": "c5",
+      "name": "Örnek Lojistik",
+      "kind": "customer",
+      "phone": "0500 000 0005"
+    },
+    {
+      "id": "c6",
+      "name": "Örnek Kırtasiye",
+      "kind": "customer",
+      "phone": "0500 000 0006"
+    },
+    {
+      "id": "c7",
+      "name": "Örnek Kafe & Fırın",
+      "kind": "customer",
+      "phone": "0500 000 0007"
+    },
+    {
+      "id": "c8",
+      "name": "Örnek Oto Yedek Parça",
+      "kind": "customer",
+      "phone": "0500 000 0008"
+    },
+    {
+      "id": "s1",
+      "name": "Örnek Toptan Un",
+      "kind": "supplier"
+    },
+    {
+      "id": "s2",
+      "name": "Örnek Ambalaj San.",
+      "kind": "supplier"
+    },
+    {
+      "id": "s3",
+      "name": "Örnek Enerji Dağıtım",
+      "kind": "supplier"
+    },
+    {
+      "id": "s4",
+      "name": "Örnek Kargo Hizmetleri",
+      "kind": "supplier"
+    },
+    {
+      "id": "s5",
+      "name": "Örnek Kırtasiye Toptan",
+      "kind": "supplier"
+    }
+  ],
+  "transactions": [
+    {
+      "id": "t1",
+      "customerId": "c1",
+      "type": "SATIŞ",
+      "date": "2026-09-10T12:45:00.000Z",
+      "description": "Fatura - ürün satışı",
+      "amount": 12750
+    },
+    {
+      "id": "t68",
+      "customerId": "s4",
+      "type": "ÖDEME",
+      "date": "2026-09-10T13:15:00.000Z",
+      "description": "Ödeme",
+      "amount": 14000,
+      "account": "bank"
+    },
+    {
+      "id": "t48",
+      "customerId": "c8",
+      "type": "SATIŞ",
+      "date": "2026-09-12T11:30:00.000Z",
+      "description": "Hizmet bedeli",
+      "amount": 4500
+    },
+    {
+      "id": "t40",
+      "customerId": "c7",
+      "type": "SATIŞ",
+      "date": "2026-09-16T17:15:00.000Z",
+      "description": "Sipariş teslimi",
+      "amount": 33150
+    },
+    {
+      "id": "t12",
+      "customerId": "c3",
+      "type": "SATIŞ",
+      "date": "2026-09-17T11:00:00.000Z",
+      "description": "Sipariş teslimi",
+      "amount": 26400
+    },
+    {
+      "id": "t57",
+      "customerId": "s2",
+      "type": "ALIŞ",
+      "date": "2026-09-17T16:00:00.000Z",
+      "description": "Stok alımı",
+      "amount": 19750
+    },
+    {
+      "id": "t52",
+      "customerId": "c8",
+      "type": "TAHSİLAT",
+      "date": "2026-09-18T14:15:00.000Z",
+      "description": "Tahsilat",
+      "amount": 3000,
+      "account": "cash"
+    },
+    {
+      "id": "t27",
+      "customerId": "c5",
+      "type": "SATIŞ",
+      "date": "2026-09-18T17:30:00.000Z",
+      "description": "Fatura - ürün satışı",
+      "amount": 4500
+    },
+    {
+      "id": "t2",
+      "customerId": "c1",
+      "type": "SATIŞ",
+      "date": "2026-09-18T18:45:00.000Z",
+      "description": "Toplu alım",
+      "amount": 26400
+    },
+    {
+      "id": "t63",
+      "customerId": "s3",
+      "type": "ÖDEME",
+      "date": "2026-09-20T10:15:00.000Z",
+      "description": "Ödeme",
+      "amount": 4000,
+      "account": "cash"
+    },
+    {
+      "id": "t6",
+      "customerId": "c2",
+      "type": "SATIŞ",
+      "date": "2026-09-20T14:00:00.000Z",
+      "description": "Fatura - ürün satışı",
+      "amount": 33150
+    },
+    {
+      "id": "t15",
+      "customerId": "c3",
+      "type": "TAHSİLAT",
+      "date": "2026-09-21T17:30:00.000Z",
+      "description": "Tahsilat",
+      "amount": 15000,
+      "account": "bank"
+    },
+    {
+      "id": "t13",
+      "customerId": "c3",
+      "type": "SATIŞ",
+      "date": "2026-09-21T18:45:00.000Z",
+      "description": "Fatura - ürün satışı",
+      "amount": 33150
+    },
+    {
+      "id": "t59",
+      "customerId": "s2",
+      "type": "ÖDEME",
+      "date": "2026-09-23T14:30:00.000Z",
+      "description": "Ödeme",
+      "amount": 14000,
+      "account": "cash"
+    },
+    {
+      "id": "t23",
+      "customerId": "c5",
+      "type": "SATIŞ",
+      "date": "2026-09-25T13:45:00.000Z",
+      "description": "Fatura - ürün satışı",
+      "amount": 18900
+    },
+    {
+      "id": "t33",
+      "customerId": "c6",
+      "type": "SATIŞ",
+      "date": "2026-09-25T14:00:00.000Z",
+      "description": "Hizmet bedeli",
+      "amount": 4500
+    },
+    {
+      "id": "t71",
+      "customerId": "s5",
+      "type": "ÖDEME",
+      "date": "2026-09-25T17:30:00.000Z",
+      "description": "Ödeme",
+      "amount": 14000,
+      "account": "cash"
+    },
+    {
+      "id": "t18",
+      "customerId": "c4",
+      "type": "SATIŞ",
+      "date": "2026-09-25T18:45:00.000Z",
+      "description": "Sipariş teslimi",
+      "amount": 4500
+    },
+    {
+      "id": "t3",
+      "customerId": "c1",
+      "type": "SATIŞ",
+      "date": "2026-09-27T10:00:00.000Z",
+      "description": "Fatura - ürün satışı",
+      "amount": 8200
+    },
+    {
+      "id": "t26",
+      "customerId": "c5",
+      "type": "SATIŞ",
+      "date": "2026-09-27T12:15:00.000Z",
+      "description": "Fatura - ürün satışı",
+      "amount": 26400
+    },
+    {
+      "id": "t36",
+      "customerId": "c6",
+      "type": "TAHSİLAT",
+      "date": "2026-09-27T14:45:00.000Z",
+      "description": "Tahsilat",
+      "amount": 5000,
+      "account": "bank"
+    },
+    {
+      "id": "t58",
+      "customerId": "s2",
+      "type": "ÖDEME",
+      "date": "2026-09-28T16:45:00.000Z",
+      "description": "Ödeme",
+      "amount": 8500,
+      "account": "cash"
+    },
+    {
+      "id": "t53",
+      "customerId": "s1",
+      "type": "ALIŞ",
+      "date": "2026-09-29T10:30:00.000Z",
+      "description": "Stok alımı",
+      "amount": 19750
+    },
+    {
+      "id": "t50",
+      "customerId": "c8",
+      "type": "TAHSİLAT",
+      "date": "2026-09-30T13:15:00.000Z",
+      "description": "Tahsilat",
+      "amount": 5000,
+      "account": "bank"
+    },
+    {
+      "id": "t37",
+      "customerId": "c7",
+      "type": "SATIŞ",
+      "date": "2026-10-01T15:00:00.000Z",
+      "description": "Fatura - ürün satışı",
+      "amount": 8200
+    },
+    {
+      "id": "t16",
+      "customerId": "c3",
+      "type": "TAHSİLAT",
+      "date": "2026-10-01T17:45:00.000Z",
+      "description": "Tahsilat",
+      "amount": 15000,
+      "account": "bank"
+    },
+    {
+      "id": "t11",
+      "customerId": "c3",
+      "type": "SATIŞ",
+      "date": "2026-10-04T17:00:00.000Z",
+      "description": "Toplu alım",
+      "amount": 26400
+    },
+    {
+      "id": "t35",
+      "customerId": "c6",
+      "type": "SATIŞ",
+      "date": "2026-10-05T16:15:00.000Z",
+      "description": "Fatura - ürün satışı",
+      "amount": 12750
+    },
+    {
+      "id": "t39",
+      "customerId": "c7",
+      "type": "SATIŞ",
+      "date": "2026-10-06T09:15:00.000Z",
+      "description": "Sipariş teslimi",
+      "amount": 18900
+    },
+    {
+      "id": "t14",
+      "customerId": "c3",
+      "type": "SATIŞ",
+      "date": "2026-10-06T12:00:00.000Z",
+      "description": "Sipariş teslimi",
+      "amount": 18900
+    },
+    {
+      "id": "t29",
+      "customerId": "c5",
+      "type": "TAHSİLAT",
+      "date": "2026-10-06T18:15:00.000Z",
+      "description": "Tahsilat",
+      "amount": 5000,
+      "account": "cash"
+    },
+    {
+      "id": "t44",
+      "customerId": "c7",
+      "type": "TAHSİLAT",
+      "date": "2026-10-07T11:30:00.000Z",
+      "description": "Tahsilat",
+      "amount": 15000,
+      "account": "bank"
+    },
+    {
+      "id": "t20",
+      "customerId": "c4",
+      "type": "SATIŞ",
+      "date": "2026-10-07T17:45:00.000Z",
+      "description": "Toplu alım",
+      "amount": 33150
+    },
+    {
+      "id": "t22",
+      "customerId": "c4",
+      "type": "TAHSİLAT",
+      "date": "2026-10-08T11:45:00.000Z",
+      "description": "Tahsilat",
+      "amount": 15000,
+      "account": "bank"
+    },
+    {
+      "id": "t65",
+      "customerId": "s4",
+      "type": "ALIŞ",
+      "date": "2026-10-09T18:15:00.000Z",
+      "description": "Alış faturası",
+      "amount": 19750
+    },
+    {
+      "id": "t55",
+      "customerId": "s1",
+      "type": "ÖDEME",
+      "date": "2026-10-10T09:00:00.000Z",
+      "description": "Ödeme",
+      "amount": 8500,
+      "account": "bank"
+    },
+    {
+      "id": "t30",
+      "customerId": "c5",
+      "type": "TAHSİLAT",
+      "date": "2026-10-10T11:15:00.000Z",
+      "description": "Tahsilat",
+      "amount": 9800,
+      "account": "cash"
+    },
+    {
+      "id": "t47",
+      "customerId": "c8",
+      "type": "SATIŞ",
+      "date": "2026-10-10T17:15:00.000Z",
+      "description": "Hizmet bedeli",
+      "amount": 18900
+    },
+    {
+      "id": "t10",
+      "customerId": "c2",
+      "type": "TAHSİLAT",
+      "date": "2026-10-11T17:30:00.000Z",
+      "description": "Tahsilat",
+      "amount": 15000,
+      "account": "bank"
+    },
+    {
+      "id": "t31",
+      "customerId": "c6",
+      "type": "SATIŞ",
+      "date": "2026-10-12T11:15:00.000Z",
+      "description": "Toplu alım",
+      "amount": 12750
+    },
+    {
+      "id": "t42",
+      "customerId": "c7",
+      "type": "TAHSİLAT",
+      "date": "2026-10-12T13:15:00.000Z",
+      "description": "Tahsilat",
+      "amount": 15000,
+      "account": "cash"
+    },
+    {
+      "id": "t41",
+      "customerId": "c7",
+      "type": "SATIŞ",
+      "date": "2026-10-12T13:45:00.000Z",
+      "description": "Sipariş teslimi",
+      "amount": 8200
+    },
+    {
+      "id": "t66",
+      "customerId": "s4",
+      "type": "ALIŞ",
+      "date": "2026-10-12T15:15:00.000Z",
+      "description": "Stok alımı",
+      "amount": 19750
+    },
+    {
+      "id": "t19",
+      "customerId": "c4",
+      "type": "SATIŞ",
+      "date": "2026-10-13T12:30:00.000Z",
+      "description": "Toplu alım",
+      "amount": 26400
+    },
+    {
+      "id": "t61",
+      "customerId": "s3",
+      "type": "ALIŞ",
+      "date": "2026-10-15T13:00:00.000Z",
+      "description": "Hizmet faturası",
+      "amount": 19750
+    },
+    {
+      "id": "t70",
+      "customerId": "s5",
+      "type": "ALIŞ",
+      "date": "2026-10-16T11:00:00.000Z",
+      "description": "Stok alımı",
+      "amount": 27300
+    },
+    {
+      "id": "t34",
+      "customerId": "c6",
+      "type": "SATIŞ",
+      "date": "2026-10-16T13:45:00.000Z",
+      "description": "Toplu alım",
+      "amount": 4500
+    },
+    {
+      "id": "t21",
+      "customerId": "c4",
+      "type": "TAHSİLAT",
+      "date": "2026-10-16T16:00:00.000Z",
+      "description": "Tahsilat",
+      "amount": 3000,
+      "account": "bank"
+    },
+    {
+      "id": "t62",
+      "customerId": "s3",
+      "type": "ALIŞ",
+      "date": "2026-10-16T18:00:00.000Z",
+      "description": "Stok alımı",
+      "amount": 19750
+    },
+    {
+      "id": "t56",
+      "customerId": "s2",
+      "type": "ALIŞ",
+      "date": "2026-10-17T10:00:00.000Z",
+      "description": "Alış faturası",
+      "amount": 11400
+    },
+    {
+      "id": "t7",
+      "customerId": "c2",
+      "type": "SATIŞ",
+      "date": "2026-10-18T16:15:00.000Z",
+      "description": "Hizmet bedeli",
+      "amount": 26400
+    },
+    {
+      "id": "t69",
+      "customerId": "s5",
+      "type": "ALIŞ",
+      "date": "2026-10-19T17:45:00.000Z",
+      "description": "Alış faturası",
+      "amount": 6200
+    },
+    {
+      "id": "t54",
+      "customerId": "s1",
+      "type": "ALIŞ",
+      "date": "2026-10-20T13:00:00.000Z",
+      "description": "Alış faturası",
+      "amount": 19750
+    },
+    {
+      "id": "t5",
+      "customerId": "c1",
+      "type": "TAHSİLAT",
+      "date": "2026-10-20T14:30:00.000Z",
+      "description": "Tahsilat",
+      "amount": 5000,
+      "account": "bank"
+    },
+    {
+      "id": "t43",
+      "customerId": "c7",
+      "type": "TAHSİLAT",
+      "date": "2026-10-20T16:45:00.000Z",
+      "description": "Tahsilat",
+      "amount": 9800,
+      "account": "cash"
+    },
+    {
+      "id": "t46",
+      "customerId": "c8",
+      "type": "SATIŞ",
+      "date": "2026-10-22T09:00:00.000Z",
+      "description": "Sipariş teslimi",
+      "amount": 4500
+    },
+    {
+      "id": "t67",
+      "customerId": "s4",
+      "type": "ALIŞ",
+      "date": "2026-10-22T11:15:00.000Z",
+      "description": "Hizmet faturası",
+      "amount": 27300
+    },
+    {
+      "id": "t17",
+      "customerId": "c3",
+      "type": "TAHSİLAT",
+      "date": "2026-10-24T13:30:00.000Z",
+      "description": "Tahsilat",
+      "amount": 15000,
+      "account": "bank"
+    },
+    {
+      "id": "t24",
+      "customerId": "c5",
+      "type": "SATIŞ",
+      "date": "2026-10-24T15:15:00.000Z",
+      "description": "Fatura - ürün satışı",
+      "amount": 12750
+    },
+    {
+      "id": "t64",
+      "customerId": "s3",
+      "type": "ÖDEME",
+      "date": "2026-10-29T09:15:00.000Z",
+      "description": "Ödeme",
+      "amount": 14000,
+      "account": "cash"
+    },
+    {
+      "id": "t45",
+      "customerId": "c8",
+      "type": "SATIŞ",
+      "date": "2026-10-29T17:30:00.000Z",
+      "description": "Toplu alım",
+      "amount": 18900
+    },
+    {
+      "id": "t49",
+      "customerId": "c8",
+      "type": "SATIŞ",
+      "date": "2026-10-29T18:30:00.000Z",
+      "description": "Sipariş teslimi",
+      "amount": 26400
+    },
+    {
+      "id": "t32",
+      "customerId": "c6",
+      "type": "SATIŞ",
+      "date": "2026-10-30T15:00:00.000Z",
+      "description": "Fatura - ürün satışı",
+      "amount": 18900
+    },
+    {
+      "id": "t51",
+      "customerId": "c8",
+      "type": "TAHSİLAT",
+      "date": "2026-10-30T15:15:00.000Z",
+      "description": "Tahsilat",
+      "amount": 3000,
+      "account": "bank"
+    },
+    {
+      "id": "t25",
+      "customerId": "c5",
+      "type": "SATIŞ",
+      "date": "2026-10-31T09:45:00.000Z",
+      "description": "Fatura - ürün satışı",
+      "amount": 18900
+    },
+    {
+      "id": "t9",
+      "customerId": "c2",
+      "type": "SATIŞ",
+      "date": "2026-10-31T15:45:00.000Z",
+      "description": "Toplu alım",
+      "amount": 18900
+    },
+    {
+      "id": "t60",
+      "customerId": "s3",
+      "type": "ALIŞ",
+      "date": "2026-11-02T15:00:00.000Z",
+      "description": "Stok alımı",
+      "amount": 19750
+    },
+    {
+      "id": "t38",
+      "customerId": "c7",
+      "type": "SATIŞ",
+      "date": "2026-11-03T17:00:00.000Z",
+      "description": "Sipariş teslimi",
+      "amount": 8200
+    },
+    {
+      "id": "t8",
+      "customerId": "c2",
+      "type": "SATIŞ",
+      "date": "2026-11-04T14:30:00.000Z",
+      "description": "Hizmet bedeli",
+      "amount": 33150
+    },
+    {
+      "id": "t28",
+      "customerId": "c5",
+      "type": "TAHSİLAT",
+      "date": "2026-11-05T14:45:00.000Z",
+      "description": "Tahsilat",
+      "amount": 9800,
+      "account": "cash"
+    },
+    {
+      "id": "t4",
+      "customerId": "c1",
+      "type": "TAHSİLAT",
+      "date": "2026-11-05T16:30:00.000Z",
+      "description": "Tahsilat",
+      "amount": 3000,
+      "account": "bank"
+    }
+  ],
+  "accounts": [
+    {
+      "id": "cash",
+      "name": "Nakit",
+      "opening": 80000
+    },
+    {
+      "id": "bank",
+      "name": "Banka",
+      "opening": 60000
+    }
+  ],
+  "notes": [],
+  "readIds": []
+}
