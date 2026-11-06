@@ -38,4 +38,6 @@
     <!-- Permissions -->
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Play beyanıyla uyumlu olması için (Play Console: reklam kimliği beyanı) -->
+    <uses-permission android:name="com.google.android.gms.permission.AD_ID" />
 </manifest>
