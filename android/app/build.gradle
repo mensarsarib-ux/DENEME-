@@ -65,3 +65,10 @@ try {
 } catch(Exception e) {
     logger.info("google-services.json not found, google-services plugin not applied. Push Notifications won't work")
 }
+
+// Play Faturalandırma Kitaplığı en az 8.0.0 olmalı (Play Console uyarısı)
+configurations.all {
+    resolutionStrategy {
+        force 'com.android.billingclient:billing:8.0.0'
+    }
+}
