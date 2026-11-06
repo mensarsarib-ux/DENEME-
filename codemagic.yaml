@@ -39,3 +39,31 @@ workflows:
       app_store_connect:
         auth: integration
         submit_to_testflight: true
+
+  hesabim-android:
+    name: Hesabım Android (AAB)
+    instance_type: linux_x2
+    max_build_duration: 45
+    environment:
+      groups:
+        # Codemagic'te "supabase" ortam grubu: VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY
+        - supabase
+      android_signing:
+        # Codemagic'te yüklenen yükleme anahtarının adı (upload-keystore.jks)
+        - hesabim-upload
+      vars:
+        APP_PACKAGE: "com.mensar.hesabim"
+      java: 17
+      node: 20
+    # Derleme yalnızca Codemagic'te elle başlatılır. AAB, Play Console'a elle yüklenir.
+    scripts:
+      - name: Paketleri kur
+        script: npm ci
+      - name: Web uygulamasını derle
+        script: npm run build
+      - name: Capacitor ile Android projesine kopyala
+        script: npx cap sync android
+      - name: Release AAB üret
+        script: cd android && ./gradlew bundleRelease
+    artifacts:
+      - android/app/build/outputs/bundle/release/*.aab
