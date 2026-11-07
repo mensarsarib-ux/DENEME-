@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { CURRENT_PLAN, PLAN_NAME, type Plan } from "../lib/plan";
-import { buyPlan, loadProducts, ownsOnDevice, PENDING_MESSAGE, PLAN_PRODUCT, purchasesAvailable, refreshPlan, restorePlan } from "../lib/purchases";
+import { buyPlan, loadProducts, ownsOnDevice, PENDING_MESSAGE, planProduct, purchasesAvailable, refreshPlan, restorePlan } from "../lib/purchases";
 import { haptic } from "../lib/haptics";
 import { getLanguage, locale, t } from "../lib/i18n";
 import { SUPPORT_ICON } from "../lib/menu";
@@ -246,7 +246,7 @@ export default function PlansPage({
                 </div>
                 <p className="paywall-price">
                   {/* Fiyat App Store'dan geldiyse o gösterilir (ülkeye göre para birimi doğru olur) */}
-                  {(p.id !== "free" && storePrices[PLAN_PRODUCT[p.id as Exclude<Plan, "free">]]) || price(p.price)}
+                  {(p.id !== "free" && storePrices[planProduct(p.id as Exclude<Plan, "free">)]) || price(p.price)}
                   <small>{p.price === 0 ? t("sonsuza kadar") : t("yıllık")}</small>
                 </p>
               </div>
@@ -263,10 +263,10 @@ export default function PlansPage({
                 <button
                   type="button"
                   className="paywall-btn"
-                  disabled={busy || !storePrices[PLAN_PRODUCT[p.id as Exclude<Plan, "free">]]}
+                  disabled={busy || !storePrices[planProduct(p.id as Exclude<Plan, "free">)]}
                   onClick={() => void purchase(p.id as Exclude<Plan, "free">)}
                 >
-                  {storePrices[PLAN_PRODUCT[p.id as Exclude<Plan, "free">]]
+                  {storePrices[planProduct(p.id as Exclude<Plan, "free">)]
                     ? switchLabel(t(PLAN_NAME[p.id]))
                     : t("Fiyat bekleniyor…")}
                 </button>

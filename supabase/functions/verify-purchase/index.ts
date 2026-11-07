@@ -155,6 +155,106 @@ async function refreshOwner(admin: Admin, userId: string, businessId: string): P
   }
 }
 
+// ---------- Google Play (Android) ----------
+const GOOGLE_PACKAGE = "com.hesabimmuhasebe";
+const GOOGLE_PRODUCT_PLAN: Record<string, string> = {
+  "pro.yearly": "pro",
+  "proplus.yearly": "proplus",
+  "premium.yearly": "premium",
+};
+
+/** Google'a servis hesabı JWT'si ile erişim jetonu alır (GOOGLE_PLAY_SERVICE_ACCOUNT_JSON secret'ı) */
+async function googleAccessToken(): Promise<string> {
+  const sa = JSON.parse(Deno.env.get("GOOGLE_PLAY_SERVICE_ACCOUNT_JSON")!) as { client_email: string; private_key: string };
+  const now = Math.floor(Date.now() / 1000);
+  const header = b64url(JSON.stringify({ alg: "RS256", typ: "JWT" }));
+  const claims = b64url(
+    JSON.stringify({
+      iss: sa.client_email,
+      scope: "https://www.googleapis.com/auth/androidpublisher",
+      aud: "https://oauth2.googleapis.com/token",
+      iat: now,
+      exp: now + 3600,
+    }),
+  );
+  const body = sa.private_key.replace(/-----[^-]+-----/g, "").replace(/\s+/g, "");
+  const der = Uint8Array.from(atob(body), (c) => c.charCodeAt(0));
+  const key = await crypto.subtle.importKey("pkcs8", der, { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" }, false, ["sign"]);
+  const sig = await crypto.subtle.sign("RSASSA-PKCS1-v1_5", key, new TextEncoder().encode(`${header}.${claims}`));
+  const assertion = `${header}.${claims}.${b64url(new Uint8Array(sig))}`;
+  const res = await fetch("https://oauth2.googleapis.com/token", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({ grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer", assertion }),
+  });
+  const data = (await res.json().catch(() => ({}))) as { access_token?: string };
+  if (!res.ok || !data.access_token) throw new Error(`google token ${res.status}`);
+  return data.access_token;
+}
+
+/** Android satın alması: purchaseToken Google Play'e sorulur, aktif aboneliğin planı hesaba yazılır */
+async function verifyGoogle(admin: Admin, userId: string, purchaseToken: string): Promise<Response> {
+  try {
+    const access = await googleAccessToken();
+    const base = `https://androidpublisher.googleapis.com/androidpublisher/v3/applications/${GOOGLE_PACKAGE}`;
+    const res = await fetch(`${base}/purchases/subscriptionsv2/tokens/${encodeURIComponent(purchaseToken)}`, {
+      headers: { Authorization: `Bearer ${access}` },
+    });
+    if (!res.ok) {
+      console.log(`google reddetti ${res.status}`);
+      return json({ error: "google_reddetti" }, 402);
+    }
+    const sub = (await res.json()) as {
+      subscriptionState?: string;
+      acknowledgementState?: string;
+      lineItems?: { productId: string; expiryTime?: string }[];
+    };
+    const active = sub.subscriptionState === "SUBSCRIPTION_STATE_ACTIVE" || sub.subscriptionState === "SUBSCRIPTION_STATE_IN_GRACE_PERIOD";
+    let best: { plan: string; productId: string; expires: number } | null = null;
+    for (const li of sub.lineItems ?? []) {
+      const plan = GOOGLE_PRODUCT_PLAN[li.productId];
+      if (!plan || !active) continue;
+      const expires = Math.max(li.expiryTime ? new Date(li.expiryTime).getTime() : 0, Date.now() + 24 * 3600 * 1000);
+      if (!best || RANK[plan] > RANK[best.plan]) best = { plan, productId: li.productId, expires };
+    }
+    const chosen = best as { plan: string; productId: string; expires: number } | null;
+
+    // Üç gün içinde onaylanmazsa Google satın almayı iade eder; bu yüzden bekleyen onay burada yapılır
+    if (chosen && sub.acknowledgementState === "ACKNOWLEDGEMENT_STATE_PENDING") {
+      const ack = await fetch(`${base}/purchases/subscriptions/${chosen.productId}/tokens/${encodeURIComponent(purchaseToken)}:acknowledge`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${access}`, "Content-Type": "application/json" },
+        body: "{}",
+      });
+      console.log(`google onay ${ack.status}`);
+    }
+
+    const stamp = new Date().toISOString();
+    if (chosen) {
+      // Aynı Play aboneliği başka bir hesapta etkinse oradan alınır (Apple yoluyla aynı kural)
+      await admin
+        .from("entitlements")
+        .update({ plan: "free", expires_at: stamp, updated_at: stamp })
+        .eq("original_transaction_id", purchaseToken)
+        .neq("user_id", userId)
+        .neq("plan", "free");
+    }
+    const row = chosen
+      ? { plan: chosen.plan, product_id: chosen.productId, original_transaction_id: purchaseToken, expires_at: new Date(chosen.expires).toISOString() }
+      : { plan: "free", product_id: null, original_transaction_id: null, expires_at: null };
+    const { error } = await admin.from("entitlements").upsert({ user_id: userId, ...row, transaction_id: purchaseToken, updated_at: stamp });
+    if (error) {
+      console.log(`kayit hatasi ${error.message}`);
+      return json({ error: "kayit_hatasi" }, 500);
+    }
+    if (!chosen) return json({ error: "aktif_abonelik_yok" }, 402);
+    return json({ plan: chosen.plan, expiresAt: row.expires_at });
+  } catch (e) {
+    console.log(`google hata ${String(e)}`);
+    return json({ error: "sunucu_hatasi" }, 500);
+  }
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: cors });
   if (req.method !== "POST") return json({ error: "method" }, 405);
@@ -180,6 +280,8 @@ Deno.serve(async (req) => {
   if (!transactionId) return json({ error: "islem_yok" }, 404);
   // Hangi işlemin sorulduğu: telefondan gelen mi, hesabın kayıtlı işlemi mi (sorun ayıklamak için)
   console.log(`istek kaynak=${input.transactionId != null ? "telefon" : "kayit"} islem=${transactionId}`);
+  // Apple işlem numaraları sayısaldır; Android purchaseToken'ı ise metin olarak gelir
+  if (!/^\d+$/.test(transactionId)) return await verifyGoogle(admin, userId, transactionId);
 
   try {
     const token = await appleJwt();

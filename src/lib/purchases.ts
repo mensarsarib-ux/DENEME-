@@ -18,6 +18,19 @@ export const PLAN_PRODUCT: Record<Exclude<Plan, "free">, string> = {
   premium: "com.mensar.hesabim.premium.yearly",
 };
 
+/** Android'de Play Console'daki ürün kimlikleri */
+const ANDROID_PRODUCT: Record<Exclude<Plan, "free">, string> = {
+  pro: "pro.yearly",
+  proplus: "proplus.yearly",
+  premium: "premium.yearly",
+};
+
+const isAndroid = () => Capacitor.getPlatform() === "android";
+
+/** Seçilen paketin bu platformdaki ürün kimliği */
+export const planProduct = (plan: Exclude<Plan, "free">): string =>
+  isAndroid() ? ANDROID_PRODUCT[plan] : PLAN_PRODUCT[plan];
+
 /** Satın alma yalnızca yerel uygulamada çalışır; tarayıcıda her zaman kapalıdır */
 export const purchasesAvailable = () => Capacitor.isNativePlatform();
 
@@ -25,7 +38,7 @@ export const purchasesAvailable = () => Capacitor.isNativePlatform();
 export async function loadProducts(): Promise<Product[]> {
   if (!purchasesAvailable()) return [];
   const { products } = await NativePurchases.getProducts({
-    productIdentifiers: Object.keys(PRODUCT_PLAN),
+    productIdentifiers: isAndroid() ? Object.values(ANDROID_PRODUCT) : Object.keys(PRODUCT_PLAN),
     productType: PURCHASE_TYPE.SUBS,
   });
   return products;
@@ -46,9 +59,9 @@ export async function buyPlan(plan: Exclude<Plan, "free">): Promise<void> {
   };
   const tx = await plugin
     .purchaseProduct({
-      productIdentifier: PLAN_PRODUCT[plan],
+      productIdentifier: planProduct(plan),
       productType: PURCHASE_TYPE.SUBS,
-      appAccountToken: session.userId,
+      appAccountToken: isAndroid() ? undefined : session.userId,
     })
     .catch((e: unknown) => {
       // Onay bekleyen satın alma, onaylanınca açılışta ya da uygulamaya dönüldüğünde hesaba bağlanır
@@ -96,7 +109,7 @@ async function deviceTransactionId(onlyAccount?: string): Promise<string | undef
 
 /** Bu paket telefondaki Apple hesabında zaten etkin mi? (Apple'ın "Bu öğeye abonesiniz" penceresi) */
 export async function ownsOnDevice(plan: Exclude<Plan, "free">): Promise<boolean> {
-  return (await deviceEntitlements()).some((e) => e.productIdentifier === PLAN_PRODUCT[plan]);
+  return (await deviceEntitlements()).some((e) => e.productIdentifier === planProduct(plan));
 }
 
 /** Aile onayı ya da banka onayı bekleyen satın alma için gösterilen mesaj */
