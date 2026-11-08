@@ -18,6 +18,7 @@ import {
 } from "../lib/cloud";
 import { haptic } from "../lib/haptics";
 import { getLanguage, t } from "../lib/i18n";
+import { legalBase } from "../lib/platform";
 import { Svg } from "./Icon";
 import PhoneField from "./PhoneField";
 
@@ -81,12 +82,12 @@ const ATTACHED_END = ["ja", "zh", "ko"];
 
 /** Kayıt ekranındaki yasal sayfalar; Türkçe dışındaki dillerde İngilizce sayfalar açılır */
 /** 6698 sayılı KVKK aydınlatma metni (Türkçe; Türkiye'deki kullanıcılar için zorunlu bilgilendirme) */
-const KVKK_URL = "https://hesabimmuhasebe.com/kvkk.html";
+const KVKK_URL = `${legalBase()}/kvkk.html`;
 
 const legalUrl = (page: "terms" | "privacy") =>
   getLanguage() === "tr"
-    ? `https://hesabimmuhasebe.com/${page === "terms" ? "kullanim-kosullari" : "gizlilik"}.html`
-    : `https://hesabimmuhasebe.com/en/${page}.html`;
+    ? `${legalBase()}/${page === "terms" ? "kullanim-kosullari" : "gizlilik"}.html`
+    : `${legalBase()}/en/${page}.html`;
 
 export default function AuthScreen({
   recoveryToken,

@@ -1,5 +1,5 @@
 import { t } from "../lib/i18n";
-import { onAndroid } from "../lib/platform";
+import { legalBase, onAndroid } from "../lib/platform";
 import { PRIVACY_ICON } from "../lib/menu";
 import PageHeader from "./PageHeader";
 
@@ -27,7 +27,7 @@ export default function PrivacyPage({ onBack }: { onBack: () => void }) {
           <h2 className="card-title">{t("İletişim")}</h2>
           <p>{t("Sorularınız için Destek al bölümünü kullanabilirsiniz.")}</p>
           <p>
-            <a href="https://hesabimmuhasebe.com/kvkk.html" target="_blank" rel="noreferrer">{t("KVKK Aydınlatma Metni")}</a>
+            <a href={`${legalBase()}/kvkk.html`} target="_blank" rel="noreferrer">{t("KVKK Aydınlatma Metni")}</a>
           </p>
         </section>
       </div>
