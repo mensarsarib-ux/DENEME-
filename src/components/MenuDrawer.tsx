@@ -12,6 +12,7 @@ import { Svg } from "./Icon";
 import { t } from "../lib/i18n";
 import { activeWorkspace, switchWorkspace } from "../lib/storage";
 import { STORE_ICON } from "./BusinessPlus";
+import { appVersion } from "../lib/version";
 
 /**
  * Soldan açılan yarı genişlikte menü penceresi. Seçenekler: işletme profili, hesaplarım, raporlar,
@@ -174,6 +175,8 @@ export default function MenuDrawer({
         <div className="drawer-spacer" />
 
         {/* En altta: destek al ve çıkış yap (ekip daveti Ekiplerim sayfasındadır) */}
+        {/* Uygulama sürümü: hangi derlemenin yüklü olduğu buradan anlaşılır */}
+        <p className="drawer-version">{t("Sürüm {v}", { v: appVersion() })}</p>
         <nav className="drawer-nav drawer-footer" aria-label={t("Ekip ve hesap")}>
           <button type="button" className="drawer-item" onClick={() => open("support")}>
             <Svg d={SUPPORT_ICON} />

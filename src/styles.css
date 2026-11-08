@@ -4297,3 +4297,11 @@ a.action-btn:visited {
 }
 .ob-sheet.is-done .ob-body { align-items: center; text-align: center; }
 .ob-sheet.is-done .ob-body .primary-btn { align-self: stretch; }
+
+/* Menüde uygulama sürümü ("Destek al" satırının hemen üstünde, soluk ve küçük) */
+.drawer-version {
+  margin: 0;
+  padding: 0 20px 6px;
+  font-size: 12px;
+  opacity: 0.5;
+}

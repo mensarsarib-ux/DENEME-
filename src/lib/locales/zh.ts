@@ -20,6 +20,7 @@ const dict: Record<string, string> = {
   "Bildirimler": "通知",
   "Ayarlar": "设置",
   "Destek al": "获取帮助",
+  "Sürüm {v}": "版本 {v}",
   "Ara": "拨打电话",
   "Aramayı temizle": "清除搜索",
   "Kasa: nakit ve banka": "现金账：现金和银行",

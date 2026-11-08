@@ -20,6 +20,7 @@ const dict: Record<string, string> = {
   "Bildirimler": "Benachrichtigungen",
   "Ayarlar": "Einstellungen",
   "Destek al": "Hilfe erhalten",
+  "Sürüm {v}": "Version {v}",
   "Ara": "Anrufen",
   "Aramayı temizle": "Suche löschen",
   "Kasa: nakit ve banka": "Kasse: Bargeld und Bank",

@@ -26,6 +26,7 @@ export const app: Record<string, string> = {
   "Bildirimler": "Notifications",
   "Ayarlar": "Settings",
   "Destek al": "Get support",
+  "Sürüm {v}": "Version {v}",
 
   // Ana ekran
   "Ara": "Search",
