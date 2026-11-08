@@ -283,6 +283,35 @@ public class NativePurchasesPlugin extends Plugin {
     });
   }
 
+  /**
+   * Bu Google hesabındaki aktif abonelik satın almaları (purchaseToken, ürün, hesap kimliği).
+   * Uygulama "zaten abonesiniz" durumunda ve geri yüklemede sunucuya bu numarayı gönderir.
+   */
+  @PluginMethod
+  public void getSubscriptionPurchases(PluginCall call) {
+    if (!initBillingClient(null, call)) return;
+    billingClient.queryPurchasesAsync(
+      QueryPurchasesParams.newBuilder().setProductType(BillingClient.ProductType.SUBS).build(),
+      (BillingResult billingResult, List<Purchase> purchases) -> {
+        JSONArray out = new JSONArray();
+        if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK && purchases != null) {
+          for (Purchase p : purchases) {
+            if (p.getPurchaseState() != Purchase.PurchaseState.PURCHASED) continue;
+            JSObject item = new JSObject();
+            item.put("transactionId", p.getPurchaseToken());
+            item.put("productIdentifier", p.getProducts().isEmpty() ? "" : p.getProducts().get(0));
+            item.put("appAccountToken", p.getAccountIdentifiers() != null ? p.getAccountIdentifiers().getObfuscatedAccountId() : "");
+            out.put(item);
+          }
+        }
+        closeBillingClient();
+        JSObject ret = new JSObject();
+        ret.put("purchases", out);
+        call.resolve(ret);
+      }
+    );
+  }
+
   /** Onaylanmamış satın almaları onaylar (abonelikler tüketilmez) */
   @PluginMethod
   public void restorePurchases(PluginCall call) {

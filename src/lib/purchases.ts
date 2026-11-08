@@ -99,9 +99,21 @@ type DeviceEntitlement = { transactionId: string; productIdentifier: string; app
 
 /** Telefondaki Apple hesabının şu an geçerli abonelikleri (Transaction.currentEntitlements) */
 async function deviceEntitlements(): Promise<DeviceEntitlement[]> {
-  // Android'de getCurrentEntitlements yok (yama yalnızca iOS'a ekleniyor). Olmayan metodun çağrısı
-  // yerel tarafta yakalanamadığı için uygulama kapanır; Android satın almaları purchaseToken ile doğrulanır.
-  if (isAndroid()) return [];
+  // Android: Google Play'deki aktif abonelik satın almaları (purchaseToken). Ürün kimliği iOS karşılığına çevrilir.
+  if (isAndroid()) {
+    try {
+      const plugin = NativePurchases as unknown as {
+        getSubscriptionPurchases(): Promise<{ purchases: { transactionId: string; productIdentifier: string; appAccountToken?: string }[] }>;
+      };
+      const { purchases } = await plugin.getSubscriptionPurchases();
+      return (purchases ?? []).flatMap((p) => {
+        const entry = (Object.entries(ANDROID_PRODUCT) as [Exclude<Plan, "free">, string][]).find(([, id]) => id === p.productIdentifier);
+        return entry ? [{ transactionId: p.transactionId, productIdentifier: PLAN_PRODUCT[entry[0]], appAccountToken: p.appAccountToken }] : [];
+      });
+    } catch {
+      return [];
+    }
+  }
   try {
     const plugin = NativePurchases as unknown as {
       getCurrentEntitlements(): Promise<{ entitlements: DeviceEntitlement[] }>;
@@ -132,7 +144,7 @@ async function deviceTransactionId(onlyAccount?: string): Promise<string | undef
 
 /** Bu paket telefondaki Apple hesabında zaten etkin mi? (Apple'ın "Bu öğeye abonesiniz" penceresi) */
 export async function ownsOnDevice(plan: Exclude<Plan, "free">): Promise<boolean> {
-  return (await deviceEntitlements()).some((e) => e.productIdentifier === planProduct(plan));
+  return (await deviceEntitlements()).some((e) => PRODUCT_PLAN[e.productIdentifier] === plan);
 }
 
 /** Aile onayı ya da banka onayı bekleyen satın alma için gösterilen mesaj */
