@@ -1,4 +1,5 @@
 import { t } from "../lib/i18n";
+import { onAndroid } from "../lib/platform";
 import { PRIVACY_ICON } from "../lib/menu";
 import PageHeader from "./PageHeader";
 
@@ -16,7 +17,7 @@ export default function TermsPage({ onBack }: { onBack: () => void }) {
           <h2 className="card-title">{t("Ücretsiz ve ücretli paketler")}</h2>
           <p>{t("Ücretsiz paket sınırlı kullanım sunar. Pro, Pro Plus ve Premium paketleri yıllık abonelik olarak sunulur ve paket sınırları uygulama tarafından gösterilen değerlerle belirlenir.")}</p>
           <h2 className="card-title">{t("Abonelik ve ödeme")}</h2>
-          <p>{t("Ücretli paketler Apple Kimliğiniz üzerinden tahsil edilir. Abonelik, dönem sonunda otomatik olarak yenilenir. Yenilemeyi, dönem bitiminden en az 24 saat önce Ayarlar → Apple Hesabı → Abonelikler bölümünden kapatabilirsiniz. Ödenmiş dönemin iadesi Apple'ın kurallarına tabidir.")}</p>
+          <p>{onAndroid() ? t("Ücretli paketler Google Play hesabınız üzerinden tahsil edilir. Abonelik, dönem sonunda otomatik olarak yenilenir. Yenilemeyi Google Play → Profil → Ödemeler ve abonelikler → Abonelikler bölümünden istediğiniz zaman kapatabilirsiniz. Ödenmiş dönemin iadesi Google Play'in kurallarına tabidir.") : t("Ücretli paketler Apple Kimliğiniz üzerinden tahsil edilir. Abonelik, dönem sonunda otomatik olarak yenilenir. Yenilemeyi, dönem bitiminden en az 24 saat önce Ayarlar → Apple Hesabı → Abonelikler bölümünden kapatabilirsiniz. Ödenmiş dönemin iadesi Apple'ın kurallarına tabidir.")}</p>
           <h2 className="card-title">{t("Verileriniz")}</h2>
           <p>{t("Verilerinizin nasıl işlendiği, Gizlilik politikası bölümünde açıklanmıştır. Uygulamanın kayıtlarınızı kaybetmemesi için düzenli yedek almanızı öneririz.")}</p>
           <h2 className="card-title">{t("Kullanım kuralları")}</h2>

@@ -1,5 +1,5 @@
 // Supabase Edge Function: verify-purchase
-// Satın almayı Apple'a sorar ve aktif aboneliğin planını hesabın kaydına yazar.
+// Satın almayı Apple'a (iOS) ya da Google Play'e (Android) sorar ve aktif aboneliğin planını hesabın kaydına yazar.
 // transactionId gönderilmezse hesabın kayıtlı işlemi kullanılır (geri yükleme ve yenileme).
 
 import { createClient } from "jsr:@supabase/supabase-js@2";
@@ -118,6 +118,28 @@ async function refreshOwner(admin: Admin, userId: string, businessId: string): P
   }
   if (ent.updated_at && now - new Date(ent.updated_at).getTime() < 3600 * 1000) return json({ plan: "free" });
 
+  // Sahip aboneliği Android'den aldıysa kayıtlı işlem bir Google purchaseToken'ıdır (Apple numaraları sayısaldır)
+  if (!/^\d+$/.test(String(ent.transaction_id))) {
+    try {
+      const sub = await googleSubscription(String(ent.transaction_id));
+      const stamp = new Date().toISOString();
+      if (!sub?.chosen) {
+        await admin.from("entitlements").update({ updated_at: stamp }).eq("user_id", owner);
+        return json({ plan: "free" });
+      }
+      const expiresAt = new Date(sub.chosen.expires).toISOString();
+      await admin
+        .from("entitlements")
+        .update({ plan: sub.chosen.plan, product_id: sub.chosen.productId, expires_at: expiresAt, updated_at: stamp })
+        .eq("user_id", owner);
+      console.log(`sahip yenileme (google): ${sub.chosen.plan} ${owner}`);
+      return json({ plan: sub.chosen.plan, expiresAt });
+    } catch (e) {
+      console.log(`sahip yenileme hatası (google) ${String(e)}`);
+      return json({ error: "sunucu_hatasi" }, 500);
+    }
+  }
+
   try {
     const token = await appleJwt();
     const status = await appleGet(`/inApps/v1/subscriptions/${ent.transaction_id}`, token);
@@ -192,46 +214,77 @@ async function googleAccessToken(): Promise<string> {
   return data.access_token;
 }
 
+type GoogleSub = {
+  /** Aktif abonelik varsa en üst paket; yoksa null */
+  chosen: { plan: string; productId: string; expires: number } | null;
+  /** Satın alma sırasında uygulamanın verdiği Hesabım kullanıcı kimliği (obfuscatedAccountId) */
+  account: string;
+};
+
+/**
+ * purchaseToken'ı Google Play'e sorar. Aktif abonelik bulunur ve henüz onaylanmamışsa onaylar
+ * (üç gün içinde onaylanmayan satın almayı Google iade eder). Google reddederse null döner.
+ */
+async function googleSubscription(purchaseToken: string): Promise<GoogleSub | null> {
+  const access = await googleAccessToken();
+  const base = `https://androidpublisher.googleapis.com/androidpublisher/v3/applications/${GOOGLE_PACKAGE}`;
+  const res = await fetch(`${base}/purchases/subscriptionsv2/tokens/${encodeURIComponent(purchaseToken)}`, {
+    headers: { Authorization: `Bearer ${access}` },
+  });
+  if (!res.ok) {
+    console.log(`google reddetti ${res.status} ${(await res.text()).slice(0, 160)}`);
+    return null;
+  }
+  const sub = (await res.json()) as {
+    subscriptionState?: string;
+    acknowledgementState?: string;
+    lineItems?: { productId: string; expiryTime?: string }[];
+    externalAccountIdentifiers?: { obfuscatedExternalAccountId?: string };
+  };
+  const active = sub.subscriptionState === "SUBSCRIPTION_STATE_ACTIVE" || sub.subscriptionState === "SUBSCRIPTION_STATE_IN_GRACE_PERIOD";
+  let chosen: GoogleSub["chosen"] = null;
+  for (const li of sub.lineItems ?? []) {
+    const plan = GOOGLE_PRODUCT_PLAN[li.productId];
+    if (!plan || !active) continue;
+    const expires = Math.max(li.expiryTime ? new Date(li.expiryTime).getTime() : 0, Date.now() + 24 * 3600 * 1000);
+    if (!chosen || RANK[plan] > RANK[chosen.plan]) chosen = { plan, productId: li.productId, expires };
+  }
+  console.log(`google durum=${sub.subscriptionState} plan=${chosen?.plan ?? "yok"}`);
+  if (chosen && sub.acknowledgementState === "ACKNOWLEDGEMENT_STATE_PENDING") {
+    const ack = await fetch(`${base}/purchases/subscriptions/${chosen.productId}/tokens/${encodeURIComponent(purchaseToken)}:acknowledge`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${access}`, "Content-Type": "application/json" },
+      body: "{}",
+    });
+    console.log(`google onay ${ack.status}`);
+  }
+  return { chosen, account: String(sub.externalAccountIdentifiers?.obfuscatedExternalAccountId ?? "").toLowerCase() };
+}
+
 /** Android satın alması: purchaseToken Google Play'e sorulur, aktif aboneliğin planı hesaba yazılır */
 async function verifyGoogle(admin: Admin, userId: string, purchaseToken: string): Promise<Response> {
   try {
-    const access = await googleAccessToken();
-    const base = `https://androidpublisher.googleapis.com/androidpublisher/v3/applications/${GOOGLE_PACKAGE}`;
-    const res = await fetch(`${base}/purchases/subscriptionsv2/tokens/${encodeURIComponent(purchaseToken)}`, {
-      headers: { Authorization: `Bearer ${access}` },
-    });
-    if (!res.ok) {
-      console.log(`google reddetti ${res.status}`);
-      return json({ error: "google_reddetti" }, 402);
-    }
-    const sub = (await res.json()) as {
-      subscriptionState?: string;
-      acknowledgementState?: string;
-      lineItems?: { productId: string; expiryTime?: string }[];
-    };
-    const active = sub.subscriptionState === "SUBSCRIPTION_STATE_ACTIVE" || sub.subscriptionState === "SUBSCRIPTION_STATE_IN_GRACE_PERIOD";
-    let best: { plan: string; productId: string; expires: number } | null = null;
-    for (const li of sub.lineItems ?? []) {
-      const plan = GOOGLE_PRODUCT_PLAN[li.productId];
-      if (!plan || !active) continue;
-      const expires = Math.max(li.expiryTime ? new Date(li.expiryTime).getTime() : 0, Date.now() + 24 * 3600 * 1000);
-      if (!best || RANK[plan] > RANK[best.plan]) best = { plan, productId: li.productId, expires };
-    }
-    const chosen = best as { plan: string; productId: string; expires: number } | null;
-
-    // Üç gün içinde onaylanmazsa Google satın almayı iade eder; bu yüzden bekleyen onay burada yapılır
-    if (chosen && sub.acknowledgementState === "ACKNOWLEDGEMENT_STATE_PENDING") {
-      const ack = await fetch(`${base}/purchases/subscriptions/${chosen.productId}/tokens/${encodeURIComponent(purchaseToken)}:acknowledge`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${access}`, "Content-Type": "application/json" },
-        body: "{}",
-      });
-      console.log(`google onay ${ack.status}`);
-    }
-
+    const sub = await googleSubscription(purchaseToken);
+    if (!sub) return json({ error: "google_reddetti" }, 402);
+    const chosen = sub.chosen;
     const stamp = new Date().toISOString();
+
+    // Satın alma başka bir Hesabım hesabıyla yapıldıysa ve o hesapta hâlâ geçerliyse bu hesaba taşınmaz (Apple yoluyla aynı kural)
+    if (chosen && sub.account && sub.account !== userId.toLowerCase()) {
+      const { data: holder } = await admin
+        .from("entitlements")
+        .select("user_id")
+        .eq("user_id", sub.account)
+        .neq("plan", "free")
+        .gt("expires_at", stamp)
+        .limit(1);
+      if (holder && holder.length > 0) {
+        console.log("google abonelik baska hesaba bagli");
+        return json({ error: "baska_hesapta" }, 409);
+      }
+    }
     if (chosen) {
-      // Aynı Play aboneliği başka bir hesapta etkinse oradan alınır (Apple yoluyla aynı kural)
+      // Aynı Play aboneliği başka bir hesapta etkinse oradan alınır
       await admin
         .from("entitlements")
         .update({ plan: "free", expires_at: stamp, updated_at: stamp })

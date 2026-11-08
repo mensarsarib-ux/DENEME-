@@ -7,6 +7,26 @@
 const fs = require("fs");
 const path = require("path");
 
+// Android: eklentinin Java dosyası Billing 8 uyumlu sürümle değiştirilir ve eklenti Billing 8'e karşı derlenir
+// (ayrıntı: scripts/native-purchases-android/NativePurchasesPlugin.java başındaki açıklama).
+// Yalnızca bu dosyanın yazıldığı eklenti sürümünde (6.0.42) uygulanır; eklenti yükseltilirse yeniden gözden geçirilmeli.
+(() => {
+  const pkgDir = path.join(__dirname, "..", "node_modules", "@capgo", "native-purchases");
+  const pkgFile = path.join(pkgDir, "package.json");
+  if (!fs.existsSync(pkgFile)) return;
+  const version = JSON.parse(fs.readFileSync(pkgFile, "utf8")).version;
+  if (version !== "6.0.42") {
+    console.warn(`patch-native-purchases: eklenti ${version}, Android yaması 6.0.42 için yazıldı; uygulanmadı`);
+    return;
+  }
+  const javaTarget = path.join(pkgDir, "android", "src", "main", "java", "ee", "forgr", "nativepurchases", "NativePurchasesPlugin.java");
+  fs.copyFileSync(path.join(__dirname, "native-purchases-android", "NativePurchasesPlugin.java"), javaTarget);
+  const gradleFile = path.join(pkgDir, "android", "build.gradle");
+  const gradle = fs.readFileSync(gradleFile, "utf8");
+  const patched = gradle.replace(/def billing_version = "[^"]+"/, 'def billing_version = "8.0.0"');
+  if (patched !== gradle) fs.writeFileSync(gradleFile, patched);
+})();
+
 const dir = path.join(__dirname, "..", "node_modules", "@capgo", "native-purchases", "ios", "Plugin");
 const swiftPath = path.join(dir, "NativePurchasesPlugin.swift");
 const objcPath = path.join(dir, "NativePurchasesPlugin.m");

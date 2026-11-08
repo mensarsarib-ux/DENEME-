@@ -18,12 +18,15 @@ export const PLAN_PRODUCT: Record<Exclude<Plan, "free">, string> = {
   premium: "com.mensar.hesabim.premium.yearly",
 };
 
-/** Android'de Play Console'daki ürün kimlikleri */
+/** Android'de Play Console'daki abonelik kimlikleri; her birinin tek temel planı "yearly" */
 const ANDROID_PRODUCT: Record<Exclude<Plan, "free">, string> = {
   pro: "pro.yearly",
   proplus: "proplus.yearly",
   premium: "premium.yearly",
 };
+
+/** Play Console'daki temel plan kimliği (üç abonelikte de aynı) */
+const ANDROID_BASE_PLAN = "yearly";
 
 const isAndroid = () => Capacitor.getPlatform() === "android";
 
@@ -34,14 +37,20 @@ export const planProduct = (plan: Exclude<Plan, "free">): string =>
 /** Satın alma yalnızca yerel uygulamada çalışır; tarayıcıda her zaman kapalıdır */
 export const purchasesAvailable = () => Capacitor.isNativePlatform();
 
-/** Abonelik ürünlerini App Store'dan getirir (fiyat ve açıklama dahil) */
+/** Abonelik ürünlerini mağazadan getirir (fiyat ve açıklama dahil) */
 export async function loadProducts(): Promise<Product[]> {
   if (!purchasesAvailable()) return [];
   const { products } = await NativePurchases.getProducts({
     productIdentifiers: isAndroid() ? Object.values(ANDROID_PRODUCT) : Object.keys(PRODUCT_PLAN),
     productType: PURCHASE_TYPE.SUBS,
   });
-  return products;
+  if (!isAndroid()) return products;
+  // Android'de eklenti identifier olarak temel planı ("yearly", üçünde aynı), planIdentifier olarak abonelik
+  // kimliğini döndürür; fiyatlar pakete göre ayrılsın diye identifier abonelik kimliği yapılır
+  return products.map((p) => {
+    const sub = (p as Product & { planIdentifier?: string }).planIdentifier;
+    return sub ? { ...p, identifier: sub } : p;
+  });
 }
 
 /** Seçilen paketi satın alır; Apple'dan gelen işlem sunucuda doğrulanır, plan ancak onaydan sonra açılır */
@@ -53,16 +62,24 @@ export async function buyPlan(plan: Exclude<Plan, "free">): Promise<void> {
   const plugin = NativePurchases as unknown as {
     purchaseProduct(options: {
       productIdentifier: string;
+      planIdentifier?: string;
       productType: PURCHASE_TYPE;
       appAccountToken?: string;
     }): Promise<{ transactionId: string }>;
   };
   const tx = await plugin
-    .purchaseProduct({
-      productIdentifier: planProduct(plan),
-      productType: PURCHASE_TYPE.SUBS,
-      appAccountToken: isAndroid() ? undefined : session.userId,
-    })
+    .purchaseProduct(
+      isAndroid()
+        ? // Android: planIdentifier = abonelik (pro.yearly), productIdentifier = temel plan (yearly).
+          // Hesap kimliği Google'a obfuscatedAccountId olarak gider; sunucu satın almanın hangi hesaba ait olduğunu görür.
+          {
+            productIdentifier: ANDROID_BASE_PLAN,
+            planIdentifier: ANDROID_PRODUCT[plan],
+            productType: PURCHASE_TYPE.SUBS,
+            appAccountToken: session.userId,
+          }
+        : { productIdentifier: PLAN_PRODUCT[plan], productType: PURCHASE_TYPE.SUBS, appAccountToken: session.userId },
+    )
     .catch((e: unknown) => {
       // Onay bekleyen satın alma, onaylanınca açılışta ya da uygulamaya dönüldüğünde hesaba bağlanır
       if (/pending/i.test(e instanceof Error ? e.message : String(e))) throw new Error(PENDING_MESSAGE());
@@ -72,7 +89,10 @@ export async function buyPlan(plan: Exclude<Plan, "free">): Promise<void> {
   // Sunucuya ulaşılamazsa satın alma kaybolmasın: işlem, doğrulanana kadar cihazda bekletilir
   savePendingTransaction(id);
   const confirmed = await confirmWithServer(id);
-  if (confirmed === "free") throw new Error(t("Apple bu hesap için aktif abonelik göstermedi"));
+  if (confirmed === "free")
+    throw new Error(
+      isAndroid() ? t("Google Play bu hesap için aktif abonelik göstermedi") : t("Apple bu hesap için aktif abonelik göstermedi"),
+    );
 }
 
 type DeviceEntitlement = { transactionId: string; productIdentifier: string; appAccountToken?: string };
@@ -119,7 +139,10 @@ export async function ownsOnDevice(plan: Exclude<Plan, "free">): Promise<boolean
 export const PENDING_MESSAGE = () => t("Satın alma onay bekliyor. Onaylandığında paketiniz otomatik açılır.");
 
 /** Abonelik başka bir Hesabım hesabına bağlıysa gösterilen mesaj */
-const OTHER_ACCOUNT = () => t("Bu Apple aboneliği başka bir Hesabım hesabında kullanılıyor.");
+const OTHER_ACCOUNT = () =>
+  isAndroid()
+    ? t("Bu Google Play aboneliği başka bir Hesabım hesabında kullanılıyor.")
+    : t("Bu Apple aboneliği başka bir Hesabım hesabında kullanılıyor.");
 
 const PENDING_KEY = "hesabim:pending-transaction";
 

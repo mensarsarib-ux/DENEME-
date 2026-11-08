@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { CloudError, signIn } from "../lib/cloud";
 import { t } from "../lib/i18n";
+import { onAndroid } from "../lib/platform";
 
 /**
  * Hesap silme onayı: hesap şifresi doğrulanmadan hesap silinmez.
@@ -11,7 +12,7 @@ export default function AccountDeleteDialog({
   onConfirm,
   onClose,
   title = t("Hesabınızı silmek için şifrenizi girin"),
-  note = t("Hesabınız ve bu hesaba bağlı tüm veriler kalıcı olarak silinecek. Bu işlem geri alınamaz. Aktif bir paket aboneliğiniz varsa hesabı silmek aboneliği iptal etmez; iptal için iPhone'da Ayarlar → Apple Hesabı → Abonelikler bölümünü kullanın."),
+  note = onAndroid() ? t("Hesabınız ve bu hesaba bağlı tüm veriler kalıcı olarak silinecek. Bu işlem geri alınamaz. Aktif bir paket aboneliğiniz varsa hesabı silmek aboneliği iptal etmez; iptal için Google Play → Profil → Ödemeler ve abonelikler → Abonelikler bölümünü kullanın.") : t("Hesabınız ve bu hesaba bağlı tüm veriler kalıcı olarak silinecek. Bu işlem geri alınamaz. Aktif bir paket aboneliğiniz varsa hesabı silmek aboneliği iptal etmez; iptal için iPhone'da Ayarlar → Apple Hesabı → Abonelikler bölümünü kullanın."),
   actionLabel = t("Hesabımı sil"),
 }: {
   email: string;

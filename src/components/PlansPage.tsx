@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Capacitor } from "@capacitor/core";
 import { CURRENT_PLAN, PLAN_NAME, type Plan } from "../lib/plan";
 import { buyPlan, loadProducts, ownsOnDevice, PENDING_MESSAGE, planProduct, purchasesAvailable, refreshPlan, restorePlan } from "../lib/purchases";
 import { haptic } from "../lib/haptics";
@@ -74,6 +75,12 @@ const PLANS: {
  * ürünler App Store Connect'te hazır olunca true yapılıp satın alma bağlanır.
  */
 const PURCHASES_OPEN = purchasesAvailable();
+
+/** Android'de abonelik Google Play üzerinden yürür; metin ve yönetim bağlantısı ona göre gösterilir */
+const ON_ANDROID = Capacitor.getPlatform() === "android";
+const MANAGE_URL = ON_ANDROID
+  ? "https://play.google.com/store/account/subscriptions?package=com.hesabimmuhasebe"
+  : "https://apps.apple.com/account/subscriptions";
 
 /** Fiyat: tam sayı değilse kuruşla gösterilir (ör. ₺499,99) */
 const price = (value: number) =>
@@ -278,7 +285,9 @@ export default function PlansPage({
         {PURCHASES_OPEN && (
           <>
             <p className="paywall-note">
-              {t("Abonelik Apple Kimliğiniz üzerinden ücretlendirilir. Dönem sonunda otomatik olarak yenilenir. Ayarlar → Apple Hesabı → Abonelikler bölümünden en az 24 saat önce iptal edebilirsiniz.")}
+              {ON_ANDROID
+                ? t("Abonelik Google Play hesabınız üzerinden ücretlendirilir. Dönem sonunda otomatik olarak yenilenir. Google Play → Profil → Ödemeler ve abonelikler → Abonelikler bölümünden istediğiniz zaman iptal edebilirsiniz.")
+                : t("Abonelik Apple Kimliğiniz üzerinden ücretlendirilir. Dönem sonunda otomatik olarak yenilenir. Ayarlar → Apple Hesabı → Abonelikler bölümünden en az 24 saat önce iptal edebilirsiniz.")}
             </p>
             <p className="paywall-note">
               {t("Fiyatlar yıllık abonelik ücretidir.")}
@@ -295,7 +304,7 @@ export default function PlansPage({
           </>
         )}
         {PURCHASES_OPEN && shownPlan !== "free" && (
-          <a className="paywall-link" href="https://apps.apple.com/account/subscriptions" target="_blank" rel="noreferrer">
+          <a className="paywall-link" href={MANAGE_URL} target="_blank" rel="noreferrer">
             {t("Aboneliği yönet veya iptal et")}
           </a>
         )}
