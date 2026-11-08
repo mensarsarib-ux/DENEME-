@@ -79,6 +79,9 @@ type DeviceEntitlement = { transactionId: string; productIdentifier: string; app
 
 /** Telefondaki Apple hesabının şu an geçerli abonelikleri (Transaction.currentEntitlements) */
 async function deviceEntitlements(): Promise<DeviceEntitlement[]> {
+  // Android'de getCurrentEntitlements yok (yama yalnızca iOS'a ekleniyor). Olmayan metodun çağrısı
+  // yerel tarafta yakalanamadığı için uygulama kapanır; Android satın almaları purchaseToken ile doğrulanır.
+  if (isAndroid()) return [];
   try {
     const plugin = NativePurchases as unknown as {
       getCurrentEntitlements(): Promise<{ entitlements: DeviceEntitlement[] }>;
