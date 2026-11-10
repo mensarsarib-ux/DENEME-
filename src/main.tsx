@@ -6,25 +6,6 @@ import "./styles.css";
 import { applyTheme } from "./lib/theme";
 import { initLanguage } from "./lib/i18n";
 
-/**
- * ?sifirla bağlantısı: bu cihazdaki tüm Hesabım verisini (oturum, işletmeler, kayıtlar) siler
- * ve uygulamayı ilk kez indirilmiş gibi açar. Sunucudaki hesap silinmez.
- */
-function resetLocalData() {
-  const url = new URL(window.location.href);
-  if (!url.searchParams.has("sifirla")) return;
-  try {
-    Object.keys(localStorage)
-      .filter((key) => key.startsWith("hesabim"))
-      .forEach((key) => localStorage.removeItem(key));
-  } catch {
-    /* depolama erişilemiyorsa sessizce geç */
-  }
-  // Diğer parametreler (ör. ?plan=pro) korunur
-  url.searchParams.delete("sifirla");
-  window.location.replace(url.toString());
-}
-resetLocalData();
 // Tema ilk çizimden önce uygulanır ki ekran bir an yanlış renkte görünmesin
 applyTheme();
 
