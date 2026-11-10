@@ -739,6 +739,7 @@ const dict: Record<string, string> = {
   "Hesabınızda açık bakiye bulunmuyor.": "لا يوجد رصيد مفتوح في حسابكم.",
   "Son hareketler:": "آخر الحركات:",
   "Sorularınız için bize yazabilirsiniz.": "لأي استفسار يسعدنا تواصلكم معنا.",
+  "Giderler, gelirin %{n} kadarı": "المصروفات تمثل {n}% من الإيرادات",
 };
 
 export default dict;

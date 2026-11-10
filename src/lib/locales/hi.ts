@@ -739,6 +739,7 @@ const dict: Record<string, string> = {
   "Hesabınızda açık bakiye bulunmuyor.": "आपके खाते में कोई बकाया शेष नहीं है।",
   "Son hareketler:": "हाल के लेन-देन:",
   "Sorularınız için bize yazabilirsiniz.": "किसी भी प्रश्न के लिए हमें लिखें।",
+  "Giderler, gelirin %{n} kadarı": "खर्च आय का {n}% है",
 };
 
 export default dict;

@@ -65,7 +65,7 @@ export default function FlowChart({
 
   const note =
     gelir > 0
-      ? t("Gider / gelir: %{n}", { n: Math.round((gider / gelir) * 100) })
+      ? t("Giderler, gelirin %{n} kadarı", { n: Math.round((gider / gelir) * 100) })
       : gider > 0
         ? t("Bu dönemde gelir yok.")
         : t("Bu dönemde işlem yok.");

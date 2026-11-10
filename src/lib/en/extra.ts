@@ -498,4 +498,5 @@ export const extra: Record<string, string> = {
   "Bu Google Play aboneliği başka bir Hesabım hesabında kullanılıyor.": "This Google Play subscription is in use on another Hesabım account.",
   "Google Play bu hesap için aktif abonelik göstermedi": "Google Play did not report an active subscription for this account",
   "Abonelik Google Play hesabınız üzerinden ücretlendirilir. Dönem sonunda otomatik olarak yenilenir. Google Play → Profil → Ödemeler ve abonelikler → Abonelikler bölümünden istediğiniz zaman iptal edebilirsiniz.": "Your subscription is charged to your Google Play account. It renews automatically at the end of each period. You can cancel at any time in Google Play → Profile → Payments & subscriptions → Subscriptions.",
+  "Giderler, gelirin %{n} kadarı": "Expenses are {n}% of income",
 };

@@ -73,8 +73,9 @@ export default function MenuDrawer({
 
   function open(page: MenuPage) {
     haptic("light");
-    // Ücretsiz planda Ekiplerim doğrudan paket seçeneklerini açar (üye için paket alması işe yaramaz)
-    const target = page === "team" && !canUseTeam() && !isMember ? "plans" : page;
+    // Ekiplerim sayfası ücretsiz pakette neden kapalı olduğunu kendisi açıklar ve paketlere yönlendirir.
+    // Yalnızca giriş yapılmamışsa (ekip sayfası açılamaz) doğrudan paketler gösterilir.
+    const target = page === "team" && !canUseTeam() && !isMember && !onSignOut ? "plans" : page;
     requestClose(() => onNavigate(target));
   }
 

@@ -403,7 +403,7 @@ export default function CustomerPage({
                   </div>
                   {row.description && <p>{row.description}</p>}
                 </div>
-                <span className={`tx-amount ${outflow ? "is-debt" : ""}`}>
+                <span className={`tx-amount ${row.type === "TAHSİLAT" ? "is-in" : outflow ? "is-debt" : ""}`}>
                   {outflow ? "-" : ""}
                   {money.format(row.amount)}
                 </span>
@@ -665,7 +665,7 @@ export default function CustomerPage({
                 <span>{formatDateTime(selected.date)}</span>
               </div>
               <span
-                className={`tx-amount ${signOf(selected.type) < 0 ? "is-debt" : ""}`}
+                className={`tx-amount ${selected.type === "TAHSİLAT" ? "is-in" : signOf(selected.type) < 0 ? "is-debt" : ""}`}
               >
                 {signOf(selected.type) < 0 ? "-" : ""}
                 {money.format(selected.amount)}

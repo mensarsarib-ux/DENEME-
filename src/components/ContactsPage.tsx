@@ -78,7 +78,7 @@ export default function ContactsPage({
                     <span className="tx-account">{groupName(p.kind)}</span>
                     {p.phone && <span>{p.phone}</span>}
                     {!p.phone && p.email && <span>{p.email}</span>}
-                    {!p.phone && !p.email && <span className="contact-empty">{t("İletişim bilgisi yok")}</span>}
+                    
                   </span>
                 </span>
               </button>

@@ -103,7 +103,7 @@ export default function BusinessRequestsPage({ onBack }: { onBack: () => void })
 
   return (
     <div className="cust-page">
-      <PageHeader title={t("Bildirimler")} subtitle={t("Katılma istekleri")} icon={SUPPORT_ICON} onBack={onBack} />
+      <PageHeader title={t("Bildirimler")} subtitle={`${t("Değişiklikler")} · ${t("Katılma istekleri")}`} icon={SUPPORT_ICON} onBack={onBack} />
       <div className="stack">
         <section className="card" aria-label={t("Değişiklik bildirimleri")}>
           <h2 className="card-title">{t("DEĞİŞİKLİKLER")}</h2>

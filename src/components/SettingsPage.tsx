@@ -6,7 +6,7 @@ import { isLockEnabled, lockAvailable, setLockEnabled, verifyOwner } from "../li
 import { currentDeviceId, listDevices, removeDevice, type DeviceInfo, type Session } from "../lib/cloud";
 import type { Settings } from "../data/mock";
 import { LANGUAGES, currencyName, locale, t, type Language } from "../lib/i18n";
-import { onAndroid } from "../lib/platform";
+import { onIOS } from "../lib/platform";
 import { CURRENCIES, currencyOf } from "../lib/currencies";
 import { haptic } from "../lib/haptics";
 import { saveTextFile } from "../lib/saveBackup";
@@ -317,6 +317,11 @@ export default function SettingsPage({
 
         {group === "hesap" && (
           <>
+        {!account && (
+          <section className="card" aria-label={t("Hesap")}>
+            <p className="card-empty">{t("Giriş yapılmadı")}</p>
+          </section>
+        )}
         {account && (
           <section className="card" aria-label={t("Hesap")}>
             <h2 className="card-title">{t("Eşitleme")}</h2>
@@ -473,7 +478,7 @@ export default function SettingsPage({
               </button>
             ))}
           </div>
-          <p className="field-hint">{onAndroid() ? t("Telefona göre seçilirse telefonun açık/koyu görünümü izlenir.") : t("Telefona göre seçilirse iPhone'un açık/koyu görünümü izlenir.")}</p>
+          <p className="field-hint">{onIOS() ? t("Telefona göre seçilirse iPhone'un açık/koyu görünümü izlenir.") : t("Telefona göre seçilirse telefonun açık/koyu görünümü izlenir.")}</p>
         </section>
 
         <section className="card" aria-label={t("Yazı boyutu")}>
