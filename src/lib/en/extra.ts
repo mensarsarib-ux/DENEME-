@@ -499,4 +499,18 @@ export const extra: Record<string, string> = {
   "Google Play bu hesap için aktif abonelik göstermedi": "Google Play did not report an active subscription for this account",
   "Abonelik Google Play hesabınız üzerinden ücretlendirilir. Dönem sonunda otomatik olarak yenilenir. Google Play → Profil → Ödemeler ve abonelikler → Abonelikler bölümünden istediğiniz zaman iptal edebilirsiniz.": "Your subscription is charged to your Google Play account. It renews automatically at the end of each period. You can cancel at any time in Google Play → Profile → Payments & subscriptions → Subscriptions.",
   "Giderler, gelirin %{n} kadarı": "Expenses are {n}% of income",
+  // Açılış tanıtımı
+  "Hesabım tanıtımı": "Hesabım introduction",
+  "Atla": "Skip",
+  "Geri": "Back",
+  "İleri": "Next",
+  "Başla": "Start",
+  "Müşterilerinizi tek yerden takip edin": "Track your customers in one place",
+  "Müşteri ve tedarikçilerinizin alacak ve borç bakiyelerini anında görün.": "See your customers' and suppliers' receivable and payable balances instantly.",
+  "Satış, alış ve tahsilatı hızlıca kaydedin": "Record sales, purchases and collections quickly",
+  "Her işlem tarih ve açıklamasıyla kayıt altında kalır. Tek dokunuşla ekleyin.": "Every transaction is kept on record with its date and description. Add with one tap.",
+  "Kasanızı ve dönemlerinizi görün": "See your cash and periods",
+  "Nakit ve banka bakiyelerinizi, aylık gelir ve giderlerinizi tek ekranda izleyin.": "Follow your cash and bank balances and monthly income and expenses on one screen.",
+  "Ekibinizle birlikte çalışın": "Work together with your team",
+  "İşletmenizi ekip üyelerinizle paylaşın. Verileriniz cihazlarınız arasında eşitlenir.": "Share your business with team members. Your data syncs across your devices.",
 };

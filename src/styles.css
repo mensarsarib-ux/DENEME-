@@ -4305,3 +4305,85 @@ a.action-btn:visited {
   font-size: 12px;
   opacity: 0.5;
 }
+
+/* İlk açılış tanıtımı: slaytlar, nokta göstergesi ve ileri/geri düğmeleri */
+.intro {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  padding: calc(env(safe-area-inset-top) + 12px) 20px calc(env(safe-area-inset-bottom) + 20px);
+  background: var(--surface, #161b22);
+  color: var(--text, #f2f5f8);
+}
+.intro-top {
+  display: flex;
+  justify-content: flex-end;
+  min-height: 36px;
+}
+.intro-skip,
+.intro-back {
+  background: none;
+  border: 0;
+  color: var(--muted, #9aa5b4);
+  font: inherit;
+  padding: 8px 4px;
+}
+.intro-skip:disabled {
+  visibility: hidden;
+}
+.intro-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  gap: 14px;
+  padding: 0 8px;
+}
+.intro-icon {
+  font-size: 64px;
+  line-height: 1;
+}
+.intro-title {
+  font-size: 1.5rem;
+  margin: 8px 0 0;
+  line-height: 1.25;
+}
+.intro-text {
+  margin: 0;
+  color: var(--muted, #9aa5b4);
+  line-height: 1.55;
+  font-size: 1rem;
+  max-width: 320px;
+}
+.intro-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin: 12px 0 20px;
+}
+.intro-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--line, #262d37);
+}
+.intro-dot.is-on {
+  background: var(--accent, #3c8fd9);
+  width: 22px;
+  border-radius: 4px;
+}
+.intro-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.intro-actions .intro-back {
+  flex: 0 0 auto;
+}
+.intro-next {
+  flex: 1;
+}

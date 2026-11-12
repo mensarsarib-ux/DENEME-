@@ -55,6 +55,7 @@ import { setCurrency } from "./lib/format";
 import { getLanguage, locale, setLanguage, t, type Language } from "./lib/i18n";
 import { setDarkHeader } from "./lib/theme";
 import AuthScreen from "./components/AuthScreen";
+import IntroSlides, { introDone } from "./components/IntroSlides";
 import { cloudEnabled, heartbeat, loadSession, readRecoveryToken, signOut, syncAccountLanguage, type Session } from "./lib/cloud";
 import { useCloudSync } from "./lib/useCloudSync";
 import { clearStored, usePersistedState } from "./lib/storage";
@@ -138,6 +139,7 @@ export default function App() {
 
   // Hesap ve bulut eşitleme: Supabase tanımlıysa giriş gerekir; değilse uygulama yalnızca bu cihazda çalışır
   const [session, setSession] = useState<Session | null>(() => (cloudEnabled ? loadSession() : null));
+  const [introSeen, setIntroSeen] = useState<boolean>(() => introDone());
   // Önceki sürümlerden gelen oturumda telefondaki verinin sahibi bu hesaptır
   if (session && !dataOwner()) setDataOwner(session.userId);
   // Hesaba gönderilen e-postalar uygulamanın diliyle gelsin diye dil hesaba da yazılır
@@ -470,6 +472,11 @@ export default function App() {
     };
   }, [session]);
 
+
+  // İlk açılışta kısa tanıtım (bir kez); giriş ekranından önce gösterilir
+  if (!introSeen) {
+    return <IntroSlides onDone={() => setIntroSeen(true)} />;
+  }
 
   if (cloudEnabled && !session) {
     return (
