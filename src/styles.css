@@ -4387,3 +4387,14 @@ a.action-btn:visited {
 .intro-next {
   flex: 1;
 }
+
+/* Tanıtım slaytlarındaki uygulama ekran görüntüleri */
+.intro-shot {
+  height: min(50vh, 420px);
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+  border-radius: 18px;
+  border: 1px solid var(--line, #262d37);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}

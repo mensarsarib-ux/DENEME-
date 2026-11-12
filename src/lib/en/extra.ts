@@ -513,4 +513,5 @@ export const extra: Record<string, string> = {
   "Nakit ve banka bakiyelerinizi, aylık gelir ve giderlerinizi tek ekranda izleyin.": "Follow your cash and bank balances and monthly income and expenses on one screen.",
   "Ekibinizle birlikte çalışın": "Work together with your team",
   "İşletmenizi ekip üyelerinizle paylaşın. Verileriniz cihazlarınız arasında eşitlenir.": "Share your business with team members. Your data syncs across your devices.",
+  "Uygulama ekran görüntüsü": "App screenshot",
 };

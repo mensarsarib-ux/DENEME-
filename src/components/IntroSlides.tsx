@@ -20,19 +20,22 @@ function markIntroDone() {
   }
 }
 
-const SLIDES: { title: string; text: string; icon: string }[] = [
+const SLIDES: { title: string; text: string; icon: string; shot?: string }[] = [
   {
     icon: "👥",
+    shot: "/tanitim/1-ana.png",
     title: "Müşterilerinizi tek yerden takip edin",
     text: "Müşteri ve tedarikçilerinizin alacak ve borç bakiyelerini anında görün.",
   },
   {
     icon: "🧾",
+    shot: "/tanitim/2-satis.png",
     title: "Satış, alış ve tahsilatı hızlıca kaydedin",
     text: "Her işlem tarih ve açıklamasıyla kayıt altında kalır. Tek dokunuşla ekleyin.",
   },
   {
     icon: "🏦",
+    shot: "/tanitim/3-kasa.png",
     title: "Kasanızı ve dönemlerinizi görün",
     text: "Nakit ve banka bakiyelerinizi, aylık gelir ve giderlerinizi tek ekranda izleyin.",
   },
@@ -62,7 +65,11 @@ export default function IntroSlides({ onDone }: { onDone: () => void }) {
         </button>
       </div>
       <div className="intro-body" aria-live="polite">
-        <div className="intro-icon" aria-hidden="true">{slide.icon}</div>
+        {slide.shot ? (
+          <img className="intro-shot" src={slide.shot} alt={t("Uygulama ekran görüntüsü")} />
+        ) : (
+          <div className="intro-icon" aria-hidden="true">{slide.icon}</div>
+        )}
         <h1 className="intro-title">{t(slide.title)}</h1>
         <p className="intro-text">{t(slide.text)}</p>
       </div>
