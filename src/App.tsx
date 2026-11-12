@@ -362,8 +362,9 @@ export default function App() {
       return;
     }
     signOut();
+    // Tanıtım işareti silinmez: hesap silinince tanıtım tekrar gösterilmez (yalnızca uygulama yeniden yüklenince)
     Object.keys(localStorage)
-      .filter((k) => k.startsWith("hesabim:"))
+      .filter((k) => k.startsWith("hesabim:") && k !== "hesabim:tanitim")
       .forEach((k) => localStorage.removeItem(k));
     window.location.reload();
   }

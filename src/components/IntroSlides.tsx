@@ -4,9 +4,25 @@ import { t } from "../lib/i18n";
 /** Tanıtım tamamlandı işareti (cihaz başına; ilk açılışta bir kez gösterilir) */
 const INTRO_KEY = "hesabim:tanitim";
 
+/** Hesap ve veri anahtarları: bunlardan biri varsa cihazda uygulama daha önce kullanılmış demektir */
+const USED_KEYS = ["hesabim:auth", "hesabim:workspace", "hesabim:workspaces", "hesabim:plan", "hesabim:data-owner", "hesabim:pending-transaction"];
+const USED_PREFIXES = ["hesabim:v1:", "hesabim:base:", "hesabim:dirty:"];
+
+/**
+ * Tanıtım yalnızca uygulama yeni yüklendiğinde gösterilir. Uygulamayı kapatıp açmak ya da hesap silmek
+ * tanıtımı tekrar açmaz. Güncelleme ile gelen mevcut kullanıcılar (veri var) tanıtımı görmez.
+ */
 export function introDone(): boolean {
   try {
-    return localStorage.getItem(INTRO_KEY) === "1";
+    if (localStorage.getItem(INTRO_KEY) === "1") return true;
+    const used = Object.keys(localStorage).some(
+      (k) => USED_KEYS.includes(k) || USED_PREFIXES.some((pre) => k.startsWith(pre)),
+    );
+    if (used) {
+      markIntroDone();
+      return true;
+    }
+    return false;
   } catch {
     return true;
   }
