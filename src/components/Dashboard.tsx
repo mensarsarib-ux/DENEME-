@@ -126,6 +126,8 @@ export default function Dashboard({
   /** Liste sıralaması: A'dan Z'ye, bakiyeye göre artan ya da azalan */
   listSort: "name" | "balance-asc" | "balance-desc";
 }) {
+  /** Kasa tutarı varsayılan gizli; kasa satırına bir kez dokununca görünür */
+  const [cashRevealed, setCashRevealed] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   // Firma kutusuna basılı tutunca altında "+" çıkar; konumu bu kutudan alınır
   const markRef = useRef<HTMLButtonElement>(null);
@@ -368,12 +370,17 @@ export default function Dashboard({
                 aria-label={t("Kasa: nakit ve banka")}
                 onClick={() => {
                   haptic("light");
+                  // İlk dokunuş tutarı gösterir; tutar açıkken bir kez daha dokununca kasa açılır
+                  if (!cashRevealed) {
+                    setCashRevealed(true);
+                    return;
+                  }
                   onOpenKasa();
                 }}
               >
                 <span className="row-name">{t("Kasa")}</span>
                 <span className="row-amount">
-                  {money.format(cashTotal(transactions, accounts))}
+                  {cashRevealed ? money.format(cashTotal(transactions, accounts)) : "••••••"}
                   <span className="row-chevron" aria-hidden="true">
                     ›
                   </span>
