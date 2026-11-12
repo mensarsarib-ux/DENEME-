@@ -1201,9 +1201,9 @@ body {
 }
 
 /* Açıklama yazılırken işlem türü sekmeleri gizlenir; yazı klavyesinin üstünde tarih ve açıklama kalır */
-/* Yazı yazılırken sekmeler gizlenir ama yerlerini korur; alanlar kaymaz */
+/* Yazı yazılırken sekmeler tamamen kalkar; klavyenin üstünde boş bant kalmaz, panel klavyeye yapışır */
 .entry-dock.is-typing .entry-tabs {
-  visibility: hidden;
+  display: none;
 }
 
 .entry-tabs {
