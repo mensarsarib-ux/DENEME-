@@ -23,6 +23,7 @@
   #teamWrap svg{width:1080px;height:920px;overflow:visible;}
   .line{stroke:#3DDBB0;stroke-width:9;fill:none;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 10px rgba(61,219,176,.45));}
   .lineB{stroke:#4c9cf0;stroke-width:9;fill:none;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 10px rgba(76,156,240,.45));}
+  .lineT{stroke:#3DDBB0;stroke-width:9;fill:none;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 10px rgba(61,219,176,.45));}
   .lineG{stroke:#3ec28a;stroke-width:10;fill:none;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 10px rgba(62,194,138,.5));}
   .cta{left:150px;right:150px;top:1146px;height:140px;border-radius:80px;background:#3ec28a;color:#06241a;
        font-size:60px;font-weight:800;display:flex;align-items:center;justify-content:center;white-space:nowrap;
@@ -58,26 +59,39 @@
     <div id="island"></div>
   </div>
 
-  <!-- Ekip grafiği: 11.8 – 16.0 -->
+  <!-- Ekip grafiği: işletme düğümü, bağlı üç ekip üyesi, görme yetkisi işaretleri -->
   <div id="teamWrap">
-    <svg viewBox="0 0 720 920" preserveAspectRatio="xMidYMid meet">
-      <g transform="translate(0,-360)">
-        <rect id="cA" class="lineG" x="60" y="420" width="190" height="260" rx="28"/>
-        <circle id="aA" class="lineG" cx="155" cy="500" r="48"/>
-        <path id="bA" class="lineG" d="M95 640 Q95 575 155 575 Q215 575 215 640"/>
-        <path id="nA" class="line" d="M100 640 H210 M120 668 H190"/>
-        <path id="okA" class="lineG" d="M120 720 L146 746 L192 698"/>
-        <rect id="cB" class="lineB" x="265" y="420" width="190" height="260" rx="28"/>
-        <circle id="aB" class="lineB" cx="360" cy="500" r="48"/>
-        <path id="bB" class="lineB" d="M300 640 Q300 575 360 575 Q420 575 420 640"/>
-        <path id="nB" class="line" d="M305 640 H415 M325 668 H395"/>
-        <path id="xB1" class="lineB" d="M320 705 L370 745 M370 705 L320 745"/>
-        <rect id="cC" class="lineG" x="470" y="420" width="190" height="260" rx="28"/>
-        <circle id="aC" class="lineG" cx="565" cy="500" r="48"/>
-        <path id="bC" class="lineG" d="M505 640 Q505 575 565 575 Q625 575 625 640"/>
-        <path id="nC" class="line" d="M510 640 H620 M530 668 H600"/>
-        <path id="okC" class="lineG" d="M525 720 L551 746 L597 698"/>
-      </g>
+    <svg viewBox="0 0 1080 920" width="1080" height="920">
+      <!-- işletme düğümü -->
+      <rect id="tnRoot" class="lineT" x="330" y="30" width="420" height="130" rx="34"/>
+      <text id="ttRoot" x="540" y="108" text-anchor="middle" font-size="46" font-weight="800" fill="#f4f8f8" font-family="Inter, Segoe UI, Arial, sans-serif">İşletmeniz</text>
+      <!-- bağlantılar -->
+      <path id="tlMain" class="lineT" d="M540 160 V260"/>
+      <path id="tlBus" class="lineT" d="M180 260 H900"/>
+      <path id="tlA" class="lineT" d="M180 260 V330"/>
+      <path id="tlB" class="lineB" d="M540 260 V330"/>
+      <path id="tlC" class="lineT" d="M900 260 V330"/>
+      <!-- üye 1 -->
+      <circle id="uA" class="lineT" cx="180" cy="420" r="78"/>
+      <circle id="uAh" class="lineT" cx="180" cy="400" r="26"/>
+      <path id="uAb" class="lineT" d="M130 470 Q130 440 180 440 Q230 440 230 470"/>
+      <text id="tuA" x="180" y="545" text-anchor="middle" font-size="36" font-weight="700" fill="#f4f8f8" font-family="Inter, Segoe UI, Arial, sans-serif">Ekip üyesi 1</text>
+      <rect id="pA" class="lineT" x="80" y="580" width="200" height="66" rx="33"/>
+      <text id="tpA" x="180" y="625" text-anchor="middle" font-size="32" font-weight="700" fill="#3DDBB0" font-family="Inter, Segoe UI, Arial, sans-serif">✓ görebilir</text>
+      <!-- üye 2 -->
+      <circle id="uB" class="lineB" cx="540" cy="420" r="78"/>
+      <circle id="uBh" class="lineB" cx="540" cy="400" r="26"/>
+      <path id="uBb" class="lineB" d="M490 470 Q490 440 540 440 Q590 440 590 470"/>
+      <text id="tuB" x="540" y="545" text-anchor="middle" font-size="36" font-weight="700" fill="#f4f8f8" font-family="Inter, Segoe UI, Arial, sans-serif">Ekip üyesi 2</text>
+      <rect id="pB" class="lineB" x="440" y="580" width="200" height="66" rx="33"/>
+      <text id="tpB" x="540" y="625" text-anchor="middle" font-size="32" font-weight="700" fill="#4c9cf0" font-family="Inter, Segoe UI, Arial, sans-serif">✕ göremez</text>
+      <!-- üye 3 -->
+      <circle id="uC" class="lineT" cx="900" cy="420" r="78"/>
+      <circle id="uCh" class="lineT" cx="900" cy="400" r="26"/>
+      <path id="uCb" class="lineT" d="M850 470 Q850 440 900 440 Q950 440 950 470"/>
+      <text id="tuC" x="900" y="545" text-anchor="middle" font-size="36" font-weight="700" fill="#f4f8f8" font-family="Inter, Segoe UI, Arial, sans-serif">Ekip üyesi 3</text>
+      <rect id="pC" class="lineT" x="800" y="580" width="200" height="66" rx="33"/>
+      <text id="tpC" x="900" y="625" text-anchor="middle" font-size="32" font-weight="700" fill="#3DDBB0" font-family="Inter, Segoe UI, Arial, sans-serif">✓ görebilir</text>
     </svg>
   </div>
 
@@ -159,13 +173,17 @@
     show($('tSatis'), t, 7.0, 11.75, 20); show($('sSatis'), t, 9.8, 11.75, 16);
     show($('tEkip'), t, 11.9, 15.8, 20); show($('sEkip'), t, 13.6, 15.8, 16);
 
-    // Ekip kartları (11.8 – 16.0)
-    drawAll(['cA','aA','bA','nA'], t, 11.8, 0.4, 0.06, 16.0);
-    drawAll(['okA'], t, 12.5, 0.35, 0, 16.0);
-    drawAll(['cB','aB','bB','nB'], t, 12.1, 0.4, 0.06, 16.0);
-    drawAll(['xB1'], t, 12.8, 0.35, 0, 16.0);
-    drawAll(['cC','aC','bC','nC'], t, 12.4, 0.4, 0.06, 16.0);
-    drawAll(['okC'], t, 13.1, 0.35, 0, 16.0);
+    // Ekip grafiği (11.9 – 15.8): işletme → bağlantılar → üyeler → görme işaretleri
+    drawAll(['tnRoot'], t, 11.9, 0.45, 0, 15.8);
+    drawAll(['tlMain','tlBus'], t, 12.2, 0.35, 0.1, 15.8);
+    drawAll(['tlA','tlB','tlC'], t, 12.6, 0.3, 0.08, 15.8);
+    drawAll(['uA','uAh','uAb'], t, 12.9, 0.35, 0.06, 15.8);
+    drawAll(['uB','uBh','uBb'], t, 13.0, 0.35, 0.06, 15.8);
+    drawAll(['uC','uCh','uCb'], t, 13.1, 0.35, 0.06, 15.8);
+    drawAll(['pA','pB','pC'], t, 13.6, 0.4, 0.1, 15.8);
+    show($('ttRoot'), t, 12.0, 15.8, 0);
+    show($('tuA'), t, 13.0, 15.8, 0); show($('tuB'), t, 13.1, 15.8, 0); show($('tuC'), t, 13.2, 15.8, 0);
+    show($('tpA'), t, 13.8, 15.8, 0); show($('tpB'), t, 13.9, 15.8, 0); show($('tpC'), t, 14.0, 15.8, 0);
 
     // Kapanış (16.0 – 19.0)
     show($('logo'), t, 16.0, 20.2, 10);
