@@ -115,7 +115,7 @@
   // Telefon kaynakları: video zamanına göre klip zamanı (sn).
   // Cari: 2.7–7.0 → klip 0.5–4.8 ; Satış: 7.0–11.8 → klip 2.5–7.3
   const PH = [
-    { a: 3.2, b: 6.9, c0: 0.5, zooms: [{a:1.6, b:2.9, s:1.22, ox:0.5, oy:0.4}] },
+    { a: 3.1, b: 6.9, c0: 0.5, zooms: [{a:1.6, b:2.9, s:1.22, ox:0.5, oy:0.4}] },
     { a: 7.0, b: 11.7, c0: 2.5, zooms: [{a:4.2, b:6.0, s:1.16, ox:0.65, oy:0.7}] },
   ];
   const RAMP = 0.25;
@@ -130,7 +130,7 @@
 
   window.render = async function(t){
     // Kanca (0 – 2.7): kelime kelime, ilk 0,3 sn içinde hareket
-    show($('hook'), t, 0.0, 2.8, 18);
+    show($('hook'), t, 0.0, 3.1, 18);
     drawAll(['qMark'], t, 0.2, 0.5, 0, 2.8);
 
     // Telefon (2.7 – 11.8)
@@ -155,7 +155,7 @@
     }
 
     // Başlıklar
-    show($('tCari'), t, 3.2, 6.95, 20);  show($('sCari'), t, 3.3, 6.95, 16);
+    show($('tCari'), t, 3.1, 6.95, 20);  show($('sCari'), t, 3.2, 6.95, 16);
     show($('tSatis'), t, 7.0, 11.75, 20); show($('sSatis'), t, 9.8, 11.75, 16);
     show($('tEkip'), t, 11.9, 15.8, 20); show($('sEkip'), t, 13.6, 15.8, 16);
 
