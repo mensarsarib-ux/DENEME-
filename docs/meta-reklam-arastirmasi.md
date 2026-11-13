@@ -51,6 +51,7 @@ Tam rapor: https://claude.ai/artifact/8z4mYnZAs8XjaMF6xSRD82
 - Logo İşbaşı: 9 aktif reklam (1 Ekim'den beri). "Tahsilat takibi işletme sahibinin hafızasına bırakılmayacak kadar önemli." 14 gün ücretsiz deneme.
 - Defter-e: iOS ve Android yükleme reklamı (16 Ekim'den beri). "Kimin size ne kadar borcu var… tek ekranda görün." Şimdi yükle.
 - SanalCari: 15 Eylül'den beri (~2 ay). "Veresiye defterinizi kâğıda yazmayı bırakın… ömür boyu ücretsiz."
+- Defteran (6 Kasım): "Defterin sayfaları biter. İşlerin bitmez. Kim ne kadar borçlu, para nereye gitti, kasada ne var?"
 - Parola (25 Ekim), UR-GE (13 Ekim, aylık 600 TL, 14 gün ücretsiz), İşletmem+ (9 Kasım, defter fotoğrafından aktarma), Markur (~100 gün, kapandı).
 - Paraşüt aramasında aktif ön muhasebe reklamı çıkmadı.
 - Boş alan: ekip ve birden çok işletmeyi anlatan rakip reklam yok.
