@@ -68,3 +68,14 @@ Tam rapor: https://claude.ai/artifact/8z4mYnZAs8XjaMF6xSRD82
 - Öneri: Meta SDK veya Conversions API ile abonelik olayı, Pro için ücretsiz deneme, sınırda paket ekranı.
 
 Sunum: https://claude.ai/artifact/K2LWjCYMhNocxGx668dqXE
+
+## A/B test bütçesi (net öneri, 13 Kasım 2026)
+- 1 kampanya (uygulama tanıtımı, iOS), Meta A/B testi ile 2 reklam seti: A açılışı ve B açılışı. Gövde ve kapanış aynı.
+- Her set günde 300 TL (öğrenme için en az 250 TL: 50 yükleme × 35 TL ÷ 7 gün). Toplam günde 600 TL.
+- Süre 14 gün; 7. gün ilk okuma, 14. gün karar. iOS (SKAdNetwork) verisi 1–3 gün gecikmeli.
+- Bütçe 8.400 TL + %5 Meta konum ücreti = tavan 8.820 TL.
+- Beklenen (CPI 35 TL): 240 yükleme, set başına 120. %95 güven, %80 güçle %40 ve üstü maliyet farkını gösterir. CPI 25 TL: %30–35; CPI 50 TL: %50.
+- Erken bitirme: 7. günde bir açılışın maliyeti diğerinin 2 katı ve her biri 40+ yükleme.
+- Ücretli abone (5–7) bu testte karşılaştırmaya yetmez; ikinci aşamada Meta SDK ile ölçülecek.
+- Türkiye CPI 12–25 TL (tüm cihazlar, iOS daha pahalı); CPM 2026 3. çeyrekte 155 TL.
+- B sürümü hazır olmadan A tek başına başlarsa: 1 set, günde 300 TL, 7 gün (~2.205 TL) taban ölçüm.
