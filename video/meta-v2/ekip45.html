@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<style>
+  html,body{margin:0;padding:0;background:#000;}
+  body{width:1080px;height:1350px;overflow:hidden;position:relative;color:#f4f8f8;
+       font-family:"Inter","Segoe UI","Helvetica Neue",Arial,sans-serif;}
+  .c{position:absolute;left:0;right:0;text-align:center;}
+  .title{top:110px;font-size:80px;font-weight:800;line-height:1.12;letter-spacing:-1.5px;padding:0 64px;}
+  .title em{font-style:normal;color:#3DDBB0;}
+  .sub{top:330px;font-size:46px;font-weight:600;color:#9fb5ba;padding:0 80px;}
+  svg{position:absolute;left:0;top:0;width:1080px;height:1350px;}
+  .line{stroke:#3DDBB0;stroke-width:9;fill:none;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 10px rgba(61,219,176,.45));}
+  .lineB{stroke:#4c9cf0;stroke-width:9;fill:none;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 10px rgba(76,156,240,.45));}
+  .lineG{stroke:#3ec28a;stroke-width:10;fill:none;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 10px rgba(62,194,138,.5));}
+  .logo{position:absolute;left:390px;top:830px;width:300px;height:300px;border-radius:66px;box-shadow:0 0 80px rgba(61,219,176,.25);}
+  .brand{top:1220px;font-size:64px;font-weight:800;white-space:nowrap;letter-spacing:-1px;}
+  .brand em{font-style:normal;color:#3DDBB0;}
+  .cta{left:150px;right:150px;top:1290px;height:0px;}
+</style>
+</head>
+<body>
+  <div class="c title">Çalışanınız da <em>kayıt girsin</em></div>
+  <div class="c sub">kimin neyi göreceğine siz karar verin</div>
+
+  <svg viewBox="0 0 1080 1350">
+    <!-- üç ekip kartı: 3 kart, dikeyde ortalı (y 430–760) -->
+    <rect class="lineG" x="110" y="440" width="260" height="340" rx="36"/>
+    <circle class="lineG" cx="240" cy="560" r="62"/>
+    <path class="lineG" d="M150 740 Q150 640 240 640 Q330 640 330 740"/>
+    <path class="lineG" d="M170 790 H310" />
+    <path class="lineG" d="M205 690" />
+
+    <rect class="lineB" x="410" y="440" width="260" height="340" rx="36"/>
+    <circle class="lineB" cx="540" cy="560" r="62"/>
+    <path class="lineB" d="M450 740 Q450 640 540 640 Q630 640 630 740"/>
+    <path class="lineB" d="M470 790 H610" />
+
+    <rect class="lineG" x="710" y="440" width="260" height="340" rx="36"/>
+    <circle class="lineG" cx="840" cy="560" r="62"/>
+    <path class="lineG" d="M750 740 Q750 640 840 640 Q930 640 930 740"/>
+    <path class="lineG" d="M770 790 H910" />
+  </svg>
+
+  <!-- alt: logo, marka adı, düğme -->
+  <img class="logo" src="logo_app.png">
+  <div class="c brand" style="top:1140px;">Hesabım <em>Muhasebe</em></div>
+  <div style="position:absolute;left:150px;right:150px;top:1225px;height:100px;border-radius:60px;background:#3ec28a;color:#06241a;font-size:46px;font-weight:800;display:flex;align-items:center;justify-content:center;white-space:nowrap;">Ücretsiz indirin</div>
+</body>
+</html>
