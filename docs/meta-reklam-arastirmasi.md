@@ -46,3 +46,24 @@ Tam rapor: https://claude.ai/artifact/8z4mYnZAs8XjaMF6xSRD82
 - Yapay zekâ sahneleri etiketlenir; uydurma yorum, sahte müşteri yok.
 - Ekran kayıtlarında gerçek ad, telefon, e-posta yok.
 - Kredi, borç verme, yatırım çağrıştıran dil yok (Meta finans kategorisi riski).
+
+## Rakip reklamları (Meta Reklam Kütüphanesi, 13 Kasım 2026)
+- Logo İşbaşı: 9 aktif reklam (1 Ekim'den beri). "Tahsilat takibi işletme sahibinin hafızasına bırakılmayacak kadar önemli." 14 gün ücretsiz deneme.
+- Defter-e: iOS ve Android yükleme reklamı (16 Ekim'den beri). "Kimin size ne kadar borcu var… tek ekranda görün." Şimdi yükle.
+- SanalCari: 15 Eylül'den beri (~2 ay). "Veresiye defterinizi kâğıda yazmayı bırakın… ömür boyu ücretsiz."
+- Parola (25 Ekim), UR-GE (13 Ekim, aylık 600 TL, 14 gün ücretsiz), İşletmem+ (9 Kasım, defter fotoğrafından aktarma), Markur (~100 gün, kapandı).
+- Paraşüt aramasında aktif ön muhasebe reklamı çıkmadı.
+- Boş alan: ekip ve birden çok işletmeyi anlatan rakip reklam yok.
+
+## Mevcut video (Reklam_videosu_bir.mp4) analizi
+- 28,3 sn, 720×1280, 572 kbit/sn. 7 özellik art arda.
+- Ana yazılar ekranın alt %20'sinde: Reels arayüzünün altında kalıyor. Ortaya taşınmalı.
+- "Ücretsiz" geçmiyor. 1080×1920 çıktı, 3 özellik, 15–20 sn önerildi.
+- Ses metne dökülemedi (model indirme engelli).
+
+## Ücretli pakete geçiş
+- Ücretsiz plan: 1 işletme, 4 sekme, sekme başına 10 kayıt, ekip yok.
+- Freemium medyan ücretliye geçiş %2,1 (RevenueCat 2026). Başa baş için %7,5 gerekiyor (CPI 32 TL).
+- Öneri: Meta SDK veya Conversions API ile abonelik olayı, Pro için ücretsiz deneme, sınırda paket ekranı.
+
+Sunum: https://claude.ai/artifact/K2LWjCYMhNocxGx668dqXE
