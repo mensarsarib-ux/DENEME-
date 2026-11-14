@@ -66,3 +66,17 @@ Uzun denemeler (17–32 gün) medyan %42,5 ile ücretliye dönüyor; şu an dene
 
 - Her madde ayrı commit, aynı dal, push.
 - Bitince kullanıcıya hangi maddelerin yapıldığını ve yeni derleme gerekip gerekmediğini yaz.
+
+## 7. Meta (Facebook) iOS SDK — ONAYLANDI (14 Kasım 2026), ÖNCELİKLİ
+
+Meta Reklam Yöneticisi iOS 14+ uygulama kampanyasında uygulamayı seçtirmiyor: "Dönüşüm verileri eksik veya kısmi olduğundan uygulamanız Toplu Olay Ölçümü'nü kullanamaz. Genellikle en kolay çözüm, iOS için Facebook SDK'sını ayarlamaktır." Bu yüzden yükleme kampanyası açılamıyor; şimdilik App Store'a giden Trafik kampanyası kullanılıyor. Madde 5'in yerine geçer (kullanıcı SDK yolunu onayladı).
+
+- Facebook iOS SDK (FBSDKCoreKit), Capacitor 6 projesine (Swift Package Manager ya da CocoaPods).
+- Info.plist: FacebookAppID = 2195198467790132, FacebookClientToken (Meta Uygulama Paneli → Ayarlar → Gelişmiş → İstemci Token'ı; kullanıcı panelden alıp girer, sohbete yazılmaz), FacebookDisplayName = Hesabım Muhasebe, ilgili LSApplicationQueriesSchemes ve SKAdNetworkItems (Meta'nın güncel listesi: v9wttpbfk9.skadnetwork, n38lu8286q.skadnetwork).
+- AppDelegate: `ApplicationDelegate.shared.application(_:didFinishLaunchingWithOptions:)`; otomatik uygulama olayları (fb_mobile_activate_app, install) açık.
+- Olaylar: kayıt tamamlandı (fb_mobile_complete_registration), abonelik (Subscribe / StartTrial, değer ve TRY para birimiyle) — StoreKit satın alma doğrulandıktan sonra.
+- App Tracking Transparency: Meta SDK için zorunlu değil; ATT penceresi EKLENMESİN (izin istemeden SKAdNetwork/AEM çalışır). `Settings.shared.isAdvertiserTrackingEnabled` false kalsın.
+- App Store gizlilik etiketi güncellenmeli: Meta'ya gönderilen veriler (kullanım verisi, satın almalar, cihaz kimliği olmayan tanımlayıcılar) — "izleme için kullanılmıyor".
+- Gizlilik politikası (public/gizlilik.html ve /en) ve KVKK aydınlatma metnine Meta SDK eklenmeli.
+- Meta Uygulama Paneli: uygulama Canlı (Live) moda alınmalı; Events Manager → uygulama → SKAdNetwork açık, AEM olay sıralaması (install, kayıt, abonelik).
+- Yeni derleme App Store'a gönderilecek; yayınlandıktan sonra Meta reklam sohbetine haber verilecek.
