@@ -2,82 +2,132 @@
 <html lang="tr">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Hesabım Muhasebe – Veresiye, Cari ve Kasa Takibi Uygulaması</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Hesabım Muhasebe – Veresiye, Cari ve Kasa Takibi</title>
   <meta name="description" content="Esnaf için veresiye defteri, cari hesap, borç alacak ve kasa takibi. Çalışanınızla birlikte kullanın. iPhone'da ücretsiz indirin." />
   <meta name="apple-itunes-app" content="app-id=6826814944" />
+  <meta name="theme-color" content="#f2f2f7" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="Hesabım Muhasebe – Veresiye, cari ve kasa tek uygulamada" />
-  <meta property="og:description" content="Müşteri borcunu kafanızda tutmayın. Her müşterinin hesabı ayrı, bakiye anında güncel. iPhone'da ücretsiz." />
-  <meta property="og:image" content="https://hesabimmuhasebe.com/tanitim/1-ana.png" />
+  <meta property="og:title" content="Hesabım Muhasebe" />
+  <meta property="og:description" content="Veresiye, cari hesap ve kasa tek uygulamada. iPhone'da ücretsiz." />
   <meta property="og:url" content="https://hesabimmuhasebe.com/indir.html" />
   <link rel="icon" href="/logo.svg" />
   <style>
-    :root { color-scheme: dark; }
+    :root {
+      color-scheme: light dark;
+      --bg: #f2f2f7; --card: #ffffff; --label: #000000; --secondary: #3c3c4399;
+      --sep: #3c3c4329; --accent: #007aff; --green: #34c759;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg: #000000; --card: #1c1c1e; --label: #ffffff; --secondary: #ebebf599; --sep: #54545899; --accent: #0a84ff; --green: #30d158; }
+    }
     * { box-sizing: border-box; }
-    body { margin: 0; background: #0e1416; color: #f2f5f8; font-family: -apple-system, system-ui, sans-serif; line-height: 1.55; }
-    main { max-width: 760px; margin: 0 auto; padding: 28px 18px 48px; }
-    .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.05rem; }
-    .brand img { width: 36px; height: 36px; border-radius: 9px; }
-    h1 { font-size: 2rem; line-height: 1.15; margin: 28px 0 12px; }
-    h1 em { font-style: normal; color: #3ddbb0; }
-    .lead { color: #c4d0cd; font-size: 1.08rem; margin: 0 0 22px; }
-    .cta { display: inline-block; background: #3ddbb0; color: #0e1416; font-weight: 700; font-size: 1.1rem; text-decoration: none; padding: 15px 26px; border-radius: 14px; }
-    .cta:active { opacity: .85; }
-    .note { color: #8fa29d; font-size: .9rem; margin: 10px 0 0; }
-    .shots { display: flex; gap: 12px; overflow-x: auto; margin: 32px -18px 8px; padding: 0 18px 8px; scroll-snap-type: x mandatory; }
-    .shots img { width: 220px; flex: 0 0 auto; border-radius: 22px; border: 1px solid #24302d; scroll-snap-align: start; }
-    .features { display: grid; gap: 12px; margin: 28px 0; }
-    .card { background: #16211f; border: 1px solid #24302d; border-radius: 16px; padding: 16px 18px; }
-    .card h2 { font-size: 1.05rem; margin: 0 0 4px; }
-    .card p { margin: 0; color: #c4d0cd; }
-    h3 { font-size: 1.05rem; margin: 28px 0 8px; }
-    details { border-top: 1px solid #24302d; padding: 12px 0; }
-    summary { cursor: pointer; font-weight: 600; }
-    details p { color: #c4d0cd; margin: 8px 0 0; }
-    .bottom { text-align: center; margin: 36px 0 8px; }
-    nav { margin-top: 32px; padding-top: 16px; border-top: 1px solid #24302d; font-size: .9rem; color: #8fa29d; }
-    nav a { color: #6fb1ea; margin-right: 12px; }
-    @media (min-width: 720px) { h1 { font-size: 2.6rem; } .features { grid-template-columns: repeat(3, 1fr); } }
+    html, body { margin: 0; background: var(--bg); color: var(--label); }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+      -webkit-font-smoothing: antialiased; line-height: 1.4;
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    }
+    main { max-width: 480px; margin: 0 auto; padding: 0 16px 40px; }
+
+    .hero { text-align: center; padding: 40px 8px 8px; }
+    .app-icon { width: 96px; height: 96px; border-radius: 22.37%; box-shadow: 0 2px 10px rgba(0,0,0,.15); display: block; margin: 0 auto 16px; }
+    .title { font-size: 28px; font-weight: 700; letter-spacing: .36px; margin: 0; }
+    .subtitle { font-size: 17px; color: var(--secondary); margin: 6px 0 0; }
+
+    .get { display: flex; flex-direction: column; align-items: center; gap: 8px; margin: 24px 0 8px; }
+    .get a { display: inline-block; line-height: 0; }
+    .get img { height: 40px; width: auto; display: block; }
+    .get .note { font-size: 13px; color: var(--secondary); }
+
+    .section-title { font-size: 13px; text-transform: uppercase; letter-spacing: -.08px; color: var(--secondary); margin: 28px 16px 6px; }
+    .group { background: var(--card); border-radius: 10px; overflow: hidden; }
+    .row { display: flex; align-items: flex-start; gap: 14px; padding: 14px 16px; min-height: 44px; }
+    .row + .row { border-top: 0.5px solid var(--sep); }
+    .glyph { width: 30px; height: 30px; border-radius: 7px; flex: 0 0 30px; display: grid; place-items: center; color: #fff; font-size: 15px; font-weight: 600; }
+    .g-blue { background: #007aff; } .g-green { background: #34c759; } .g-orange { background: #ff9500; }
+    .row-title { font-size: 17px; font-weight: 400; margin: 0; }
+    .row-text { font-size: 15px; color: var(--secondary); margin: 2px 0 0; }
+
+    .shots { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 4px 16px 12px; margin: 0 -16px; scrollbar-width: none; }
+    .shots::-webkit-scrollbar { display: none; }
+    .shots img { width: 200px; flex: 0 0 auto; border-radius: 22px; box-shadow: 0 1px 6px rgba(0,0,0,.12); scroll-snap-align: center; }
+    .caption { font-size: 13px; color: var(--secondary); text-align: center; margin: 4px 0 0; }
+
+    details.group { padding: 0; }
+    details summary { list-style: none; cursor: pointer; padding: 14px 16px; font-size: 17px; display: flex; justify-content: space-between; align-items: center; min-height: 44px; }
+    details summary::-webkit-details-marker { display: none; }
+    details summary::after { content: "›"; font-size: 22px; color: var(--secondary); transform: rotate(90deg); transition: transform .15s; }
+    details[open] summary::after { transform: rotate(-90deg); }
+    details .answer { font-size: 15px; color: var(--secondary); padding: 0 16px 14px; margin: 0; }
+    details + details { border-top: 0.5px solid var(--sep); }
+
+    .footer { text-align: center; margin-top: 32px; font-size: 13px; color: var(--secondary); }
+    .footer a { color: var(--accent); text-decoration: none; margin: 0 6px; }
+    a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
   </style>
 </head>
 <body>
   <main>
-    <div class="brand"><img src="/logo.svg" alt="" />Hesabım Muhasebe</div>
+    <header class="hero">
+      <img class="app-icon" src="/logo.svg" alt="Hesabım Muhasebe uygulama simgesi" width="96" height="96" />
+      <h1 class="title">Hesabım Muhasebe</h1>
+      <p class="subtitle">Veresiye, cari hesap ve kasa</p>
 
-    <h1>Müşteri borcunu <em>kafanızda</em> tutmayın.</h1>
-    <p class="lead">Veresiye, cari hesap ve kasa tek uygulamada. Her müşterinin hesabı ayrı, bakiye anında güncel. Çalışanınız da kayıt girsin, kimin neyi göreceğine siz karar verin.</p>
+      <div class="get">
+        <a href="https://apps.apple.com/tr/app/hesab%C4%B1m-muhasebe/id6826814944" aria-label="App Store'dan indir">
+          <img src="/app-store-badge.svg" alt="App Store'dan indirin" />
+        </a>
+        <span class="note">iPhone için · Ücretsiz</span>
+      </div>
+    </header>
 
-    <a class="cta" id="indir" href="https://apps.apple.com/tr/app/hesab%C4%B1m-muhasebe/id6826814944">App Store'dan ücretsiz indir</a>
-    <p class="note">iPhone için. Ücretsiz planla başlayın, ihtiyaç olursa pakete geçin.</p>
+    <p class="section-title">Neler yapar</p>
+    <section class="group" aria-label="Özellikler">
+      <div class="row">
+        <div class="glyph g-blue" aria-hidden="true">👤</div>
+        <div><p class="row-title">Her müşterinin hesabı ayrı</p><p class="row-text">Kim ne kadar borçlu, siz kime ne kadar borçlusunuz, tek ekranda.</p></div>
+      </div>
+      <div class="row">
+        <div class="glyph g-green" aria-hidden="true">＋</div>
+        <div><p class="row-title">Tek dokunuşla kayıt</p><p class="row-text">Satış, tahsilat, alış ve ödeme. Kasa kendiliğinden güncellenir.</p></div>
+      </div>
+      <div class="row">
+        <div class="glyph g-orange" aria-hidden="true">👥</div>
+        <div><p class="row-title">Çalışanınızla birlikte</p><p class="row-text">Ekip üyesi ekleyin, hangi işletmeyi kimin göreceğini siz seçin.</p></div>
+      </div>
+    </section>
 
-    <div class="shots" aria-label="Uygulama ekranları (örnek verilerle)">
-      <img src="/tanitim/1-ana.png" alt="Ana ekran: kasa, müşteriler ve tedarikçiler" loading="lazy" />
-      <img src="/tanitim/2-satis.png" alt="Satış ve tahsilat kaydı ekranı" loading="lazy" />
-      <img src="/tanitim/3-kasa.png" alt="Kasa ve gelir gider ekranı" loading="lazy" />
+    <p class="section-title">Ekran görüntüleri</p>
+    <div class="shots" aria-label="Uygulama ekranları">
+      <figure style="margin:0"><img src="/tanitim/1-ana.png" alt="Ana ekran: kasa, müşteriler ve tedarikçiler" loading="lazy" /></figure>
+      <figure style="margin:0"><img src="/tanitim/2-satis.png" alt="Satış ve tahsilat kaydı" loading="lazy" /></figure>
+      <figure style="margin:0"><img src="/tanitim/3-kasa.png" alt="Kasa ve gelir gider" loading="lazy" /></figure>
     </div>
-    <p class="note">Ekranlardaki isim ve tutarlar örnektir.</p>
+    <p class="caption">Ekranlardaki isim ve tutarlar örnektir.</p>
 
-    <div class="features">
-      <div class="card"><h2>Her müşterinin hesabı ayrı</h2><p>Kim ne kadar borçlu, siz kime ne kadar borçlusunuz, tek ekranda görün.</p></div>
-      <div class="card"><h2>Tek dokunuşla kayıt</h2><p>Satışı, tahsilatı, alışı ve ödemeyi saniyeler içinde girin; kasa kendiliğinden güncellensin.</p></div>
-      <div class="card"><h2>Çalışanınızla birlikte</h2><p>Ekibinizi ekleyin, hangi işletmeyi kimin göreceğini siz seçin. Birden çok işletmeyi tek uygulamada yönetin.</p></div>
-    </div>
+    <p class="section-title">Sık sorulanlar</p>
+    <details class="group">
+      <summary>Ücretsiz mi?</summary>
+      <p class="answer">İndirmek ve ücretsiz planla kullanmak ücretsizdir. Daha fazla işletme, kayıt ve ekip için yıllık paketler vardır.</p>
+    </details>
+    <details class="group">
+      <summary>Verilerim kaybolur mu?</summary>
+      <p class="answer">Kayıtlarınız hesabınızda saklanır ve aynı hesapla giriş yaptığınız telefonlar arasında eşitlenir. Yedek de alabilirsiniz.</p>
+    </details>
+    <details class="group">
+      <summary>Resmi muhasebe programı mı?</summary>
+      <p class="answer">Hayır. Ön muhasebe ve cari takip uygulamasıdır. Vergi işlemleriniz için mali müşavirinize danışın.</p>
+    </details>
+    <details class="group">
+      <summary>Android'de var mı?</summary>
+      <p class="answer">Şu an yalnızca iPhone'da.</p>
+    </details>
 
-    <h3>Sık sorulanlar</h3>
-    <details><summary>Ücretsiz mi?</summary><p>Uygulamayı indirmek ve ücretsiz planla kullanmak ücretsizdir. Daha fazla işletme, kayıt ve ekip üyesi için Pro, Pro Plus ve Premium yıllık paketleri vardır.</p></details>
-    <details><summary>Verilerim kaybolur mu?</summary><p>Kayıtlarınız hesabınızda saklanır ve cihazlarınız arasında eşitlenir. İstediğiniz zaman yedek alıp geri yükleyebilirsiniz.</p></details>
-    <details><summary>Resmi muhasebe programı mı?</summary><p>Hayır. Hesabım bir ön muhasebe ve cari takip uygulamasıdır; vergi işlemleriniz için mali müşavirinize danışın.</p></details>
-    <details><summary>Android'de var mı?</summary><p>Şu an iPhone'da. Android sürümü hazırlanıyor.</p></details>
-
-    <div class="bottom"><a class="cta" href="https://apps.apple.com/tr/app/hesab%C4%B1m-muhasebe/id6826814944">Hemen ücretsiz indir</a></div>
-
-    <nav>
-      <a href="/destek.html">Destek</a>
-      <a href="/gizlilik.html">Gizlilik</a>
-      <a href="/kullanim-kosullari.html">Kullanım koşulları</a>
-      <a href="/kvkk.html">KVKK</a>
-    </nav>
+    <footer class="footer">
+      <a href="/destek.html">Destek</a> · <a href="/gizlilik.html">Gizlilik</a> · <a href="/kullanim-kosullari.html">Koşullar</a> · <a href="/kvkk.html">KVKK</a>
+    </footer>
   </main>
 </body>
 </html>
