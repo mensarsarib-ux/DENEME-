@@ -50,10 +50,16 @@
     .row-title { font-size: 17px; font-weight: 400; margin: 0; }
     .row-text { font-size: 15px; color: var(--secondary); margin: 2px 0 0; }
 
-    .shots { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 4px 16px 12px; margin: 0 -16px; scrollbar-width: none; }
+    .shots { display: flex; gap: 18px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 4px 16px 12px; margin: 0 -16px; scrollbar-width: none; }
     .shots::-webkit-scrollbar { display: none; }
     .shots img { width: 200px; flex: 0 0 auto; border-radius: 22px; box-shadow: 0 1px 6px rgba(0,0,0,.12); scroll-snap-align: center; }
     .caption { font-size: 13px; color: var(--secondary); text-align: center; margin: 4px 0 0; }
+
+
+    .device { position: relative; width: 236px; aspect-ratio: 9 / 19.5; margin: 0 auto; padding: 9px; border-radius: 44px; background: #1d1d1f; box-shadow: 0 14px 34px rgba(0,0,0,.22), inset 0 0 0 2px #3a3a3c; flex: 0 0 auto; scroll-snap-align: center; }
+    .device::before { content: ""; position: absolute; top: 15px; left: 50%; transform: translateX(-50%); width: 84px; height: 24px; border-radius: 14px; background: #000; z-index: 2; }
+    .device { overflow: hidden; } .device img { display: block; width: 100%; height: calc(100% - 30px); margin-top: 30px; object-fit: cover; object-position: top; border-radius: 0 0 36px 36px; }
+    .hint { font-size: 15px; color: var(--secondary); text-align: center; margin: 14px 0 0; }
 
     details.group { padding: 0; }
     details summary { list-style: none; cursor: pointer; padding: 14px 16px; font-size: 17px; display: flex; justify-content: space-between; align-items: center; min-height: 44px; }
@@ -79,7 +85,8 @@
         <a href="https://apps.apple.com/tr/app/hesab%C4%B1m-muhasebe/id6826814944" aria-label="App Store'dan indir">
           <img src="/app-store-badge.svg" alt="App Store'dan indirin" />
         </a>
-        <span class="note">iPhone için · Ücretsiz</span>
+        <span class="hint">iPhone'unuzda dokunarak indirin</span>
+        <span class="note">Ücretsiz · iPhone için</span>
       </div>
     </header>
 
@@ -101,9 +108,9 @@
 
     <p class="section-title">Ekran görüntüleri</p>
     <div class="shots" aria-label="Uygulama ekranları">
-      <figure style="margin:0"><img src="/tanitim/1-ana.png" alt="Ana ekran: kasa, müşteriler ve tedarikçiler" loading="lazy" /></figure>
-      <figure style="margin:0"><img src="/tanitim/2-satis.png" alt="Satış ve tahsilat kaydı" loading="lazy" /></figure>
-      <figure style="margin:0"><img src="/tanitim/3-kasa.png" alt="Kasa ve gelir gider" loading="lazy" /></figure>
+      <div class="device"><img src="/tanitim/1-ana.png" alt="Ana ekran: kasa, müşteriler ve tedarikçiler" loading="lazy" /></div>
+      <div class="device"><img src="/tanitim/2-satis.png" alt="Satış ve tahsilat kaydı" loading="lazy" /></div>
+      <div class="device"><img src="/tanitim/3-kasa.png" alt="Kasa ve gelir gider" loading="lazy" /></div>
     </div>
     <p class="caption">Ekranlardaki isim ve tutarlar örnektir.</p>
 
