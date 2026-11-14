@@ -79,3 +79,9 @@ Sunum: https://claude.ai/artifact/K2LWjCYMhNocxGx668dqXE
 - Ücretli abone (5–7) bu testte karşılaştırmaya yetmez; ikinci aşamada Meta SDK ile ölçülecek.
 - Türkiye CPI 12–25 TL (tüm cihazlar, iOS daha pahalı); CPM 2026 3. çeyrekte 155 TL.
 - B sürümü hazır olmadan A tek başına başlarsa: 1 set, günde 300 TL, 7 gün (~2.205 TL) taban ölçüm.
+
+## Kurulan kampanya (14 Kasım 2026, Meta Marketing API, sistem kullanıcısı claude-reklam)
+- Kampanya 52618169570093 "Hesabım iOS Trafik - App Store - A" (OUTCOME_TRAFFIC), PAUSED.
+- Reklam seti 52618170271093: TR, 25–60, Türkçe, iPhone iOS 13+, FB+IG Akış/Hikaye/Reels, küçük işletme sahipleri + işletme sayfası yöneticileri, günde 200 TL, 15–21 Kasım, dinamik kreatif, bağlantı tıklaması.
+- Reklam 52618171195693: 9:16 video, 3 metin, 3 başlık, İndir düğmesi → https://hesabimmuhasebe.com/indir.html (utm_campaign=ios_trafik_a). PAUSED, Meta incelemesinde.
+- Neden trafik + tanıtım sayfası: Meta trafik kampanyasında App Store bağlantısını kabul etmiyor; iOS uygulama yükleme kampanyası Meta SDK olmadan açılamıyor (AEM/SKAN uygun değil).
