@@ -247,11 +247,11 @@ def card(icon):
     def d(dr, al):
         ic = icon.copy()
         ic.putalpha(ic.split()[3].point(lambda v: int(v * al / 255)))
-        dr._image.alpha_composite(ic, ((W - ic.width) // 2, 560))
-        text_centered(dr, 870, "Hesabım Muhasebe", ImageFont.truetype(FONT_BOLD, 62), (*WHITE, al))
-        text_centered(dr, 962, "Veresiye, cari hesap ve kasa", F_INTRO_SMALL, (*MUTED, al))
-        text_centered(dr, 1014, "takibi tek uygulamada", F_INTRO_SMALL, (*MUTED, al))
-        text_centered(dr, 1120, "Ücretsiz başla, istediğinde yükselt", ImageFont.truetype(FONT_REG, 34), (*ACCENT, al))
+        dr._image.alpha_composite(ic, ((W - ic.width) // 2, 660))
+        text_centered(dr, 970, "Hesabım Muhasebe", ImageFont.truetype(FONT_BOLD, 62), (*WHITE, al))
+        text_centered(dr, 1062, "Veresiye, cari hesap ve kasa", F_INTRO_SMALL, (*MUTED, al))
+        text_centered(dr, 1114, "takibi tek uygulamada", F_INTRO_SMALL, (*MUTED, al))
+        text_centered(dr, 1220, "Ücretsiz başla, istediğinde yükselt", ImageFont.truetype(FONT_REG, 34), (*ACCENT, al))
 
     return d
 
