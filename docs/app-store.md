@@ -32,21 +32,25 @@ Sonra: önce AB dışındaki ülkeler, AB satıcı bilgisi kararından sonra AB.
 Abonelik grubu: Hesabım Muhasebe (görünen ad: Hesabım Paketleri). Seviye sırası Premium 1, Pro Plus 2, Pro 3 olmalı.
 
 ## Uygulama adı (en fazla 30 karakter)
-Hesabım Muhasebe
+Hesabım Muhasebe: Veresiye
+
+Not: Telefondaki görünen ad (CFBundleDisplayName) "Hesabım" olarak kalır; değişen yalnızca App Store adı.
 
 ## Alt başlık (en fazla 30 karakter)
-İşletme cari ve kasa takibi
+Cari, borç alacak, kasa takibi
 
 ## Anahtar kelimeler (en fazla 100 karakter, virgülle, boşluk yok)
-muhasebe,cari,gelir,gider,alacak,borç,kasa,tahsilat,defter,müşteri,tedarikçi,işletme,esnaf,ekip
+ciro,tahsilat,gelir,gider,esnaf,müşteri,tedarikçi,ekip,dükkan,bakkal,market,ön,hesap,ekstre
+
+(96/100 bayt. "defter" rakip marka adı olduğu için yerine "ciro" kullanıldı.)
 
 Not: Uygulama adı ve alt başlıktaki kelimeler Apple tarafından zaten arama için kullanılır; anahtar kelimelerde tekrar etmeye gerek yok.
 
 ## Tanıtım metni (en fazla 170 karakter)
-Müşterilerinizi, tedarikçilerinizi ve kasanızı tek yerden takip edin. Alacak ve borçlarınızı anında görün, ekibinizle birlikte yönetin.
+Veresiye defterini telefonuna taşı. Müşteri ve tedarikçi hesapları, satış, tahsilat ve kasa tek yerde. Çalışanın da kayıt girsin, kimin neyi göreceğine sen karar ver.
 
 ## Açıklama (en fazla 4.000 karakter)
-Hesabım Muhasebe, küçük işletmeler ve esnaf için hazırlanmış bir işletme muhasebe ve cari hesap uygulamasıdır. Müşteri ve tedarikçi kayıtlarınızı tutun, satış, alış, tahsilat ve ödemelerinizi kaydedin; alacaklarınızı ve borçlarınızı her an görün.
+Hesabım Muhasebe, esnaf ve küçük işletmeler için veresiye, cari hesap ve kasa takibi uygulamasıdır. Müşterinin borcunu deftere değil telefona yazın; kimin ne kadar borçlu olduğunu, kime ne kadar borcunuz olduğunu anında görün.
 
 Öne çıkan özellikler:
 • Müşteri ve tedarikçi cari hesapları: Her kişi için ayrı bakiye, işlem geçmişi ve notlar
@@ -71,6 +75,13 @@ Gizlilik politikası: https://hesabimmuhasebe.com/gizlilik.html
 Kullanım koşulları: https://hesabimmuhasebe.com/kullanim-kosullari.html
 
 ## Bu sürümde neler var (en fazla 4.000 karakter)
+### 1.1
+• İlk açılışta uygulamayı tanıtan ekranlar
+• Kasa tutarı gizlilik için gizli gelir, dokununca görünür
+• Yazı yazarken klavyede ekranın kayması düzeltildi
+• Genel iyileştirmeler ve hata düzeltmeleri
+
+### 1.0
 İlk sürüm. Müşteri ve tedarikçi takibi, gelir gider kayıtları, kasa ve hesaplar, alacak takibi, raporlar, ekip çalışması, yedekleme ve geri yükleme, Face ID kilidi, açık/koyu tema ve 17 dil.
 
 ## İnceleme notu (App Store Connect → İnceleme bilgileri)
