@@ -42,11 +42,14 @@ SCREENS = [
 ]
 
 # Telefon ölçüleri (tam boy, kamera ölçeği 1 iken)
+# iPhone 16 / 15 ölçüleri (nokta): ekran 393x852, köşe 55, Dinamik Ada 126x37 (tepeden 11), durum çubuğu 54
+PT = 560 / 393  # 1 nokta = kaç piksel
 SCR_W = 560
-SCR_H = round(SCR_W * 2532 / 1170)
-BEZEL = 16
-PH_W = SCR_W + BEZEL * 2
-PH_H = SCR_H + BEZEL * 2
+SCR_H = round(852 * PT)
+BEZEL = round(5.5 * PT)  # ince siyah çerçeve
+RIM = 4  # metalik dış kenar (piksel)
+PH_W = SCR_W + (BEZEL + RIM) * 2
+PH_H = SCR_H + (BEZEL + RIM) * 2
 PAD = 60  # gölge payı
 GAP = 90
 PITCH = PH_W + GAP
@@ -102,20 +105,85 @@ def rounded_mask(size, radius):
     return m
 
 
+def status_bar(width, height, bg, fg):
+    """iOS durum çubuğu: 9:41, hücresel sinyal, Wi-Fi, pil. Dinamik Ada ayrıca çizilir."""
+    bar = Image.new("RGBA", (width, height), bg)
+    d = ImageDraw.Draw(bar)
+    f = ImageFont.truetype("/usr/share/fonts/opentype/inter/Inter-SemiBold.otf", round(17 * PT))
+    cy = round(31 * PT)  # durum çubuğu yazılarının dikey merkezi
+    tw = d.textlength("9:41", font=f)
+    d.text((round(58 * PT) - tw / 2, cy), "9:41", font=f, fill=fg, anchor="lm")
+    # sağ taraf: sinyal (4 çubuk), Wi-Fi, pil
+    x = width - round(27 * PT)
+    bw, bh = round(27 * PT), round(13 * PT)
+    bx = x - bw
+    d.rounded_rectangle((bx, cy - bh / 2, bx + bw, cy + bh / 2), radius=round(4 * PT), outline=fg, width=max(1, round(1.1 * PT)))
+    d.rounded_rectangle((bx + 2.4 * PT, cy - bh / 2 + 2.4 * PT, bx + bw - 2.4 * PT, cy + bh / 2 - 2.4 * PT), radius=round(2 * PT), fill=fg)
+    d.rounded_rectangle((bx + bw + 1.2 * PT, cy - 2.2 * PT, bx + bw + 2.6 * PT, cy + 2.2 * PT), radius=1, fill=fg)
+    # Wi-Fi: üç yay + nokta
+    wx = bx - round(13 * PT)
+    for i, r in enumerate((round(9 * PT), round(6 * PT), round(3 * PT))):
+        d.arc((wx - r, cy + 3 * PT - r, wx + r, cy + 3 * PT + r), 225, 315, fill=fg, width=max(2, round(1.8 * PT)))
+    d.ellipse((wx - 1.4 * PT, cy + 3 * PT - 1.4 * PT, wx + 1.4 * PT, cy + 3 * PT + 1.4 * PT), fill=fg)
+    # hücresel sinyal
+    sx = wx - round(30 * PT)
+    for i in range(4):
+        h = (4 + i * 2.6) * PT
+        x0 = sx + i * 4.6 * PT
+        d.rounded_rectangle((x0, cy + 5 * PT - h, x0 + 3.2 * PT, cy + 5 * PT), radius=1, fill=fg)
+    return bar
+
+
 def make_sprite(name):
-    """Telefon çerçevesi + ekran + gölge, tek bir saydam görsel olarak (bir kez hazırlanır)."""
+    """Gerçek iPhone görünümü: metalik kenar, ince siyah çerçeve, yan tuşlar, Dinamik Ada, durum çubuğu,
+    uygulama ekranı ve alt ana ekran çubuğu; altında yumuşak gölge. Bir kez hazırlanır."""
     sprite = Image.new("RGBA", (PH_W + PAD * 2, PH_H + PAD * 2), (0, 0, 0, 0))
+    radius_outer = round(55 * PT) + BEZEL + RIM
     shadow = Image.new("L", sprite.size, 0)
-    ImageDraw.Draw(shadow).rounded_rectangle((PAD, PAD + 24, PAD + PH_W, PAD + PH_H + 24), radius=72, fill=150)
+    ImageDraw.Draw(shadow).rounded_rectangle((PAD, PAD + 24, PAD + PH_W, PAD + PH_H + 24), radius=radius_outer, fill=150)
     shadow = shadow.filter(ImageFilter.GaussianBlur(26))
     sprite.paste((0, 0, 0, 255), (0, 0), shadow)
-    frame = Image.new("RGBA", (PH_W, PH_H), (0, 0, 0, 0))
-    fd = ImageDraw.Draw(frame)
-    fd.rounded_rectangle((0, 0, PH_W - 1, PH_H - 1), radius=72, fill=(5, 8, 10, 255))
-    fd.rounded_rectangle((2, 2, PH_W - 3, PH_H - 3), radius=70, outline=(43, 58, 64, 255), width=3)
-    scr = Image.open(os.path.join(SHOTS, name)).convert("RGBA").resize((SCR_W, SCR_H), Image.LANCZOS)
-    frame.paste(scr, (BEZEL, BEZEL), rounded_mask((SCR_W, SCR_H), 56))
-    sprite.alpha_composite(frame, (PAD, PAD))
+    sd = ImageDraw.Draw(sprite)
+    # yan tuşlar (gövdenin biraz dışına taşar): solda Eylem + ses aç/kıs, sağda yan tuş
+    btn = (110, 116, 122, 255)
+    for top, h in ((122, 34), (178, 64), (256, 64)):
+        y = PAD + round(top * PT)
+        sd.rounded_rectangle((PAD - 3, y, PAD + 4, y + round(h * PT)), radius=2, fill=btn)
+    y = PAD + round(200 * PT)
+    sd.rounded_rectangle((PAD + PH_W - 4, y, PAD + PH_W + 3, y + round(100 * PT)), radius=2, fill=btn)
+    # gövde: metalik kenar (dikey ışık geçişli) + siyah çerçeve
+    body = Image.new("RGBA", (PH_W, PH_H), (0, 0, 0, 0))
+    rim = Image.new("RGBA", (PH_W, PH_H))
+    rd = ImageDraw.Draw(rim)
+    for yy in range(PH_H):
+        k = 0.5 + 0.5 * math.cos(yy / PH_H * math.pi * 2)
+        c = int(78 + 50 * k)
+        rd.line((0, yy, PH_W, yy), fill=(c, c + 3, c + 6, 255))
+    body.paste(rim, (0, 0), rounded_mask((PH_W, PH_H), radius_outer))
+    ImageDraw.Draw(body).rounded_rectangle(
+        (RIM, RIM, PH_W - 1 - RIM, PH_H - 1 - RIM), radius=radius_outer - RIM, fill=(3, 4, 5, 255)
+    )
+    # ekran: durum çubuğu + uygulama (üst kısmı durum çubuğunun altından başlar)
+    app = Image.open(os.path.join(SHOTS, name)).convert("RGBA")
+    app = app.resize((SCR_W, round(app.height * SCR_W / app.width)), Image.LANCZOS)
+    top_rgb = app.getpixel((8, 8))[:3]
+    lum = 0.299 * top_rgb[0] + 0.587 * top_rgb[1] + 0.114 * top_rgb[2]
+    fg = (255, 255, 255, 255) if lum < 150 else (0, 0, 0, 255)
+    bar_h = round(54 * PT)
+    screen = Image.new("RGBA", (SCR_W, SCR_H), (*top_rgb, 255))
+    screen.alpha_composite(status_bar(SCR_W, bar_h, (*top_rgb, 255), fg), (0, 0))
+    screen.alpha_composite(app.crop((0, 0, SCR_W, SCR_H - bar_h)), (0, bar_h))
+    sdraw = ImageDraw.Draw(screen)
+    # Dinamik Ada
+    iw, ih = round(126 * PT), round(37 * PT)
+    ix, iy = (SCR_W - iw) // 2, round(11 * PT)
+    sdraw.rounded_rectangle((ix, iy, ix + iw, iy + ih), radius=ih // 2, fill=(0, 0, 0, 255))
+    # alt ana ekran çubuğu
+    hw, hh = round(139 * PT), round(5 * PT)
+    hy = SCR_H - round(8 * PT) - hh
+    sdraw.rounded_rectangle(((SCR_W - hw) // 2, hy, (SCR_W + hw) // 2, hy + hh), radius=hh // 2, fill=(*fg[:3], 230))
+    body.paste(screen, (RIM + BEZEL, RIM + BEZEL), rounded_mask((SCR_W, SCR_H), round(55 * PT)))
+    sprite.alpha_composite(body, (PAD, PAD))
     return sprite
 
 
