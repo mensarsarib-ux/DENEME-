@@ -57,8 +57,9 @@ S_MID = 0.64  # geçişlerde hafif uzaklaşma
 S_NEAR = 1.0  # odak
 
 # Zaman çizelgesi (kare)
-INTRO = 90  # kapak karesi (18 kare durur), sonra şerit kayar ve ilk telefonda durur
-COVER = 18
+INTRO = 102  # kapak (son kareyle aynı tasarım), geçiş, sonra şerit kayar ve ilk telefonda durur
+COVER = 24  # kapak karesi bu kadar durur
+FADE = 14  # kapaktan şeride geçiş
 ZOOM_IN = 18
 HOLD = 50  # her ekranda bekleme (5. saniye ilk ekranın başlığına denk gelir: App Store kapağı)
 TRANS = 18  # telefondan telefona geçiş
@@ -165,7 +166,7 @@ def camera(t):
     """Kare t için (kamera_x, ölçek, odaktaki ekran ya da None, odak içindeki kare, sahne)."""
     if t < INTRO:
         # kapak: ortadaki telefonlar ve başlık; sonra şerit kayarak ilk telefona gelir
-        u = ease_in_out(max(0, t - COVER) / (INTRO - COVER))
+        u = ease_in_out(max(0, t - COVER - FADE // 2) / (INTRO - COVER - FADE // 2))
         return lerp(cx(3), cx(0), u), S_FAR, None, 0, "intro"
     t -= INTRO
     if t < ZOOM_IN:
@@ -200,7 +201,10 @@ def render_frame(t, bg, sprites, icon):
     cam_x, s, focus, ft, stage = camera(t)
     dim = 1.0
     if stage == "end":
-        dim = 1.0 - 0.92 * ease_in_out(ft / 20)
+        dim = 1.0 - ease_in_out(ft / 20)  # son kare kapakla birebir aynı olsun
+    elif stage == "intro":
+        # kapakta şerit görünmez, kapak kaybolurken belirir
+        dim = ease_in_out((t - COVER) / FADE)
     # şerit
     for i in range(len(SCREENS)):
         sx = W / 2 + (cx(i) - cam_x) * s
@@ -211,6 +215,8 @@ def render_frame(t, bg, sprites, icon):
         y_center = lerp(CENTER_Y - 40, CENTER_Y, (s - S_FAR) / (S_NEAR - S_FAR)) if s < S_NEAR else CENTER_Y
         x0 = round(sx - sp.width / 2)
         y0 = round(y_center - sp.height / 2)
+        if dim <= 0.01:
+            continue
         if dim < 1.0:
             sp = sp.copy()
             sp.putalpha(sp.split()[3].point(lambda v: int(v * dim)))
@@ -218,13 +224,8 @@ def render_frame(t, bg, sprites, icon):
 
     # yazılar
     if stage == "intro":
-        a = 1 - ease_in_out((t - (INTRO - 14)) / 14)  # ilk kareden itibaren tam görünür (kapak)
-
-        def d(dr, al):
-            text_centered(dr, 520, "Hesabım Muhasebe", F_INTRO_BIG, (*WHITE, al))
-            text_centered(dr, 605, "Esnafın cari hesap defteri", F_INTRO_SMALL, (*ACCENT, al))
-
-        overlay_text(canvas, d, a)
+        # ilk kare = kapak (App Store'da önizleme kapağı); son kareyle aynı tasarım
+        overlay_text(canvas, card(icon), 1 - ease_in_out((t - COVER) / FADE))
     elif stage == "hold":
         first, second, cap, _ = SCREENS[focus]
         a = ease_out(ft / 8) * (1 - ease_in_out((ft - (HOLD - 6)) / 6))
@@ -236,19 +237,23 @@ def render_frame(t, bg, sprites, icon):
 
         overlay_text(canvas, d, a)
     elif stage == "end":
-        a = ease_out((ft - 8) / 16)
-
-        def d(dr, al):
-            ic = icon.copy()
-            ic.putalpha(ic.split()[3].point(lambda v: int(v * al / 255)))
-            dr._image.alpha_composite(ic, ((W - ic.width) // 2, 560))
-            text_centered(dr, 870, "Hesabım Muhasebe", ImageFont.truetype(FONT_BOLD, 62), (*WHITE, al))
-            text_centered(dr, 962, "Veresiye, cari hesap ve kasa", F_INTRO_SMALL, (*MUTED, al))
-            text_centered(dr, 1014, "takibi tek uygulamada", F_INTRO_SMALL, (*MUTED, al))
-            text_centered(dr, 1120, "Ücretsiz başla, istediğinde yükselt", ImageFont.truetype(FONT_REG, 34), (*ACCENT, al))
-
-        overlay_text(canvas, d, a)
+        overlay_text(canvas, card(icon), ease_out((ft - 8) / 16))
     return canvas.convert("RGB")
+
+
+def card(icon):
+    """Kapak ve kapanış kartı: simge, ad, açıklama, slogan."""
+
+    def d(dr, al):
+        ic = icon.copy()
+        ic.putalpha(ic.split()[3].point(lambda v: int(v * al / 255)))
+        dr._image.alpha_composite(ic, ((W - ic.width) // 2, 560))
+        text_centered(dr, 870, "Hesabım Muhasebe", ImageFont.truetype(FONT_BOLD, 62), (*WHITE, al))
+        text_centered(dr, 962, "Veresiye, cari hesap ve kasa", F_INTRO_SMALL, (*MUTED, al))
+        text_centered(dr, 1014, "takibi tek uygulamada", F_INTRO_SMALL, (*MUTED, al))
+        text_centered(dr, 1120, "Ücretsiz başla, istediğinde yükselt", ImageFont.truetype(FONT_REG, 34), (*ACCENT, al))
+
+    return d
 
 
 def paste_clipped(canvas, sp, x0, y0):
