@@ -1,20 +1,18 @@
 #!/usr/bin/env python3
-"""Rulo önizleme videosuna geçiş ses efektleri ekler.
+"""Rulo önizleme videosuna geçiş ses efektleri ekler (Mixkit ses kütüphanesi).
 
-Sesler burada üretilir (kayıt indirilmez, lisans sorunu yok):
-  - whoosh: şerit kayarken ve telefondan telefona geçişte (filtrelenmiş gürültü, yükselip alçalan ton)
-  - pop: kamera ilk telefona yakınlaşırken
-  - tık: her başlık belirdiğinde (yumuşak, kısa)
-  - zil: kapanış kartı gelirken (iki tonlu, uzun sönümlü)
-Zamanlar scripts/render-app-preview.py içindeki zaman çizelgesinden okunur; video değişirse sesler de uyar.
+Sesler Mixkit'ten indirilir (Mixkit Sound Effects Free License: ücretsiz, ticari kullanıma açık, atıf gerekmez;
+ses dosyaları tek başına yeniden dağıtılamaz, bu yüzden repoya konmaz, store/app-preview/sfx/ altına indirilir).
+Her sesin en yüksek anı, ilgili hareketin ortasına hizalanır. Zamanlar scripts/render-app-preview.py'den okunur.
 
 Kullanım: python3 scripts/add-preview-sfx.py
 Girdi: store/app-preview/hesabim-rulo-886x1920-apple.mp4
-Çıktı: store/app-preview/hesabim-rulo-886x1920-sesli.mp4 (+ aynı adla .wav ses izi)
+Çıktı: store/app-preview/hesabim-rulo-886x1920-sesli.mp4
 """
 import importlib.util
 import os
 import subprocess
+import urllib.request
 import wave
 
 import numpy as np
@@ -26,105 +24,88 @@ spec.loader.exec_module(rp)
 
 VIDEO_IN = rp.OUT
 VIDEO_OUT = os.path.join(ROOT, "store", "app-preview", "hesabim-rulo-886x1920-sesli.mp4")
+SFX_DIR = os.path.join(ROOT, "store", "app-preview", "sfx")
 WAV = VIDEO_OUT.replace(".mp4", ".wav")
 SR = 48000
-rng = np.random.default_rng(7)
+
+# Mixkit ses kimlikleri (mixkit.co/free-sound-effects)
+SFX = {
+    "intro": 1492,  # Cinematic whoosh fast transition
+    "sweep": 166,  # Fast small sweep transition
+    "pop": 3005,  # Explainer video pops whoosh light pop
+    "click": 2568,  # Cool interface click tone
+    "out": 1490,  # Fast whoosh transition
+    "end": 951,  # Positive notification
+}
 
 
-def bandpass(x, lo, hi):
-    X = np.fft.rfft(x)
-    f = np.fft.rfftfreq(len(x), 1 / SR)
-    X[(f < lo) | (f > hi)] = 0
-    return np.fft.irfft(X, len(x))
+def load(name):
+    sid = SFX[name]
+    os.makedirs(SFX_DIR, exist_ok=True)
+    mp3 = os.path.join(SFX_DIR, f"mixkit-{sid}.mp3")
+    if not os.path.exists(mp3):
+        req = urllib.request.Request(
+            f"https://assets.mixkit.co/active_storage/sfx/{sid}/{sid}-preview.mp3", headers={"User-Agent": "Mozilla/5.0"}
+        )
+        with urllib.request.urlopen(req, timeout=30) as r, open(mp3, "wb") as f:
+            f.write(r.read())
+    raw = subprocess.run(
+        ["ffmpeg", "-v", "error", "-i", mp3, "-f", "s16le", "-ac", "2", "-ar", str(SR), "-"],
+        check=True, capture_output=True,
+    ).stdout
+    return np.frombuffer(raw, dtype=np.int16).reshape(-1, 2).astype(np.float64) / 32768
 
 
-def whoosh(dur, lo=300, hi=5000, peak=0.45):
-    """Kayma sesi: gürültü, ses yüksekliği ortada tepe yapar, parlaklık yükselip iner."""
-    n = int(dur * SR)
-    t = np.linspace(0, 1, n)
-    env = np.sin(np.pi * np.clip(t / 1.0, 0, 1)) ** 2
-    env *= np.clip((t - 0) / 0.15, 0, 1)  # yumuşak giriş
-    low = bandpass(rng.standard_normal(n), lo, lo * 4)
-    high = bandpass(rng.standard_normal(n), hi * 0.4, hi)
-    sweep = np.sin(np.pi * t) ** 1.5  # ortada daha parlak
-    x = low * (1 - 0.6 * sweep) + high * 0.6 * sweep
-    x /= np.max(np.abs(x)) + 1e-9
-    # stereo: soldan sağa (şerit sağdan sola kayarken ses de geçsin)
-    pan = 0.5 + 0.35 * np.cos(np.pi * t)
-    return np.stack([x * env * peak * pan, x * env * peak * (1 - pan)], axis=1)
-
-
-def pop(freq=520, dur=0.18, gain=0.35):
-    n = int(dur * SR)
-    t = np.arange(n) / SR
-    f = freq * (1 + 0.6 * np.exp(-t / 0.02))  # hızla düşen perde
-    x = np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-t / 0.05)
-    x[: int(0.002 * SR)] *= np.linspace(0, 1, int(0.002 * SR))
-    return np.stack([x * gain, x * gain], axis=1)
-
-
-def tick(gain=0.18):
-    n = int(0.06 * SR)
-    t = np.arange(n) / SR
-    x = np.sin(2 * np.pi * 1800 * t) * np.exp(-t / 0.008) + bandpass(rng.standard_normal(n), 2500, 7000) * np.exp(-t / 0.004) * 0.4
-    x /= np.max(np.abs(x)) + 1e-9
-    return np.stack([x * gain, x * gain], axis=1)
-
-
-def chime(gain=0.28):
-    dur = 1.8
-    n = int(dur * SR)
-    t = np.arange(n) / SR
-    x = np.zeros(n)
-    for f, d, a in [(784.0, 0.0, 1.0), (1046.5, 0.09, 0.8), (1568.0, 0.09, 0.25)]:
-        tt = np.clip(t - d, 0, None)
-        x += a * np.sin(2 * np.pi * f * tt) * np.exp(-tt / 0.55) * (t >= d)
-    x[: int(0.004 * SR)] *= np.linspace(0, 1, int(0.004 * SR))
-    x /= np.max(np.abs(x)) + 1e-9
-    return np.stack([x * gain, x * gain], axis=1)
+def peak_time(x):
+    """Sesin en güçlü olduğu an (20 ms pencerelerle)."""
+    w = int(0.02 * SR)
+    e = np.convolve((x ** 2).mean(axis=1), np.ones(w) / w, mode="same")
+    return int(np.argmax(e))
 
 
 def main():
     total = rp.total_frames() / rp.FPS
-    out = np.zeros((int((total + 0.5) * SR), 2))
+    out = np.zeros((int((total + 1) * SR), 2))
+    snd = {k: load(k) for k in SFX}
 
-    def place(seg, at):
-        i0 = int(at * SR)
-        n = min(len(seg), len(out) - i0)
+    def place(name, at_sec, gain, align="peak"):
+        x = snd[name] * gain
+        offset = peak_time(x) if align == "peak" else 0
+        i0 = int(at_sec * SR) - offset
+        if i0 < 0:
+            x = x[-i0:]
+            i0 = 0
+        n = min(len(x), len(out) - i0)
         if n > 0:
-            out[i0 : i0 + n] += seg[:n]
+            out[i0 : i0 + n] += x[:n]
 
-    fr = lambda f: f / rp.FPS  # kare → saniye
-    # 1) açılış kayması: kapak kaybolup şerit kaymaya başlarken
+    fr = lambda f: f / rp.FPS
+    # açılış: kapak kaybolup şerit kayarken; tepe, kaymanın ilk yarısına
     slide_start = rp.COVER + rp.FADE // 2
-    place(whoosh(fr(rp.INTRO - slide_start) * 0.9, lo=180, hi=4000, peak=0.5), fr(slide_start))
-    # 2) ilk telefona yakınlaşma
-    place(pop(), fr(rp.INTRO + 2))
-    # 3) her ekran: başlık tıkı; arada geçiş whoosh'u
-    n = len(rp.SCREENS)
+    place("intro", fr(slide_start + (rp.INTRO - slide_start) * 0.35), 0.75)
+    # ilk telefona yakınlaşma
+    place("pop", fr(rp.INTRO + rp.ZOOM_IN * 0.5), 0.7)
     t = rp.INTRO + rp.ZOOM_IN
+    n = len(rp.SCREENS)
     for i in range(n):
-        place(tick(), fr(t + 2))
+        place("click", fr(t + 3), 0.32, align="start")  # başlık belirirken
         t += rp.HOLD
         if i < n - 1:
-            place(whoosh(fr(rp.TRANS) + 0.12, peak=0.38), fr(t - 2))
+            place("sweep", fr(t + rp.TRANS * 0.5), 0.55)  # telefondan telefona
             t += rp.TRANS
-    # 4) uzaklaşma ve kapanış zili
-    place(whoosh(fr(rp.ZOOM_OUT) + 0.15, lo=150, hi=2500, peak=0.32), fr(t))
+    place("out", fr(t + rp.ZOOM_OUT * 0.5), 0.6)  # bütün şeride uzaklaşma
     t += rp.ZOOM_OUT
-    place(chime(), fr(t + 8))
+    place("end", fr(t + 8), 0.6, align="start")  # kapanış kartı
 
-    # tepe sınırlama ve kayıt
     peak = np.max(np.abs(out))
-    if peak > 0.9:
-        out *= 0.9 / peak
-    pcm = (out * 32767).astype(np.int16)
+    if peak > 0.89:
+        out *= 0.89 / peak
+    out = out[: int(total * SR)]
     with wave.open(WAV, "wb") as w:
         w.setnchannels(2)
         w.setsampwidth(2)
         w.setframerate(SR)
-        w.writeframes(pcm.tobytes())
-
+        w.writeframes((out * 32767).astype(np.int16).tobytes())
     subprocess.run(
         [
             "ffmpeg", "-v", "error", "-y", "-i", VIDEO_IN, "-i", WAV,
