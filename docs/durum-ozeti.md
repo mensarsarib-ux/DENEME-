@@ -1,9 +1,39 @@
-# Hesabım Muhasebe – Durum özeti ve açık görevler (10 Kasım 2026)
+# Hesabım Muhasebe – Durum özeti ve açık görevler (15 Kasım 2026)
 
 Bu dosya oturumlar arası devir içindir. Yeni bir sohbette "docs/durum-ozeti.md dosyasını oku" demek yeterlidir.
 Gizli bilgi (şifre, anahtar, JSON) burada yoktur.
 
-## 1. Şu anki durum
+## 0. 15 Kasım 2026 güncellemesi (en güncel bilgi burada)
+
+| Konu | Durum |
+|---|---|
+| iOS mağazada | 1.0 (38) satışta |
+| iOS gönderilecek | **1.1 (57)**: klavye düzeltmesi, tanıtım ekranları, kasa gizleme, Meta SDK, puan penceresi. Codemagic'te 57 henüz derlenmedi. 55'i gönderme (fazladan activateApp vardı, 56'da geri alındı) |
+| Meta SDK | Çalışıyor. Olay Yöneticisi → Hesabım Muhasebe veri seti → detay sayfasında açılış, yükleme ve abone olma olayları görünüyor. Özet kart "0" gösterebilir, ona bakma. `baglanti_testi` adlı tek olay Claude'un bağlantı testidir |
+| Meta reklam hesabı | **4581603412076546** (Hesabım Muhasebe portföyü). 1740583227051530 başka işletmenin, kullanma |
+| Android | Play kapalı testte 51. **52 (AAB) hazır**, Play'e yüklenmedi. 14 gün yaklaşık 24 Kasım'da doluyor, sonra üretime başvuru |
+| Veritabanı güvenlik betiği | Uygulandı ve doğrulandı (15 Kas). Ekip akışı telefonda denendi, çalışıyor |
+| Web | indir.html rozeti `itms-apps` ile App Store uygulamasını açar. Gizlilik, İngilizce gizlilik ve KVKK sayfalarına Meta SDK eklendi |
+
+### 1.1'i göndermeden önce (kullanıcı, App Store Connect)
+1. Codemagic → Hesabım iOS (TestFlight) → derleme 57.
+2. 1.1 sürüm sayfasında derleme olarak **57**'yi seç.
+3. Ad, alt başlık, anahtar kelimeler, tanıtım metni ve açıklamanın ilk paragrafı: `docs/app-store.md`.
+4. Ekran görüntüleri: `store/app-store/` içindeki 3 görsel (6,9 inç), en başa.
+5. Uygulama Gizliliği: `docs/app-store.md` → "Uygulama Gizliliği" tablosu.
+6. Bu sürümdeki yenilikler: `docs/app-store.md` → "1.1".
+7. İnceleme demo hesabıyla girişin çalıştığını kontrol et, sonra İncelemeye Gönder.
+
+### Bekleyen kararlar ve sonraya kalanlar
+- Meta reklam kampanyası: görsel Reklam Yöneticisi → Medya kitaplığına yüklenecek; Claude kampanyayı duraklatılmış kurar.
+- Meta kayıt olayı (complete_registration): yerel köprü gerekir, sonraki sürüme.
+- Ücretsiz paket sınırında doğrudan paket ekranı, Pro ücretsiz deneme: karar verilmedi.
+- Apple ve Google abonelik bildirimleri, verify-purchase sıkılaştırma, paket sınırlarının sunucuda denetimi: ertelendi.
+- Codemagic dış test (TestFlight external) bilgileri eksik; kırmızı uyarı veriyor ama iç test etkilenmiyor. Kullanıcı kaldırılmasını istemedi.
+
+---
+
+## 1. 10 Kasım durumu (eski; güncel bilgi bölüm 0'da)
 
 | Konu | Durum |
 |---|---|
