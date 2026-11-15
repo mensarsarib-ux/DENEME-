@@ -1,13 +1,17 @@
 #!/usr/bin/env python3
-"""App Store uygulama önizlemesi (886x1920, 30 fps, ~24 sn).
+"""App Store uygulama önizlemesi: "rulo" akışı (886x1920, 30 fps, ~18 sn).
 
-Mağaza ekran görüntüleriyle aynı başlıklar ve aynı görseller kullanılır: store/app-store/*.png.
-Akış: her ekran telefon çerçevesinde yukarıdan girer, başlığı yerine oturur, kısa bir süre durur
-ve bir sonrakine geçer. Son sahnede uygulama simgesi ve kısa bir kapanış yazısı gelir.
-Veriler uygulamanın demo verisidir; gerçek müşteri bilgisi içermez.
+Bütün telefonlar yan yana bir şerit (rulo) üzerinde durur; bir kamera bu şeridin üstünde gezer:
+  1. Açılış: kamera uzaktan bakar, şerit hızla kayar ve ilk telefonda yavaşlayarak durur.
+  2. Kamera ilk telefona yakınlaşır; başlığı ve alt yazısı gelir.
+  3. Her geçişte kamera hafifçe uzaklaşır, yandaki telefona kayar ve yeniden yakınlaşır.
+  4. Son telefondan sonra kamera bütün şeridi gösterecek kadar uzaklaşır, kapanış kartı gelir.
+
+Ekranlar uygulamanın ham ekran görüntüleridir (store/app-preview/raw, scripts/capture-app-screens.cjs ile alınır).
+Başlıklar mağaza ekran görüntüleriyle aynıdır. Veriler demo verisidir; gerçek müşteri bilgisi içermez.
 
 Kullanım: python3 scripts/render-app-preview.py
-Çıktı: store/app-preview/hesabim-akis-886x1920.mp4
+Çıktı: store/app-preview/hesabim-rulo-886x1920.mp4
 """
 import math
 import os
@@ -15,20 +19,18 @@ import subprocess
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
-SHOTS = os.path.join(ROOT, "store", "app-preview", "raw")  # scripts/capture-app-screens.cjs ile alınan ham ekranlar
+SHOTS = os.path.join(ROOT, "store", "app-preview", "raw")
 ICON = os.path.join(ROOT, "ios", "App", "App", "Assets.xcassets", "AppIcon.appiconset", "AppIcon-512@2x.png")
-OUT = os.path.join(ROOT, "store", "app-preview", "hesabim-akis-886x1920.mp4")
+OUT = os.path.join(ROOT, "store", "app-preview", "hesabim-rulo-886x1920.mp4")
 FONT_BOLD = "/usr/share/fonts/opentype/inter/Inter-ExtraBold.otf"
 FONT_REG = "/usr/share/fonts/opentype/inter/Inter-Medium.otf"
 
 W, H = 886, 1920
 FPS = 30
-SCENE = 3 * FPS  # her ekran 3 sn
 ACCENT = (61, 219, 176)
 WHITE = (244, 248, 248)
 MUTED = (201, 220, 220)
 
-# (başlık: son kelime vurgulu, alt yazı, görsel)
 SCREENS = [
     ("Veresiye defterin", "cebinde", "Her müşterinin hesabı ayrı", "1-veresiye.png"),
     ("Satış ve tahsilat", "tek dokunuşla", "Satış, alış, tahsilat, ödeme", "2-satis-tahsilat.png"),
@@ -39,29 +41,57 @@ SCREENS = [
     ("Tedarikçine borcunu", "unutma", "Tedarikçi hesaplarını da takip et", "7-tedarikci.png"),
 ]
 
-PHONE_W = 560
-SCREEN_H = round(PHONE_W * 2532 / 1170)  # ham ekran görüntülerinin oranı (390x844 @3x)
+# Telefon ölçüleri (tam boy, kamera ölçeği 1 iken)
+SCR_W = 560
+SCR_H = round(SCR_W * 2532 / 1170)
 BEZEL = 16
-PHONE_TOP = 520
+PH_W = SCR_W + BEZEL * 2
+PH_H = SCR_H + BEZEL * 2
+PAD = 60  # gölge payı
+GAP = 90
+PITCH = PH_W + GAP
+CENTER_Y = 520 + PH_H // 2  # odaklanınca telefonun dikey merkezi
+
+S_FAR = 0.54  # uzak görünüm (açılış ve kapanış)
+S_MID = 0.64  # geçişlerde hafif uzaklaşma
+S_NEAR = 1.0  # odak
+
+# Zaman çizelgesi (kare)
+INTRO = 78  # şerit kayar ve ilk telefonda durur
+ZOOM_IN = 18
+HOLD = 40  # her ekranda bekleme
+TRANS = 18  # telefondan telefona geçiş
+ZOOM_OUT = 18
+END = 60
+
+
+def ease_in_out(t):
+    t = max(0.0, min(1.0, t))
+    return t * t * (3 - 2 * t)
 
 
 def ease_out(t):
     t = max(0.0, min(1.0, t))
-    return 1 - (1 - t) ** 3
+    return 1 - (1 - t) ** 4
+
+
+def lerp(a, b, t):
+    return a + (b - a) * t
+
+
+def cx(i):
+    return i * PITCH
 
 
 def gradient_bg():
-    bg = Image.new("RGB", (W, H), (13, 26, 31))
+    bg = Image.new("RGB", (W, H))
     px = bg.load()
     for y in range(H):
-        for x in range(0, W, 1):
-            d = math.hypot((x - W * 0.5) / (W * 0.9), (y - 0) / (H * 0.55))
+        for x in range(W):
+            d = math.hypot((x - W * 0.5) / (W * 0.9), y / (H * 0.55))
             k = max(0.0, 1 - d)
-            r = int(13 + (29 - 13) * k)
-            g = int(26 + (90 - 26) * k)
-            b = int(31 + (95 - 31) * k)
-            px[x, y] = (r, g, b)
-    return bg
+            px[x, y] = (int(13 + 16 * k), int(26 + 64 * k), int(31 + 64 * k))
+    return bg.convert("RGBA")
 
 
 def rounded_mask(size, radius):
@@ -70,33 +100,37 @@ def rounded_mask(size, radius):
     return m
 
 
-def load_screen(name):
-    im = Image.open(os.path.join(SHOTS, name)).convert("RGB")
-    return im.resize((PHONE_W, SCREEN_H), Image.LANCZOS)
-
-
-def draw_phone(canvas, shot, x, y, alpha=1.0):
-    """Telefon: koyu çerçeve + yuvarlatılmış ekran görüntüsü. alpha ile saydamlaştırılır."""
-    outer = (PHONE_W + BEZEL * 2, SCREEN_H + BEZEL * 2)
-    layer = Image.new("RGBA", outer, (0, 0, 0, 0))
-    frame = Image.new("RGBA", outer, (0, 0, 0, 0))
+def make_sprite(name):
+    """Telefon çerçevesi + ekran + gölge, tek bir saydam görsel olarak (bir kez hazırlanır)."""
+    sprite = Image.new("RGBA", (PH_W + PAD * 2, PH_H + PAD * 2), (0, 0, 0, 0))
+    shadow = Image.new("L", sprite.size, 0)
+    ImageDraw.Draw(shadow).rounded_rectangle((PAD, PAD + 24, PAD + PH_W, PAD + PH_H + 24), radius=72, fill=150)
+    shadow = shadow.filter(ImageFilter.GaussianBlur(26))
+    sprite.paste((0, 0, 0, 255), (0, 0), shadow)
+    frame = Image.new("RGBA", (PH_W, PH_H), (0, 0, 0, 0))
     fd = ImageDraw.Draw(frame)
-    fd.rounded_rectangle((0, 0, outer[0] - 1, outer[1] - 1), radius=72, fill=(5, 8, 10, 255))
-    fd.rounded_rectangle((2, 2, outer[0] - 3, outer[1] - 3), radius=70, outline=(43, 58, 64, 255), width=3)
-    layer.alpha_composite(frame)
-    scr = shot.convert("RGBA")
-    mask = rounded_mask((PHONE_W, SCREEN_H), 56)
-    layer.paste(scr, (BEZEL, BEZEL), mask)
-    if alpha < 1.0:
-        a = layer.split()[3].point(lambda v: int(v * alpha))
-        layer.putalpha(a)
-    # gölge
-    shadow = Image.new("RGBA", (outer[0] + 80, outer[1] + 80), (0, 0, 0, 0))
-    sm = Image.new("L", outer, int(150 * alpha))
-    shadow.paste((0, 0, 0, 255), (40, 52), sm)
-    shadow = shadow.filter(ImageFilter.GaussianBlur(28))
-    canvas.alpha_composite(shadow, (x - 40, y - 40 + 22))
-    canvas.alpha_composite(layer, (x, y))
+    fd.rounded_rectangle((0, 0, PH_W - 1, PH_H - 1), radius=72, fill=(5, 8, 10, 255))
+    fd.rounded_rectangle((2, 2, PH_W - 3, PH_H - 3), radius=70, outline=(43, 58, 64, 255), width=3)
+    scr = Image.open(os.path.join(SHOTS, name)).convert("RGBA").resize((SCR_W, SCR_H), Image.LANCZOS)
+    frame.paste(scr, (BEZEL, BEZEL), rounded_mask((SCR_W, SCR_H), 56))
+    sprite.alpha_composite(frame, (PAD, PAD))
+    return sprite
+
+
+class Sprites:
+    def __init__(self):
+        self.full = [make_sprite(s[3]) for s in SCREENS]
+        self.cache = {}
+
+    def get(self, i, scale):
+        w = max(1, round(self.full[i].width * scale))
+        key = (i, w)
+        if key not in self.cache:
+            h = max(1, round(self.full[i].height * scale))
+            self.cache[key] = self.full[i].resize((w, h), Image.BILINEAR)
+            if len(self.cache) > 400:
+                self.cache.clear()
+        return self.cache[key]
 
 
 def text_centered(draw, y, text, font, fill):
@@ -104,92 +138,145 @@ def text_centered(draw, y, text, font, fill):
     draw.text(((W - w) / 2, y), text, font=font, fill=fill)
 
 
-def draw_title(canvas, first, second, alpha):
-    if alpha <= 0:
+F_TITLE = None
+F_CAP = None
+F_INTRO_BIG = None
+F_INTRO_SMALL = None
+
+
+def fonts():
+    global F_TITLE, F_CAP, F_INTRO_BIG, F_INTRO_SMALL
+    F_TITLE = ImageFont.truetype(FONT_BOLD, 70)
+    F_CAP = ImageFont.truetype(FONT_REG, 40)
+    F_INTRO_BIG = ImageFont.truetype(FONT_BOLD, 64)
+    F_INTRO_SMALL = ImageFont.truetype(FONT_REG, 38)
+
+
+def overlay_text(canvas, draw_fn, alpha):
+    if alpha <= 0.01:
         return
-    layer = Image.new("RGBA", (W, 420), (0, 0, 0, 0))
-    d = ImageDraw.Draw(layer)
-    f_big = ImageFont.truetype(FONT_BOLD, 70)
-    col1 = (*WHITE, int(255 * alpha))
-    col2 = (*ACCENT, int(255 * alpha))
-    # iki satır: ilki beyaz, ikincisi vurgulu; her satır ortalanır, taşma olmaz
-    text_centered(d, 120, first, f_big, col1)
-    text_centered(d, 205, second, f_big, col2)
-    canvas.alpha_composite(layer, (0, 0))
-
-
-def draw_caption(canvas, text, alpha):
-    if alpha <= 0:
-        return
-    layer = Image.new("RGBA", (W, 200), (0, 0, 0, 0))
-    d = ImageDraw.Draw(layer)
-    f = ImageFont.truetype(FONT_REG, 40)
-    w = d.textlength(text, font=f)
-    d.text(((W - w) / 2, 40), text, font=f, fill=(*MUTED, int(255 * alpha)))
-    canvas.alpha_composite(layer, (0, 1740))
-
-
-def end_card(canvas, alpha):
-    if alpha <= 0:
-        return
-    icon = Image.open(ICON).convert("RGBA").resize((260, 260), Image.LANCZOS)
-    m = rounded_mask((260, 260), 58)
     layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
-    layer.paste(icon, ((W - 260) // 2, 470), m)
-    d = ImageDraw.Draw(layer)
-    f_big = ImageFont.truetype(FONT_BOLD, 60)
-    f_mid = ImageFont.truetype(FONT_REG, 38)
-    f_small = ImageFont.truetype(FONT_REG, 34)
-    text_centered(d, 800, "Hesabım Muhasebe", f_big, (*WHITE, 255))
-    text_centered(d, 890, "Veresiye, cari hesap ve kasa", f_mid, (*MUTED, 255))
-    text_centered(d, 942, "takibi tek uygulamada", f_mid, (*MUTED, 255))
-    text_centered(d, 1050, "Ücretsiz başla, istediğinde yükselt", f_small, (*ACCENT, 255))
-    a = layer.split()[3].point(lambda v: int(v * alpha))
-    layer.putalpha(a)
-    canvas.alpha_composite(layer, (0, 0))
+    draw_fn(ImageDraw.Draw(layer), int(255 * min(1.0, alpha)))
+    canvas.alpha_composite(layer)
 
 
-def frame_for(t, bg, screens):
-    canvas = bg.copy().convert("RGBA")
-    total_screens = len(SCREENS)
-    end_start = total_screens * SCENE
-    if t < end_start:
-        i = t // SCENE
-        f = t % SCENE
-        first, second, caption, _ = SCREENS[i]
-        enter = ease_out(f / 16)
-        # çıkış: son 6 karede yukarı kayıp hafifçe solar
-        leave = 0.0
-        if f >= SCENE - 6:
-            leave = (f - (SCENE - 6)) / 6
-        y = PHONE_TOP + (1 - enter) * 280 - leave * 180
-        alpha = enter * (1 - leave * 0.6)
-        # hafif büyüme (ağır olmayan zoom)
-        draw_title(canvas, first, second, min(1.0, enter * 1.2) * (1 - leave))
-        draw_phone(canvas, screens[i], (W - (PHONE_W + BEZEL * 2)) // 2, int(y), alpha=max(0.0, alpha))
-        draw_caption(canvas, caption, min(1.0, enter * 1.4) * (1 - leave))
-    else:
-        f = t - end_start
-        end_alpha = ease_out(f / 14)
-        end_card(canvas, end_alpha)
+def camera(t):
+    """Kare t için (kamera_x, ölçek, odaktaki ekran ya da None, odak içindeki kare, sahne)."""
+    if t < INTRO:
+        u = ease_out(t / INTRO)
+        return lerp(cx(len(SCREENS) - 1) + PITCH * 1.5, cx(0), u), S_FAR, None, 0, "intro"
+    t -= INTRO
+    if t < ZOOM_IN:
+        return cx(0), lerp(S_FAR, S_NEAR, ease_in_out(t / ZOOM_IN)), None, 0, "zoomin"
+    t -= ZOOM_IN
+    n = len(SCREENS)
+    for i in range(n):
+        if t < HOLD:
+            return cx(i), S_NEAR, i, t, "hold"
+        t -= HOLD
+        if i < n - 1:
+            if t < TRANS:
+                u = t / TRANS
+                x = lerp(cx(i), cx(i + 1), ease_in_out(u))
+                s = S_NEAR - (S_NEAR - S_MID) * math.sin(math.pi * u)
+                return x, s, None, 0, "trans"
+            t -= TRANS
+    if t < ZOOM_OUT:
+        u = ease_in_out(t / ZOOM_OUT)
+        return lerp(cx(n - 1), cx((n - 1) / 2), u), lerp(S_NEAR, S_FAR * 0.82, u), None, 0, "zoomout"
+    t -= ZOOM_OUT
+    return cx((n - 1) / 2), S_FAR * 0.82, None, t, "end"
+
+
+def total_frames():
+    n = len(SCREENS)
+    return INTRO + ZOOM_IN + n * HOLD + (n - 1) * TRANS + ZOOM_OUT + END
+
+
+def render_frame(t, bg, sprites, icon):
+    canvas = bg.copy()
+    cam_x, s, focus, ft, stage = camera(t)
+    dim = 1.0
+    if stage == "end":
+        dim = 1.0 - 0.92 * ease_in_out(ft / 20)
+    # şerit
+    for i in range(len(SCREENS)):
+        sx = W / 2 + (cx(i) - cam_x) * s
+        half = (PH_W / 2 + PAD) * s
+        if sx + half < 0 or sx - half > W:
+            continue
+        sp = sprites.get(i, s)
+        y_center = lerp(CENTER_Y - 40, CENTER_Y, (s - S_FAR) / (S_NEAR - S_FAR)) if s < S_NEAR else CENTER_Y
+        x0 = round(sx - sp.width / 2)
+        y0 = round(y_center - sp.height / 2)
+        if dim < 1.0:
+            sp = sp.copy()
+            sp.putalpha(sp.split()[3].point(lambda v: int(v * dim)))
+        canvas.alpha_composite(sp, (x0, y0)) if x0 >= 0 and y0 >= 0 and x0 + sp.width <= W and y0 + sp.height <= H else paste_clipped(canvas, sp, x0, y0)
+
+    # yazılar
+    if stage == "intro":
+        a = min(1.0, t / 10) * (1 - ease_in_out((t - (INTRO - 14)) / 14))
+
+        def d(dr, al):
+            text_centered(dr, 520, "Hesabım Muhasebe", F_INTRO_BIG, (*WHITE, al))
+            text_centered(dr, 605, "Esnafın cari hesap defteri", F_INTRO_SMALL, (*ACCENT, al))
+
+        overlay_text(canvas, d, a)
+    elif stage == "hold":
+        first, second, cap, _ = SCREENS[focus]
+        a = ease_out(ft / 8) * (1 - ease_in_out((ft - (HOLD - 6)) / 6))
+
+        def d(dr, al):
+            text_centered(dr, 120, first, F_TITLE, (*WHITE, al))
+            text_centered(dr, 205, second, F_TITLE, (*ACCENT, al))
+            text_centered(dr, 1780, cap, F_CAP, (*MUTED, al))
+
+        overlay_text(canvas, d, a)
+    elif stage == "end":
+        a = ease_out((ft - 8) / 16)
+
+        def d(dr, al):
+            ic = icon.copy()
+            ic.putalpha(ic.split()[3].point(lambda v: int(v * al / 255)))
+            dr._image.alpha_composite(ic, ((W - ic.width) // 2, 560))
+            text_centered(dr, 870, "Hesabım Muhasebe", ImageFont.truetype(FONT_BOLD, 62), (*WHITE, al))
+            text_centered(dr, 962, "Veresiye, cari hesap ve kasa", F_INTRO_SMALL, (*MUTED, al))
+            text_centered(dr, 1014, "takibi tek uygulamada", F_INTRO_SMALL, (*MUTED, al))
+            text_centered(dr, 1120, "Ücretsiz başla, istediğinde yükselt", ImageFont.truetype(FONT_REG, 34), (*ACCENT, al))
+
+        overlay_text(canvas, d, a)
     return canvas.convert("RGB")
+
+
+def paste_clipped(canvas, sp, x0, y0):
+    """Ekran dışına taşan telefonu kırparak yerleştirir (alpha_composite negatif konum kabul etmez)."""
+    left = max(0, -x0)
+    top = max(0, -y0)
+    right = min(sp.width, W - x0)
+    bottom = min(sp.height, H - y0)
+    if right <= left or bottom <= top:
+        return
+    canvas.alpha_composite(sp.crop((left, top, right, bottom)), (x0 + left, y0 + top))
 
 
 def main():
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
-    screens = [load_screen(s[3]) for s in SCREENS]
+    fonts()
+    sprites = Sprites()
     bg = gradient_bg()
-    total = len(SCREENS) * SCENE + 3 * FPS  # son kart 3 sn
+    icon = Image.open(ICON).convert("RGBA").resize((260, 260), Image.LANCZOS)
+    icon.putalpha(Image.composite(icon.split()[3], Image.new("L", icon.size, 0), rounded_mask(icon.size, 58)))
+    total = total_frames()
     cmd = [
         "ffmpeg", "-v", "error", "-y",
         "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{W}x{H}", "-r", str(FPS), "-i", "-",
-        "-c:v", "libx264", "-preset", "slow", "-crf", "20", "-profile:v", "high",
+        "-c:v", "libx264", "-preset", "slow", "-crf", "19", "-profile:v", "high",
         "-pix_fmt", "yuv420p", "-movflags", "+faststart", OUT,
     ]
     proc = subprocess.Popen(cmd, stdin=subprocess.PIPE)
     for t in range(total):
-        frame = frame_for(t, bg, screens)
-        proc.stdin.write(frame.tobytes())
+        proc.stdin.write(render_frame(t, bg, sprites, icon).tobytes())
     proc.stdin.close()
     proc.wait()
     print("yazıldı:", OUT, f"{total / FPS:.1f} sn")
