@@ -15,3 +15,7 @@ ios/App/App/config.xml
 android/app/build/
 android/.gradle/
 android/local.properties
+
+# Ara üretim dosyaları
+__pycache__/
+store/app-preview/*.wav
