@@ -165,3 +165,15 @@ The app language follows the iPhone language and can be changed in Settings → 
 - [inceleme e-postası]/[review email] ve [inceleme şifresi]/[review password] yerlerine gerçek test hesabı bilgilerini yaz (yalnızca App Store Connect'te).
 - Açıklamadaki bağlantıların açıldığını kontrol et.
 - Şifreyi bu dosyaya yazma; yalnızca App Store Connect'teki inceleme bilgileri alanına gir.
+
+## Uygulama Gizliliği (App Store Connect → Uygulama Gizliliği), 1.1 ile güncellenecek
+Meta (Facebook) SDK eklendiği için mevcut beyana şunlar eklenir. Mevcut beyandaki diğer veri türleri aynen kalır.
+
+| Veri türü | Amaç | Kimliğe bağlı mı | İzleme için mi |
+|---|---|---|---|
+| Kullanım Verileri → Ürün Etkileşimi | Üçüncü Taraf Reklamcılık, Analiz | Hayır | Hayır |
+| Kullanım Verileri → Reklam Verileri | Üçüncü Taraf Reklamcılık | Hayır | Hayır |
+| Satın Almalar → Satın Alma Geçmişi | Üçüncü Taraf Reklamcılık, Analiz | Hayır | Hayır |
+| Tanılama → Çökme Verileri | Analiz | Hayır | Hayır |
+
+Gerekçe: Uygulama izleme izni (App Tracking Transparency) istemiyor, reklam kimliği (IDFA) toplanmıyor. Meta'ya yalnızca yükleme, açılış ve abonelik olayları ile cihaz bilgisi gidiyor. Gizlilik politikası (gizlilik.html, en/privacy.html) ve KVKK metni 15 Kasım 2026'da buna göre güncellendi.
