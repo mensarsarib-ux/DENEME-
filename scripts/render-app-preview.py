@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""App Store uygulama önizlemesi: "rulo" akışı (886x1920, 30 fps, ~18 sn).
+"""App Store uygulama önizlemesi: "rulo" akışı (886x1920, 30 fps, ~21 sn).
 
 Bütün telefonlar yan yana bir şerit (rulo) üzerinde durur; bir kamera bu şeridin üstünde gezer:
   1. Açılış: kamera uzaktan bakar, şerit hızla kayar ve ilk telefonda yavaşlayarak durur.
@@ -11,7 +11,7 @@ Ekranlar uygulamanın ham ekran görüntüleridir (store/app-preview/raw, script
 Başlıklar mağaza ekran görüntüleriyle aynıdır. Veriler demo verisidir; gerçek müşteri bilgisi içermez.
 
 Kullanım: python3 scripts/render-app-preview.py
-Çıktı: store/app-preview/hesabim-rulo-886x1920.mp4
+Çıktı: store/app-preview/hesabim-rulo-886x1920-apple.mp4
 """
 import math
 import os
@@ -21,7 +21,7 @@ from PIL import Image, ImageDraw, ImageFont, ImageFilter
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
 SHOTS = os.path.join(ROOT, "store", "app-preview", "raw")
 ICON = os.path.join(ROOT, "ios", "App", "App", "Assets.xcassets", "AppIcon.appiconset", "AppIcon-512@2x.png")
-OUT = os.path.join(ROOT, "store", "app-preview", "hesabim-rulo-886x1920.mp4")
+OUT = os.path.join(ROOT, "store", "app-preview", "hesabim-rulo-886x1920-apple.mp4")
 FONT_BOLD = "/usr/share/fonts/opentype/inter/Inter-ExtraBold.otf"
 FONT_REG = "/usr/share/fonts/opentype/inter/Inter-Medium.otf"
 
@@ -57,9 +57,10 @@ S_MID = 0.64  # geçişlerde hafif uzaklaşma
 S_NEAR = 1.0  # odak
 
 # Zaman çizelgesi (kare)
-INTRO = 78  # şerit kayar ve ilk telefonda durur
+INTRO = 90  # kapak karesi (18 kare durur), sonra şerit kayar ve ilk telefonda durur
+COVER = 18
 ZOOM_IN = 18
-HOLD = 40  # her ekranda bekleme
+HOLD = 50  # her ekranda bekleme (5. saniye ilk ekranın başlığına denk gelir: App Store kapağı)
 TRANS = 18  # telefondan telefona geçiş
 ZOOM_OUT = 18
 END = 60
@@ -163,8 +164,9 @@ def overlay_text(canvas, draw_fn, alpha):
 def camera(t):
     """Kare t için (kamera_x, ölçek, odaktaki ekran ya da None, odak içindeki kare, sahne)."""
     if t < INTRO:
-        u = ease_out(t / INTRO)
-        return lerp(cx(len(SCREENS) - 1) + PITCH * 1.5, cx(0), u), S_FAR, None, 0, "intro"
+        # kapak: ortadaki telefonlar ve başlık; sonra şerit kayarak ilk telefona gelir
+        u = ease_in_out(max(0, t - COVER) / (INTRO - COVER))
+        return lerp(cx(3), cx(0), u), S_FAR, None, 0, "intro"
     t -= INTRO
     if t < ZOOM_IN:
         return cx(0), lerp(S_FAR, S_NEAR, ease_in_out(t / ZOOM_IN)), None, 0, "zoomin"
@@ -216,7 +218,7 @@ def render_frame(t, bg, sprites, icon):
 
     # yazılar
     if stage == "intro":
-        a = min(1.0, t / 10) * (1 - ease_in_out((t - (INTRO - 14)) / 14))
+        a = 1 - ease_in_out((t - (INTRO - 14)) / 14)  # ilk kareden itibaren tam görünür (kapak)
 
         def d(dr, al):
             text_centered(dr, 520, "Hesabım Muhasebe", F_INTRO_BIG, (*WHITE, al))
@@ -268,11 +270,16 @@ def main():
     icon = Image.open(ICON).convert("RGBA").resize((260, 260), Image.LANCZOS)
     icon.putalpha(Image.composite(icon.split()[3], Image.new("L", icon.size, 0), rounded_mask(icon.size, 58)))
     total = total_frames()
+    # Apple önizleme şartları: H.264 High 4.0, 30 fps, ~10 Mbps, ses kanalı zorunlu (sessiz stereo AAC)
     cmd = [
         "ffmpeg", "-v", "error", "-y",
         "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{W}x{H}", "-r", str(FPS), "-i", "-",
-        "-c:v", "libx264", "-preset", "slow", "-crf", "19", "-profile:v", "high",
-        "-pix_fmt", "yuv420p", "-movflags", "+faststart", OUT,
+        "-f", "lavfi", "-i", "anullsrc=channel_layout=stereo:sample_rate=48000",
+        "-map", "0:v", "-map", "1:a", "-shortest",
+        "-c:v", "libx264", "-preset", "slow", "-profile:v", "high", "-level:v", "4.0",
+        "-b:v", "10M", "-maxrate", "12M", "-bufsize", "24M", "-pix_fmt", "yuv420p",
+        "-c:a", "aac", "-b:a", "256k", "-ar", "48000", "-ac", "2",
+        "-movflags", "+faststart", OUT,
     ]
     proc = subprocess.Popen(cmd, stdin=subprocess.PIPE)
     for t in range(total):
