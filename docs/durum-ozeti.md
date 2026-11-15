@@ -19,7 +19,7 @@ Gizli bilgi (şifre, anahtar, JSON) burada yoktur.
 1. Codemagic → Hesabım iOS (TestFlight) → derleme 57.
 2. 1.1 sürüm sayfasında derleme olarak **57**'yi seç.
 3. Ad, alt başlık, anahtar kelimeler, tanıtım metni ve açıklamanın ilk paragrafı: `docs/app-store.md`.
-4. Ekran görüntüleri: `store/app-store/` içindeki 3 görsel (6,9 inç), en başa.
+4. Ekran görüntüleri: `store/app-store/` içindeki 7 görsel (6,9 inç), dosya adlarındaki sırayla; eski görseller kaldırılabilir.
 5. Uygulama Gizliliği: `docs/app-store.md` → "Uygulama Gizliliği" tablosu.
 6. Bu sürümdeki yenilikler: `docs/app-store.md` → "1.1".
 7. İnceleme demo hesabıyla girişin çalıştığını kontrol et, sonra İncelemeye Gönder.

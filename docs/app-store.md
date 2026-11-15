@@ -166,6 +166,12 @@ The app language follows the iPhone language and can be changed in Settings → 
 - Açıklamadaki bağlantıların açıldığını kontrol et.
 - Şifreyi bu dosyaya yazma; yalnızca App Store Connect'teki inceleme bilgileri alanına gir.
 
+## Ekran görüntüleri (1.1)
+`store/app-store/` içindeki 7 görsel, 1320×2868 (iPhone 6,9 inç). Dosya adındaki sırayla yüklenir; ilk 3 tanesi aramada görünür.
+1. Veresiye defterin cebinde (müşteri listesi) · 2. Satış ve tahsilat tek dokunuşla (kayıt ekranı) · 3. Hesap ekstresi PDF olarak hazır ·
+4. En çok kimden alacağın var, gör (alacak grafiği) · 5. Nakit ve banka tek ekranda (kasa) · 6. Gelir ve giderini ay ay izle · 7. Tedarikçine borcunu unutma.
+Yeniden üretmek için: `npx vite --port 5199` ve `node scripts/generate-store-shots.cjs`. Veriler uygulamanın demo verisidir.
+
 ## Uygulama Gizliliği (App Store Connect → Uygulama Gizliliği), 1.1 ile güncellenecek
 Meta (Facebook) SDK eklendiği için mevcut beyana şunlar eklenir. Mevcut beyandaki diğer veri türleri aynen kalır.
 
