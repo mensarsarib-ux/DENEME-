@@ -8,7 +8,7 @@ Gizli bilgi (şifre, anahtar, JSON) burada yoktur.
 | Konu | Durum |
 |---|---|
 | iOS mağazada | 1.0 (38) satışta |
-| iOS gönderilecek | **1.1 (57)**: klavye düzeltmesi, tanıtım ekranları, kasa gizleme, Meta SDK, puan penceresi. Codemagic'te 57 henüz derlenmedi. 55'i gönderme (fazladan activateApp vardı, 56'da geri alındı) |
+| iOS 1.1 | **1.1 (57) 15 Kasım 21:37'de incelemeye gönderildi** (Waiting for Review). Yeni ad "Hesabım Muhasebe: Veresiye", alt başlık, anahtar kelimeler, 7 ekran görüntüsü (1206x2622), önizleme videosu (store/app-preview/hesabim-rulo-886x1920-apple.mp4), gizlilik etiketine Meta verileri eklendi. Abonelikler zaten onaylı, yeniden gönderilmedi |
 | Meta SDK | Çalışıyor. Olay Yöneticisi → Hesabım Muhasebe veri seti → detay sayfasında açılış, yükleme ve abone olma olayları görünüyor. Özet kart "0" gösterebilir, ona bakma. `baglanti_testi` adlı tek olay Claude'un bağlantı testidir |
 | Meta reklam hesabı | **4581603412076546** (Hesabım Muhasebe portföyü). 1740583227051530 başka işletmenin, kullanma |
 | Android | Play kapalı testte 51. **52 (AAB) hazır**, Play'e yüklenmedi. 14 gün yaklaşık 24 Kasım'da doluyor, sonra üretime başvuru |
