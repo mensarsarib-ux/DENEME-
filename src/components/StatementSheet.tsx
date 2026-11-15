@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { noteStatementShared } from "../lib/review";
 import { haptic } from "../lib/haptics";
 import { t } from "../lib/i18n";
 import { saveViaViewer } from "../lib/saveFile";
@@ -80,6 +81,7 @@ export default function StatementSheet({
     if (canShareFile) {
       try {
         await navigator.share({ files: [file], title: input.party.name });
+        noteStatementShared();
         return;
       } catch (error) {
         if ((error as DOMException)?.name === "AbortError") return;

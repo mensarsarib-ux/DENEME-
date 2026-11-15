@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { noteRecordAdded, noteStatementShared } from "../lib/review";
 import {
   TX_TYPES,
   balanceOf,
@@ -229,6 +230,7 @@ export default function CustomerPage({
     } else {
       onAdd(tx);
       setJustAdded([tx.id]);
+      noteRecordAdded();
     }
     resetFields();
   }
@@ -268,6 +270,7 @@ export default function CustomerPage({
     try {
       if (navigator.share) {
         await navigator.share({ title: `${t("Cari hesap ekstresi")} — ${customer.name}`, text });
+        noteStatementShared();
         return;
       }
     } catch (error) {
