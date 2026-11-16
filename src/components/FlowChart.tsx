@@ -8,7 +8,7 @@ import PeriodSheet from "./PeriodSheet";
 import { t } from "../lib/i18n";
 
 /** Gelir ya da gider satırı: etiket, tutar ve orantılı çubuk */
-function FlowRow({
+export function FlowRow({
   label,
   value,
   max,
@@ -17,7 +17,8 @@ function FlowRow({
   label: string;
   value: number;
   max: number;
-  tone: "in" | "out";
+  /** in: gelir (mavi), out: gider (kırmızı), return/discount: iade (turuncu) ve indirim (pembe) */
+  tone: "in" | "out" | "return" | "discount";
 }) {
   // Sıfır olsa bile küçük bir çıkıntı kalır, çubuk görünür olur
   const width = Math.max((value / max) * 100, 1.5);

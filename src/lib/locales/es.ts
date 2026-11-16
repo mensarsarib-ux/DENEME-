@@ -751,6 +751,9 @@ const dict: Record<string, string> = {
   "Ben indirim yaptım": "Hice un descuento",
   "Bana indirim yapıldı": "Me hicieron descuento",
   "Yön": "Sentido",
+  "NET ETKİ": "EFECTO NETO",
+  "Satıştan düşen {a} · Alıştan düşen {b}": "De ventas {a} · De compras {b}",
+  "Bu dönemde iade ve indirim yok.": "Sin devoluciones ni descuentos en este periodo.",
 };
 
 export default dict;

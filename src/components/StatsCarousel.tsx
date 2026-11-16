@@ -3,8 +3,9 @@ import type { Customer, Transaction } from "../data/mock";
 import FlowChart from "./FlowChart";
 import ColumnChart from "./ColumnChart";
 import ReceivablePie from "./ReceivablePie";
+import ReturnsChart from "./ReturnsChart";
 
-const PAGES = 3;
+const PAGES = 4;
 
 /**
  * Özet istatistik: yana kaydırılabilir iki sayfa (gelir/gider grafiği ve aylık sütun grafiği).
@@ -37,6 +38,9 @@ export default function StatsCarousel({
         </div>
         <div className="stats-slide">
           <ReceivablePie parties={parties} transactions={transactions} />
+        </div>
+        <div className="stats-slide">
+          <ReturnsChart transactions={transactions} />
         </div>
       </div>
       <div className="stats-dots" aria-hidden="true">

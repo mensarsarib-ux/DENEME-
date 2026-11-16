@@ -113,4 +113,7 @@ export const parties: Record<string, string> = {
   "Ben indirim yaptım": "I gave a discount",
   "Bana indirim yapıldı": "I got a discount",
   "Yön": "Direction",
+  "NET ETKİ": "NET EFFECT",
+  "Satıştan düşen {a} · Alıştan düşen {b}": "Off sales {a} · Off purchases {b}",
+  "Bu dönemde iade ve indirim yok.": "No returns or discounts in this period.",
 };

@@ -751,6 +751,9 @@ const dict: Record<string, string> = {
   "Ben indirim yaptım": "Я дал скидку",
   "Bana indirim yapıldı": "Мне дали скидку",
   "Yön": "Направление",
+  "NET ETKİ": "ИТОГО",
+  "Satıştan düşen {a} · Alıştan düşen {b}": "Из продаж {a} · Из закупок {b}",
+  "Bu dönemde iade ve indirim yok.": "За этот период нет возвратов и скидок.",
 };
 
 export default dict;

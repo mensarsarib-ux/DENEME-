@@ -560,6 +560,25 @@ button {
   background: linear-gradient(90deg, #c4463a, #f08a7e);
 }
 
+/* İade ve indirim kartı: işlem renkleriyle aynı (turuncu, pembe) */
+.flow-return .flow-label,
+.flow-return .flow-amount {
+  color: #f5a35e;
+}
+
+.flow-discount .flow-label,
+.flow-discount .flow-amount {
+  color: #ec8cc4;
+}
+
+.flow-return .flow-fill {
+  background: linear-gradient(90deg, #d9762a, #f5a35e);
+}
+
+.flow-discount .flow-fill {
+  background: linear-gradient(90deg, #c4518f, #ec8cc4);
+}
+
 .month-note {
   margin: 0;
   color: var(--muted);
