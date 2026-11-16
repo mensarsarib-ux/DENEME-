@@ -1,0 +1,527 @@
+{
+  "alinma_tarihi": "2026-11-16",
+  "kaynak": "Meta Graph API, kampanya 52618169570093, date_preset=maximum",
+  "kampanya_toplam": [
+    {
+      "actions": [
+        {
+          "action_type": "link_click",
+          "value": "174"
+        },
+        {
+          "action_type": "post_reaction",
+          "value": "4"
+        },
+        {
+          "action_type": "landing_page_view",
+          "value": "92"
+        },
+        {
+          "action_type": "omni_landing_page_view",
+          "value": "92"
+        },
+        {
+          "action_type": "onsite_conversion.messaging_block",
+          "value": "2"
+        },
+        {
+          "action_type": "onsite_conversion.post_unlike",
+          "value": "2"
+        },
+        {
+          "action_type": "post_engagement",
+          "value": "1349"
+        },
+        {
+          "action_type": "post_interaction_gross",
+          "value": "12"
+        },
+        {
+          "action_type": "page_engagement",
+          "value": "1349"
+        },
+        {
+          "action_type": "post_interaction_net",
+          "value": "9"
+        },
+        {
+          "action_type": "post",
+          "value": "4"
+        },
+        {
+          "action_type": "onsite_conversion.post_unsave",
+          "value": "1"
+        },
+        {
+          "action_type": "onsite_conversion.post_save",
+          "value": "4"
+        },
+        {
+          "action_type": "onsite_conversion.post_net_save",
+          "value": "3"
+        },
+        {
+          "action_type": "onsite_conversion.post_net_like",
+          "value": "2"
+        },
+        {
+          "action_type": "video_view",
+          "value": "1163"
+        }
+      ],
+      "cpc": "1.829579",
+      "ctr": "2.887099",
+      "date_start": "2026-11-15",
+      "date_stop": "2026-11-16",
+      "clicks": "190",
+      "impressions": "6581",
+      "reach": "5406",
+      "spend": "347.62"
+    }
+  ],
+  "reklam_toplam": [
+    {
+      "actions": [
+        {
+          "action_type": "link_click",
+          "value": "136"
+        },
+        {
+          "action_type": "post_reaction",
+          "value": "2"
+        },
+        {
+          "action_type": "landing_page_view",
+          "value": "75"
+        },
+        {
+          "action_type": "omni_landing_page_view",
+          "value": "75"
+        },
+        {
+          "action_type": "onsite_conversion.messaging_block",
+          "value": "2"
+        },
+        {
+          "action_type": "onsite_conversion.post_unlike",
+          "value": "1"
+        },
+        {
+          "action_type": "post_engagement",
+          "value": "1092"
+        },
+        {
+          "action_type": "post_interaction_gross",
+          "value": "10"
+        },
+        {
+          "action_type": "page_engagement",
+          "value": "1092"
+        },
+        {
+          "action_type": "post_interaction_net",
+          "value": "8"
+        },
+        {
+          "action_type": "post",
+          "value": "4"
+        },
+        {
+          "action_type": "onsite_conversion.post_unsave",
+          "value": "1"
+        },
+        {
+          "action_type": "onsite_conversion.post_save",
+          "value": "4"
+        },
+        {
+          "action_type": "onsite_conversion.post_net_save",
+          "value": "3"
+        },
+        {
+          "action_type": "onsite_conversion.post_net_like",
+          "value": "1"
+        },
+        {
+          "action_type": "video_view",
+          "value": "946"
+        }
+      ],
+      "date_start": "2026-11-14",
+      "date_stop": "2026-11-16",
+      "clicks": "153",
+      "impressions": "5386",
+      "spend": "276.37",
+      "ad_id": "52618174412893",
+      "ad_name": "A - tek video"
+    },
+    {
+      "actions": [
+        {
+          "action_type": "link_click",
+          "value": "23"
+        },
+        {
+          "action_type": "post_reaction",
+          "value": "1"
+        },
+        {
+          "action_type": "landing_page_view",
+          "value": "9"
+        },
+        {
+          "action_type": "omni_landing_page_view",
+          "value": "9"
+        },
+        {
+          "action_type": "post_engagement",
+          "value": "147"
+        },
+        {
+          "action_type": "post_interaction_gross",
+          "value": "1"
+        },
+        {
+          "action_type": "page_engagement",
+          "value": "147"
+        },
+        {
+          "action_type": "post_interaction_net",
+          "value": "1"
+        },
+        {
+          "action_type": "onsite_conversion.post_net_like",
+          "value": "1"
+        },
+        {
+          "action_type": "video_view",
+          "value": "123"
+        }
+      ],
+      "date_start": "2026-11-14",
+      "date_stop": "2026-11-16",
+      "clicks": "21",
+      "impressions": "733",
+      "spend": "39.24",
+      "ad_id": "52618559210293",
+      "ad_name": "A - metin 2 (ekip)"
+    },
+    {
+      "actions": [
+        {
+          "action_type": "link_click",
+          "value": "15"
+        },
+        {
+          "action_type": "post_reaction",
+          "value": "1"
+        },
+        {
+          "action_type": "landing_page_view",
+          "value": "8"
+        },
+        {
+          "action_type": "omni_landing_page_view",
+          "value": "8"
+        },
+        {
+          "action_type": "onsite_conversion.post_unlike",
+          "value": "1"
+        },
+        {
+          "action_type": "post_engagement",
+          "value": "108"
+        },
+        {
+          "action_type": "post_interaction_gross",
+          "value": "1"
+        },
+        {
+          "action_type": "page_engagement",
+          "value": "108"
+        },
+        {
+          "action_type": "post_interaction_net",
+          "value": "0"
+        },
+        {
+          "action_type": "onsite_conversion.post_net_like",
+          "value": "0"
+        },
+        {
+          "action_type": "video_view",
+          "value": "92"
+        }
+      ],
+      "date_start": "2026-11-14",
+      "date_stop": "2026-11-16",
+      "clicks": "16",
+      "impressions": "462",
+      "spend": "32.01",
+      "ad_id": "52618559213293",
+      "ad_name": "A - metin 3 (sade)"
+    }
+  ],
+  "reklam_gunluk": [
+    {
+      "actions": [
+        {
+          "action_type": "link_click",
+          "value": "60"
+        },
+        {
+          "action_type": "post_reaction",
+          "value": "1"
+        },
+        {
+          "action_type": "landing_page_view",
+          "value": "37"
+        },
+        {
+          "action_type": "omni_landing_page_view",
+          "value": "37"
+        },
+        {
+          "action_type": "onsite_conversion.messaging_block",
+          "value": "1"
+        },
+        {
+          "action_type": "onsite_conversion.post_unlike",
+          "value": "1"
+        },
+        {
+          "action_type": "post_engagement",
+          "value": "436"
+        },
+        {
+          "action_type": "post_interaction_gross",
+          "value": "6"
+        },
+        {
+          "action_type": "page_engagement",
+          "value": "436"
+        },
+        {
+          "action_type": "post_interaction_net",
+          "value": "5"
+        },
+        {
+          "action_type": "post",
+          "value": "2"
+        },
+        {
+          "action_type": "onsite_conversion.post_save",
+          "value": "3"
+        },
+        {
+          "action_type": "onsite_conversion.post_net_save",
+          "value": "3"
+        },
+        {
+          "action_type": "onsite_conversion.post_net_like",
+          "value": "0"
+        },
+        {
+          "action_type": "video_view",
+          "value": "370"
+        }
+      ],
+      "cpc": "1.931304",
+      "ctr": "3.105311",
+      "date_start": "2026-11-15",
+      "date_stop": "2026-11-15",
+      "clicks": "69",
+      "impressions": "2222",
+      "reach": "1982",
+      "spend": "133.26",
+      "ad_id": "52618174412893",
+      "ad_name": "A - tek video"
+    },
+    {
+      "actions": [
+        {
+          "action_type": "link_click",
+          "value": "76"
+        },
+        {
+          "action_type": "post_reaction",
+          "value": "1"
+        },
+        {
+          "action_type": "landing_page_view",
+          "value": "38"
+        },
+        {
+          "action_type": "omni_landing_page_view",
+          "value": "38"
+        },
+        {
+          "action_type": "onsite_conversion.messaging_block",
+          "value": "1"
+        },
+        {
+          "action_type": "post_engagement",
+          "value": "656"
+        },
+        {
+          "action_type": "post_interaction_gross",
+          "value": "4"
+        },
+        {
+          "action_type": "page_engagement",
+          "value": "656"
+        },
+        {
+          "action_type": "post_interaction_net",
+          "value": "3"
+        },
+        {
+          "action_type": "post",
+          "value": "2"
+        },
+        {
+          "action_type": "onsite_conversion.post_unsave",
+          "value": "1"
+        },
+        {
+          "action_type": "onsite_conversion.post_save",
+          "value": "1"
+        },
+        {
+          "action_type": "onsite_conversion.post_net_save",
+          "value": "0"
+        },
+        {
+          "action_type": "onsite_conversion.post_net_like",
+          "value": "1"
+        },
+        {
+          "action_type": "video_view",
+          "value": "576"
+        }
+      ],
+      "cpc": "1.70369",
+      "ctr": "2.654867",
+      "date_start": "2026-11-16",
+      "date_stop": "2026-11-16",
+      "clicks": "84",
+      "impressions": "3164",
+      "reach": "2774",
+      "spend": "143.11",
+      "ad_id": "52618174412893",
+      "ad_name": "A - tek video"
+    },
+    {
+      "actions": [
+        {
+          "action_type": "link_click",
+          "value": "23"
+        },
+        {
+          "action_type": "post_reaction",
+          "value": "1"
+        },
+        {
+          "action_type": "landing_page_view",
+          "value": "9"
+        },
+        {
+          "action_type": "omni_landing_page_view",
+          "value": "9"
+        },
+        {
+          "action_type": "post_engagement",
+          "value": "147"
+        },
+        {
+          "action_type": "post_interaction_gross",
+          "value": "1"
+        },
+        {
+          "action_type": "page_engagement",
+          "value": "147"
+        },
+        {
+          "action_type": "post_interaction_net",
+          "value": "1"
+        },
+        {
+          "action_type": "onsite_conversion.post_net_like",
+          "value": "1"
+        },
+        {
+          "action_type": "video_view",
+          "value": "123"
+        }
+      ],
+      "cpc": "1.868571",
+      "ctr": "2.864939",
+      "date_start": "2026-11-16",
+      "date_stop": "2026-11-16",
+      "clicks": "21",
+      "impressions": "733",
+      "reach": "685",
+      "spend": "39.24",
+      "ad_id": "52618559210293",
+      "ad_name": "A - metin 2 (ekip)"
+    },
+    {
+      "actions": [
+        {
+          "action_type": "link_click",
+          "value": "15"
+        },
+        {
+          "action_type": "post_reaction",
+          "value": "1"
+        },
+        {
+          "action_type": "landing_page_view",
+          "value": "8"
+        },
+        {
+          "action_type": "omni_landing_page_view",
+          "value": "8"
+        },
+        {
+          "action_type": "onsite_conversion.post_unlike",
+          "value": "1"
+        },
+        {
+          "action_type": "post_engagement",
+          "value": "108"
+        },
+        {
+          "action_type": "post_interaction_gross",
+          "value": "1"
+        },
+        {
+          "action_type": "page_engagement",
+          "value": "108"
+        },
+        {
+          "action_type": "post_interaction_net",
+          "value": "0"
+        },
+        {
+          "action_type": "onsite_conversion.post_net_like",
+          "value": "0"
+        },
+        {
+          "action_type": "video_view",
+          "value": "92"
+        }
+      ],
+      "cpc": "2.000625",
+      "ctr": "3.463203",
+      "date_start": "2026-11-16",
+      "date_stop": "2026-11-16",
+      "clicks": "16",
+      "impressions": "462",
+      "reach": "435",
+      "spend": "32.01",
+      "ad_id": "52618559213293",
+      "ad_name": "A - metin 3 (sade)"
+    }
+  ]
+}
