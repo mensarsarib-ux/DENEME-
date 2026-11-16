@@ -163,6 +163,8 @@ export function statementText(input: StatementInput): string {
   }
   lines.push("", t("Sorularınız için bize yazabilirsiniz."));
   if (business) lines.push(business);
+  // Metnin en sonunda uygulama bağlantısı (mevcut metne dokunulmaz)
+  lines.push("", APP_LINK);
   return lines.join("\n");
 }
 
