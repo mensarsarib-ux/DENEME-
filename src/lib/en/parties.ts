@@ -102,4 +102,15 @@ export const parties: Record<string, string> = {
   "Sekme seç": "Choose tab",
   "Hangi sekmeye eklensin?": "Which tab should it be added to?",
   "Kişi seçtiğiniz sekmenin listesine eklenir.": "The contact is added to the selected tab's list.",
+  // Ek işlemler: devir, iade, indirim
+  "DEVİR": "CARRY-OVER",
+  "İADE": "RETURN",
+  "İNDİRİM": "DISCOUNT",
+  "Bana borçlu": "Owes me",
+  "Ben borçluyum": "I owe them",
+  "Sattığım mal geri geldi": "Goods returned to me",
+  "Aldığım malı geri verdim": "I returned goods",
+  "Ben indirim yaptım": "I gave a discount",
+  "Bana indirim yapıldı": "I got a discount",
+  "Yön": "Direction",
 };

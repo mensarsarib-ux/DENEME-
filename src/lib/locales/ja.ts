@@ -740,6 +740,17 @@ const dict: Record<string, string> = {
   "Son hareketler:": "最近のお取引：",
   "Sorularınız için bize yazabilirsiniz.": "ご不明な点はお気軽にお問い合わせください。",
   "Giderler, gelirin %{n} kadarı": "支出は収入の{n}%",
+  // Ek işlemler: devir, iade, indirim
+  "DEVİR": "繰越",
+  "İADE": "返品",
+  "İNDİRİM": "値引き",
+  "Bana borçlu": "相手が借り",
+  "Ben borçluyum": "自分が借り",
+  "Sattığım mal geri geldi": "商品が返品された",
+  "Aldığım malı geri verdim": "商品を返品した",
+  "Ben indirim yaptım": "値引きした",
+  "Bana indirim yapıldı": "値引きを受けた",
+  "Yön": "方向",
 };
 
 export default dict;

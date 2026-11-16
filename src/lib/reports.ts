@@ -75,7 +75,7 @@ export function buildReport(
         id: p.id,
         name: p.name,
         amount: inRange
-          .filter((t) => t.customerId === p.id && t.type === type)
+          .filter((t) => t.customerId === p.id && t.type === type && !t.sub)
           .reduce((sum, t) => sum + t.amount, 0),
       }))
       .filter((r) => r.amount > 0)

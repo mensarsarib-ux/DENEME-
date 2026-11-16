@@ -7,7 +7,15 @@ function list(snapshot: Record<string, unknown> | null, key: string): Row[] {
   return Array.isArray(v) ? (v as Row[]) : [];
 }
 
-const TYPE_LABEL: Record<string, string> = { SATIŞ: "Satış", ALIŞ: "Alış", TAHSİLAT: "Tahsilat", ÖDEME: "Ödeme" };
+const TYPE_LABEL: Record<string, string> = {
+  SATIŞ: "Satış",
+  ALIŞ: "Alış",
+  TAHSİLAT: "Tahsilat",
+  ÖDEME: "Ödeme",
+  DEVİR: "Devir",
+  İADE: "İade",
+  İNDİRİM: "İndirim",
+};
 
 /**
  * İki veri anlık görüntüsü arasındaki farkı Türkçe cümlelere çevirir.
@@ -30,7 +38,7 @@ export function describeChanges(prev: Record<string, unknown> | null, next: Reco
 
   const prevTx = new Map(list(prev, "transactions").map((t) => [t.id, t]));
   const nextTx = new Map(list(next, "transactions").map((t) => [t.id, t]));
-  const label = (t: Row) => `${TYPE_LABEL[String(t.type)] ?? String(t.type)} ${money.format(Number(t.amount))} — ${nameOf(t.customerId)}`;
+  const label = (t: Row) => `${TYPE_LABEL[String(t.sub ?? t.type)] ?? String(t.sub ?? t.type)} ${money.format(Number(t.amount))} — ${nameOf(t.customerId)}`;
 
   for (const [id, t] of nextTx) {
     const old = prevTx.get(id);

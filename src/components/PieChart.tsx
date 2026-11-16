@@ -53,7 +53,7 @@ export default function PieChart({
   const [start, end] = range;
   const sales = transactions.filter((tx) => {
     const d = new Date(tx.date).getTime();
-    return tx.type === "SATIŞ" && d >= start.getTime() && d < end.getTime();
+    return tx.type === "SATIŞ" && !tx.sub && d >= start.getTime() && d < end.getTime();
   });
   const total = sales.reduce((s, tx) => s + tx.amount, 0);
 

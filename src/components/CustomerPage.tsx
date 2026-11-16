@@ -1,8 +1,12 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { noteRecordAdded, noteStatementShared } from "../lib/review";
 import {
-  TX_TYPES,
+  ENTRY_KINDS,
+  EXTRA_DIRECTIONS,
   balanceOf,
+  directionLabel,
+  isExtra,
+  kindOf,
   needsAccount,
   signOf,
   transactionsOf,
@@ -10,8 +14,8 @@ import {
   type AccountId,
   type Customer,
   type Profile,
+  type EntryKind,
   type Transaction,
-  type TxType,
 } from "../data/mock";
 import { formatDateTime, money } from "../lib/format";
 import { ACCENT } from "../lib/accents";
@@ -67,7 +71,10 @@ export default function CustomerPage({
 }) {
   // Her sekmede dört işlem türü de girilebilir; müşteride SATIŞ, diğerlerinde ALIŞ seçili başlar
   // Her müşteri açılışında işlem türü önce SATIŞ; kullanıcı isterse değiştirir
-  const [txType, setTxType] = useState<TxType>("SATIŞ");
+  const [txType, setTxType] = useState<EntryKind>("SATIŞ");
+  // Devir, iade ve indirimde seçilen yön (bakiye artar: SATIŞ, azalır: ALIŞ); varsayılan yoktur, kullanıcı seçer
+  const [extraDir, setExtraDir] = useState<"SATIŞ" | "ALIŞ" | null>(null);
+  const extraKind = isExtra(txType) ? txType : null;
   const [amount, setAmount] = useState("");
   // Tuş takımı sayfa yerleştikten kısa süre sonra yumuşakça açılır; kayıttan sonra kapanmaz
   const [keypadOpen, setKeypadOpen] = useState(false);
@@ -160,7 +167,7 @@ export default function CustomerPage({
 
   const history = transactionsOf(transactions, customer.id);
   const value = parseAmount(amount);
-  const canSave = value !== null && value > 0;
+  const canSave = value !== null && value > 0 && (!extraKind || extraDir !== null);
   const lastNewId = [...history]
     .reverse()
     .find((row) => justAdded.includes(row.id))?.id;
@@ -188,10 +195,12 @@ export default function CustomerPage({
   /** Formdaki değerlerden işlem üretir; tutar geçersizse null */
   function buildCurrent(): Transaction | null {
     if (value === null || value <= 0) return null;
+    if (extraKind && !extraDir) return null;
     return {
       id: `t${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
       customerId: customer.id,
-      type: txType,
+      type: extraKind ? extraDir! : (txType as Transaction["type"]),
+      ...(extraKind ? { sub: extraKind } : {}),
       date: dateValue ? new Date(dateValue).toISOString() : new Date().toISOString(),
       description,
       amount: value,
@@ -233,12 +242,14 @@ export default function CustomerPage({
       noteRecordAdded();
     }
     resetFields();
+    setExtraDir(null);
   }
 
   /** Seçenek penceresinden "Düzenle": işlemi giriş paneline yükler */
   function startEdit(tx: Transaction) {
     setEditingId(tx.id);
-    setTxType(tx.type);
+    setTxType(kindOf(tx));
+    setExtraDir(tx.sub ? (tx.type === "ALIŞ" ? "ALIŞ" : "SATIŞ") : null);
     setAmount(String(tx.amount).replace(".", ","));
     setDescription(tx.description);
     setDateValue(toLocalInput(tx.date));
@@ -248,6 +259,7 @@ export default function CustomerPage({
 
   function cancelEdit() {
     setEditingId(null);
+    setExtraDir(null);
     resetFields();
   }
 
@@ -382,7 +394,7 @@ export default function CustomerPage({
               <button
                 className="tx-hit"
                 type="button"
-                aria-label={t("{type} işlemi için seçenekler", { type: t(row.type) })}
+                aria-label={t("{type} işlemi için seçenekler", { type: t(kindOf(row)) })}
                 onClick={() => {
                   // Tuş takımı açıksa ilk dokunuş yalnızca onu kapatır; seçenekler ikinci dokunuşta çıkar
                   if (keypadOpen) {
@@ -394,8 +406,8 @@ export default function CustomerPage({
               >
                 <div className="tx-info">
                   <div className="tx-meta">
-                    <strong style={{ color: ACCENT[row.type].color }}>
-                      {t(row.type)}
+                    <strong style={{ color: ACCENT[kindOf(row)].color }}>
+                      {t(kindOf(row))}
                     </strong>
                     <span>{formatDateTime(row.date)}</span>
                     {row.account && (
@@ -404,7 +416,9 @@ export default function CustomerPage({
                       </span>
                     )}
                   </div>
-                  {row.description && <p>{row.description}</p>}
+                  {(row.description || row.sub) && (
+                    <p>{[t(directionLabel(row)), row.description].filter(Boolean).join(" · ")}</p>
+                  )}
                 </div>
                 <span className={`tx-amount ${row.type === "TAHSİLAT" ? "is-in" : outflow ? "is-debt" : ""}`}>
                   {outflow ? "-" : ""}
@@ -529,8 +543,28 @@ export default function CustomerPage({
             </button>
           </div>
 
+          {extraKind && (
+            <div className="entry-dirs" role="radiogroup" aria-label={t("Yön")}>
+              {EXTRA_DIRECTIONS[extraKind].map((d) => (
+                <button
+                  key={d.base}
+                  type="button"
+                  role="radio"
+                  aria-checked={extraDir === d.base}
+                  className={extraDir === d.base ? "is-active" : ""}
+                  onClick={() => {
+                    haptic("light");
+                    setExtraDir(d.base);
+                  }}
+                >
+                  {t(d.label)}
+                </button>
+              ))}
+            </div>
+          )}
+
           <div className="entry-tabs" role="tablist" aria-label={t("İşlem türü")}>
-            {TX_TYPES.map((type) => (
+            {ENTRY_KINDS.map((type) => (
               <button
                 key={type}
                 role="tab"
@@ -545,6 +579,7 @@ export default function CustomerPage({
                 }
                 onClick={() => {
                   haptic("light");
+                  if (type !== txType) setExtraDir(null);
                   setTxType(type);
                 }}
               >
@@ -662,9 +697,10 @@ export default function CustomerPage({
             <div className="action-handle" aria-hidden="true" />
             <div className="action-summary">
               <div className="tx-meta">
-                <strong style={{ color: ACCENT[selected.type].color }}>
-                  {t(selected.type)}
+                <strong style={{ color: ACCENT[kindOf(selected)].color }}>
+                  {t(kindOf(selected))}
                 </strong>
+                {selected.sub && <span>{t(directionLabel(selected))}</span>}
                 <span>{formatDateTime(selected.date)}</span>
               </div>
               <span

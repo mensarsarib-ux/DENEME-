@@ -1202,19 +1202,31 @@ body {
 
 /* Açıklama yazılırken işlem türü sekmeleri gizlenir; yazı klavyesinin üstünde tarih ve açıklama kalır */
 /* Yazı yazılırken sekmeler tamamen kalkar; klavyenin üstünde boş bant kalmaz, panel klavyeye yapışır */
-.entry-dock.is-typing .entry-tabs {
+.entry-dock.is-typing .entry-tabs,
+.entry-dock.is-typing .entry-dirs {
   display: none;
 }
 
+/* İşlem türleri yan yana kayar: ilk dördü sığar, beşincinin kenarı görünür (sağda devamı olduğu anlaşılır) */
 .entry-tabs {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
   gap: 4px;
   padding: 6px;
   border-top: 1px solid var(--line);
 }
 
+.entry-tabs::-webkit-scrollbar {
+  display: none;
+}
+
 .entry-tabs button {
+  flex: 0 0 calc((100% - 12px) / 4.35);
+  scroll-snap-align: start;
   padding: 11px 2px;
   border: 0;
   border-radius: 10px;
@@ -1243,6 +1255,37 @@ body {
     0 0 14px -2px var(--tab-glow),
     inset 0 -2px 0 var(--tab-accent);
   text-shadow: 0 0 10px var(--tab-glow);
+}
+
+/* Devir, iade ve indirimde yön seçimi: iki seçenek, seçilen işlemin renginde */
+.entry-dirs {
+  display: flex;
+  gap: 8px;
+  padding: 10px 12px 4px;
+  border-top: 1px solid var(--line);
+}
+
+.entry-dirs button {
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 10px 6px;
+  border: 1.5px solid var(--line);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.8rem;
+  line-height: 1.2;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.entry-dirs button.is-active {
+  border-color: var(--accent);
+  color: var(--accent);
+  font-weight: 700;
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
 }
 
 @keyframes page-in {

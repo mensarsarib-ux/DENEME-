@@ -740,6 +740,17 @@ const dict: Record<string, string> = {
   "Son hareketler:": "हाल के लेन-देन:",
   "Sorularınız için bize yazabilirsiniz.": "किसी भी प्रश्न के लिए हमें लिखें।",
   "Giderler, gelirin %{n} kadarı": "खर्च आय का {n}% है",
+  // Ek işlemler: devir, iade, indirim
+  "DEVİR": "शेष आगे",
+  "İADE": "वापसी",
+  "İNDİRİM": "छूट",
+  "Bana borçlu": "मुझे देना है",
+  "Ben borçluyum": "मैं उन्हें देनदार",
+  "Sattığım mal geri geldi": "माल मुझे वापस आया",
+  "Aldığım malı geri verdim": "मैंने माल लौटाया",
+  "Ben indirim yaptım": "मैंने छूट दी",
+  "Bana indirim yapıldı": "मुझे छूट मिली",
+  "Yön": "दिशा",
 };
 
 export default dict;

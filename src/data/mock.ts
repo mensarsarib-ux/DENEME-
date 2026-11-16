@@ -67,10 +67,54 @@ export function defaultTxType(kind: PartyKind): TxType {
   return kind === "customer" ? "SATIŞ" : "ALIŞ";
 }
 
+/**
+ * Kasaya dokunmayan ek işlemler: devir (açılış bakiyesi), iade ve indirim. Her sekmede iki yönlüdür.
+ * Bakiye yönü mevcut SATIŞ (+) / ALIŞ (−) türüyle saklanır; işlemin kendisi `sub` alanındadır.
+ * Böylece bu alanı tanımayan eski sürümler kaydı satış/alış gibi gösterir ama bakiyeyi doğru hesaplar.
+ */
+export const EXTRA_TYPES = ["DEVİR", "İADE", "İNDİRİM"] as const;
+export type ExtraType = (typeof EXTRA_TYPES)[number];
+/** Ekrandaki işlem sekmeleri: dört temel işlem, sonra sağa kaydırınca ek işlemler */
+export type EntryKind = TxType | ExtraType;
+export const ENTRY_KINDS: EntryKind[] = [...TX_TYPES, ...EXTRA_TYPES];
+export function isExtra(kind: EntryKind): kind is ExtraType {
+  return (EXTRA_TYPES as readonly string[]).includes(kind);
+}
+
+/** Ek işlemin iki yönü: ekrandaki metin ve saklanan bakiye yönü (SATIŞ: bakiye artar, ALIŞ: azalır) */
+export const EXTRA_DIRECTIONS: Record<ExtraType, { label: string; base: "SATIŞ" | "ALIŞ" }[]> = {
+  DEVİR: [
+    { label: "Bana borçlu", base: "SATIŞ" },
+    { label: "Ben borçluyum", base: "ALIŞ" },
+  ],
+  İADE: [
+    { label: "Sattığım mal geri geldi", base: "ALIŞ" },
+    { label: "Aldığım malı geri verdim", base: "SATIŞ" },
+  ],
+  İNDİRİM: [
+    { label: "Ben indirim yaptım", base: "ALIŞ" },
+    { label: "Bana indirim yapıldı", base: "SATIŞ" },
+  ],
+};
+
+/** Kaydın ekranda görünen türü: ek işlemse onun adı (DEVİR…), değilse temel tür */
+export function kindOf(tx: Pick<Transaction, "type" | "sub">): EntryKind {
+  return tx.sub && isExtra(tx.sub) ? tx.sub : tx.type;
+}
+
+/** Ek işlemin yön metni (ör. "Bana borçlu"); temel işlemde boş */
+export function directionLabel(tx: Pick<Transaction, "type" | "sub">): string {
+  if (!tx.sub || !isExtra(tx.sub)) return "";
+  return EXTRA_DIRECTIONS[tx.sub].find((d) => d.base === tx.type)?.label ?? "";
+}
+
 export interface Transaction {
   id: string;
   customerId: string;
+  /** Bakiye yönü. Ek işlemlerde yalnızca SATIŞ (+) ya da ALIŞ (−) olur */
   type: TxType;
+  /** Ek işlem: devir, iade ya da indirim (kasaya dokunmaz) */
+  sub?: ExtraType;
   /** ISO tarih-saat (UTC) */
   date: string;
   description: string;
@@ -214,6 +258,14 @@ export function totalsBetween(
   for (const t of list) {
     const at = new Date(t.date);
     if (at < start || at >= end) continue;
+    if (t.sub) {
+      // Devir eski bakiyedir, bu dönemin geliri ya da gideri değildir. İade ve indirim satıştan
+      // (bakiyeyi azaltıyorsa) ya da alıştan (bakiyeyi artırıyorsa) düşülür.
+      if (t.sub === "DEVİR") continue;
+      if (t.type === "ALIŞ") totals.satis -= t.amount;
+      else totals.alis -= t.amount;
+      continue;
+    }
     if (t.type === "SATIŞ") totals.satis += t.amount;
     else if (t.type === "ALIŞ") totals.alis += t.amount;
     else if (t.type === "TAHSİLAT") totals.tahsilat += t.amount;

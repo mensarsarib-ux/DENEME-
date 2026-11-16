@@ -1,5 +1,5 @@
 import type { Account, Customer, Profile, Transaction } from "../data/mock";
-import { signOf, transactionsOf } from "../data/mock";
+import { signOf, transactionsOf, directionLabel, kindOf } from "../data/mock";
 import { currencyCode, money } from "./format";
 import { locale, t } from "./i18n";
 
@@ -88,9 +88,9 @@ export function buildStatement({ party, accounts, transactions, range }: Stateme
     else totalCredit += tx.amount;
     rows.push({
       date: dateText(tx.date),
-      type: t(tx.type),
+      type: t(kindOf(tx)),
       account: tx.account ? t(accounts.find((a) => a.id === tx.account)?.name ?? "") : "",
-      description: tx.description,
+      description: [t(directionLabel(tx)), tx.description].filter(Boolean).join(" · "),
       debit: sign > 0 ? tx.amount : null,
       credit: sign < 0 ? tx.amount : null,
       balance,
@@ -144,7 +144,7 @@ export function statementText(input: StatementInput): string {
   ];
   if (recent.length > 0) {
     lines.push("", t("Son hareketler:"));
-    for (const tx of recent) lines.push(`• ${day(tx.date)} · ${title(t(tx.type))} · ${money.format(tx.amount)}`);
+    for (const tx of recent) lines.push(`• ${day(tx.date)} · ${title(t(kindOf(tx)))} · ${money.format(tx.amount)}`);
   }
   lines.push("", t("Sorularınız için bize yazabilirsiniz."));
   if (business) lines.push(business);
