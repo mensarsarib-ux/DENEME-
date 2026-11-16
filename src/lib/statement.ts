@@ -6,8 +6,6 @@ import qrcode from "qrcode-generator";
 
 /** Belgenin altındaki indirme bağlantısı ve QR kodun açtığı adres: App Store'daki uygulama sayfası */
 export const APP_LINK = "https://apps.apple.com/tr/app/id6826814944";
-/** Alt bilginin yüksekliği (son sayfanın en altında) */
-const FOOTER_H = 150;
 
 /** Sayfadaki tıklanabilir alan (piksel, sol üstten) */
 export interface PageLink {
@@ -19,9 +17,10 @@ export interface PageLink {
   url: string;
 }
 
-/** A4, 150 dpi */
+/** A4 sayfa koordinatları (150 dpi). Çizim SCALE katı çözünürlükte yapılır (300 dpi): yakınlaştırınca bulanık olmaz */
 const W = 1240;
 const H = 1754;
+const SCALE = 2;
 const M = 80;
 const FONT = '-apple-system, "Segoe UI", Helvetica, Arial, sans-serif';
 
@@ -206,9 +205,10 @@ export async function renderStatement(input: StatementInput, links: PageLink[] =
 
   const create = () => {
     const canvas = document.createElement("canvas");
-    canvas.width = W;
-    canvas.height = H;
+    canvas.width = W * SCALE;
+    canvas.height = H * SCALE;
     const context = canvas.getContext("2d")!;
+    context.scale(SCALE, SCALE);
     context.fillStyle = "#fff";
     context.fillRect(0, 0, W, H);
     context.textBaseline = "alphabetic";
@@ -301,39 +301,36 @@ export async function renderStatement(input: StatementInput, links: PageLink[] =
   text(plain(data.balance), toplamR, baseT + 1, 25, data.balance < 0 ? "#c0392b" : INK, "600", "right");
   y += 60;
 
-  // Alt bilgi (son sayfanın en altında): "Hesabım Muhasebe ile hazırlanmıştır", App Store bağlantısı ve QR kod.
-  // Küçük ve gri; belgenin asıl bilgisini bastırmaz. Sığmazsa yeni sayfaya geçer.
-  const footerTop = H - M - FOOTER_H + 20;
-  if (y > footerTop - 20) newPageFn();
+  // Alt bilgi: toplam satırının altında, verilerden biraz uzakta; kayıt arttıkça onunla birlikte aşağı kayar.
+  // Sayfaya sığmazsa yeni sayfanın başına geçer. Solda iki satır yazı, sağda QR kod.
+  const qrSize = 120;
+  if (y + 70 + qrSize > H - M - 40) newPageFn();
+  else y += 70;
   {
+    const top = y;
+    ctx.fillStyle = LINE;
+    ctx.fillRect(M, top, W - 2 * M, 1);
     const qr = qrcode(0, "M");
     qr.addData(APP_LINK);
     qr.make();
     const n = qr.getModuleCount();
-    const size = 120;
-    const cell = size / n;
-    const qx = W - M - size;
-    const qy = footerTop + 6;
-    ctx.fillStyle = "#fff";
-    ctx.fillRect(qx - 6, qy - 6, size + 12, size + 12);
+    const cell = qrSize / n;
+    const qx = W - M - qrSize;
+    const qy = top + 24;
     ctx.fillStyle = INK;
     for (let r = 0; r < n; r++)
-      for (let c = 0; c < n; c++) if (qr.isDark(r, c)) ctx.fillRect(qx + c * cell, qy + r * cell, Math.ceil(cell), Math.ceil(cell));
-    ctx.fillStyle = LINE;
-    ctx.fillRect(M, footerTop - 14, W - 2 * M, 1);
+      for (let c = 0; c < n; c++) if (qr.isDark(r, c)) ctx.fillRect(qx + c * cell, qy + r * cell, cell + 0.02, cell + 0.02);
     const tx = M + 4;
-    text(t("Bu belge Hesabım Muhasebe uygulamasıyla hazırlanmıştır."), tx, footerTop + 34, 18, MUTED, "600");
-    text(t("Siz de cari hesaplarınızı telefonunuzdan takip edin:"), tx, footerTop + 64, 17, MUTED);
-    const label = "apps.apple.com · Hesabım Muhasebe";
-    text(label, tx, footerTop + 94, 17, "#2f6fb0", "600");
-    ctx.font = `600 17px ${FONT}`;
+    const mid = qy + qrSize / 2;
+    text(t("Bu belge Hesabım Muhasebe uygulaması tarafından düzenlenmiştir."), tx, mid - 8, 18, MUTED, "600");
+    const label = APP_LINK.replace(/^https:\/\//, "");
+    text(label, tx, mid + 24, 17, "#2f6fb0", "400");
+    ctx.font = `400 17px ${FONT}`;
     const lw = ctx.measureText(label).width;
-    ctx.fillStyle = "#2f6fb0";
-    ctx.fillRect(tx, footerTop + 98, lw, 1.5);
-    text(t("ya da QR kodu okutun"), qx - 16, qy + size - 4, 15, MUTED, "400", "right");
     const page = pages.length - 1;
-    links.push({ page, x: tx - 6, y: footerTop + 72, w: lw + 12, h: 36, url: APP_LINK });
-    links.push({ page, x: qx - 6, y: qy - 6, w: size + 12, h: size + 12, url: APP_LINK });
+    links.push({ page, x: tx - 6, y: mid + 2, w: lw + 12, h: 32, url: APP_LINK });
+    links.push({ page, x: qx - 6, y: qy - 6, w: qrSize + 12, h: qrSize + 12, url: APP_LINK });
+    y = qy + qrSize + 10;
   }
   // Sayfa numarası yalnızca birden fazla sayfa varsa
   if (pages.length > 1) {
@@ -438,12 +435,19 @@ export interface StatementPdf {
 export async function createStatementPdf(input: StatementInput): Promise<StatementPdf> {
   const links: PageLink[] = [];
   const pages = await renderStatement(input, links);
-  const jpegs = pages.map((p) => dataUrlToBytes(p.toDataURL("image/jpeg", 0.92)));
-  const bytes = buildPdf(jpegs, W, H, links);
+  const jpegs = pages.map((p) => dataUrlToBytes(p.toDataURL("image/jpeg", 0.9)));
+  const scaled = links.map((l) => ({ ...l, x: l.x * SCALE, y: l.y * SCALE, w: l.w * SCALE, h: l.h * SCALE }));
+  const bytes = buildPdf(jpegs, W * SCALE, H * SCALE, scaled);
   const safe = input.party.name.replace(/[^\p{L}\p{N}]+/gu, "-").replace(/^-|-$/g, "");
+  const previews = pages.map((p) => p.toDataURL("image/jpeg", 0.8));
+  // Yüksek çözünürlüklü sayfalar bellekte yer kaplar; iş bitince bırakılır (telefonda bellek sınırı var)
+  for (const p of pages) {
+    p.width = 0;
+    p.height = 0;
+  }
   return {
     blob: new Blob([bytes.buffer as ArrayBuffer], { type: "application/pdf" }),
-    previews: pages.map((p) => p.toDataURL("image/jpeg", 0.7)),
+    previews,
     filename: `${t("Ekstre")}-${safe || "hesap"}.pdf`,
   };
 }

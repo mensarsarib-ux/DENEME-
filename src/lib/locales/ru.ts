@@ -754,9 +754,7 @@ const dict: Record<string, string> = {
   "NET ETKİ": "ИТОГО",
   "Satıştan düşen {a} · Alıştan düşen {b}": "Из продаж {a} · Из закупок {b}",
   "Bu dönemde iade ve indirim yok.": "За этот период нет возвратов и скидок.",
-  "Bu belge Hesabım Muhasebe uygulamasıyla hazırlanmıştır.": "Документ подготовлен в приложении Hesabım Muhasebe.",
-  "Siz de cari hesaplarınızı telefonunuzdan takip edin:": "Ведите и вы свои счета с телефона:",
-  "ya da QR kodu okutun": "или отсканируйте QR-код",
+  "Bu belge Hesabım Muhasebe uygulaması tarafından düzenlenmiştir.": "Документ составлен приложением Hesabım Muhasebe.",
 };
 
 export default dict;
