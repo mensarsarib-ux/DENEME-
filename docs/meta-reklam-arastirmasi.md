@@ -85,3 +85,10 @@ Sunum: https://claude.ai/artifact/K2LWjCYMhNocxGx668dqXE
 - Reklam seti 52618170271093: TR, 25–60, Türkçe, iPhone iOS 13+, FB+IG Akış/Hikaye/Reels, küçük işletme sahipleri + işletme sayfası yöneticileri, günde 200 TL, 15–21 Kasım, dinamik kreatif, bağlantı tıklaması.
 - Reklam 52618171195693: 9:16 video, 3 metin, 3 başlık, İndir düğmesi → https://hesabimmuhasebe.com/indir.html (utm_campaign=ios_trafik_a). PAUSED, Meta incelemesinde.
 - Neden trafik + tanıtım sayfası: Meta trafik kampanyasında App Store bağlantısını kabul etmiyor; iOS uygulama yükleme kampanyası Meta SDK olmadan açılamıyor (AEM/SKAN uygun değil).
+
+## iOS 14+ yükleme kampanyası (16 Kasım 2026, 22:30'da yayına girdi)
+- Kampanya 52618613339893 "Hesabım iOS 14+ Yükleme" (OUTCOME_APP_PROMOTION, is_skadnetwork_attribution=true, kampanya düzeyinde promoted_object). ACTIVE.
+- Reklam seti 52618613499693: TR, 25–60, Türkçe, iPhone, iOS 14.0+, küçük işletme sahipleri + işletme sayfası yöneticileri, FB+IG Akış/Hikaye/Reels, APP_INSTALLS, günde 150 TL, 24 Kasım 23:59'a kadar.
+- Reklam 52618613824893: A videosu, ana metin "Müşteri borcunu hâlâ kafanızda mı…", Yükle düğmesi → App Store.
+- Ders: iOS 14+ kampanyasında promoted_object kampanya düzeyinde verilmezse Meta kampanyayı normal yükleme kampanyası sayar ve iOS hedefini 13.0–14.4'e kısar (hata 3955009 / 2490253).
+- Trafik kampanyası 52618169570093 hâlâ ACTIVE (21 Kasım'da biter). "Ekip" metinli reklam silindi (ücretsiz planda olmayan özellik). Verisi: docs/veri/trafik-kampanyasi-veri-2026-11-16.json.
