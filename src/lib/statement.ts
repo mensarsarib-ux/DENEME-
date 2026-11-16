@@ -315,12 +315,12 @@ export async function renderStatement(input: StatementInput, links: PageLink[] =
     qr.make();
     const n = qr.getModuleCount();
     const cell = qrSize / n;
-    const qx = W - M - qrSize;
+    const qx = M + 4;
     const qy = top + 24;
     ctx.fillStyle = INK;
     for (let r = 0; r < n; r++)
       for (let c = 0; c < n; c++) if (qr.isDark(r, c)) ctx.fillRect(qx + c * cell, qy + r * cell, cell + 0.02, cell + 0.02);
-    const tx = M + 4;
+    const tx = qx + qrSize + 28;
     const mid = qy + qrSize / 2;
     text(t("Bu belge Hesabım Muhasebe uygulaması tarafından düzenlenmiştir."), tx, mid - 8, 18, MUTED, "600");
     const label = APP_LINK.replace(/^https:\/\//, "");
