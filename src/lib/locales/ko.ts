@@ -754,6 +754,9 @@ const dict: Record<string, string> = {
   "NET ETKİ": "순효과",
   "Satıştan düşen {a} · Alıştan düşen {b}": "매출에서 {a} · 매입에서 {b}",
   "Bu dönemde iade ve indirim yok.": "이 기간에 반품이나 할인이 없습니다.",
+  "Bu belge Hesabım Muhasebe uygulamasıyla hazırlanmıştır.": "이 문서는 Hesabım Muhasebe 앱으로 작성되었습니다.",
+  "Siz de cari hesaplarınızı telefonunuzdan takip edin:": "여러분도 거래처 장부를 휴대폰으로 관리하세요:",
+  "ya da QR kodu okutun": "또는 QR 코드를 스캔하세요",
 };
 
 export default dict;

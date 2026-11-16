@@ -27,6 +27,9 @@ export const statement: Record<string, string> = {
   "İndirme başlatıldı. Başlamazsa PDF'i açıp oradan kaydedin.": "Download started. If nothing happens, open the PDF and save it from there.",
   "Paylaşım bu cihazda açılamadı; ekstre panoya kopyalandı.": "Sharing could not open on this device; the statement was copied to the clipboard.",
   "Paylaşım bu cihazda kullanılamıyor.": "Sharing is not available on this device.",
+  "Bu belge Hesabım Muhasebe uygulamasıyla hazırlanmıştır.": "This document was prepared with the Hesabım Muhasebe app.",
+  "Siz de cari hesaplarınızı telefonunuzdan takip edin:": "Track your own accounts from your phone:",
+  "ya da QR kodu okutun": "or scan the QR code",
 };
 statement["Miktar"] = "Amount";
 statement["Toplam"] = "Total";

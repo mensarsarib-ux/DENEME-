@@ -2,6 +2,22 @@ import type { Account, Customer, Profile, Transaction } from "../data/mock";
 import { signOf, transactionsOf, directionLabel, kindOf } from "../data/mock";
 import { currencyCode, money } from "./format";
 import { locale, t } from "./i18n";
+import qrcode from "qrcode-generator";
+
+/** Belgenin altındaki indirme bağlantısı ve QR kodun açtığı adres: App Store'daki uygulama sayfası */
+export const APP_LINK = "https://apps.apple.com/tr/app/id6826814944";
+/** Alt bilginin yüksekliği (son sayfanın en altında) */
+const FOOTER_H = 150;
+
+/** Sayfadaki tıklanabilir alan (piksel, sol üstten) */
+export interface PageLink {
+  page: number;
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  url: string;
+}
 
 /** A4, 150 dpi */
 const W = 1240;
@@ -176,7 +192,7 @@ function wrap(ctx: CanvasRenderingContext2D, text: string, width: number, maxLin
  * Ekstreyi A4 sayfalar halinde çizer (canvas); bir sayfa = bir tuval.
  * Düzen: üstte logo + firma adı kartı, altında kişi adı, sonra TARİH / AÇIKLAMA / MİKTAR / TOPLAM tablosu.
  */
-export async function renderStatement(input: StatementInput): Promise<HTMLCanvasElement[]> {
+export async function renderStatement(input: StatementInput, links: PageLink[] = []): Promise<HTMLCanvasElement[]> {
   const data = buildStatement(input);
   const { party, profile } = input;
 
@@ -284,6 +300,41 @@ export async function renderStatement(input: StatementInput): Promise<HTMLCanvas
   text(`${plain(data.totalDebit)}${data.totalCredit ? `  -${plain(data.totalCredit)}` : ""}`, miktarR, baseT, 19, INK, "600", "right");
   text(plain(data.balance), toplamR, baseT + 1, 25, data.balance < 0 ? "#c0392b" : INK, "600", "right");
   y += 60;
+
+  // Alt bilgi (son sayfanın en altında): "Hesabım Muhasebe ile hazırlanmıştır", App Store bağlantısı ve QR kod.
+  // Küçük ve gri; belgenin asıl bilgisini bastırmaz. Sığmazsa yeni sayfaya geçer.
+  const footerTop = H - M - FOOTER_H + 20;
+  if (y > footerTop - 20) newPageFn();
+  {
+    const qr = qrcode(0, "M");
+    qr.addData(APP_LINK);
+    qr.make();
+    const n = qr.getModuleCount();
+    const size = 120;
+    const cell = size / n;
+    const qx = W - M - size;
+    const qy = footerTop + 6;
+    ctx.fillStyle = "#fff";
+    ctx.fillRect(qx - 6, qy - 6, size + 12, size + 12);
+    ctx.fillStyle = INK;
+    for (let r = 0; r < n; r++)
+      for (let c = 0; c < n; c++) if (qr.isDark(r, c)) ctx.fillRect(qx + c * cell, qy + r * cell, Math.ceil(cell), Math.ceil(cell));
+    ctx.fillStyle = LINE;
+    ctx.fillRect(M, footerTop - 14, W - 2 * M, 1);
+    const tx = M + 4;
+    text(t("Bu belge Hesabım Muhasebe uygulamasıyla hazırlanmıştır."), tx, footerTop + 34, 18, MUTED, "600");
+    text(t("Siz de cari hesaplarınızı telefonunuzdan takip edin:"), tx, footerTop + 64, 17, MUTED);
+    const label = "apps.apple.com · Hesabım Muhasebe";
+    text(label, tx, footerTop + 94, 17, "#2f6fb0", "600");
+    ctx.font = `600 17px ${FONT}`;
+    const lw = ctx.measureText(label).width;
+    ctx.fillStyle = "#2f6fb0";
+    ctx.fillRect(tx, footerTop + 98, lw, 1.5);
+    text(t("ya da QR kodu okutun"), qx - 16, qy + size - 4, 15, MUTED, "400", "right");
+    const page = pages.length - 1;
+    links.push({ page, x: tx - 6, y: footerTop + 72, w: lw + 12, h: 36, url: APP_LINK });
+    links.push({ page, x: qx - 6, y: qy - 6, w: size + 12, h: size + 12, url: APP_LINK });
+  }
   // Sayfa numarası yalnızca birden fazla sayfa varsa
   if (pages.length > 1) {
     pages.forEach((p, i) => {
@@ -305,7 +356,7 @@ export async function renderStatement(input: StatementInput): Promise<HTMLCanvas
 const enc = new TextEncoder();
 
 /** Sayfa görsellerinden (JPEG) basit bir PDF üretir. Her sayfa A4 boyutundadır. */
-export function buildPdf(jpegs: Uint8Array[], pxW: number, pxH: number): Uint8Array {
+export function buildPdf(jpegs: Uint8Array[], pxW: number, pxH: number, links: PageLink[] = []): Uint8Array {
   const PW = 595.28;
   const PH = 841.89;
   const chunks: Uint8Array[] = [];
@@ -326,13 +377,19 @@ export function buildPdf(jpegs: Uint8Array[], pxW: number, pxH: number): Uint8Ar
 
   push("%PDF-1.4\n");
   const n = jpegs.length;
+  // Bağlantı alanları (görsel tıklanamadığı için PDF'e ayrıca eklenir); sayfa nesnelerinden sonra numaralanır
+  const sx = PW / pxW;
+  const sy = PH / pxH;
+  const linkNo = (k: number) => 3 + n * 3 + k;
   // 1: katalog, 2: sayfalar, sonra her sayfa için 3 nesne (sayfa, içerik, görsel)
   obj(1, "<< /Type /Catalog /Pages 2 0 R >>");
   const kids = jpegs.map((_, i) => `${3 + i * 3} 0 R`).join(" ");
   obj(2, `<< /Type /Pages /Kids [${kids}] /Count ${n} >>`);
   jpegs.forEach((jpeg, i) => {
     const page = 3 + i * 3;
-    obj(page, `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${PW} ${PH}] /Resources << /XObject << /Im0 ${page + 2} 0 R >> >> /Contents ${page + 1} 0 R >>`);
+    const annots = links.map((l, k) => (l.page === i ? `${linkNo(k)} 0 R` : "")).filter(Boolean);
+    const annotPart = annots.length ? ` /Annots [${annots.join(" ")}]` : "";
+    obj(page, `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${PW} ${PH}] /Resources << /XObject << /Im0 ${page + 2} 0 R >> >> /Contents ${page + 1} 0 R${annotPart} >>`);
     const content = `q ${PW} 0 0 ${PH} 0 0 cm /Im0 Do Q`;
     obj(page + 1, `<< /Length ${content.length} >>\nstream\n${content}\nendstream`);
     obj(page + 2, () => {
@@ -342,7 +399,14 @@ export function buildPdf(jpegs: Uint8Array[], pxW: number, pxH: number): Uint8Ar
     });
   });
 
-  const count = 3 + n * 3;
+  links.forEach((l, k) => {
+    const x1 = (l.x * sx).toFixed(2);
+    const x2 = ((l.x + l.w) * sx).toFixed(2);
+    const y1 = (PH - (l.y + l.h) * sy).toFixed(2);
+    const y2 = (PH - l.y * sy).toFixed(2);
+    obj(linkNo(k), `<< /Type /Annot /Subtype /Link /Rect [${x1} ${y1} ${x2} ${y2}] /Border [0 0 0] /A << /S /URI /URI (${l.url}) >> >>`);
+  });
+  const count = 3 + n * 3 + links.length;
   const xref = length;
   push(`xref\n0 ${count}\n0000000000 65535 f \n`);
   for (let i = 1; i < count; i++) push(`${String(offsets[i]).padStart(10, "0")} 00000 n \n`);
@@ -372,9 +436,10 @@ export interface StatementPdf {
 }
 
 export async function createStatementPdf(input: StatementInput): Promise<StatementPdf> {
-  const pages = await renderStatement(input);
+  const links: PageLink[] = [];
+  const pages = await renderStatement(input, links);
   const jpegs = pages.map((p) => dataUrlToBytes(p.toDataURL("image/jpeg", 0.92)));
-  const bytes = buildPdf(jpegs, W, H);
+  const bytes = buildPdf(jpegs, W, H, links);
   const safe = input.party.name.replace(/[^\p{L}\p{N}]+/gu, "-").replace(/^-|-$/g, "");
   return {
     blob: new Blob([bytes.buffer as ArrayBuffer], { type: "application/pdf" }),
