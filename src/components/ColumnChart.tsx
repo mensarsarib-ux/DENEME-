@@ -44,7 +44,7 @@ export default function ColumnChart({ transactions }: { transactions: Transactio
   return (
     <>
     <section
-      className={`card col-chart ${pressing ? "is-pressing" : ""}`}
+      className={`chart-card col-chart ${pressing ? "is-pressing" : ""}`}
       aria-label={t("Gelir ve gider sütunları")}
       title={t("Dönemi değiştirmek için basılı tutun")}
       {...handlers}

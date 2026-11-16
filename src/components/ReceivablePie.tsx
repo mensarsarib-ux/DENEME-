@@ -75,7 +75,7 @@ export default function ReceivablePie({
   return (
     <>
     <section
-      className={`card pie-card ${pressing ? "is-pressing" : ""}`}
+      className={`chart-card pie-card ${pressing ? "is-pressing" : ""}`}
       aria-label={t("En çok alacağı olan müşteriler")}
       title={t("Dönemi değiştirmek için basılı tutun")}
       {...handlers}
