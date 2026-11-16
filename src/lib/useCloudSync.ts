@@ -82,6 +82,19 @@ export function useCloudSync({
       return null;
     }
   };
+  /**
+   * Açılışta ekran, sunucu beklenmeden cihazdaki son veriyle gösterilir. İlk eşitleme bitmeden yapılan
+   * değişiklikler kalıcı işarete henüz yazılmamış olabilir; cihazdaki veri sunucuyla en son ortak veriden
+   * farklıysa gönderilmemiş değişiklik var sayılır ve üzerine yazılmak yerine birleştirilir.
+   */
+  const differsFromBase = (cur: typeof latest.current) => {
+    try {
+      const raw = localStorage.getItem(storeKey("base", cur));
+      return raw !== null && raw !== cur.json;
+    } catch {
+      return false;
+    }
+  };
   const parse = (text: string | null) => (text ? (JSON.parse(text) as Record<string, unknown>) : null);
 
   /** Sunucuyla ortak veri: son alınan ya da yazılan veri ve sunucudaki zamanı */
@@ -104,6 +117,8 @@ export function useCloudSync({
     try {
       const remote = await pull(cur.session, cur.businessId);
       if (remote === "expired") return latest.current.onExpired();
+      // Beklerken eşitlenen işletme ya da hesap değiştiyse bu sonuç artık geçersiz (yeni eşitleme başlar)
+      if (latest.current.businessId !== cur.businessId || latest.current.session?.userId !== cur.session.userId) return;
       if (remote === null) {
         // Ortak işletmede veri yoksa üye boş verisini yazmaz; yalnızca sahip ilk veriyi oluşturur
         if (first && (!cur.businessId || cur.canSeed)) {
@@ -117,7 +132,9 @@ export function useCloudSync({
         // Beklerken yapılan değişiklikler de hesaba katılsın diye güncel veri kullanılır
         const now = latest.current;
         // Gönderilmemiş değişiklik: açılışta kalıcı işaretten, açıkken ortak veriden farkından anlaşılır
-        const pending = first ? isDirty(now) : syncedJson.current !== null && now.json !== syncedJson.current;
+        const pending = first
+          ? isDirty(now) || differsFromBase(now)
+          : syncedJson.current !== null && now.json !== syncedJson.current;
         if (pending) {
           const base = first ? loadBase(now) : parse(syncedJson.current);
           now.apply(mergeSnapshots(base, now.snapshot, remote.data));
@@ -139,7 +156,8 @@ export function useCloudSync({
     }
   }, []);
 
-  // Oturum açılınca ilk eşitleme
+  // Oturum açılınca (ya da eşitlenen işletme değişince) ilk eşitleme. İşletme, açılışta cihazda kayıtlı
+  // üyelikten gelir; sunucudaki üyelik farklı çıkarsa doğru işletmeyle baştan eşitlenir.
   const userId = session?.userId;
   useEffect(() => {
     setReady(false);
@@ -150,8 +168,18 @@ export function useCloudSync({
       return;
     }
     setStatus("loading");
-    void pullRemote(true);
-  }, [userId, pullRemote]);
+    let alive = true;
+    // Önceki işletme için süren bir eşitleme varsa bitmesi beklenir
+    const start = () => {
+      if (!alive) return;
+      if (busy.current) window.setTimeout(start, 150);
+      else void pullRemote(true);
+    };
+    start();
+    return () => {
+      alive = false;
+    };
+  }, [userId, businessId, pullRemote]);
 
   /**
    * Yerel veriyi sunucuya yazar. Araya başka bir telefonun yazması girdiyse onun verisi alınır,

@@ -183,8 +183,34 @@ export default function App() {
     };
   }, [session]);
 
+  /**
+   * Açılışın beklememesi için üyelik ve işletme listesi cihazda hatırlanır: uygulama bunlarla hemen açılır,
+   * sunucudaki güncel hali arka planda okunur ve farklıysa onunla değiştirilir.
+   */
+  const cacheKey = (kind: "uyelik" | "isletmeler") => (session ? `hesabim:${kind}:${session.userId}` : null);
+  const readCache = <T,>(kind: "uyelik" | "isletmeler"): T | undefined => {
+    const key = cacheKey(kind);
+    if (!key) return undefined;
+    try {
+      const raw = localStorage.getItem(key);
+      return raw ? (JSON.parse(raw) as T) : undefined;
+    } catch {
+      return undefined;
+    }
+  };
+  const writeCache = (kind: "uyelik" | "isletmeler", value: unknown) => {
+    const key = cacheKey(kind);
+    if (!key) return;
+    try {
+      if (value === null || value === undefined) localStorage.removeItem(key);
+      else localStorage.setItem(key, JSON.stringify(value));
+    } catch {
+      /* depolama yoksa açılış eskisi gibi sunucuyu bekler */
+    }
+  };
+
   // Çalışma alanı: ana işletme, sunucudaki bir ortak işletme ya da yalnızca bu cihazdaki (eski) bir işletme
-  const [serverBiz, setServerBiz] = useState<MyBusiness[] | null>(null);
+  const [serverBiz, setServerBiz] = useState<MyBusiness[] | null>(() => readCache<MyBusiness[]>("isletmeler") ?? null);
   const activeId = activeWorkspace();
   // Yerel işletme taşındıysa sunucudaki karşılığı kullanılır
   const localWs = listWorkspaces().find((w) => w.id === activeId);
@@ -195,7 +221,8 @@ export default function App() {
   const isMainWorkspace = wsKind === "main";
   const serverWs = wsKind === "main" || wsKind === "server";
   // Üyelik: undefined = henüz kontrol edilmedi, null = işletmesi yok (ana işletme için)
-  const [membership, setMembership] = useState<Membership | null | undefined>(undefined);
+  // Yalnızca bir işletmeye bağlı (sahip ya da üye) üyelik hatırlanır; istek bekleyen kişi her açılışta sunucuyu bekler
+  const [membership, setMembership] = useState<Membership | null | undefined>(() => readCache<Membership>("uyelik"));
   const [requestStatus, setRequestStatus] = useState<string | null>(null);
   const [recheck, setRecheck] = useState(0);
   // Ekiplerim: seçili üye (detay sayfası için)
@@ -269,6 +296,15 @@ export default function App() {
     }
     setSyncPausedState(paused);
   };
+  // Bu hesabın bu işletmesi bu telefonda daha önce eşitlendi mi (useCloudSync'in sakladığı ortak veri var mı)
+  const hasLocalCopy = (() => {
+    if (!session || !memberReady) return false;
+    try {
+      return localStorage.getItem(`hesabim:base:${session.userId}:${effMembership?.businessId ?? "kisisel"}`) !== null;
+    } catch {
+      return false;
+    }
+  })();
   const sync = useCloudSync({
     session: serverWs && memberReady && !waiting && !syncPaused ? session : null,
     businessId: effMembership?.businessId ?? null,
@@ -330,7 +366,14 @@ export default function App() {
       localStorage.removeItem("hesabim:workspaces");
       localStorage.removeItem(DATA_OWNER_KEY);
       Object.keys(localStorage)
-        .filter((k) => k.startsWith("hesabim:dirty:") || k.startsWith("hesabim:base:") || k.startsWith("hesabim:v1:"))
+        .filter(
+          (k) =>
+            k.startsWith("hesabim:dirty:") ||
+            k.startsWith("hesabim:base:") ||
+            k.startsWith("hesabim:v1:") ||
+            k.startsWith("hesabim:uyelik:") ||
+            k.startsWith("hesabim:isletmeler:"),
+        )
         .forEach((k) => localStorage.removeItem(k));
     } catch {
       /* erişilemiyorsa sayfa yenilemesi yeterli */
@@ -383,7 +426,10 @@ export default function App() {
     const load = () =>
       myBusinesses(session)
         .then((r) => {
-          if (alive && Array.isArray(r)) setServerBiz(r);
+          if (alive && Array.isArray(r)) {
+            setServerBiz(r);
+            writeCache("isletmeler", r);
+          }
         })
         .catch(() => undefined);
     void load();
@@ -443,6 +489,7 @@ export default function App() {
       }
       if (!alive) return;
       setMembership(m);
+      writeCache("uyelik", m);
       setRequestStatus(st);
     })();
     return () => {
@@ -529,8 +576,9 @@ export default function App() {
     return <div className="sync-loading">{t("Verileriniz getiriliyor…")}</div>;
   }
 
-  // Eşitleme duraklatılmışsa (tüm verileri sil sonrası) yükleme ekranı beklenmez
-  if (session && serverWs && !sync.ready && !syncPaused) {
+  // Eşitleme duraklatılmışsa (tüm verileri sil sonrası) yükleme ekranı beklenmez. Bu işletmenin verisi
+  // bu telefonda daha önce eşitlendiyse de beklenmez: son veri hemen gösterilir, güncellemesi arka planda gelir.
+  if (session && serverWs && !sync.ready && !syncPaused && !hasLocalCopy) {
     return <div className="sync-loading">{t("Verileriniz getiriliyor…")}</div>;
   }
 
