@@ -5,7 +5,7 @@
  * iPhone ve Android'de yerel eklenti, web'de Firebase'in JavaScript kütüphanesi (yalnızca gerektiğinde yüklenir) kullanılır.
  *
  * Kötüye kullanım sınırları (SMS ücretli): aynı numaraya iki kod arası en az 5 dakika ve saatte en fazla 3 kod;
- * bir cihaz 24 saatte en fazla 2 farklı numaraya kod isteyebilir (yanlış yazılan numarayı bir kez düzeltme hakkı).
+ * bir cihaz 24 saatte en fazla 4 farklı numaraya kod isteyebilir.
  * Sayaçlar iPhone'da Keychain'de tutulur; uygulama silinip yeniden kurulunca sıfırlanmaz.
  */
 import { Capacitor } from "@capacitor/core";
@@ -16,7 +16,7 @@ const WAIT_MS = 5 * 60 * 1000;
 const HOUR_MS = 60 * 60 * 1000;
 const DAY_MS = 24 * HOUR_MS;
 const MAX_PER_HOUR = 3;
-const MAX_NUMBERS_PER_DAY = 2;
+const MAX_NUMBERS_PER_DAY = 4;
 const STORE_KEY = "hesabim-sms-log";
 
 export type SmsErrorCode =
