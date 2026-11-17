@@ -11,6 +11,8 @@ const config: CapacitorConfig = {
   plugins: {
     // Klavye açılınca web görünümü küçülmesin; giriş paneli klavye yüksekliği kadar kendisi yukarı kalkar
     Keyboard: { resize: "none" },
+    // Telefon numarasını SMS koduyla doğrulamak için (Firebase); yalnızca telefon sağlayıcısı yüklenir
+    FirebaseAuthentication: { skipNativeAuth: false, providers: ["phone"] },
   },
 };
 

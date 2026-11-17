@@ -3905,6 +3905,17 @@ a.paywall-link {
   white-space: nowrap;
 }
 
+/* Doğrulanmadı (telefon): sarı, basılabilir; basınca SMS kodu gönderilir */
+.verified-badge.is-unverified {
+  border: 0;
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: rgba(217, 164, 65, 0.18);
+  color: #c58a1c;
+  cursor: pointer;
+}
+
 .verified-badge svg {
   width: 14px;
   height: 14px;
@@ -4319,6 +4330,7 @@ a.action-btn:visited {
 }
 
 .login-row-value {
+  flex: 1;
   min-width: 0;
   overflow-wrap: anywhere;
 }

@@ -755,6 +755,20 @@ const dict: Record<string, string> = {
   "Satıştan düşen {a} · Alıştan düşen {b}": "Из продаж {a} · Из закупок {b}",
   "Bu dönemde iade ve indirim yok.": "За этот период нет возвратов и скидок.",
   "Bu belge Hesabım Muhasebe uygulaması tarafından düzenlenmiştir.": "Документ составлен приложением Hesabım Muhasebe.",
+  // Telefon SMS doğrulaması
+  "Doğrulanmadı": "Не подтверждён",
+  "Telefon numaranız doğrulandı. Bu numara ve şifrenizle de giriş yapabilirsiniz.": "Ваш номер подтверждён. Вы также можете входить по этому номеру и паролю.",
+  "Numaranıza SMS ile 6 haneli bir kod göndereceğiz.": "Мы отправим 6-значный код по SMS.",
+  "{p} numarasına SMS ile 6 haneli bir kod gönderdik.": "Мы отправили 6-значный код по SMS на номер {p}.",
+  "Yeni kod için {m} dakika bekleyin.": "Новый код можно запросить через {m} мин.",
+  "Bu numaraya bir saatte en fazla 3 kod gönderilebilir. Daha sonra tekrar deneyin.": "На этот номер можно отправить не более 3 кодов в час. Попробуйте позже.",
+  "Bu cihazdan bugün başka numaralara kod gönderildi. Yarın tekrar deneyin.": "Сегодня с этого устройства уже отправлялись коды на другие номера. Попробуйте завтра.",
+  "Telefon numarası geçersiz.": "Неверный номер телефона.",
+  "Kodun süresi doldu. Yeni kod isteyin.": "Срок действия кода истёк. Запросите новый.",
+  "Çok fazla deneme yapıldı. Biraz sonra tekrar deneyin.": "Слишком много попыток. Попробуйте чуть позже.",
+  "SMS gönderilemedi; bağlantınızı kontrol edip tekrar deneyin.": "Не удалось отправить SMS; проверьте подключение и попробуйте снова.",
+  "Bu telefon numarasıyla zaten bir hesap var. Giriş yapın ya da şifrenizi yenileyin.": "Аккаунт с этим номером уже существует. Войдите или сбросьте пароль.",
+  "Numaranızı SMS ile gelecek 6 haneli kodla doğrulayacağız.": "Мы подтвердим ваш номер 6-значным кодом из SMS.",
 };
 
 export default dict;

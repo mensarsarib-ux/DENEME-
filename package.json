@@ -10,8 +10,10 @@
     "postinstall": "node scripts/patch-native-purchases.cjs && node scripts/patch-contacts.cjs"
   },
   "dependencies": {
+    "@aparajita/capacitor-secure-storage": "6.0.1",
     "@capacitor-community/contacts": "^6.1.1",
     "@capacitor-community/in-app-review": "6.0.0",
+    "@capacitor-firebase/authentication": "6.3.1",
     "@capacitor/android": "^6.2.3",
     "@capacitor/core": "^6.2.2",
     "@capacitor/filesystem": "^6.0.4",
@@ -22,6 +24,7 @@
     "@capacitor/status-bar": "^6.0.3",
     "@capgo/capacitor-native-biometric": "^6.0.4",
     "@capgo/native-purchases": "^6.0.42",
+    "firebase": "11.10.0",
     "qrcode-generator": "2.0.4",
     "react": "18.3.1",
     "react-dom": "18.3.1"

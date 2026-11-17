@@ -514,4 +514,18 @@ export const extra: Record<string, string> = {
   "Ekibinizle birlikte çalışın": "Work together with your team",
   "İşletmenizi ekip üyelerinizle paylaşın. Verileriniz cihazlarınız arasında eşitlenir.": "Share your business with team members. Your data syncs across your devices.",
   "Uygulama ekran görüntüsü": "App screenshot",
+  // Telefon SMS doğrulaması
+  "Doğrulanmadı": "Not verified",
+  "Telefon numaranız doğrulandı. Bu numara ve şifrenizle de giriş yapabilirsiniz.": "Your phone number is verified. You can also sign in with this number and your password.",
+  "Numaranıza SMS ile 6 haneli bir kod göndereceğiz.": "We'll send a 6-digit code to your number by SMS.",
+  "{p} numarasına SMS ile 6 haneli bir kod gönderdik.": "We sent a 6-digit code by SMS to {p}.",
+  "Yeni kod için {m} dakika bekleyin.": "Wait {m} min for a new code.",
+  "Bu numaraya bir saatte en fazla 3 kod gönderilebilir. Daha sonra tekrar deneyin.": "Up to 3 codes per hour can be sent to this number. Try again later.",
+  "Bu cihazdan bugün başka numaralara kod gönderildi. Yarın tekrar deneyin.": "Codes were already sent to other numbers from this device today. Try again tomorrow.",
+  "Telefon numarası geçersiz.": "Invalid phone number.",
+  "Kodun süresi doldu. Yeni kod isteyin.": "The code has expired. Request a new one.",
+  "Çok fazla deneme yapıldı. Biraz sonra tekrar deneyin.": "Too many attempts. Try again a little later.",
+  "SMS gönderilemedi; bağlantınızı kontrol edip tekrar deneyin.": "Could not send the SMS; check your connection and try again.",
+  "Bu telefon numarasıyla zaten bir hesap var. Giriş yapın ya da şifrenizi yenileyin.": "An account with this phone number already exists. Sign in or reset your password.",
+  "Numaranızı SMS ile gelecek 6 haneli kodla doğrulayacağız.": "We'll verify your number with a 6-digit code sent by SMS.",
 };

@@ -755,6 +755,20 @@ const dict: Record<string, string> = {
   "Satıştan düşen {a} · Alıştan düşen {b}": "Van verkoop {a} · Van inkoop {b}",
   "Bu dönemde iade ve indirim yok.": "Geen retouren of kortingen in deze periode.",
   "Bu belge Hesabım Muhasebe uygulaması tarafından düzenlenmiştir.": "Dit document is opgesteld door de app Hesabım Muhasebe.",
+  // Telefon SMS doğrulaması
+  "Doğrulanmadı": "Niet geverifieerd",
+  "Telefon numaranız doğrulandı. Bu numara ve şifrenizle de giriş yapabilirsiniz.": "Je nummer is geverifieerd. Je kunt ook inloggen met dit nummer en je wachtwoord.",
+  "Numaranıza SMS ile 6 haneli bir kod göndereceğiz.": "We sturen je een 6-cijferige code per sms.",
+  "{p} numarasına SMS ile 6 haneli bir kod gönderdik.": "We hebben een 6-cijferige code per sms gestuurd naar {p}.",
+  "Yeni kod için {m} dakika bekleyin.": "Wacht {m} min op een nieuwe code.",
+  "Bu numaraya bir saatte en fazla 3 kod gönderilebilir. Daha sonra tekrar deneyin.": "Naar dit nummer kunnen maximaal 3 codes per uur worden gestuurd. Probeer het later opnieuw.",
+  "Bu cihazdan bugün başka numaralara kod gönderildi. Yarın tekrar deneyin.": "Vanaf dit apparaat zijn vandaag al codes naar andere nummers gestuurd. Probeer het morgen opnieuw.",
+  "Telefon numarası geçersiz.": "Ongeldig telefoonnummer.",
+  "Kodun süresi doldu. Yeni kod isteyin.": "De code is verlopen. Vraag een nieuwe aan.",
+  "Çok fazla deneme yapıldı. Biraz sonra tekrar deneyin.": "Te veel pogingen. Probeer het zo meteen opnieuw.",
+  "SMS gönderilemedi; bağlantınızı kontrol edip tekrar deneyin.": "Sms kon niet worden verzonden; controleer je verbinding en probeer het opnieuw.",
+  "Bu telefon numarasıyla zaten bir hesap var. Giriş yapın ya da şifrenizi yenileyin.": "Er bestaat al een account met dit nummer. Log in of stel je wachtwoord opnieuw in.",
+  "Numaranızı SMS ile gelecek 6 haneli kodla doğrulayacağız.": "We verifiëren je nummer met een 6-cijferige code per sms.",
 };
 
 export default dict;

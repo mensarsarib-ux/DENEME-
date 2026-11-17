@@ -755,6 +755,20 @@ const dict: Record<string, string> = {
   "Satıştan düşen {a} · Alıştan düşen {b}": "Vom Verkauf {a} · Vom Einkauf {b}",
   "Bu dönemde iade ve indirim yok.": "Keine Rückgaben oder Rabatte in diesem Zeitraum.",
   "Bu belge Hesabım Muhasebe uygulaması tarafından düzenlenmiştir.": "Dieses Dokument wurde mit der App Hesabım Muhasebe erstellt.",
+  // Telefon SMS doğrulaması
+  "Doğrulanmadı": "Nicht bestätigt",
+  "Telefon numaranız doğrulandı. Bu numara ve şifrenizle de giriş yapabilirsiniz.": "Ihre Telefonnummer ist bestätigt. Sie können sich auch mit dieser Nummer und Ihrem Passwort anmelden.",
+  "Numaranıza SMS ile 6 haneli bir kod göndereceğiz.": "Wir senden Ihnen einen 6-stelligen Code per SMS.",
+  "{p} numarasına SMS ile 6 haneli bir kod gönderdik.": "Wir haben einen 6-stelligen Code per SMS an {p} gesendet.",
+  "Yeni kod için {m} dakika bekleyin.": "Warten Sie {m} Min. auf einen neuen Code.",
+  "Bu numaraya bir saatte en fazla 3 kod gönderilebilir. Daha sonra tekrar deneyin.": "An diese Nummer können höchstens 3 Codes pro Stunde gesendet werden. Versuchen Sie es später erneut.",
+  "Bu cihazdan bugün başka numaralara kod gönderildi. Yarın tekrar deneyin.": "Von diesem Gerät wurden heute bereits Codes an andere Nummern gesendet. Versuchen Sie es morgen erneut.",
+  "Telefon numarası geçersiz.": "Ungültige Telefonnummer.",
+  "Kodun süresi doldu. Yeni kod isteyin.": "Der Code ist abgelaufen. Fordern Sie einen neuen an.",
+  "Çok fazla deneme yapıldı. Biraz sonra tekrar deneyin.": "Zu viele Versuche. Versuchen Sie es etwas später erneut.",
+  "SMS gönderilemedi; bağlantınızı kontrol edip tekrar deneyin.": "SMS konnte nicht gesendet werden; prüfen Sie Ihre Verbindung und versuchen Sie es erneut.",
+  "Bu telefon numarasıyla zaten bir hesap var. Giriş yapın ya da şifrenizi yenileyin.": "Mit dieser Telefonnummer gibt es bereits ein Konto. Melden Sie sich an oder setzen Sie Ihr Passwort zurück.",
+  "Numaranızı SMS ile gelecek 6 haneli kodla doğrulayacağız.": "Wir bestätigen Ihre Nummer mit einem 6-stelligen SMS-Code.",
 };
 
 export default dict;

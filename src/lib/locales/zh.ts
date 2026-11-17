@@ -755,6 +755,20 @@ const dict: Record<string, string> = {
   "Satıştan düşen {a} · Alıştan düşen {b}": "从销售中扣减 {a} · 从采购中扣减 {b}",
   "Bu dönemde iade ve indirim yok.": "此期间没有退货或折扣。",
   "Bu belge Hesabım Muhasebe uygulaması tarafından düzenlenmiştir.": "本文件由 Hesabım Muhasebe 应用编制。",
+  // Telefon SMS doğrulaması
+  "Doğrulanmadı": "未验证",
+  "Telefon numaranız doğrulandı. Bu numara ve şifrenizle de giriş yapabilirsiniz.": "您的手机号已验证。您也可以使用此号码和密码登录。",
+  "Numaranıza SMS ile 6 haneli bir kod göndereceğiz.": "我们将通过短信向您发送6位验证码。",
+  "{p} numarasına SMS ile 6 haneli bir kod gönderdik.": "我们已通过短信向 {p} 发送6位验证码。",
+  "Yeni kod için {m} dakika bekleyin.": "请等待{m}分钟后再获取新验证码。",
+  "Bu numaraya bir saatte en fazla 3 kod gönderilebilir. Daha sonra tekrar deneyin.": "此号码每小时最多可接收3个验证码。请稍后再试。",
+  "Bu cihazdan bugün başka numaralara kod gönderildi. Yarın tekrar deneyin.": "今天此设备已向其他号码发送过验证码。请明天再试。",
+  "Telefon numarası geçersiz.": "手机号无效。",
+  "Kodun süresi doldu. Yeni kod isteyin.": "验证码已过期。请重新获取。",
+  "Çok fazla deneme yapıldı. Biraz sonra tekrar deneyin.": "尝试次数过多。请稍后再试。",
+  "SMS gönderilemedi; bağlantınızı kontrol edip tekrar deneyin.": "短信发送失败；请检查网络后重试。",
+  "Bu telefon numarasıyla zaten bir hesap var. Giriş yapın ya da şifrenizi yenileyin.": "此手机号已注册账户。请登录或重置密码。",
+  "Numaranızı SMS ile gelecek 6 haneli kodla doğrulayacağız.": "我们将通过短信验证码（6位）验证您的号码。",
 };
 
 export default dict;

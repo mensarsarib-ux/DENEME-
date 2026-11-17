@@ -755,6 +755,20 @@ const dict: Record<string, string> = {
   "Satıştan düşen {a} · Alıştan düşen {b}": "من المبيعات {a} · من المشتريات {b}",
   "Bu dönemde iade ve indirim yok.": "لا مرتجعات أو خصومات في هذه الفترة.",
   "Bu belge Hesabım Muhasebe uygulaması tarafından düzenlenmiştir.": "أعدّ هذا المستند تطبيقُ Hesabım Muhasebe.",
+  // Telefon SMS doğrulaması
+  "Doğrulanmadı": "غير موثّق",
+  "Telefon numaranız doğrulandı. Bu numara ve şifrenizle de giriş yapabilirsiniz.": "تم توثيق رقم هاتفك. يمكنك أيضًا تسجيل الدخول بهذا الرقم وكلمة المرور.",
+  "Numaranıza SMS ile 6 haneli bir kod göndereceğiz.": "سنرسل إلى رقمك رمزًا من 6 أرقام عبر رسالة SMS.",
+  "{p} numarasına SMS ile 6 haneli bir kod gönderdik.": "أرسلنا رمزًا من 6 أرقام عبر SMS إلى {p}.",
+  "Yeni kod için {m} dakika bekleyin.": "انتظر {m} دقيقة لطلب رمز جديد.",
+  "Bu numaraya bir saatte en fazla 3 kod gönderilebilir. Daha sonra tekrar deneyin.": "يمكن إرسال 3 رموز كحد أقصى في الساعة إلى هذا الرقم. حاول لاحقًا.",
+  "Bu cihazdan bugün başka numaralara kod gönderildi. Yarın tekrar deneyin.": "أُرسلت اليوم رموز إلى أرقام أخرى من هذا الجهاز. حاول غدًا.",
+  "Telefon numarası geçersiz.": "رقم الهاتف غير صالح.",
+  "Kodun süresi doldu. Yeni kod isteyin.": "انتهت صلاحية الرمز. اطلب رمزًا جديدًا.",
+  "Çok fazla deneme yapıldı. Biraz sonra tekrar deneyin.": "محاولات كثيرة جدًا. حاول بعد قليل.",
+  "SMS gönderilemedi; bağlantınızı kontrol edip tekrar deneyin.": "تعذّر إرسال الرسالة؛ تحقق من اتصالك وحاول مرة أخرى.",
+  "Bu telefon numarasıyla zaten bir hesap var. Giriş yapın ya da şifrenizi yenileyin.": "يوجد حساب بهذا الرقم بالفعل. سجّل الدخول أو أعد تعيين كلمة المرور.",
+  "Numaranızı SMS ile gelecek 6 haneli kodla doğrulayacağız.": "سنوثّق رقمك برمز من 6 أرقام يصلك عبر SMS.",
 };
 
 export default dict;

@@ -755,6 +755,20 @@ const dict: Record<string, string> = {
   "Satıştan düşen {a} · Alıştan düşen {b}": "बिक्री से घटा {a} · खरीद से घटा {b}",
   "Bu dönemde iade ve indirim yok.": "इस अवधि में कोई वापसी या छूट नहीं।",
   "Bu belge Hesabım Muhasebe uygulaması tarafından düzenlenmiştir.": "यह दस्तावेज़ Hesabım Muhasebe ऐप द्वारा तैयार किया गया है।",
+  // Telefon SMS doğrulaması
+  "Doğrulanmadı": "सत्यापित नहीं",
+  "Telefon numaranız doğrulandı. Bu numara ve şifrenizle de giriş yapabilirsiniz.": "आपका नंबर सत्यापित हो गया है। आप इस नंबर और अपने पासवर्ड से भी साइन इन कर सकते हैं।",
+  "Numaranıza SMS ile 6 haneli bir kod göndereceğiz.": "हम आपके नंबर पर SMS से 6 अंकों का कोड भेजेंगे।",
+  "{p} numarasına SMS ile 6 haneli bir kod gönderdik.": "हमने {p} पर SMS से 6 अंकों का कोड भेजा है।",
+  "Yeni kod için {m} dakika bekleyin.": "नए कोड के लिए {m} मिनट प्रतीक्षा करें।",
+  "Bu numaraya bir saatte en fazla 3 kod gönderilebilir. Daha sonra tekrar deneyin.": "इस नंबर पर एक घंटे में अधिकतम 3 कोड भेजे जा सकते हैं। बाद में फिर कोशिश करें।",
+  "Bu cihazdan bugün başka numaralara kod gönderildi. Yarın tekrar deneyin.": "आज इस डिवाइस से दूसरे नंबरों पर पहले ही कोड भेजे जा चुके हैं। कल फिर कोशिश करें।",
+  "Telefon numarası geçersiz.": "फ़ोन नंबर अमान्य है।",
+  "Kodun süresi doldu. Yeni kod isteyin.": "कोड की समय-सीमा समाप्त हो गई। नया कोड माँगें।",
+  "Çok fazla deneme yapıldı. Biraz sonra tekrar deneyin.": "बहुत अधिक प्रयास। थोड़ी देर बाद फिर कोशिश करें।",
+  "SMS gönderilemedi; bağlantınızı kontrol edip tekrar deneyin.": "SMS नहीं भेजा जा सका; अपना कनेक्शन जाँचें और फिर कोशिश करें।",
+  "Bu telefon numarasıyla zaten bir hesap var. Giriş yapın ya da şifrenizi yenileyin.": "इस नंबर से पहले से एक खाता मौजूद है। साइन इन करें या पासवर्ड रीसेट करें।",
+  "Numaranızı SMS ile gelecek 6 haneli kodla doğrulayacağız.": "हम SMS से भेजे गए 6 अंकों के कोड से आपका नंबर सत्यापित करेंगे।",
 };
 
 export default dict;

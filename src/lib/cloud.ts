@@ -298,13 +298,13 @@ export async function fetchPlan(
 /** Hesap bilgileri: ad, telefon (kayıtta girilen) ve e-postanın doğrulanıp doğrulanmadığı */
 export interface AccountProfile {
   name: string;
-  /** Kayıtta isteğe bağlı yazılan telefon (giriş için doğrulanmış telefon değil) */
+  /** Hesabın telefonu (+90…); telefonla girişte kullanılır */
   phone: string;
+  /** Telefon SMS koduyla doğrulandı mı (numara sonradan değiştiyse hayır) */
+  phoneVerified: boolean;
   emailConfirmed: boolean;
-  /** Girişte kullanılabilen e-posta ve telefon (+90…) ile doğrulanıp doğrulanmadıkları */
+  /** Girişte kullanılan e-posta */
   loginEmail: string;
-  loginPhone: string;
-  phoneConfirmed: boolean;
 }
 
 export async function getAccountProfile(session: Session): Promise<AccountProfile | "expired"> {
@@ -315,18 +315,17 @@ export async function getAccountProfile(session: Session): Promise<AccountProfil
   if (!res.ok) throw new CloudError("unknown", String(res.status));
   const user = (await res.json()) as {
     email?: string | null;
-    phone?: string | null;
     email_confirmed_at?: string | null;
-    phone_confirmed_at?: string | null;
     user_metadata?: { name?: string; phone?: string };
+    app_metadata?: { phone_verified?: string };
   };
+  const phone = user.user_metadata?.phone ?? "";
   return {
     name: user.user_metadata?.name ?? "",
-    phone: user.user_metadata?.phone ?? "",
+    phone,
+    phoneVerified: phone !== "" && user.app_metadata?.phone_verified === phone,
     emailConfirmed: !!user.email && !!user.email_confirmed_at,
     loginEmail: user.email ?? "",
-    loginPhone: user.phone ? `+${user.phone.replace(/^\+/, "")}` : "",
-    phoneConfirmed: !!user.phone && !!user.phone_confirmed_at,
   };
 }
 
@@ -387,6 +386,35 @@ export async function updateAccountProfile(session: Session, name: string, phone
   if (res.status === 401) return "expired";
   if (!res.ok) throw phoneError((await res.json().catch(() => ({}))) as AuthBody, phone);
   return true;
+}
+
+/**
+ * SMS doğrulamasından sonra: numara başka bir hesapta doğrulanmış mı?
+ * idToken Firebase'in verdiği belirteçtir; numara sunucuda bu belirteçten okunur.
+ */
+export async function checkVerifiedPhone(idToken: string): Promise<{ phone: string; taken: boolean }> {
+  const res = await call("/functions/v1/phone-verify", { method: "POST", body: JSON.stringify({ idToken, action: "check" }) });
+  if (!res.ok) throw new CloudError(res.status === 401 ? "invalid_credentials" : "unknown", String(res.status));
+  return (await res.json()) as { phone: string; taken: boolean };
+}
+
+/** Doğrulanan numarayı hesaba yazar; numara başka bir hesapta doğrulanmışsa phone_taken */
+export async function attachVerifiedPhone(session: Session, idToken: string): Promise<string | "expired"> {
+  const s = await fresh(session);
+  if (!s) return "expired";
+  const res = await call("/functions/v1/phone-verify", {
+    method: "POST",
+    token: s.accessToken,
+    body: JSON.stringify({ idToken, action: "attach" }),
+  });
+  if (res.status === 409) throw new CloudError("phone_taken", "taken");
+  if (res.status === 401) {
+    const body = (await res.json().catch(() => ({}))) as { error?: string };
+    if (body.error === "expired") return "expired";
+    throw new CloudError("invalid_credentials", "token");
+  }
+  if (!res.ok) throw new CloudError("unknown", String(res.status));
+  return ((await res.json()) as { phone: string }).phone;
 }
 
 /** Şifre değiştirme: önce mevcut şifre doğrulanır (oturum değiştirilmeden), sonra yeni şifre yazılır */
