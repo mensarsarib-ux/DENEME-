@@ -51,3 +51,12 @@ Yapıldı (17 Kasım): Firebase projesi "HESABIM", iOS uygulaması (com.mensar.h
 - Bütçe: aylık 1.000 TL, uyarılar 500 / 900 / 1.000 TL (e-posta). Harcamayı durduran tavan YOK: Google Cloud'da Firebase telefon doğrulaması için günlük SMS kotası bulunmuyor, bütçedeki "harcama limiti" seçeneği bu hesapta kapalı.
 - Bu yüzden Ensar Bey'in onayıyla **SMS bölge politikası: yalnızca Türkiye**. Yurt dışına açılınca ülke eklenir. Uygulamada yurt dışı numara girilirse anlaşılır bir mesaj göster (ör. "Şimdilik yalnızca Türkiye numaralarıyla kayıt olunabiliyor").
 - Uygulamadaki 5 dakika / saatte 3 kod sınırı aynen geçerli.
+
+## Güncelleme (17 Kasım, 16:55) — önceki "yalnızca Türkiye" kararı İPTAL
+- Ensar Bey'in kararı: SMS bölge politikası **kısıtsız (tüm dünya)** kalacak. Koruma uygulama sınırlarıyla sağlanacak.
+- Sınırlar:
+  1. Aynı numaraya iki kod isteği arası en az 5 dakika, saatte en fazla 3 kod.
+  2. **Aynı cihazdan farklı numaralara kod gönderilemez:** bir cihaz 24 saatte en fazla 1 farklı numaraya kod isteyebilir (aynı numaraya yeniden gönderim 1. kurala tabi). Numarasını yanlış yazan kullanıcı için: ilk kod doğrulanmadıysa numarayı 1 kez değiştirme hakkı olabilir; nasıl kurgulayacağını Ensar Bey'e öner.
+  3. Sayaçlar iOS **Keychain**'de tutulsun (uygulama silinip yeniden kurulunca sıfırlanmasın).
+- Sunucu tarafı koruma: Firebase **App Check (App Attest)** Authentication için açılabiliyorsa aç ve zorunlu kıl (istek gerçekten App Store'daki uygulamadan gelmiyorsa SMS gitmez). Desteği ve iOS 14+ gereksinimini doğrula; Apple incelemesindeki test numarası çalışmaya devam etmeli.
+- Bütçe uyarısı 500 / 900 / 1.000 TL kurulu; Ensar Bey e-postaları takip edecek.
