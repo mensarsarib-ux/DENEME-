@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { notifyChanges, pull, push, pushIfUnchanged, type Session } from "./cloud";
+import { notifyChanges, pull, pullStamp, push, pushIfUnchanged, type Session } from "./cloud";
 import { mergeSnapshots } from "./merge";
 import { describeChanges } from "./changes";
 
@@ -115,6 +115,12 @@ export function useCloudSync({
     if (!cur.session || busy.current) return;
     busy.current = true;
     try {
+      // Sık kontrolde önce yalnızca güncelleme zamanına bakılır; değişmediyse veri indirilmez (trafik tasarrufu)
+      if (!first && syncedAt.current) {
+        const stamp = await pullStamp(cur.session, cur.businessId);
+        if (stamp === "expired") return latest.current.onExpired();
+        if (stamp === syncedAt.current) return;
+      }
       const remote = await pull(cur.session, cur.businessId);
       if (remote === "expired") return latest.current.onExpired();
       // Beklerken eşitlenen işletme ya da hesap değiştiyse bu sonuç artık geçersiz (yeni eşitleme başlar)

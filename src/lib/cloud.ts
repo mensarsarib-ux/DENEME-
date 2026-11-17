@@ -452,6 +452,20 @@ export async function changePassword(session: Session, current: string, next: st
   return true;
 }
 
+/** Sunucudaki verinin güncelleme zamanı; veri indirilmeden yalnızca değişiklik kontrolü için kullanılır */
+export async function pullStamp(session: Session, businessId?: string | null): Promise<string | null | "expired"> {
+  const s = await fresh(session);
+  if (!s) return "expired";
+  const path = businessId
+    ? `/rest/v1/business_data?select=updated_at&business_id=eq.${businessId}`
+    : `/rest/v1/user_data?select=updated_at&user_id=eq.${s.userId}`;
+  const res = await call(path, { token: s.accessToken });
+  if (res.status === 401) return "expired";
+  if (!res.ok) throw new CloudError("unknown", String(res.status));
+  const rows = (await res.json()) as { updated_at: string }[];
+  return rows.length ? rows[0].updated_at : null;
+}
+
 export async function pull(session: Session, businessId?: string | null): Promise<RemoteData | null | "expired"> {
   const s = await fresh(session);
   if (!s) return "expired";
