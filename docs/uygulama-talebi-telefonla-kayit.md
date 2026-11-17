@@ -45,3 +45,9 @@ Yapıldı (17 Kasım): Firebase projesi "HESABIM", iOS uygulaması (com.mensar.h
 ## Teslim
 - Bitince: neler yapıldı, Ensar Bey'in hangi adımları tamamladığı, test sonucu (gerçek numarayla bir kayıt, bir şifre yenileme), yeni derleme gerekip gerekmediği.
 - Bu yeni sürüm yayına girene kadar e-posta kodlarının spama düşmemesi için Resend ile özel SMTP kurulumu önerildi (Supabase → Authentication → Emails → SMTP). Ensar Bey yaptıysa dokunma, yapmadıysa hatırlat.
+
+## Güncelleme (17 Kasım, 16:45)
+- Proje Blaze planında (faturalandırma hesabı "Firebase Ödemesi", para birimi TRY). Türkiye SMS fiyatı 0,01 $/SMS (≈0,50 TL), günde ilk 10 SMS ücretsiz; telefonla giriş ilk 50.000 aylık aktif kullanıcıya kadar ücretsiz (Google Identity Platform fiyat sayfası).
+- Bütçe: aylık 1.000 TL, uyarılar 500 / 900 / 1.000 TL (e-posta). Harcamayı durduran tavan YOK: Google Cloud'da Firebase telefon doğrulaması için günlük SMS kotası bulunmuyor, bütçedeki "harcama limiti" seçeneği bu hesapta kapalı.
+- Bu yüzden Ensar Bey'in onayıyla **SMS bölge politikası: yalnızca Türkiye**. Yurt dışına açılınca ülke eklenir. Uygulamada yurt dışı numara girilirse anlaşılır bir mesaj göster (ör. "Şimdilik yalnızca Türkiye numaralarıyla kayıt olunabiliyor").
+- Uygulamadaki 5 dakika / saatte 3 kod sınırı aynen geçerli.
