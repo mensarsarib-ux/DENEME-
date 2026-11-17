@@ -4,7 +4,8 @@
  * (ID token) alınır ve sunucumuza (phone-verify) gönderilir; Firebase oturumu hemen kapatılır.
  * iPhone ve Android'de yerel eklenti, web'de Firebase'in JavaScript kütüphanesi (yalnızca gerektiğinde yüklenir) kullanılır.
  *
- * Kötüye kullanım sınırları (SMS ücretli): aynı numaraya iki kod arası en az 5 dakika ve saatte en fazla 3 kod;
+ * Kötüye kullanım sınırları (SMS ücretli): aynı numaraya ilk yeniden gönderim 1 dakika, sonrakiler 5 dakika sonra;
+ * saatte en fazla 3 kod;
  * bir cihaz 24 saatte en fazla 4 farklı numaraya kod isteyebilir.
  * Sayaçlar iPhone'da Keychain'de tutulur; uygulama silinip yeniden kurulunca sıfırlanmaz.
  */
@@ -12,6 +13,7 @@ import { Capacitor } from "@capacitor/core";
 import { firebaseConfig } from "./firebaseConfig";
 import { t } from "./i18n";
 
+const FIRST_WAIT_MS = 60 * 1000;
 const WAIT_MS = 5 * 60 * 1000;
 const HOUR_MS = 60 * 60 * 1000;
 const DAY_MS = 24 * HOUR_MS;
@@ -83,13 +85,19 @@ async function writeLog(list: SendLog[]): Promise<void> {
   }
 }
 
+/** Son gönderimden sonra beklenecek süre: son bir saatte tek kod gittiyse 1 dakika, daha fazlaysa 5 dakika */
+function waitAfter(same: SendLog[], now: number): number {
+  return same.filter((e) => now - e.at < HOUR_MS).length <= 1 ? FIRST_WAIT_MS : WAIT_MS;
+}
+
 /** Bu numaraya şimdi kod gönderilebilir mi? Gönderilemiyorsa SmsError fırlatır. */
 async function checkLimits(phone: string): Promise<void> {
   const log = await readLog();
   const now = Date.now();
   const same = log.filter((e) => e.phone === phone);
   const last = same.reduce((m, e) => Math.max(m, e.at), 0);
-  if (last && now - last < WAIT_MS) throw new SmsError("wait", Math.ceil((WAIT_MS - (now - last)) / 1000));
+  const wait = waitAfter(same, now);
+  if (last && now - last < wait) throw new SmsError("wait", Math.ceil((wait - (now - last)) / 1000));
   if (same.filter((e) => now - e.at < HOUR_MS).length >= MAX_PER_HOUR) throw new SmsError("hourly");
   const others = new Set(log.filter((e) => e.phone !== phone).map((e) => e.phone));
   // Yeni bir numara: son 24 saatte en fazla MAX_NUMBERS_PER_DAY farklı numaraya kod gidebilir
@@ -98,8 +106,10 @@ async function checkLimits(phone: string): Promise<void> {
 
 /** Aynı numaraya yeniden gönderim için kalan süre (sn); beklemek gerekmiyorsa 0 */
 export async function resendWait(phone: string): Promise<number> {
-  const last = (await readLog()).filter((e) => e.phone === phone).reduce((m, e) => Math.max(m, e.at), 0);
-  return last ? Math.max(0, Math.ceil((WAIT_MS - (Date.now() - last)) / 1000)) : 0;
+  const now = Date.now();
+  const same = (await readLog()).filter((e) => e.phone === phone);
+  const last = same.reduce((m, e) => Math.max(m, e.at), 0);
+  return last ? Math.max(0, Math.ceil((waitAfter(same, now) - (now - last)) / 1000)) : 0;
 }
 
 // ---------- Firebase ----------

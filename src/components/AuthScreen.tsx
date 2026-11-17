@@ -81,8 +81,8 @@ const BACK: Partial<Record<Screen, Screen>> = {
 /** Hesap ilk açılışta rastgele bir şifreyle oluşturulur; gerçek şifre e-posta kodu doğrulandıktan sonra belirlenir */
 const randomPassword = () => Array.from(crypto.getRandomValues(new Uint8Array(24)), (b) => b.toString(36)).join("");
 
-/** Kod tekrar gönderilmeden önce beklenen süre (sn) */
-const RESEND_WAIT = 45;
+/** E-posta kodu tekrar gönderilmeden önce beklenen süre (sn); Supabase aynı adrese 60 sn'de bir e-posta gönderir */
+const RESEND_WAIT = 60;
 
 /** Kelimeler arasına boşluk koymayan diller (onay cümlesinin parçaları bitişik yazılır) */
 const TIGHT = ["ja", "zh"];
