@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "216927352695",
+    "project_id": "hesabim-46214",
+    "storage_bucket": "hesabim-46214.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:216927352695:android:8f7dba061fb339e7495372",
+        "android_client_info": {
+          "package_name": "com.hesabimmuhasebe"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCjAjy1jrkUQ5IN-GQ9U0XHrHueO6TGBdI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
