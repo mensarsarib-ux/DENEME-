@@ -4,7 +4,6 @@ import {
   ENTRY_KINDS,
   EXTRA_DIRECTIONS,
   balanceOf,
-  directionLabel,
   isExtra,
   kindOf,
   needsAccount,
@@ -417,7 +416,7 @@ export default function CustomerPage({
                     )}
                   </div>
                   {(row.description || row.sub) && (
-                    <p>{[t(directionLabel(row)), row.description].filter(Boolean).join(" · ")}</p>
+                    <p>{row.description}</p>
                   )}
                 </div>
                 <span className={`tx-amount ${row.type === "TAHSİLAT" ? "is-in" : outflow ? "is-debt" : ""}`}>
@@ -700,7 +699,6 @@ export default function CustomerPage({
                 <strong style={{ color: ACCENT[kindOf(selected)].color }}>
                   {t(kindOf(selected))}
                 </strong>
-                {selected.sub && <span>{t(directionLabel(selected))}</span>}
                 <span>{formatDateTime(selected.date)}</span>
               </div>
               <span

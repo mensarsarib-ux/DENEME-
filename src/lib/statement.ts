@@ -1,5 +1,5 @@
 import type { Account, Customer, Profile, Transaction } from "../data/mock";
-import { signOf, transactionsOf, directionLabel, kindOf } from "../data/mock";
+import { signOf, transactionsOf, kindOf } from "../data/mock";
 import { currencyCode, money } from "./format";
 import { locale, t } from "./i18n";
 import qrcode from "qrcode-generator";
@@ -105,7 +105,7 @@ export function buildStatement({ party, accounts, transactions, range }: Stateme
       date: dateText(tx.date),
       type: t(kindOf(tx)),
       account: tx.account ? t(accounts.find((a) => a.id === tx.account)?.name ?? "") : "",
-      description: [t(directionLabel(tx)), tx.description].filter(Boolean).join(" · "),
+      description: tx.description,
       debit: sign > 0 ? tx.amount : null,
       credit: sign < 0 ? tx.amount : null,
       balance,
