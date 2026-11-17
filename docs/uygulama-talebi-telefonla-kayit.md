@@ -22,8 +22,9 @@ Tarih: 17 Kasım 2026. Kimden: "Meta reklam yönetimi ve pazarlama" sohbeti. Ens
   - Telefonla açılan hesap: `src/lib/cloud.ts` içinde "Telefonla açılan hesapta e-posta yoktur" notu ve `supabase/phone-login.sql`, `phone-security.sql`, `functions/phone-login` var. Mevcut yapıyla uyumlu olan yolu seç (auth.users.phone + phone_confirm, ya da mevcut eşleme). Giriş (`phone-login`) telefonla açılan hesapları da kapsamalı.
 - **Şifre yenileme:** aynı doğrulama + Edge Function'da yönetici yetkisiyle şifre güncelleme.
 - **Kötüye kullanım koruması:**
-  - Firebase → Authentication → Settings → **SMS region policy: yalnızca Türkiye (TR)** (yurt dışı numaralara SMS pompalama faturasını önler).
-  - Google Cloud'da günlük SMS kotası sınırı ve bütçe uyarısı (ör. ayda 100 TL).
+  - **Güncelleme (17 Kasım, Ensar Bey'in kararı):** Proje ücretli plana (Blaze) geçiyor, SMS tüm dünyaya açık kalacak (bölge kısıtı yok; uygulama ileride yurt dışına açılacak).
+  - **Bekleme süresi (Ensar Bey'in istediği):** aynı numaraya ve aynı cihazdan kod isteme arası en az **5 dakika**, saatte en fazla **3** kod. Uygulamada "Kodu tekrar gönder" düğmesi geri sayımla kilitli; sınır aşılınca anlaşılır Türkçe mesaj. Sayaç cihazda tutulur; Firebase'in kendi numara başı sınırları ve iOS uygulama doğrulaması (APNs) ek koruma.
+  - **Asıl koruma (Ensar Bey Google Cloud'da kuracak):** Identity Toolkit API için **günlük SMS kotası** (ör. günde 100) ve **bütçe uyarısı**. Bölge kısıtı olmadığı için SMS pompalama dolandırıcılığına karşı tavan bu kota.
   - Edge Function'da numara ve IP başına deneme sınırı (phone-login'deki gibi).
 - **Apple incelemesi:** Firebase'de **test telefon numarası** (sabit kodlu, SMS gitmez) tanımla; App Store Connect inceleme notlarına bu numara ve kodu yaz. Yoksa Apple kayıt olamaz, uygulama reddedilir.
 
@@ -32,8 +33,10 @@ Tarih: 17 Kasım 2026. Kimden: "Meta reklam yönetimi ve pazarlama" sohbeti. Ens
 2. iOS uygulaması ekle: bundle `com.mensar.hesabim` → `GoogleService-Info.plist` indir (repoya koymak yerine nasıl verileceğini sen söyle; gizli anahtar sayılmaz ama yine de dikkat).
 3. Authentication → Sign-in method → **Phone** aç. Proje genel adı: "Hesabım Muhasebe" (SMS metninde görünür).
 4. Apple Developer → Keys → **APNs anahtarı** (.p8) oluştur → Firebase → Proje ayarları → Cloud Messaging → yükle. (Firebase iOS'ta sessiz bildirimle doğrulama yapar; yoksa reCAPTCHA sayfası açılır.) Not: bu, App Store Connect API anahtarından farklı bir anahtardır.
-5. Gerekirse Blaze (kullandıkça öde) planı + kart; bütçe uyarısı kur.
-6. SMS region policy → yalnızca TR.
+5. Blaze (kullandıkça öde) planı + kart; bütçe uyarısı; günlük SMS kotası.
+6. SMS bölge politikası: kısıt yok (tüm dünya) — Ensar Bey'in kararı.
+
+Yapıldı (17 Kasım): Firebase projesi "HESABIM", iOS uygulaması (com.mensar.hesabim, App Store 6826814944) eklendi, Phone sağlayıcısı açıldı, test numarası +90 555 000 00 00 / 123456 eklendi. GoogleService-Info.plist Ensar Bey'de; bu sohbete ek olarak gönderecek.
 
 ## Gizlilik
 - Gizlilik politikası (public/gizlilik.html ve /en) ve KVKK metnine: telefon numarası doğrulama için Google Firebase'e iletilir.
