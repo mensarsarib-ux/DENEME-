@@ -19,3 +19,8 @@ Uygulama: "Hesabım Muhasebe: Veresiye", sürüm 1.1 (16 Kasım 17:46 UTC yayın
 | kasa takibi, cari, cari takip, ön muhasebe, gelir gider, esnaf defteri, tahsilat, müşteri takip, dükkan, ekstre, defter | ilk 50 dışı | ilk 50 dışı |
 
 Not: Ölçüm yeni ad ve metinlerin yayına girmesinden ~5 saat sonra yapıldı. Tekrar ölçüm: 19 Kasım.
+
+## 17 Kasım 2026, ~17:00 (aynı yöntem)
+hesabım muhasebe 1 · veresiye 21 · veresiye takip 16 · veresiye defteri 33 · borç alacak 41 · tedarikçi 23 · bakkal 30 · esnaf 44.
+İlk 50 dışı: muhasebe, cari hesap, cari, cari takip, kasa takibi, hesabım, gelir gider, tahsilat, müşteri takip, esnaf defteri, dükkan, ekstre, borç takibi. Yanıt alınamadı: ön muhasebe, defter.
+Puan: 3, ortalama 5,0. Sürüm 1.1.
