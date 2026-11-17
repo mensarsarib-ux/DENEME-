@@ -528,4 +528,5 @@ export const extra: Record<string, string> = {
   "SMS gönderilemedi; bağlantınızı kontrol edip tekrar deneyin.": "Could not send the SMS; check your connection and try again.",
   "Bu telefon numarasıyla zaten bir hesap var. Giriş yapın ya da şifrenizi yenileyin.": "An account with this phone number already exists. Sign in or reset your password.",
   "Numaranızı SMS ile gelecek 6 haneli kodla doğrulayacağız.": "We'll verify your number with a 6-digit code sent by SMS.",
+  "Bu telefon numarasına bağlı hesap yok. E-posta adresinizle giriş yapın.": "No account is linked to this phone number. Sign in with your email address.",
 };

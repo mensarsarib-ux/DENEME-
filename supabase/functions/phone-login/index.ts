@@ -55,7 +55,11 @@ Deno.serve(async (req) => {
   };
 
   const { data: email } = await admin.rpc("email_for_phone", { p: phone });
-  if (!email) return await failed();
+  if (!email) {
+    // Numaraya bağlı hesap yok: ayrı bir yanıt döner (kullanıcıyı e-posta ile girmeye yönlendirir); deneme yine sayılır
+    await admin.from("phone_login_attempts").insert({ phone, ip });
+    return json({ error: "no_account" }, 401);
+  }
 
   // Asıl şifre kontrolü Supabase'in kendi girişiyle yapılır
   const res = await fetch(`${url}/auth/v1/token?grant_type=password`, {

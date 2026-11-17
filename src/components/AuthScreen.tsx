@@ -178,6 +178,7 @@ export default function AuthScreen({
     const reason = e instanceof CloudError ? e.code : "unknown";
     switch (reason) {
       case "invalid_credentials": return t("Bilgiler veya şifre hatalı.");
+      case "no_account": return t("Bu telefon numarasına bağlı hesap yok. E-posta adresinizle giriş yapın.");
       case "email_taken": return t("Bu e-posta ile zaten bir hesap var; giriş yapın.");
       case "phone_taken": return t("Bu telefon numarası başka bir hesapta kullanılıyor.");
       case "too_many_attempts": return t("Çok fazla hatalı deneme yapıldı. 15 dakika sonra tekrar deneyin.");

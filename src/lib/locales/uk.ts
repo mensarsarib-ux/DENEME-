@@ -769,6 +769,7 @@ const dict: Record<string, string> = {
   "SMS gönderilemedi; bağlantınızı kontrol edip tekrar deneyin.": "Не вдалося надіслати SMS; перевірте з'єднання та спробуйте ще раз.",
   "Bu telefon numarasıyla zaten bir hesap var. Giriş yapın ya da şifrenizi yenileyin.": "Обліковий запис із цим номером уже існує. Увійдіть або скиньте пароль.",
   "Numaranızı SMS ile gelecek 6 haneli kodla doğrulayacağız.": "Ми підтвердимо ваш номер 6-значним кодом із SMS.",
+  "Bu telefon numarasına bağlı hesap yok. E-posta adresinizle giriş yapın.": "До цього номера телефону не прив'язано обліковий запис. Увійдіть за адресою електронної пошти.",
 };
 
 export default dict;

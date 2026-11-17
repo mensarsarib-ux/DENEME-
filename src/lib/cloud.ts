@@ -24,7 +24,7 @@ export interface Session {
 
 export class CloudError extends Error {
   constructor(
-    /** invalid_credentials | email_taken | phone_taken | too_many_attempts | weak_password | email_not_confirmed | network | unknown */
+    /** invalid_credentials | no_account | email_taken | phone_taken | too_many_attempts | weak_password | email_not_confirmed | network | unknown */
     public code: string,
     message: string,
   ) {
@@ -166,6 +166,7 @@ export async function signIn(id: string, password: string): Promise<Session> {
       });
   const body = (await res.json().catch(() => ({}))) as AuthBody;
   if (byPhone && res.status === 429) throw new CloudError("too_many_attempts", "too many");
+  if (byPhone && res.status === 401 && (body as { error?: string }).error === "no_account") throw new CloudError("no_account", "no account");
   if (!res.ok) throw byPhone && res.status === 401 ? new CloudError("invalid_credentials", "invalid") : authError(body);
   const session = toSession(body, id.trim());
   if (!session) throw new CloudError("unknown", "no session");
