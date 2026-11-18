@@ -35,6 +35,7 @@ type Screen =
   | "reset-code"
   | "new-password"
   | "reg-business"
+  | "reg-phone"
   | "reg-email"
   | "reg-password"
   | "reg-code"
@@ -46,7 +47,7 @@ type Screen =
   | "join-sent";
 
 /** Sihirbaz adımları (ilerleme çizgisi için) */
-const REGISTER: Screen[] = ["reg-business", "reg-email", "reg-code", "reg-password"];
+const REGISTER: Screen[] = ["reg-business", "reg-phone", "reg-email", "reg-code", "reg-password"];
 const JOIN: Screen[] = ["join-email", "join-code", "join-password", "join-owner"];
 
 /** Geri düğmesinin götürdüğü ekran; yoksa geri düğmesi gösterilmez */
@@ -56,7 +57,8 @@ const BACK: Partial<Record<Screen, Screen>> = {
   forgot: "login",
   "reset-code": "forgot",
   "reg-business": "welcome",
-  "reg-email": "reg-business",
+  "reg-phone": "reg-business",
+  "reg-email": "reg-phone",
   // Kod ekranından e-postaya dönülür: yanlış yazılan adres düzeltilip yeni kod istenir
   "reg-code": "reg-email",
   // Kod doğrulandıktan sonraki adımlardan geri: kayıt yarıda bırakılır, açılışa dönülür.
@@ -107,6 +109,8 @@ export default function AuthScreen({
   const [email, setEmail] = useState("");
   // Girişte telefon kutusu ayrı tutulur: e-posta ve telefon birbirinin kutusuna ya da şifre yenilemeye geçmez
   const [loginPhoneInput, setLoginPhoneInput] = useState("");
+  // Kayıtta yazılan telefon (SMS kodu yok): hesap açılırken kaydedilir, telefon ve şifreyle girişte kullanılır
+  const [phone, setPhone] = useState("");
   const [password, setPassword1] = useState("");
   const [show, setShow] = useState(false);
   const [code, setCode] = useState("");
@@ -152,6 +156,7 @@ export default function AuthScreen({
   const ownerId = owner.includes("@") ? owner.trim() : normalizePhone(owner) ?? "";
   const validEmail = /^\S+@\S+\.\S+$/.test(email.trim());
   const loginPhone = normalizePhone(loginPhoneInput) ?? "";
+  const regPhone = normalizePhone(phone) ?? "";
   const validLogin = method === "email" ? validEmail : loginPhone !== "";
   const validOwner = ownerId.includes("@") ? /^\S+@\S+\.\S+$/.test(ownerId) : ownerId !== "";
   const validCode = /^\d{6,8}$/.test(code);
@@ -206,7 +211,8 @@ export default function AuthScreen({
 
   /** Kayıt ya da katılma: hesap e-postayla açılır ve kod gönderilir. Gerçek şifre kodla doğrulamadan sonra alınır. */
   async function createAccount(next: Screen, afterCode: Screen) {
-    const result = await signUp(email.trim(), randomPassword());
+    // Kayıtta yazılan telefon hesapla birlikte kaydedilir; başka bir hesapta varsa kayıt reddedilir
+    const result = await signUp(email.trim(), randomPassword(), next === "reg-code" && regPhone ? { phone: regPhone } : {});
     haptic("success");
     if (result === "pending") {
       codeSent(email.trim(), next);
@@ -293,7 +299,10 @@ export default function AuthScreen({
           setInfo(t("Şifreniz yenilendi. Yeni şifrenizle giriş yapın."));
         });
       case "reg-business":
-        if (business.trim()) go("reg-email");
+        if (business.trim()) go("reg-phone");
+        return;
+      case "reg-phone":
+        if (regPhone) go("reg-email");
         return;
       case "reg-email":
         if (!validEmail) return;
@@ -584,6 +593,17 @@ export default function AuthScreen({
         </div>
       );
       ready = business.trim() !== "";
+      break;
+    case "reg-phone":
+      title = t("Telefon numaranız");
+      lead = t("Bu numara ve şifrenizle de giriş yapabilirsiniz.");
+      body = (
+        <div className="field">
+          <label htmlFor="auth-phone">{t("Telefon")}</label>
+          <PhoneField id="auth-phone" value={phone} onChange={setPhone} />
+        </div>
+      );
+      ready = regPhone !== "";
       break;
     case "reg-email":
     case "join-email":
