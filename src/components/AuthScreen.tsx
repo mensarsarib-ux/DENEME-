@@ -105,6 +105,8 @@ export default function AuthScreen({
   const [method, setMethod] = useState<"email" | "phone">("email");
   const [business, setBusiness] = useState("");
   const [email, setEmail] = useState("");
+  // Girişte telefon kutusu ayrı tutulur: e-posta ve telefon birbirinin kutusuna ya da şifre yenilemeye geçmez
+  const [loginPhoneInput, setLoginPhoneInput] = useState("");
   const [password, setPassword1] = useState("");
   const [show, setShow] = useState(false);
   const [code, setCode] = useState("");
@@ -149,7 +151,7 @@ export default function AuthScreen({
   // Girişte kimlik: e-posta ya da telefon (+90… biçiminde)
   const ownerId = owner.includes("@") ? owner.trim() : normalizePhone(owner) ?? "";
   const validEmail = /^\S+@\S+\.\S+$/.test(email.trim());
-  const loginPhone = normalizePhone(email) ?? "";
+  const loginPhone = normalizePhone(loginPhoneInput) ?? "";
   const validLogin = method === "email" ? validEmail : loginPhone !== "";
   const validOwner = ownerId.includes("@") ? /^\S+@\S+\.\S+$/.test(ownerId) : ownerId !== "";
   const validCode = /^\d{6,8}$/.test(code);
@@ -521,12 +523,20 @@ export default function AuthScreen({
             emailField("auth-email-login")
           ) : (
             <div className="field">
-              <label htmlFor="auth-email-login">{t("Telefon")}</label>
-              <PhoneField id="auth-email-login" value={email} onChange={setEmail} />
+              <label htmlFor="auth-phone-login">{t("Telefon")}</label>
+              <PhoneField id="auth-phone-login" value={loginPhoneInput} onChange={setLoginPhoneInput} />
             </div>
           )}
           {passwordField(t("Şifre"), "current-password")}
-          <button type="button" className="help-link ob-forgot" onClick={() => go("forgot")}>
+          <button
+            type="button"
+            className="help-link ob-forgot"
+            onClick={() => {
+              // Telefon sekmesinden gelince şifre yenileme kutusu boş açılır; yalnızca e-posta sekmesindeki adres taşınır
+              if (method === "phone") setEmail("");
+              go("forgot");
+            }}
+          >
             {t("Şifremi unuttum")}
           </button>
         </>
