@@ -125,7 +125,7 @@ export default function App() {
   // Alt bileşenler çizilmeden önce para birimi biçimi güncellenir
   setCurrency(settings.currency);
   // Yazı boyutu kök yazı boyutunu değiştirir; tüm metinler rem ile ölçeklenir
-  document.documentElement.style.fontSize = { small: "13px", medium: "16px", large: "20px" }[settings.textSize] ?? "16px";
+  document.documentElement.style.fontSize = { small: "16px", medium: "18px", large: "20px" }[settings.textSize] ?? "16px";
   const [drawerOpen, setDrawerOpen] = useState(false);
   // Durum çubuğu (saat, pil): ana ekranın koyu üst kısmında açık renk, açık temalı sayfalarda koyu renk
   useEffect(() => {
@@ -152,10 +152,12 @@ export default function App() {
   // E-postadaki şifre sıfırlama bağlantısından gelindiyse yeni şifre ekranı açılır
   const [recoveryToken, setRecoveryToken] = useState<string | null>(() => (cloudEnabled ? readRecoveryToken() : null));
   // Titreşim cihaza özgüdür; diğer ayarlar hesapla birlikte eşitlenir
+  // Bu tercihler yalnızca bu cihazda kalır; ekip üyeleriyle paylaşılan işletme verisine yazılmaz
+  const DEVICE_ONLY_SETTINGS = ["haptics", "textSize", "listSort"] as const;
   const syncSettings = (all: typeof settings) => {
-    const { haptics: _haptics, ...rest } = all;
-    void _haptics;
-    return rest;
+    const rest: Record<string, unknown> = { ...all };
+    for (const k of DEVICE_ONLY_SETTINGS) delete rest[k];
+    return rest as Omit<typeof all, (typeof DEVICE_ONLY_SETTINGS)[number]>;
   };
   const snapshot = {
     groups,
@@ -319,7 +321,14 @@ export default function App() {
       const nextProfile = { ...DEFAULT_PROFILE, name: "", owner: "", ...(d.profile as object) };
       const nextNotes = Array.isArray(d.notes) ? (d.notes as typeof notes) : [];
       const nextRead = Array.isArray(d.readIds) ? (d.readIds as string[]) : [];
-      const nextSettings = { ...DEFAULT_SETTINGS, ...(d.settings as object), haptics: settings.haptics };
+      // Cihaza özel tercihler (titreşim, yazı boyutu, liste sıralaması) uzaktaki veriyle değişmez
+      const nextSettings = {
+        ...DEFAULT_SETTINGS,
+        ...(d.settings as object),
+        haptics: settings.haptics,
+        textSize: settings.textSize,
+        listSort: settings.listSort,
+      };
       setGroups(nextGroups);
       setParties(nextParties);
       setTransactions(nextTx);

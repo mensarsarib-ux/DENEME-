@@ -377,7 +377,8 @@ export interface Settings {
 export const DEFAULT_SETTINGS: Settings = {
   // İlk açılışta telefonun bölgesine göre (Türkiye'de ₺, Almanya'da €…); sonra ayarlardan değişir
   currency: regionCurrency(deviceRegion()),
-  textSize: "medium",
+  // Yeni cihazlarda eski "orta" boyut (16 px) varsayılandır
+  textSize: "small",
   listSort: "name",
   haptics: true,
   notifyReceivable: true,
