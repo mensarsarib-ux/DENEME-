@@ -773,6 +773,7 @@ const dict: Record<string, string> = {
   "Zaten hesabım var: giriş yapıp ekibe katıl": "मेरा पहले से खाता है: साइन इन करें और टीम में शामिल हों",
   "Ekibe katılmak için giriş yapın": "टीम में शामिल होने के लिए साइन इन करें",
   "Mail gelmediyse spam ya da gereksiz klasörüne bakın.": "अगर ईमेल नहीं आया है, तो स्पैम या जंक फ़ोल्डर देखें।",
+  "Bu numara ve şifrenizle de giriş yapabilirsiniz.": "आप इस नंबर और अपने पासवर्ड से भी साइन इन कर सकते हैं।",
 };
 
 export default dict;

@@ -773,6 +773,7 @@ const dict: Record<string, string> = {
   "Zaten hesabım var: giriş yapıp ekibe katıl": "既にアカウントがあります：ログインしてチームに参加",
   "Ekibe katılmak için giriş yapın": "チームに参加するにはログインしてください",
   "Mail gelmediyse spam ya da gereksiz klasörüne bakın.": "メールが届かない場合は、迷惑メールフォルダをご確認ください。",
+  "Bu numara ve şifrenizle de giriş yapabilirsiniz.": "この番号とパスワードでもログインできます。",
 };
 
 export default dict;

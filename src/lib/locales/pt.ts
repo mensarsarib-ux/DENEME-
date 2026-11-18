@@ -773,6 +773,7 @@ const dict: Record<string, string> = {
   "Zaten hesabım var: giriş yapıp ekibe katıl": "Já tenho conta: entre e entre na equipe",
   "Ekibe katılmak için giriş yapın": "Entre para participar da equipe",
   "Mail gelmediyse spam ya da gereksiz klasörüne bakın.": "Se o e-mail não chegar, verifique a pasta de spam ou lixo eletrônico.",
+  "Bu numara ve şifrenizle de giriş yapabilirsiniz.": "Você também pode entrar com este número e sua senha.",
 };
 
 export default dict;

@@ -532,4 +532,5 @@ export const extra: Record<string, string> = {
   "Zaten hesabım var: giriş yapıp ekibe katıl": "Already have an account: sign in and join the team",
   "Ekibe katılmak için giriş yapın": "Sign in to join the team",
   "Mail gelmediyse spam ya da gereksiz klasörüne bakın.": "If the email hasn't arrived, check your spam or junk folder.",
+  "Bu numara ve şifrenizle de giriş yapabilirsiniz.": "You can also sign in with this number and your password.",
 };

@@ -10,9 +10,7 @@ import {
   updateAccountProfile,
   type AccountProfile,
   type Session,
-  attachVerifiedPhone,
 } from "../lib/cloud";
-import { confirmSmsCode, resendWait, sendSmsCode, smsErrorText } from "../lib/phoneVerify";
 import { CURRENT_PLAN, PLAN_NAME, type Plan } from "../lib/plan";
 import { haptic } from "../lib/haptics";
 import { locale, t } from "../lib/i18n";
@@ -115,18 +113,9 @@ function VerifiedBadge() {
   );
 }
 
-/** Doğrulanmadı işareti (telefon); basınca doğrulama başlar */
-function UnverifiedBadge({ onClick }: { onClick: () => void }) {
-  return (
-    <button type="button" className="verified-badge is-unverified" onClick={onClick}>
-      {t("Doğrulanmadı")}
-    </button>
-  );
-}
-
 /**
  * Giriş bilgileri: e-posta (doğrulanmış, girişin ana kimliği) ve telefon (telefonla girişte kullanılır).
- * Telefon SMS koduyla doğrulanır; doğrulanmamış numaranın yanında "Doğrulanmadı" yazar, basınca kod gönderilir.
+ * Telefon SMS ile doğrulanmaz; kaydedilen numara ve şifreyle giriş yapılır. Aynı numara iki hesapta olamaz.
  */
 function LoginCard({
   session,
@@ -145,14 +134,6 @@ function LoginCard({
   const [sentTo, setSentTo] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);
-  // SMS kodu tekrar istenebilene kadar kalan süre (sn)
-  const [resendIn, setResendIn] = useState(0);
-
-  useEffect(() => {
-    if (resendIn <= 0) return;
-    const timer = window.setTimeout(() => setResendIn((n) => n - 1), 1000);
-    return () => window.clearTimeout(timer);
-  }, [resendIn]);
 
   const target = adding === "email" ? value.trim() : normalizePhone(value) ?? "";
   const valid = adding === "email" ? /^\S+@\S+\.\S+$/.test(target) : target !== "";
@@ -165,57 +146,6 @@ function LoginCard({
     setMessage(null);
   }
 
-  /** Numaraya SMS kodu gönderir ve kod alanını açar */
-  async function sendSms(phone: string) {
-    await sendSmsCode(phone, (idToken) => void finishPhone(idToken));
-    haptic("success");
-    setSentTo(phone);
-    setCode("");
-    setResendIn(await resendWait(phone));
-  }
-
-  /** Kod doğrulandı: numara hesaba doğrulanmış olarak yazılır */
-  async function finishPhone(idToken: string) {
-    const r = await attachVerifiedPhone(session, idToken);
-    if (r === "expired") return onExpired();
-    haptic("success");
-    setMessage({ ok: true, text: t("Telefon numaranız doğrulandı. Bu numara ve şifrenizle de giriş yapabilirsiniz.") });
-    setAdding(null);
-    setSentTo(null);
-    onChanged();
-  }
-
-  /** Kayıtlı ama doğrulanmamış numarayı doğrular */
-  async function verifyExisting() {
-    if (busy) return;
-    setAdding("phone");
-    setValue(profile.phone);
-    setMessage(null);
-    setBusy(true);
-    try {
-      await sendSms(profile.phone);
-    } catch (e) {
-      haptic("warning");
-      setMessage({ ok: false, text: smsErrorText(e) });
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  async function resend() {
-    if (!sentTo || resendIn > 0 || busy) return;
-    setBusy(true);
-    setMessage(null);
-    try {
-      await sendSms(sentTo);
-    } catch (e) {
-      haptic("warning");
-      setMessage({ ok: false, text: smsErrorText(e) });
-    } finally {
-      setBusy(false);
-    }
-  }
-
   async function send(event: FormEvent) {
     event.preventDefault();
     if (busy || !adding) return;
@@ -223,13 +153,14 @@ function LoginCard({
     setMessage(null);
     try {
       if (adding === "phone") {
-        if (!sentTo) {
-          if (!valid) return;
-          await sendSms(target);
-        } else {
-          const idToken = await confirmSmsCode(code);
-          await finishPhone(idToken);
-        }
+        // Telefon doğrulama kodu gerektirmez; numara hesabın bilgilerine yazılır
+        if (!valid) return;
+        const r = await updateAccountProfile(session, profile.name, target);
+        if (r === "expired") return onExpired();
+        haptic("success");
+        setMessage({ ok: true, text: t("Telefon numaranız kaydedildi. Artık bu numara ve şifrenizle de giriş yapabilirsiniz.") });
+        setAdding(null);
+        onChanged();
         return;
       }
       if (!sentTo) {
@@ -259,16 +190,14 @@ function LoginCard({
           ? t("Bu e-posta başka bir hesapta kullanılıyor.")
           : e instanceof CloudError && e.code === "phone_taken"
             ? t("Bu telefon numarası başka bir hesapta kullanılıyor.")
-            : e instanceof CloudError
-              ? t("Gönderilemedi; bağlantınızı kontrol edin.")
-              : smsErrorText(e),
+            : t("Gönderilemedi; bağlantınızı kontrol edin."),
       });
     } finally {
       setBusy(false);
     }
   }
 
-  const codeStep = !!sentTo;
+  const codeStep = adding === "email" && !!sentTo;
 
   return (
     <section className="card" aria-label={t("Giriş bilgileri")}>
@@ -288,7 +217,6 @@ function LoginCard({
         <span className="field-label">{t("Telefon")}</span>
         <div className="login-row">
           <span className="login-row-value">{profile.phone || t("Telefon eklenmedi")}</span>
-          {profile.phone && (profile.phoneVerified ? <VerifiedBadge /> : <UnverifiedBadge onClick={() => void verifyExisting()} />)}
           <button type="button" className="action-btn" onClick={() => open("phone")}>
             {profile.phone ? t("Değiştir") : t("Telefon ekle")}
           </button>
@@ -312,15 +240,10 @@ function LoginCard({
               ) : (
                 <PhoneField id="login-add" value={value} onChange={setValue} />
               )}
-              {adding === "phone" && <p className="field-hint">{t("Numaranıza SMS ile 6 haneli bir kod göndereceğiz.")}</p>}
             </div>
           ) : (
             <div className="field">
-              <label htmlFor="login-code">
-                {adding === "phone"
-                  ? t("{p} numarasına SMS ile 6 haneli bir kod gönderdik.", { p: sentTo })
-                  : t("{m} adresine 6 haneli bir doğrulama kodu gönderdik.", { m: sentTo })}
-              </label>
+              <label htmlFor="login-code">{t("{m} adresine 6 haneli bir doğrulama kodu gönderdik.", { m: sentTo })}</label>
               <input
                 id="login-code"
                 className="ob-code"
@@ -330,18 +253,15 @@ function LoginCard({
                 value={code}
                 onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
               />
-              {adding === "phone" && (
-                <button type="button" className="help-link" disabled={resendIn > 0 || busy} onClick={() => void resend()}>
-                  {resendIn > 0
-                    ? t("Kodu tekrar gönder ({s} sn)", { s: resendIn })
-                    : t("Kodu tekrar gönder")}
-                </button>
-              )}
             </div>
           )}
           <div className="card-actions">
-            <button type="submit" className="action-btn" disabled={busy || (codeStep ? !/^\d{6,8}$/.test(code) : !valid)}>
-              {busy ? t("Bekleyin…") : codeStep ? t("DOĞRULA") : t("KOD GÖNDER")}
+            <button
+              type="submit"
+              className="action-btn"
+              disabled={busy || (codeStep ? !/^\d{6,8}$/.test(code) : !valid)}
+            >
+              {codeStep ? t("DOĞRULA") : adding === "email" ? t("KOD GÖNDER") : t("KAYDET")}
             </button>
             <button type="button" className="help-link" onClick={() => setAdding(null)}>
               {t("Vazgeç")}
