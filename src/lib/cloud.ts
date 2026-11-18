@@ -343,14 +343,15 @@ export async function getAccountProfile(session: Session): Promise<AccountProfil
     email?: string | null;
     email_confirmed_at?: string | null;
     user_metadata?: { name?: string; phone?: string };
-    app_metadata?: { phone_verified?: string };
+    app_metadata?: { phone_verified?: string; email_unverified?: boolean };
   };
   const phone = user.user_metadata?.phone ?? "";
   return {
     name: user.user_metadata?.name ?? "",
     phone,
     phoneVerified: phone !== "" && user.app_metadata?.phone_verified === phone,
-    emailConfirmed: !!user.email && !!user.email_confirmed_at,
+    // "Confirm email" kapalıyken Supabase yeni hesabı onaylı sayar; gerçekte doğrulanmadıysa sunucu email_unverified işaretler
+    emailConfirmed: !!user.email && !!user.email_confirmed_at && user.app_metadata?.email_unverified !== true,
     loginEmail: user.email ?? "",
   };
 }
@@ -441,6 +442,39 @@ export async function attachVerifiedPhone(session: Session, idToken: string): Pr
   }
   if (!res.ok) throw new CloudError("unknown", String(res.status));
   return ((await res.json()) as { phone: string }).phone;
+}
+
+/** Menüden e-posta doğrulaması: adrese 6 haneli kod gönderir (yeni hesap açılmaz) */
+export async function sendEmailVerifyCode(email: string): Promise<void> {
+  const res = await call("/auth/v1/otp", {
+    method: "POST",
+    body: JSON.stringify({ email: email.trim(), create_user: false }),
+  });
+  if (!res.ok) throw authError((await res.json().catch(() => ({}))) as AuthBody);
+}
+
+/** Menüden e-posta doğrulaması: kodu doğrular ve hesaptaki "doğrulanmadı" işaretini kaldırır */
+export async function confirmEmailVerify(email: string, code: string): Promise<boolean> {
+  const res = await call("/auth/v1/verify", {
+    method: "POST",
+    body: JSON.stringify({ type: "email", email: email.trim(), token: code.trim() }),
+  });
+  if (!res.ok) return false;
+  const body = (await res.json().catch(() => ({}))) as AuthBody;
+  if (!body.access_token) return false;
+  const mark = await call("/functions/v1/email-verified", { method: "POST", token: body.access_token, body: "{}" });
+  return mark.ok;
+}
+
+/** Şifremi unuttum (telefon): SMS ile doğrulanan numaranın hesabına yeni şifre yazar */
+export async function resetPasswordByPhone(idToken: string, password: string): Promise<void> {
+  const res = await call("/functions/v1/phone-verify", {
+    method: "POST",
+    body: JSON.stringify({ idToken, action: "reset", password }),
+  });
+  if (res.status === 404) throw new CloudError("no_account", "no account");
+  if (res.status === 400) throw new CloudError("weak_password", "weak");
+  if (!res.ok) throw new CloudError("unknown", String(res.status));
 }
 
 /** Şifre değiştirme: önce mevcut şifre doğrulanır (oturum değiştirilmeden), sonra yeni şifre yazılır */

@@ -1,0 +1,1 @@
+{{ if eq (printf "%v" .Data.lang) "en" }}Your Hesabım verification code{{ else }}Hesabım doğrulama kodunuz{{ end }}

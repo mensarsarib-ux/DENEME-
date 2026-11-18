@@ -36,6 +36,8 @@ export type SmsErrorCode =
   | "expired"
   /** Firebase çok fazla istek dedi */
   | "quota"
+  /** Numaranın ülkesine SMS gönderimi kapalı (SMS bölge politikası) */
+  | "region"
   /** Bağlantı ya da bilinmeyen hata */
   | "failed";
 
@@ -118,6 +120,7 @@ export async function resendWait(phone: string): Promise<number> {
 function mapError(e: unknown): SmsError {
   if (e instanceof SmsError) return e;
   const text = `${(e as { code?: string })?.code ?? ""} ${(e as Error)?.message ?? ""}`.toLowerCase();
+  if (text.includes("region") || text.includes("operation-not-allowed") || text.includes("operation_not_allowed")) return new SmsError("region");
   if (text.includes("invalid-phone") || text.includes("invalid phone") || text.includes("invalid format")) return new SmsError("invalid_phone");
   if (text.includes("invalid-verification-code") || text.includes("verification code") && text.includes("invalid")) return new SmsError("invalid_code");
   if (text.includes("code-expired") || text.includes("session-expired") || text.includes("expired")) return new SmsError("expired");
@@ -247,6 +250,8 @@ export function smsErrorText(e: unknown): string {
       return t("Kod hatalı ya da süresi dolmuş. Yeni kod isteyin.");
     case "expired":
       return t("Kodun süresi doldu. Yeni kod isteyin.");
+    case "region":
+      return t("Şimdilik yalnızca Türkiye numaralarına SMS gönderilebiliyor.");
     case "quota":
       return t("Çok fazla deneme yapıldı. Biraz sonra tekrar deneyin.");
     default:

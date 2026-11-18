@@ -781,6 +781,10 @@ const dict: Record<string, string> = {
   "Geçerli bir e-posta adresi yazın.": "Digite um e-mail válido.",
   "Adresiniz doğruysa DEVAM'a tekrar basın.": "Se o endereço estiver correto, toque em CONTINUAR novamente.",
   "Bunu mu demek istediniz: {e}": "Você quis dizer: {e}",
+  "Bu numaraya bağlı doğrulanmış bir hesap yok. E-postanızla şifrenizi yenileyin.": "Não há conta com este número verificado. Redefina sua senha pelo e-mail.",
+  "Kod gönderilemedi. Biraz bekleyip tekrar deneyin.": "Não foi possível enviar o código. Aguarde e tente novamente.",
+  "E-postanız doğrulandı.": "Seu e-mail foi verificado.",
+  "Şimdilik yalnızca Türkiye numaralarına SMS gönderilebiliyor.": "Por enquanto, o SMS só pode ser enviado para números da Turquia.",
 };
 
 export default dict;

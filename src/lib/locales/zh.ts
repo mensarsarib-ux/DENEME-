@@ -781,6 +781,10 @@ const dict: Record<string, string> = {
   "Geçerli bir e-posta adresi yazın.": "请输入有效的邮箱地址。",
   "Adresiniz doğruysa DEVAM'a tekrar basın.": "如果地址无误，请再次点击继续。",
   "Bunu mu demek istediniz: {e}": "您是不是要输入：{e}",
+  "Bu numaraya bağlı doğrulanmış bir hesap yok. E-postanızla şifrenizi yenileyin.": "没有使用此已验证号码的账户，请通过邮箱重置密码。",
+  "Kod gönderilemedi. Biraz bekleyip tekrar deneyin.": "验证码发送失败，请稍后重试。",
+  "E-postanız doğrulandı.": "您的邮箱已验证。",
+  "Şimdilik yalnızca Türkiye numaralarına SMS gönderilebiliyor.": "目前只能向土耳其号码发送短信。",
 };
 
 export default dict;

@@ -540,4 +540,8 @@ export const extra: Record<string, string> = {
   "Geçerli bir e-posta adresi yazın.": "Please enter a valid email address.",
   "Adresiniz doğruysa DEVAM'a tekrar basın.": "If your address is correct, tap CONTINUE again.",
   "Bunu mu demek istediniz: {e}": "Did you mean: {e}",
+  "Bu numaraya bağlı doğrulanmış bir hesap yok. E-postanızla şifrenizi yenileyin.": "No account with this verified number. Reset your password with your email.",
+  "Kod gönderilemedi. Biraz bekleyip tekrar deneyin.": "The code could not be sent. Wait a moment and try again.",
+  "E-postanız doğrulandı.": "Your email is verified.",
+  "Şimdilik yalnızca Türkiye numaralarına SMS gönderilebiliyor.": "For now, SMS can only be sent to Turkish numbers.",
 };

@@ -3,6 +3,7 @@
 // Firebase'in verdiği kimlik belirtecini (ID token) buraya yollar. Numara yalnızca bu imzalı belirteçten okunur.
 //   action "check":  numara başka bir hesapta doğrulanmış mı? (oturum gerekmez; SMS kanıtı yeterli)
 //   action "attach": numarayı giriş yapmış kullanıcının hesabına doğrulanmış olarak yazar (Authorization: Bearer <oturum>)
+//   action "reset":  şifremi unuttum; numarayı SMS ile doğrulamış hesabın şifresini yeniler (yalnızca doğrulanmış numara)
 
 import { createClient } from "jsr:@supabase/supabase-js@2";
 import { createRemoteJWKSet, jwtVerify } from "npm:jose@5.9.6";
@@ -46,7 +47,7 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: cors });
   if (req.method !== "POST") return json({ error: "method" }, 405);
 
-  const input = (await req.json().catch(() => ({}))) as { idToken?: string; action?: string };
+  const input = (await req.json().catch(() => ({}))) as { idToken?: string; action?: string; password?: string };
   const phone = await verifiedPhone(String(input.idToken ?? ""));
   if (!phone) return json({ error: "invalid_token" }, 401);
 
@@ -66,6 +67,18 @@ Deno.serve(async (req) => {
     if (error) return json({ error: "server" }, 500);
     if (data === "taken") return json({ error: "phone_taken" }, 409);
     return json({ phone, verified: true });
+  }
+
+  if (input.action === "reset") {
+    const password = String(input.password ?? "");
+    if (password.length < 6) return json({ error: "weak_password" }, 400);
+    // Yalnızca bu numarayı SMS ile doğrulamış (ve hâlâ kullanan) hesap: doğrulanmamış numarayla hesap ele geçirilemez
+    const { data: uid, error } = await admin.rpc("phone_owner", { p: phone });
+    if (error) return json({ error: "server" }, 500);
+    if (!uid) return json({ error: "no_account" }, 404);
+    const { error: updateError } = await admin.auth.admin.updateUserById(uid as string, { password });
+    if (updateError) return json({ error: "server" }, 500);
+    return json({ ok: true });
   }
 
   return json({ error: "action" }, 400);

@@ -10,6 +10,10 @@ e-posta eklenince doğrulama kodunu gönderir.
 | Confirm signup | confirm-signup-subject.txt | confirm-signup.html |
 | Reset password | reset-password-subject.txt | reset-password.html |
 | Change email address | change-email-subject.txt | change-email.html |
+| Magic link | magic-link-subject.txt | magic-link.html |
+
+Magic link şablonu, Ayarlar → Hesabım'dan "E-postayı doğrula" denince giden doğrulama kodudur
+(kayıtta e-posta kodu istenmez; "Confirm email" kapalıdır). İçeriği kayıt onayı şablonuyla aynıdır.
 
 Dosyalar bir betikle üretilir; metni elle değiştirirken her iki dosyada da aynı dil bloğunu düzeltin.
 
