@@ -141,8 +141,12 @@ export async function signUp(
     method: "POST",
     body: JSON.stringify({ email: email.trim(), password, data }),
   });
-  const body = (await res.json().catch(() => ({}))) as AuthBody;
+  const body = (await res.json().catch(() => ({}))) as AuthBody & { identities?: unknown[] };
   if (!res.ok) throw phoneError(body, info.phone);
+  // Bu e-posta zaten bir hesapta kayıtlıysa Supabase kod göndermez; kimlik listesi boş döner
+  if (Array.isArray((body as { identities?: unknown[] }).identities) && (body as { identities?: unknown[] }).identities!.length === 0) {
+    throw new CloudError("email_taken", "email taken");
+  }
   const session = toSession(body, email.trim());
   if (!session) return "pending";
   saveSession(session);

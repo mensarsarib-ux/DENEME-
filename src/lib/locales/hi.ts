@@ -772,6 +772,7 @@ const dict: Record<string, string> = {
   "Bu telefon numarasına bağlı hesap yok. E-posta adresinizle giriş yapın.": "इस फ़ोन नंबर से कोई खाता जुड़ा नहीं है। अपने ईमेल पते से साइन इन करें।",
   "Zaten hesabım var: giriş yapıp ekibe katıl": "मेरा पहले से खाता है: साइन इन करें और टीम में शामिल हों",
   "Ekibe katılmak için giriş yapın": "टीम में शामिल होने के लिए साइन इन करें",
+  "Mail gelmediyse spam ya da gereksiz klasörüne bakın.": "अगर ईमेल नहीं आया है, तो स्पैम या जंक फ़ोल्डर देखें।",
 };
 
 export default dict;

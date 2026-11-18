@@ -556,6 +556,7 @@ export default function AuthScreen({
       <button type="button" className="help-link" disabled={resendIn > 0} onClick={() => void resend()}>
         {resendIn > 0 ? t("Kodu tekrar gönder ({s} sn)", { s: resendIn }) : t("Kodu tekrar gönder")}
       </button>
+      <p className="field-hint">{t("Mail gelmediyse spam ya da gereksiz klasörüne bakın.")}</p>
     </>
   );
 

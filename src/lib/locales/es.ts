@@ -772,6 +772,7 @@ const dict: Record<string, string> = {
   "Bu telefon numarasına bağlı hesap yok. E-posta adresinizle giriş yapın.": "No hay ninguna cuenta vinculada a este número de teléfono. Inicia sesión con tu correo electrónico.",
   "Zaten hesabım var: giriş yapıp ekibe katıl": "Ya tengo una cuenta: inicia sesión y únete al equipo",
   "Ekibe katılmak için giriş yapın": "Inicia sesión para unirte al equipo",
+  "Mail gelmediyse spam ya da gereksiz klasörüne bakın.": "Si el correo no llega, revisa la carpeta de spam o no deseado.",
 };
 
 export default dict;
