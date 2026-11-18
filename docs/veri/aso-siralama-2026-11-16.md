@@ -24,3 +24,7 @@ Not: Ölçüm yeni ad ve metinlerin yayına girmesinden ~5 saat sonra yapıldı.
 hesabım muhasebe 1 · veresiye 21 · veresiye takip 16 · veresiye defteri 33 · borç alacak 41 · tedarikçi 23 · bakkal 30 · esnaf 44.
 İlk 50 dışı: muhasebe, cari hesap, cari, cari takip, kasa takibi, hesabım, gelir gider, tahsilat, müşteri takip, esnaf defteri, dükkan, ekstre, borç takibi. Yanıt alınamadı: ön muhasebe, defter.
 Puan: 3, ortalama 5,0. Sürüm 1.1.
+
+## 18 Kasım 2026, ~18:15 (sürüm 1.2 yayında, 4 puan / 5,0)
+hesabım muhasebe 1 · hesabım 8 · tedarikçi 14 · veresiye takip 15 · borç alacak 19 · esnaf defteri 19 · veresiye 21 · veresiye defteri 32 · cari hesap 32 · ekstre 32 · bakkal 35 · esnaf 39 · kasa takibi 42 · tahsilat 45 · ön muhasebe 45 · muhasebe 47.
+İlk 50 dışı: cari, cari takip, gelir gider, müşteri takip, defter, borç takibi.
