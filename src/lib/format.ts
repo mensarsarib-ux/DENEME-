@@ -1,32 +1,23 @@
 import { DEFAULT_CURRENCY, currencyOf } from "./currencies";
-import { getLanguage, locale } from "./i18n";
+import { LANGUAGES, getLanguage, locale } from "./i18n";
 
 /** Etkin para birimi; ayarlardan seçilince App tarafından güncellenir (tutarlar çevrilmez, yalnızca biçim değişir) */
 let currency = DEFAULT_CURRENCY;
-let fullFormat = make(2, 2);
-let roundFormat = make(0, 0);
-
-function make(min: number, max: number) {
-  return new Intl.NumberFormat(locale(), {
-    style: "currency",
-    currency,
-    currencyDisplay: "narrowSymbol",
-    minimumFractionDigits: min,
-    maximumFractionDigits: max,
-  });
-}
 
 /**
- * Türkçede para sembolü sayının sağında yazılır: "60.187,00 ₺". Diğer dillerde yerel biçim kullanılır.
- * (Tarayıcıya göre sembol sola düşebildiği için sayı ve sembol burada birleştirilir.)
+ * Para sembolü görsel olarak hep sayının sağında durur: "60.187,00 ₺".
+ * Soldan sağa dillerde sembol sayıdan sonra yazılır. Sağdan sola (Arapça) dilde sembol sayıdan önce yazılır,
+ * çünkü o yönde önce yazılan öğe ekranın sağında kalır.
+ * Sayı ve sembol burada birleştirilir; tarayıcıya göre sembolün yeri değişmez.
  */
-function withSymbol(value: number, digits: [number, number], fallback: Intl.NumberFormat): string {
-  if (getLanguage() !== "tr") return fallback.format(value);
+function withSymbol(value: number, digits: [number, number]): string {
   const num = new Intl.NumberFormat(locale(), {
     minimumFractionDigits: digits[0],
     maximumFractionDigits: digits[1],
   }).format(value);
-  return `${num}\u00A0${currencyOf(currency).symbol}`;
+  const symbol = currencyOf(currency).symbol;
+  const rtl = LANGUAGES.find((l) => l.code === getLanguage())?.rtl;
+  return rtl ? `\u200F${symbol}\u00A0${num}` : `${num}\u00A0${symbol}`;
 }
 
 let formatLocale = "";
@@ -35,8 +26,6 @@ export function setCurrency(code: string) {
   if (code === currency && formatLocale === locale()) return;
   formatLocale = locale();
   currency = currencyOf(code).code;
-  fullFormat = make(2, 2);
-  roundFormat = make(0, 0);
 }
 
 /** Etkin para biriminin sembolü (form etiketlerinde kullanılır) */
@@ -45,10 +34,10 @@ export const currencyCode = () => currency;
 
 export const currencySymbol = () => currencyOf(currency).symbol;
 
-export const money = { format: (value: number) => withSymbol(value, [2, 2], fullFormat) };
+export const money = { format: (value: number) => withSymbol(value, [2, 2]) };
 
 /** Grafik sütunları gibi dar alanlar için kuruşsuz biçim */
-export const moneyRound = { format: (value: number) => withSymbol(value, [0, 0], roundFormat) };
+export const moneyRound = { format: (value: number) => withSymbol(value, [0, 0]) };
 
 /** Örn. "30 EYLÜL, 14:32" */
 export function formatDateTime(iso: string): string {
