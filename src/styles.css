@@ -707,7 +707,8 @@ body {
 .row-amount {
   white-space: nowrap;
   font-size: 1.05rem;
-  font-variant-numeric: tabular-nums;
+  /* Sabit genişlikli rakamlar (tabular-nums) "1"den sonra aralık bırakıyordu; oransal rakamlar doğal görünür */
+  font-variant-numeric: proportional-nums;
 }
 
 .row-big .row-amount {
