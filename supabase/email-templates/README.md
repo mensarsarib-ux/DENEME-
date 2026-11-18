@@ -13,4 +13,4 @@ e-posta eklenince doğrulama kodunu gönderir.
 
 Dosyalar bir betikle üretilir; metni elle değiştirirken her iki dosyada da aynı dil bloğunu düzeltin.
 
-Logo e-postadan kaldırıldı (18 Kasım 2026): mail-tester HTML_IMAGE_ONLY_20 kuralı az metinli e-postadaki görsel için -0,7 puan kırıyordu. Başlıkta yalnızca "Hesabım Muhasebe" yazısı var.
+Logo: public/mail-logo.png, sitenin kendi adresinden (https://hesabimmuhasebe.com/mail-logo.png) gösterilir. Gmail SVG göstermediği için PNG kullanılır.
