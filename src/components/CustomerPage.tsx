@@ -536,6 +536,9 @@ export default function CustomerPage({
               className="save-btn"
               type="button"
               disabled={!canSave}
+              // Dokunuşta açıklama alanı odağını kaybetmesin: klavye kapanıp düzen kayarsa ilk dokunuş kaçıyordu
+              onPointerDown={(e) => e.preventDefault()}
+              onMouseDown={(e) => e.preventDefault()}
               onClick={save}
             >
               {editingId ? t("GÜNCELLE") : t("EKLE")}
