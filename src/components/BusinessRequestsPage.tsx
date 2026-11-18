@@ -69,8 +69,11 @@ export default function BusinessRequestsPage({ onBack }: { onBack: () => void })
       const list = await myBusinesses(session);
       if (list === "expired") return setFailed(true);
       const options = list.filter((b) => b.role === "owner").map((b) => ({ id: b.businessId, name: b.name }));
-      // Tek işletme varsa sormaya gerek yok
-      if (options.length <= 1) return await decide(item, true, options.map((o) => o.id));
+      if (options.length === 0) {
+        setNotice(t("Yetkili olduğunuz bir işletme bulunamadı."));
+        return;
+      }
+      // Tek işletme olsa bile onay öncesi kişi ve işletme gösterilir; yanlış onay engellenir
       // Başlangıçta yalnızca katılmak istediği işletme işaretlidir
       setPicking({ requestId: item.request_id, options, chosen: [item.business_id] });
     } catch {
