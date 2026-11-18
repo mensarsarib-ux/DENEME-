@@ -285,6 +285,12 @@ export default function AuthScreen({
 
   /** Telefon adımı: aynı numaraya kod zaten gittiyse yeniden gönderilmez, kod ekranına dönülür */
   async function startSms(to: string, codeScreen: SmsScreen) {
+    // Numara bu oturumda zaten doğrulandıysa (geri dönülüp tekrar basıldıysa) yeni kod istenmez
+    if (codeScreen !== "forgot-sms" && smsTo === to && phoneToken) {
+      setError(null);
+      go(codeScreen === "reg-sms" ? "reg-email" : "join-email");
+      return;
+    }
     if (smsTo === to && (codeScreen === "forgot-sms" ? !resetPhoneToken : !phoneToken)) {
       go(codeScreen);
       return;

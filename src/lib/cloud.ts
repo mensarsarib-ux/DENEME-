@@ -149,7 +149,8 @@ export async function signUp(
   }
   const session = toSession(body, email.trim());
   if (!session) return "pending";
-  saveSession(session);
+  // Oturum burada kaydedilmez: kayıt akışı (şifre adımı) bitince kaydedilir.
+  // Kullanıcı yarıda bırakırsa uygulama bilmediği geçici şifreyle açılmaz.
   return session;
 }
 
@@ -224,7 +225,7 @@ let refreshing: Promise<Session | null> | null = null;
 async function fresh(session: Session): Promise<Session | null> {
   // Başka bir istek ya da sekme oturumu zaten yenilediyse kayıtlı yeni oturum kullanılır
   const stored = loadSession();
-  if (stored && stored.refreshToken !== session.refreshToken && stored.expiresAt - Date.now() > 60_000) return stored;
+  if (stored && stored.userId === session.userId && stored.refreshToken !== session.refreshToken && stored.expiresAt - Date.now() > 60_000) return stored;
   if (session.expiresAt - Date.now() > 60_000) return session;
   if (!refreshing) {
     refreshing = refreshSession(session).finally(() => {
@@ -242,8 +243,9 @@ async function refreshSession(session: Session): Promise<Session | null> {
   if (!res.ok) {
     if (res.status === 409) {
       // Eşzamanlı yenileme: diğer istek yeni oturumu kaydetmiş olabilir; oturum silinmez
+      await new Promise((r) => setTimeout(r, 1500));
       const latest = loadSession();
-      return latest && latest.expiresAt - Date.now() > 60_000 ? latest : null;
+      return latest && latest.userId === session.userId && latest.expiresAt - Date.now() > 60_000 ? latest : null;
     }
     // Oturum yalnızca sunucu gerçekten geçersiz dediğinde (400/401) silinir
     if (res.status === 400 || res.status === 401) saveSession(null);
