@@ -533,4 +533,6 @@ export const extra: Record<string, string> = {
   "Ekibe katılmak için giriş yapın": "Sign in to join the team",
   "Mail gelmediyse spam ya da gereksiz klasörüne bakın.": "If the email hasn't arrived, check your spam or junk folder.",
   "Bu numara ve şifrenizle de giriş yapabilirsiniz.": "You can also sign in with this number and your password.",
+  "Giriş yapmak ve şifrenizi yenilemek için kullanılır.": "Used to sign in and reset your password.",
+  "{b} açıldı. Telefon numaranız kaydedilemedi; Ayarlar → Hesabım bölümünden ekleyebilirsiniz.": "{b} is ready. Your phone number could not be saved; you can add it in Settings → My account.",
 };

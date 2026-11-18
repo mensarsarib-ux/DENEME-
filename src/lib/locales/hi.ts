@@ -774,6 +774,8 @@ const dict: Record<string, string> = {
   "Ekibe katılmak için giriş yapın": "टीम में शामिल होने के लिए साइन इन करें",
   "Mail gelmediyse spam ya da gereksiz klasörüne bakın.": "अगर ईमेल नहीं आया है, तो स्पैम या जंक फ़ोल्डर देखें।",
   "Bu numara ve şifrenizle de giriş yapabilirsiniz.": "आप इस नंबर और अपने पासवर्ड से भी साइन इन कर सकते हैं।",
+  "Giriş yapmak ve şifrenizi yenilemek için kullanılır.": "साइन इन करने और पासवर्ड रीसेट करने के लिए उपयोग होता है।",
+  "{b} açıldı. Telefon numaranız kaydedilemedi; Ayarlar → Hesabım bölümünden ekleyebilirsiniz.": "{b} तैयार है। आपका फ़ोन नंबर सहेजा नहीं जा सका; सेटिंग्स → मेरा खाता में जोड़ें।",
 };
 
 export default dict;
