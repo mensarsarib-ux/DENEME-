@@ -529,4 +529,6 @@ export const extra: Record<string, string> = {
   "Bu telefon numarasıyla zaten bir hesap var. Giriş yapın ya da şifrenizi yenileyin.": "An account with this phone number already exists. Sign in or reset your password.",
   "Numaranızı SMS ile gelecek 6 haneli kodla doğrulayacağız.": "We'll verify your number with a 6-digit code sent by SMS.",
   "Bu telefon numarasına bağlı hesap yok. E-posta adresinizle giriş yapın.": "No account is linked to this phone number. Sign in with your email address.",
+  "Zaten hesabım var: giriş yapıp ekibe katıl": "Already have an account: sign in and join the team",
+  "Ekibe katılmak için giriş yapın": "Sign in to join the team",
 };

@@ -770,6 +770,8 @@ const dict: Record<string, string> = {
   "Bu telefon numarasıyla zaten bir hesap var. Giriş yapın ya da şifrenizi yenileyin.": "Mit dieser Telefonnummer gibt es bereits ein Konto. Melden Sie sich an oder setzen Sie Ihr Passwort zurück.",
   "Numaranızı SMS ile gelecek 6 haneli kodla doğrulayacağız.": "Wir bestätigen Ihre Nummer mit einem 6-stelligen SMS-Code.",
   "Bu telefon numarasına bağlı hesap yok. E-posta adresinizle giriş yapın.": "Zu dieser Telefonnummer gibt es kein Konto. Melden Sie sich mit Ihrer E-Mail-Adresse an.",
+  "Zaten hesabım var: giriş yapıp ekibe katıl": "Ich habe bereits ein Konto: anmelden und dem Team beitreten",
+  "Ekibe katılmak için giriş yapın": "Zum Beitritt zum Team anmelden",
 };
 
 export default dict;

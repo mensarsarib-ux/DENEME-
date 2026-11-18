@@ -118,6 +118,8 @@ export default function AuthScreen({
   const [show, setShow] = useState(false);
   const [code, setCode] = useState("");
   const [owner, setOwner] = useState("");
+  // Giriş ekranı "Ekibe katıl" için açıldıysa: giriş sonrası ekip katılma adımına geçilir
+  const [loginForJoin, setLoginForJoin] = useState(false);
   // Kayıt: telefon numarası, SMS'in gönderildiği numara ve doğrulanınca Firebase'in verdiği belirteç
   const [phone, setPhone] = useState("");
   const [smsTo, setSmsTo] = useState<string | null>(null);
@@ -169,6 +171,8 @@ export default function AuthScreen({
 
   function go(next: Screen) {
     haptic("light");
+    // Ekibe katılım girişi yalnızca giriş ekranında geçerli; başka yere gidilince sıfırlanır
+    if (next !== "login") setLoginForJoin(false);
     setScreen(next);
     setError(null);
     setInfo(null);
@@ -271,7 +275,16 @@ export default function AuthScreen({
         return run(async () => {
           const login = method === "email" ? email.trim() : loginPhone;
           try {
-            onSession(await signIn(login, password));
+            const session = await signIn(login, password);
+            if (loginForJoin) {
+              // Mevcut hesapla ekibe katılım: oturum açıldı, işletme adı istenir
+              setLoginForJoin(false);
+              setPassword1("");
+              setPendingSession(session);
+              go("join-owner");
+              return;
+            }
+            onSession(session);
           } catch (e) {
             // Kayıt olup kodu girmeden çıkan kişi: yeni kod gönderilir ve kod ekranı açılır
             if (e instanceof CloudError && e.code === "email_not_confirmed" && method === "email") {
@@ -565,7 +578,7 @@ export default function AuthScreen({
 
   const flow = REGISTER.includes(screen) ? REGISTER : JOIN.includes(screen) ? JOIN : null;
   const step = flow ? flow.indexOf(screen) + 1 : 0;
-  const back = BACK[screen];
+  const back = screen === "login" && loginForJoin ? "join-email" : BACK[screen];
 
   // Ekran içeriği: başlık, açıklama, alanlar ve alttaki düğme
   let title = "";
@@ -576,7 +589,7 @@ export default function AuthScreen({
 
   switch (screen) {
     case "login":
-      title = t("Giriş yap");
+      title = loginForJoin ? t("Ekibe katılmak için giriş yapın") : t("Giriş yap");
       body = (
         <>
           <div className="sort-options auth-method" role="radiogroup" aria-label={t("Giriş yöntemi")}>
@@ -681,7 +694,24 @@ export default function AuthScreen({
     case "join-email":
       title = t("E-posta adresiniz");
       lead = t("Hesabınızı bu adrese gelen kodla doğrulayacağız.");
-      body = emailField(screen === "reg-email" ? "auth-email" : "auth-email-join");
+      body = (
+        <>
+          {emailField(screen === "reg-email" ? "auth-email" : "auth-email-join")}
+          {screen === "join-email" && (
+            <button
+              type="button"
+              className="help-link"
+              onClick={() => {
+                setLoginForJoin(true);
+                setPassword1("");
+                go("login");
+              }}
+            >
+              {t("Zaten hesabım var: giriş yapıp ekibe katıl")}
+            </button>
+          )}
+        </>
+      );
       ready = validEmail;
       break;
     case "reg-password":
