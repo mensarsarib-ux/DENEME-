@@ -776,6 +776,11 @@ const dict: Record<string, string> = {
   "Bu numara ve şifrenizle de giriş yapabilirsiniz.": "आप इस नंबर और अपने पासवर्ड से भी साइन इन कर सकते हैं।",
   "Giriş yapmak ve şifrenizi yenilemek için kullanılır.": "साइन इन करने और पासवर्ड रीसेट करने के लिए उपयोग होता है।",
   "{b} açıldı. Telefon numaranız kaydedilemedi; Ayarlar → Hesabım bölümünden ekleyebilirsiniz.": "{b} तैयार है। आपका फ़ोन नंबर सहेजा नहीं जा सका; सेटिंग्स → मेरा खाता में जोड़ें।",
+  "Geçici e-posta adresleri kabul edilmiyor. Kendi e-posta adresinizi yazın.": "अस्थायी ईमेल पते स्वीकार नहीं हैं। अपना ईमेल पता लिखें।",
+  "Bu e-posta adresinin alan adı mail alamıyor. Adresi kontrol edin.": "इस ईमेल पते का डोमेन मेल प्राप्त नहीं कर सकता। पता जाँचें।",
+  "Geçerli bir e-posta adresi yazın.": "मान्य ईमेल पता लिखें।",
+  "Adresiniz doğruysa DEVAM'a tekrar basın.": "अगर पता सही है, तो फिर से आगे दबाएँ।",
+  "Bunu mu demek istediniz: {e}": "क्या आपका मतलब था: {e}",
 };
 
 export default dict;

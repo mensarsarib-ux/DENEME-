@@ -535,4 +535,9 @@ export const extra: Record<string, string> = {
   "Bu numara ve şifrenizle de giriş yapabilirsiniz.": "You can also sign in with this number and your password.",
   "Giriş yapmak ve şifrenizi yenilemek için kullanılır.": "Used to sign in and reset your password.",
   "{b} açıldı. Telefon numaranız kaydedilemedi; Ayarlar → Hesabım bölümünden ekleyebilirsiniz.": "{b} is ready. Your phone number could not be saved; you can add it in Settings → My account.",
+  "Geçici e-posta adresleri kabul edilmiyor. Kendi e-posta adresinizi yazın.": "Temporary email addresses are not accepted. Please enter your own email address.",
+  "Bu e-posta adresinin alan adı mail alamıyor. Adresi kontrol edin.": "This email address's domain cannot receive mail. Please check the address.",
+  "Geçerli bir e-posta adresi yazın.": "Please enter a valid email address.",
+  "Adresiniz doğruysa DEVAM'a tekrar basın.": "If your address is correct, tap CONTINUE again.",
+  "Bunu mu demek istediniz: {e}": "Did you mean: {e}",
 };

@@ -776,6 +776,11 @@ const dict: Record<string, string> = {
   "Bu numara ve şifrenizle de giriş yapabilirsiniz.": "يمكنك أيضًا تسجيل الدخول بهذا الرقم وكلمة المرور.",
   "Giriş yapmak ve şifrenizi yenilemek için kullanılır.": "يُستخدم لتسجيل الدخول وإعادة تعيين كلمة المرور.",
   "{b} açıldı. Telefon numaranız kaydedilemedi; Ayarlar → Hesabım bölümünden ekleyebilirsiniz.": "{b} جاهز. تعذّر حفظ رقم هاتفك؛ يمكنك إضافته من الإعدادات ← حسابي.",
+  "Geçici e-posta adresleri kabul edilmiyor. Kendi e-posta adresinizi yazın.": "لا تُقبل عناوين البريد المؤقتة. اكتب بريدك الإلكتروني الخاص.",
+  "Bu e-posta adresinin alan adı mail alamıyor. Adresi kontrol edin.": "نطاق هذا البريد لا يستقبل الرسائل. تحقّق من العنوان.",
+  "Geçerli bir e-posta adresi yazın.": "اكتب عنوان بريد إلكتروني صالحًا.",
+  "Adresiniz doğruysa DEVAM'a tekrar basın.": "إذا كان العنوان صحيحًا فاضغط متابعة مرة أخرى.",
+  "Bunu mu demek istediniz: {e}": "هل تقصد: {e}",
 };
 
 export default dict;

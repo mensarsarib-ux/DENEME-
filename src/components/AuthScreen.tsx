@@ -24,6 +24,7 @@ import { legalBase } from "../lib/platform";
 import { confirmSmsCode, resendWait, sendSmsCode, smsErrorText } from "../lib/phoneVerify";
 import { Svg } from "./Icon";
 import PhoneField from "./PhoneField";
+import { checkEmail } from "../lib/emailCheck";
 
 /**
  * Açılış ve hesap ekranları. Açılışta logo, ardından Giriş yap / Üye ol / Ekibe katıl.
@@ -117,6 +118,9 @@ export default function AuthScreen({
   const [email, setEmail] = useState("");
   // Girişte telefon kutusu ayrı tutulur: e-posta ve telefon birbirinin kutusuna ya da şifre yenilemeye geçmez
   const [loginPhoneInput, setLoginPhoneInput] = useState("");
+  // E-posta kontrolü: yazım hatası önerisi ve "yine de bu adresle devam" onayı
+  const [emailSuggestion, setEmailSuggestion] = useState<string | null>(null);
+  const [emailOddConfirmed, setEmailOddConfirmed] = useState<string | null>(null);
   const [password, setPassword1] = useState("");
   const [show, setShow] = useState(false);
   const [code, setCode] = useState("");
@@ -263,6 +267,34 @@ export default function AuthScreen({
     setPhoneSaveFailed(true);
   }
 
+  /**
+   * Kayıtta e-postanın uydurma olmadığını kontrol eder (kod göndermeden). Reddedilirse ya da yazım hatası şüphesi varsa
+   * true döner ve ekranda sebebi gösterilir. Şüpheli ama geçerli adres, DEVAM'a ikinci kez basılınca kabul edilir.
+   */
+  async function emailRejected(): Promise<boolean> {
+    const address = email.trim();
+    const result = await checkEmail(address);
+    setEmailSuggestion(result.suggestion ?? null);
+    if (!result.ok) {
+      haptic("warning");
+      setError(
+        result.reason === "disposable"
+          ? t("Geçici e-posta adresleri kabul edilmiyor. Kendi e-posta adresinizi yazın.")
+          : result.reason === "no_mail"
+            ? t("Bu e-posta adresinin alan adı mail alamıyor. Adresi kontrol edin.")
+            : t("Geçerli bir e-posta adresi yazın."),
+      );
+      return true;
+    }
+    if (result.suggestion && emailOddConfirmed !== address) {
+      haptic("warning");
+      setEmailOddConfirmed(address);
+      setInfo(t("Adresiniz doğruysa DEVAM'a tekrar basın."));
+      return true;
+    }
+    return false;
+  }
+
   /** Kayıt ya da katılma: hesap e-postayla açılır ve kod gönderilir. Gerçek şifre kodla doğrulamadan sonra alınır. */
   async function createAccount(next: Screen, afterCode: Screen) {
     const result = await signUp(email.trim(), randomPassword());
@@ -389,7 +421,10 @@ export default function AuthScreen({
         return;
       case "reg-email":
         if (!validEmail) return;
-        return run(() => createAccount("reg-code", "reg-password"));
+        return run(async () => {
+          if (await emailRejected()) return;
+          await createAccount("reg-code", "reg-password");
+        });
       case "reg-code":
         if (!validCode) return;
         return run(async () => {
@@ -422,7 +457,10 @@ export default function AuthScreen({
         return;
       case "join-email":
         if (!validEmail) return;
-        return run(() => createAccount("join-code", "join-password"));
+        return run(async () => {
+          if (await emailRejected()) return;
+          await createAccount("join-code", "join-password");
+        });
       case "join-code":
         if (!validCode) return;
         return run(async () => {
@@ -546,7 +584,10 @@ export default function AuthScreen({
         autoCapitalize="none"
         autoCorrect="off"
         value={email}
-        onChange={(e) => setEmail(e.target.value)}
+        onChange={(e) => {
+          setEmail(e.target.value);
+          setEmailSuggestion(null);
+        }}
       />
     </div>
   );
@@ -718,6 +759,20 @@ export default function AuthScreen({
       body = (
         <>
           {emailField(screen === "reg-email" ? "auth-email" : "auth-email-join")}
+          {emailSuggestion && emailSuggestion !== email.trim() && (
+            <button
+              type="button"
+              className="help-link"
+              onClick={() => {
+                setEmail(emailSuggestion);
+                setEmailSuggestion(null);
+                setError(null);
+                setInfo(null);
+              }}
+            >
+              {t("Bunu mu demek istediniz: {e}", { e: emailSuggestion })}
+            </button>
+          )}
           {screen === "join-email" && (
             <button
               type="button"
