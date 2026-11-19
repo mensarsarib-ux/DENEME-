@@ -20,3 +20,6 @@ android/local.properties
 __pycache__/
 store/app-preview/*.wav
 store/app-preview/sfx/
+
+# Derleme çıktıları (imzalı Android paketleri repoya konmaz)
+*.aab
