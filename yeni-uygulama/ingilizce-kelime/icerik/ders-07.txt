@@ -1,0 +1,11 @@
+# kelime | cümle | çeviri | sözcük=anlam; ...
+week | I work five days a week. | Haftada beş gün çalışırım. | I=ben; work=çalışırım; five=beş; days=günler; a=bir; week=hafta
+big | He has a big dog. | Onun büyük bir köpeği var. | He=o (erkek); has=sahip, var; a=bir; big=büyük; dog=köpek
+our | Our teacher is very kind. | Öğretmenimiz çok nazik. | Our=bizim; teacher=öğretmen; is=-dir (olmak); very=çok; kind=nazik
+want | I want a cup of tea. | Bir fincan çay istiyorum. | I=ben; want=istiyorum; a=bir; cup=fincan; of=-in (ait olma); tea=çay
+company | She works at a big company. | O büyük bir şirkette çalışıyor. | She=o (kadın); works=çalışıyor; at=-de, -da; a=bir; big=büyük; company=şirket
+only | I have only one brother. | Sadece bir erkek kardeşim var. | I=ben; have=sahibim, var; only=sadece; one=bir; brother=erkek kardeş
+their | Their house is old. | Onların evi eski. | Their=onların; house=ev; is=-dir (olmak); old=eski
+system | The new system is very fast. | Yeni sistem çok hızlı. | The=belirli olanı gösterir; new=yeni; system=sistem; is=-dir (olmak); very=çok; fast=hızlı
+look | Look at this picture. | Bu resme bak. | Look=bak; at=-e, -a; this=bu; picture=resim
+this | This is my mother. | Bu benim annem. | This=bu; is=-dir (olmak); my=benim; mother=anne

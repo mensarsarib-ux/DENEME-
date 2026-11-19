@@ -1,0 +1,7975 @@
+{
+ "surum": 1,
+ "dersler": [
+  {
+   "ders": 1,
+   "kelimeler": [
+    {
+     "en": "I",
+     "tur": "f",
+     "tr": "ben",
+     "ornek": {
+      "en": "I am a student.",
+      "tr": "Ben bir öğrenciyim.",
+      "sozcukler": [
+       {
+        "en": "I",
+        "tr": "ben"
+       },
+       {
+        "en": "am",
+        "tr": "-im (olmak)"
+       },
+       {
+        "en": "a",
+        "tr": "bir"
+       },
+       {
+        "en": "student",
+        "tr": "öğrenci"
+       }
+      ]
+     }
+    },
+    {
+     "en": "be",
+     "tur": "v",
+     "tr": "olmak",
+     "ornek": {
+      "en": "I want to be a doctor.",
+      "tr": "Doktor olmak istiyorum.",
+      "sozcukler": [
+       {
+        "en": "I",
+        "tr": "ben"
+       },
+       {
+        "en": "want",
+        "tr": "istiyorum"
+       },
+       {
+        "en": "to",
+        "tr": "-mek"
+       },
+       {
+        "en": "be",
+        "tr": "olmak"
+       },
+       {
+        "en": "a",
+        "tr": "bir"
+       },
+       {
+        "en": "doctor",
+        "tr": "doktor"
+       }
+      ]
+     }
+    },
+    {
+     "en": "time",
+     "tur": "n",
+     "tr": "zaman, saat",
+     "ornek": {
+      "en": "What time is it?",
+      "tr": "Saat kaç?",
+      "sozcukler": [
+       {
+        "en": "What",
+        "tr": "ne, kaç"
+       },
+       {
+        "en": "time",
+        "tr": "saat, zaman"
+       },
+       {
+        "en": "is",
+        "tr": "-dir (olmak)"
+       },
+       {
+        "en": "it",
+        "tr": "o"
+       }
+      ]
+     }
+    },
+    {
+     "en": "good",
+     "tur": "a",
+     "tr": "iyi",
+     "ornek": {
+      "en": "This is a good book.",
+      "tr": "Bu iyi bir kitap.",
+      "sozcukler": [
+       {
+        "en": "This",
+        "tr": "bu"
+       },
+       {
+        "en": "is",
+        "tr": "-dir (olmak)"
+       },
+       {
+        "en": "a",
+        "tr": "bir"
+       },
+       {
+        "en": "good",
+        "tr": "iyi"
+       },
+       {
+        "en": "book",
+        "tr": "kitap"
+       }
+      ]
+     }
+    },
+    {
+     "en": "there",
+     "tur": "d",
+     "tr": "orada",
+     "ornek": {
+      "en": "My bag is there.",
+      "tr": "Çantam orada.",
+      "sozcukler": [
+       {
+        "en": "My",
+        "tr": "benim"
+       },
+       {
+        "en": "bag",
+        "tr": "çanta"
+       },
+       {
+        "en": "is",
+        "tr": "-dir (olmak)"
+       },
+       {
+        "en": "there",
+        "tr": "orada"
+       }
+      ]
+     }
+    },
+    {
+     "en": "year",
+     "tur": "n",
+     "tr": "yıl",
+     "ornek": {
+      "en": "This year is very good.",
+      "tr": "Bu yıl çok iyi.",
+      "sozcukler": [
+       {
+        "en": "This",
+        "tr": "bu"
+       },
+       {
+        "en": "year",
+        "tr": "yıl"
+       },
+       {
+        "en": "is",
+        "tr": "-dir (olmak)"
+       },
+       {
+        "en": "very",
+        "tr": "çok"
+       },
+       {
+        "en": "good",
+        "tr": "iyi"
+       }
+      ]
+     }
+    },
+    {
+     "en": "you",
+     "tur": "f",
+     "tr": "sen, siz",
+     "ornek": {
+      "en": "You are my friend.",
+      "tr": "Sen benim arkadaşımsın.",
+      "sozcukler": [
+       {
+        "en": "You",
+        "tr": "sen"
+       },
+       {
+        "en": "are",
+        "tr": "-sin (olmak)"
+       },
+       {
+        "en": "my",
+        "tr": "benim"
+       },
+       {
+        "en": "friend",
+        "tr": "arkadaş"
+       }
+      ]
+     }
+    },
+    {
+     "en": "have",
+     "tur": "v",
+     "tr": "sahip olmak",
+     "ornek": {
+      "en": "I have a car.",
+      "tr": "Bir arabam var.",
+      "sozcukler": [
+       {
+        "en": "I",
+        "tr": "ben"
+       },
+       {
+        "en": "have",
+        "tr": "sahibim, var"
+       },
+       {
+        "en": "a",
+        "tr": "bir"
+       },
+       {
+        "en": "car",
+        "tr": "araba"
+       }
+      ]
+     }
+    },
+    {
+     "en": "people",
+     "tur": "n",
+     "tr": "insanlar",
+     "ornek": {
+      "en": "Many people live here.",
+      "tr": "Burada çok insan yaşıyor.",
+      "sozcukler": [
+       {
+        "en": "Many",
+        "tr": "çok"
+       },
+       {
+        "en": "people",
+        "tr": "insanlar"
+       },
+       {
+        "en": "live",
+        "tr": "yaşıyor"
+       },
+       {
+        "en": "here",
+        "tr": "burada"
+       }
+      ]
+     }
+    },
+    {
+     "en": "he",
+     "tur": "f",
+     "tr": "o (erkek)",
+     "ornek": {
+      "en": "He is my brother.",
+      "tr": "O benim erkek kardeşim.",
+      "sozcukler": [
+       {
+        "en": "He",
+        "tr": "o (erkek)"
+       },
+       {
+        "en": "is",
+        "tr": "-dir (olmak)"
+       },
+       {
+        "en": "my",
+        "tr": "benim"
+       },
+       {
+        "en": "brother",
+        "tr": "erkek kardeş"
+       }
+      ]
+     }
+    }
+   ],
+   "hazir": true
+  },
+  {
+   "ders": 2,
+   "kelimeler": [
+    {
+     "en": "new",
+     "tur": "a",
+     "tr": "yeni",
+     "ornek": {
+      "en": "I have a new phone.",
+      "tr": "Yeni bir telefonum var.",
+      "sozcukler": [
+       {
+        "en": "I",
+        "tr": "ben"
+       },
+       {
+        "en": "have",
+        "tr": "sahibim, var"
+       },
+       {
+        "en": "a",
+        "tr": "bir"
+       },
+       {
+        "en": "new",
+        "tr": "yeni"
+       },
+       {
+        "en": "phone",
+        "tr": "telefon"
+       }
+      ]
+     }
+    },
+    {
+     "en": "way",
+     "tur": "n",
+     "tr": "yol, yöntem",
+     "ornek": {
+      "en": "This is the way to school.",
+      "tr": "Okula giden yol bu.",
+      "sozcukler": [
+       {
+        "en": "This",
+        "tr": "bu"
+       },
+       {
+        "en": "is",
+        "tr": "-dir (olmak)"
+       },
+       {
+        "en": "the",
+        "tr": "belirli olanı gösterir"
+       },
+       {
+        "en": "way",
+        "tr": "yol"
+       },
+       {
+        "en": "to",
+        "tr": "-e, -a"
+       },
+       {
+        "en": "school",
+        "tr": "okul"
+       }
+      ]
+     }
+    },
+    {
+     "en": "here",
+     "tur": "d",
+     "tr": "burada",
+     "ornek": {
+      "en": "Come here, please.",
+      "tr": "Buraya gel lütfen.",
+      "sozcukler": [
+       {
+        "en": "Come",
+        "tr": "gel"
+       },
+       {
+        "en": "here",
+        "tr": "buraya, burada"
+       },
+       {
+        "en": "please",
+        "tr": "lütfen"
+       }
+      ]
+     }
+    },
+    {
+     "en": "do",
+     "tur": "v",
+     "tr": "yapmak",
+     "ornek": {
+      "en": "I do my homework every day.",
+      "tr": "Her gün ödevimi yaparım.",
+      "sozcukler": [
+       {
+        "en": "I",
+        "tr": "ben"
+       },
+       {
+        "en": "do",
+        "tr": "yaparım"
+       },
+       {
+        "en": "my",
+        "tr": "benim"
+       },
+       {
+        "en": "homework",
+        "tr": "ödev"
+       },
+       {
+        "en": "every",
+        "tr": "her"
+       },
+       {
+        "en": "day",
+        "tr": "gün"
+       }
+      ]
+     }
+    },
+    {
+     "en": "day",
+     "tur": "n",
+     "tr": "gün",
+     "ornek": {
+      "en": "Today is a nice day.",
+      "tr": "Bugün güzel bir gün.",
+      "sozcukler": [
+       {
+        "en": "Today",
+        "tr": "bugün"
+       },
+       {
+        "en": "is",
+        "tr": "-dir (olmak)"
+       },
+       {
+        "en": "a",
+        "tr": "bir"
+       },
+       {
+        "en": "nice",
+        "tr": "güzel"
+       },
+       {
+        "en": "day",
+        "tr": "gün"
+       }
+      ]
+     }
+    },
+    {
+     "en": "she",
+     "tur": "f",
+     "tr": "o (kadın)",
+     "ornek": {
+      "en": "She is a teacher.",
+      "tr": "O bir öğretmen.",
+      "sozcukler": [
+       {
+        "en": "She",
+        "tr": "o (kadın)"
+       },
+       {
+        "en": "is",
+        "tr": "-dir (olmak)"
+       },
+       {
+        "en": "a",
+        "tr": "bir"
+       },
+       {
+        "en": "teacher",
+        "tr": "öğretmen"
+       }
+      ]
+     }
+    },
+    {
+     "en": "man",
+     "tur": "n",
+     "tr": "adam",
+     "ornek": {
+      "en": "The man is very tall.",
+      "tr": "Adam çok uzun boylu.",
+      "sozcukler": [
+       {
+        "en": "The",
+        "tr": "belirli olanı gösterir"
+       },
+       {
+        "en": "man",
+        "tr": "adam"
+       },
+       {
+        "en": "is",
+        "tr": "-dir (olmak)"
+       },
+       {
+        "en": "very",
+        "tr": "çok"
+       },
+       {
+        "en": "tall",
+        "tr": "uzun boylu"
+       }
+      ]
+     }
+    },
+    {
+     "en": "it",
+     "tur": "f",
+     "tr": "o (nesne, hayvan)",
+     "ornek": {
+      "en": "It is a small cat.",
+      "tr": "O küçük bir kedi.",
+      "sozcukler": [
+       {
+        "en": "It",
+        "tr": "o (nesne, hayvan)"
+       },
+       {
+        "en": "is",
+        "tr": "-dir (olmak)"
+       },
+       {
+        "en": "a",
+        "tr": "bir"
+       },
+       {
+        "en": "small",
+        "tr": "küçük"
+       },
+       {
+        "en": "cat",
+        "tr": "kedi"
+       }
+      ]
+     }
+    },
+    {
+     "en": "go",
+     "tur": "v",
+     "tr": "gitmek",
+     "ornek": {
+      "en": "We go to school together.",
+      "tr": "Okula birlikte gideriz.",
+      "sozcukler": [
+       {
+        "en": "We",
+        "tr": "biz"
+       },
+       {
+        "en": "go",
+        "tr": "gideriz"
+       },
+       {
+        "en": "to",
+        "tr": "-e, -a"
+       },
+       {
+        "en": "school",
+        "tr": "okul"
+       },
+       {
+        "en": "together",
+        "tr": "birlikte"
+       }
+      ]
+     }
+    },
+    {
+     "en": "old",
+     "tur": "a",
+     "tr": "eski; yaşlı",
+     "ornek": {
+      "en": "My father is not old.",
+      "tr": "Babam yaşlı değil.",
+      "sozcukler": [
+       {
+        "en": "My",
+        "tr": "benim"
+       },
+       {
+        "en": "father",
+        "tr": "baba"
+       },
+       {
+        "en": "is",
+        "tr": "-dir (olmak)"
+       },
+       {
+        "en": "not",
+        "tr": "değil"
+       },
+       {
+        "en": "old",
+        "tr": "yaşlı"
+       }
+      ]
+     }
+    }
+   ],
+   "hazir": true
+  },
+  {
+   "ders": 3,
+   "kelimeler": [
+    {
+     "en": "thing",
+     "tur": "n",
+     "tr": "şey",
+     "ornek": {
+      "en": "What is this thing?",
+      "tr": "Bu şey ne?",
+      "sozcukler": [
+       {
+        "en": "What",
+        "tr": "ne"
+       },
+       {
+        "en": "is",
+        "tr": "-dir (olmak)"
+       },
+       {
+        "en": "this",
+        "tr": "bu"
+       },
+       {
+        "en": "thing",
+        "tr": "şey"
+       }
+      ]
+     }
+    },
+    {
+     "en": "now",
+     "tur": "d",
+     "tr": "şimdi",
+     "ornek": {
+      "en": "I am at home now.",
+      "tr": "Şimdi evdeyim.",
+      "sozcukler": [
+       {
+        "en": "I",
+        "tr": "ben"
+       },
+       {
+        "en": "am",
+        "tr": "-im (olmak)"
+       },
+       {
+        "en": "at",
+        "tr": "-de, -da"
+       },
+       {
+        "en": "home",
+        "tr": "ev"
+       },
+       {
+        "en": "now",
+        "tr": "şimdi"
+       }
+      ]
+     }
+    },
+    {
+     "en": "we",
+     "tur": "f",
+     "tr": "biz",
+     "ornek": {
+      "en": "We are a big family.",
+      "tr": "Biz büyük bir aileyiz.",
+      "sozcukler": [
+       {
+        "en": "We",
+        "tr": "biz"
+       },
+       {
+        "en": "are",
+        "tr": "-iz (olmak)"
+       },
+       {
+        "en": "a",
+        "tr": "bir"
+       },
+       {
+        "en": "big",
+        "tr": "büyük"
+       },
+       {
+        "en": "family",
+        "tr": "aile"
+       }
+      ]
+     }
+    },
+    {
+     "en": "woman",
+     "tur": "n",
+     "tr": "kadın",
+     "ornek": {
+      "en": "The woman has two children.",
+      "tr": "Kadının iki çocuğu var.",
+      "sozcukler": [
+       {
+        "en": "The",
+        "tr": "belirli olanı gösterir"
+       },
+       {
+        "en": "woman",
+        "tr": "kadın"
+       },
+       {
+        "en": "has",
+        "tr": "sahip, var"
+       },
+       {
+        "en": "two",
+        "tr": "iki"
+       },
+       {
+        "en": "children",
+        "tr": "çocuklar"
+       }
+      ]
+     }
+    },
+    {
+     "en": "come",
+     "tur": "v",
+     "tr": "gelmek",
+     "ornek": {
+      "en": "Can you come with me?",
+      "tr": "Benimle gelebilir misin?",
+      "sozcukler": [
+       {
+        "en": "Can",
+        "tr": "-ebilir mi"
+       },
+       {
+        "en": "you",
+        "tr": "sen"
+       },
+       {
+        "en": "come",
+        "tr": "gelmek"
+       },
+       {
+        "en": "with",
+        "tr": "ile"
+       },
+       {
+        "en": "me",
+        "tr": "ben, beni"
+       }
+      ]
+     }
+    },
+    {
+     "en": "life",
+     "tur": "n",
+     "tr": "hayat",
+     "ornek": {
+      "en": "Life is beautiful.",
+      "tr": "Hayat güzeldir.",
+      "sozcukler": [
+       {
+        "en": "Life",
+        "tr": "hayat"
+       },
+       {
+        "en": "is",
+        "tr": "-dir (olmak)"
+       },
+       {
+        "en": "beautiful",
+        "tr": "güzel"
+       }
+      ]
+     }
+    },
+    {
+     "en": "they",
+     "tur": "f",
+     "tr": "onlar",
+     "ornek": {
+      "en": "They are my friends.",
+      "tr": "Onlar benim arkadaşlarım.",
+      "sozcukler": [
+       {
+        "en": "They",
+        "tr": "onlar"
+       },
+       {
+        "en": "are",
+        "tr": "-ler (olmak)"
+       },
+       {
+        "en": "my",
+        "tr": "benim"
+       },
+       {
+        "en": "friends",
+        "tr": "arkadaşlar"
+       }
+      ]
+     }
+    },
+    {
+     "en": "great",
+     "tur": "a",
+     "tr": "harika, büyük",
+     "ornek": {
+      "en": "You are a great friend.",
+      "tr": "Sen harika bir arkadaşsın.",
+      "sozcukler": [
+       {
+        "en": "You",
+        "tr": "sen"
+       },
+       {
+        "en": "are",
+        "tr": "-sin (olmak)"
+       },
+       {
+        "en": "a",
+        "tr": "bir"
+       },
+       {
+        "en": "great",
+        "tr": "harika"
+       },
+       {
+        "en": "friend",
+        "tr": "arkadaş"
+       }
+      ]
+     }
+    },
+    {
+     "en": "child",
+     "tur": "n",
+     "tr": "çocuk",
+     "ornek": {
+      "en": "The child is happy.",
+      "tr": "Çocuk mutlu.",
+      "sozcukler": [
+       {
+        "en": "The",
+        "tr": "belirli olanı gösterir"
+       },
+       {
+        "en": "child",
+        "tr": "çocuk"
+       },
+       {
+        "en": "is",
+        "tr": "-dir (olmak)"
+       },
+       {
+        "en": "happy",
+        "tr": "mutlu"
+       }
+      ]
+     }
+    },
+    {
+     "en": "then",
+     "tur": "d",
+     "tr": "sonra, o zaman",
+     "ornek": {
+      "en": "We eat dinner, then we sleep.",
+      "tr": "Akşam yemeği yeriz, sonra uyuruz.",
+      "sozcukler": [
+       {
+        "en": "We",
+        "tr": "biz"
+       },
+       {
+        "en": "eat",
+        "tr": "yeriz"
+       },
+       {
+        "en": "dinner",
+        "tr": "akşam yemeği"
+       },
+       {
+        "en": "then",
+        "tr": "sonra"
+       },
+       {
+        "en": "we",
+        "tr": "biz"
+       },
+       {
+        "en": "sleep",
+        "tr": "uyuruz"
+       }
+      ]
+     }
+    }
+   ],
+   "hazir": true
+  },
+  {
+   "ders": 4,
+   "kelimeler": [
+    {
+     "en": "me",
+     "tur": "f",
+     "tr": "beni, bana",
+     "ornek": {
+      "en": "Please help me.",
+      "tr": "Lütfen bana yardım et.",
+      "sozcukler": [
+       {
+        "en": "Please",
+        "tr": "lütfen"
+       },
+       {
+        "en": "help",
+        "tr": "yardım et"
+       },
+       {
+        "en": "me",
+        "tr": "bana, beni"
+       }
+      ]
+     }
+    },
+    {
+     "en": "get",
+     "tur": "v",
+     "tr": "almak, elde etmek",
+     "ornek": {
+      "en": "I get a gift every year.",
+      "tr": "Her yıl bir hediye alırım.",
+      "sozcukler": [
+       {
+        "en": "I",
+        "tr": "ben"
+       },
+       {
+        "en": "get",
+        "tr": "alırım"
+       },
+       {
+        "en": "a",
+        "tr": "bir"
+       },
+       {
+        "en": "gift",
+        "tr": "hediye"
+       },
+       {
+        "en": "every",
+        "tr": "her"
+       },
+       {
+        "en": "year",
+        "tr": "yıl"
+       }
+      ]
+     }
+    },
+    {
+     "en": "world",
+     "tur": "n",
+     "tr": "dünya",
+     "ornek": {
+      "en": "The world is very big.",
+      "tr": "Dünya çok büyük.",
+      "sozcukler": [
+       {
+        "en": "The",
+        "tr": "belirli olanı gösterir"
+       },
+       {
+        "en": "world",
+        "tr": "dünya"
+       },
+       {
+        "en": "is",
+        "tr": "-dir (olmak)"
+       },
+       {
+        "en": "very",
+        "tr": "çok"
+       },
+       {
+        "en": "big",
+        "tr": "büyük"
+       }
+      ]
+     }
+    },
+    {
+     "en": "him",
+     "tur": "f",
+     "tr": "onu, ona (erkek)",
+     "ornek": {
+      "en": "I know him.",
+      "tr": "Onu tanıyorum.",
+      "sozcukler": [
+       {
+        "en": "I",
+        "tr": "ben"
+       },
+       {
+        "en": "know",
+        "tr": "tanıyorum, biliyorum"
+       },
+       {
+        "en": "him",
+        "tr": "onu (erkek)"
+       }
+      ]
+     }
+    },
+    {
+     "en": "school",
+     "tur": "n",
+     "tr": "okul",
+     "ornek": {
+      "en": "My school is near my home.",
+      "tr": "Okulum evime yakın.",
+      "sozcukler": [
+       {
+        "en": "My",
+        "tr": "benim"
+       },
+       {
+        "en": "school",
+        "tr": "okul"
+       },
+       {
+        "en": "is",
+        "tr": "-dir (olmak)"
+       },
+       {
+        "en": "near",
+        "tr": "yakın"
+       },
+       {
+        "en": "my",
+        "tr": "benim"
+       },
+       {
+        "en": "home",
+        "tr": "ev"
+       }
+      ]
+     }
+    },
+    {
+     "en": "make",
+     "tur": "v",
+     "tr": "yapmak, üretmek",
+     "ornek": {
+      "en": "I make tea every morning.",
+      "tr": "Her sabah çay yaparım.",
+      "sozcukler": [
+       {
+        "en": "I",
+        "tr": "ben"
+       },
+       {
+        "en": "make",
+        "tr": "yaparım"
+       },
+       {
+        "en": "tea",
+        "tr": "çay"
+       },
+       {
+        "en": "every",
+        "tr": "her"
+       },
+       {
+        "en": "morning",
+        "tr": "sabah"
+       }
+      ]
+     }
+    },
+    {
+     "en": "high",
+     "tur": "a",
+     "tr": "yüksek",
+     "ornek": {
+      "en": "This mountain is very high.",
+      "tr": "Bu dağ çok yüksek.",
+      "sozcukler": [
+       {
+        "en": "This",
+        "tr": "bu"
+       },
+       {
+        "en": "mountain",
+        "tr": "dağ"
+       },
+       {
+        "en": "is",
+        "tr": "-dir (olmak)"
+       },
+       {
+        "en": "very",
+        "tr": "çok"
+       },
+       {
+        "en": "high",
+        "tr": "yüksek"
+       }
+      ]
+     }
+    },
+    {
+     "en": "family",
+     "tur": "n",
+     "tr": "aile",
+     "ornek": {
+      "en": "I love my family.",
+      "tr": "Ailemi seviyorum.",
+      "sozcukler": [
+       {
+        "en": "I",
+        "tr": "ben"
+       },
+       {
+        "en": "love",
+        "tr": "seviyorum"
+       },
+       {
+        "en": "my",
+        "tr": "benim"
+       },
+       {
+        "en": "family",
+        "tr": "aile"
+       }
+      ]
+     }
+    },
+    {
+     "en": "her",
+     "tur": "f",
+     "tr": "onu, ona; onun (kadın)",
+     "ornek": {
+      "en": "This is her book.",
+      "tr": "Bu onun kitabı.",
+      "sozcukler": [
+       {
+        "en": "This",
+        "tr": "bu"
+       },
+       {
+        "en": "is",
+        "tr": "-dir (olmak)"
+       },
+       {
+        "en": "her",
+        "tr": "onun (kadın)"
+       },
+       {
+        "en": "book",
+        "tr": "kitap"
+       }
+      ]
+     }
+    },
+    {
+     "en": "also",
+     "tur": "d",
+     "tr": "ayrıca",
+     "ornek": {
+      "en": "I also like coffee.",
+      "tr": "Kahveyi de severim.",
+      "sozcukler": [
+       {
+        "en": "I",
+        "tr": "ben"
+       },
+       {
+        "en": "also",
+        "tr": "de, ayrıca"
+       },
+       {
+        "en": "like",
+        "tr": "severim"
+       },
+       {
+        "en": "coffee",
+        "tr": "kahve"
+       }
+      ]
+     }
+    }
+   ],
+   "hazir": true
+  },
+  {
+   "ders": 5,
+   "kelimeler": [
+    {
+     "en": "student",
+     "tur": "n",
+     "tr": "öğrenci",
+     "ornek": {
+      "en": "She is a good student.",
+      "tr": "O iyi bir öğrenci.",
+      "sozcukler": [
+       {
+        "en": "She",
+        "tr": "o (kadın)"
+       },
+       {
+        "en": "is",
+        "tr": "-dir (olmak)"
+       },
+       {
+        "en": "a",
+        "tr": "bir"
+       },
+       {
+        "en": "good",
+        "tr": "iyi"
+       },
+       {
+        "en": "student",
+        "tr": "öğrenci"
+       }
+      ]
+     }
+    },
+    {
+     "en": "know",
+     "tur": "v",
+     "tr": "bilmek",
+     "ornek": {
+      "en": "I know the answer.",
+      "tr": "Cevabı biliyorum.",
+      "sozcukler": [
+       {
+        "en": "I",
+        "tr": "ben"
+       },
+       {
+        "en": "know",
+        "tr": "biliyorum"
+       },
+       {
+        "en": "the",
+        "tr": "belirli olanı gösterir"
+       },
+       {
+        "en": "answer",
+        "tr": "cevap"
+       }
+      ]
+     }
+    },
+    {
+     "en": "us",
+     "tur": "f",
+     "tr": "bizi, bize",
+     "ornek": {
+      "en": "Come with us.",
+      "tr": "Bizimle gel.",
+      "sozcukler": [
+       {
+        "en": "Come",
+        "tr": "gel"
+       },
+       {
+        "en": "with",
+        "tr": "ile"
+       },
+       {
+        "en": "us",
+        "tr": "biz, bizi"
+       }
+      ]
+     }
+    },
+    {
+     "en": "group",
+     "tur": "n",
+     "tr": "grup",
+     "ornek": {
+      "en": "We work in a small group.",
+      "tr": "Küçük bir grupta çalışıyoruz.",
+      "sozcukler": [
+       {
+        "en": "We",
+        "tr": "biz"
+       },
+       {
+        "en": "work",
+        "tr": "çalışıyoruz"
+       },
+       {
+        "en": "in",
+        "tr": "içinde"
+       },
+       {
+        "en": "a",
+        "tr": "bir"
+       },
+       {
+        "en": "small",
+        "tr": "küçük"
+       },
+       {
+        "en": "group",
+        "tr": "grup"
+       }
+      ]
+     }
+    },
+    {
+     "en": "small",
+     "tur": "a",
+     "tr": "küçük",
+     "ornek": {
+      "en": "My room is small.",
+      "tr": "Odam küçük.",
+      "sozcukler": [
+       {
+        "en": "My",
+        "tr": "benim"
+       },
+       {
+        "en": "room",
+        "tr": "oda"
+       },
+       {
+        "en": "is",
+        "tr": "-dir (olmak)"
+       },
+       {
+        "en": "small",
+        "tr": "küçük"
+       }
+      ]
+     }
+    },
+    {
+     "en": "them",
+     "tur": "f",
+     "tr": "onları, onlara",
+     "ornek": {
+      "en": "I see them every day.",
+      "tr": "Onları her gün görüyorum.",
+      "sozcukler": [
+       {
+        "en": "I",
+        "tr": "ben"
+       },
+       {
+        "en": "see",
+        "tr": "görüyorum"
+       },
+       {
+        "en": "them",
+        "tr": "onları"
+       },
+       {
+        "en": "every",
+        "tr": "her"
+       },
+       {
+        "en": "day",
+        "tr": "gün"
+       }
+      ]
+     }
+    },
+    {
+     "en": "country",
+     "tur": "n",
+     "tr": "ülke",
+     "ornek": {
+      "en": "Turkey is a beautiful country.",
+      "tr": "Türkiye güzel bir ülke.",
+      "sozcukler": [
+       {
+        "en": "Turkey",
+        "tr": "Türkiye"
+       },
+       {
+        "en": "is",
+        "tr": "-dir (olmak)"
+       },
+       {
+        "en": "a",
+        "tr": "bir"
+       },
+       {
+        "en": "beautiful",
+        "tr": "güzel"
+       },
+       {
+        "en": "country",
+        "tr": "ülke"
+       }
+      ]
+     }
+    },
+    {
+     "en": "think",
+     "tur": "v",
+     "tr": "düşünmek",
+     "ornek": {
+      "en": "I think you are right.",
+      "tr": "Bence haklısın.",
+      "sozcukler": [
+       {
+        "en": "I",
+        "tr": "ben"
+       },
+       {
+        "en": "think",
+        "tr": "düşünüyorum"
+       },
+       {
+        "en": "you",
+        "tr": "sen"
+       },
+       {
+        "en": "are",
+        "tr": "-sin (olmak)"
+       },
+       {
+        "en": "right",
+        "tr": "haklı, doğru"
+       }
+      ]
+     }
+    },
+    {
+     "en": "too",
+     "tur": "d",
+     "tr": "de, da; fazla",
+     "ornek": {
+      "en": "I like tea too.",
+      "tr": "Ben de çay severim.",
+      "sozcukler": [
+       {
+        "en": "I",
+        "tr": "ben"
+       },
+       {
+        "en": "like",
+        "tr": "severim"
+       },
+       {
+        "en": "tea",
+        "tr": "çay"
+       },
+       {
+        "en": "too",
+        "tr": "de, da"
+       }
+      ]
+     }
+    },
+    {
+     "en": "problem",
+     "tur": "n",
+     "tr": "sorun",
+     "ornek": {
+      "en": "We have a big problem.",
+      "tr": "Büyük bir sorunumuz var.",
+      "sozcukler": [
+       {
+        "en": "We",
+        "tr": "biz"
+       },
+       {
+        "en": "have",
+        "tr": "sahibiz, var"
+       },
+       {
+        "en": "a",
+        "tr": "bir"
+       },
+       {
+        "en": "big",
+        "tr": "büyük"
+       },
+       {
+        "en": "problem",
+        "tr": "sorun"
+       }
+      ]
+     }
+    }
+   ],
+   "hazir": true
+  },
+  {
+   "ders": 6,
+   "kelimeler": [
+    {
+     "en": "my",
+     "tur": "f",
+     "tr": "benim",
+     "ornek": {
+      "en": "My name is Ali.",
+      "tr": "Benim adım Ali.",
+      "sozcukler": [
+       {
+        "en": "My",
+        "tr": "benim"
+       },
+       {
+        "en": "name",
+        "tr": "isim, ad"
+       },
+       {
+        "en": "is",
+        "tr": "-dir (olmak)"
+       },
+       {
+        "en": "Ali",
+        "tr": "Ali (isim)"
+       }
+      ]
+     }
+    },
+    {
+     "en": "take",
+     "tur": "v",
+     "tr": "almak",
+     "ornek": {
+      "en": "Take your bag.",
+      "tr": "Çantanı al.",
+      "sozcukler": [
+       {
+        "en": "Take",
+        "tr": "al"
+       },
+       {
+        "en": "your",
+        "tr": "senin"
+       },
+       {
+        "en": "bag",
+        "tr": "çanta"
+       }
+      ]
+     }
+    },
+    {
+     "en": "hand",
+     "tur": "n",
+     "tr": "el",
+     "ornek": {
+      "en": "Give me your hand.",
+      "tr": "Elini ver.",
+      "sozcukler": [
+       {
+        "en": "Give",
+        "tr": "ver"
+       },
+       {
+        "en": "me",
+        "tr": "bana"
+       },
+       {
+        "en": "your",
+        "tr": "senin"
+       },
+       {
+        "en": "hand",
+        "tr": "el"
+       }
+      ]
+     }
+    },
+    {
+     "en": "large",
+     "tur": "a",
+     "tr": "geniş, büyük",
+     "ornek": {
+      "en": "They live in a large house.",
+      "tr": "Büyük bir evde yaşıyorlar.",
+      "sozcukler": [
+       {
+        "en": "They",
+        "tr": "onlar"
+       },
+       {
+        "en": "live",
+        "tr": "yaşıyorlar"
+       },
+       {
+        "en": "in",
+        "tr": "içinde"
+       },
+       {
+        "en": "a",
+        "tr": "bir"
+       },
+       {
+        "en": "large",
+        "tr": "büyük, geniş"
+       },
+       {
+        "en": "house",
+        "tr": "ev"
+       }
+      ]
+     }
+    },
+    {
+     "en": "your",
+     "tur": "f",
+     "tr": "senin, sizin",
+     "ornek": {
+      "en": "What is your name?",
+      "tr": "Adın ne?",
+      "sozcukler": [
+       {
+        "en": "What",
+        "tr": "ne"
+       },
+       {
+        "en": "is",
+        "tr": "-dir (olmak)"
+       },
+       {
+        "en": "your",
+        "tr": "senin"
+       },
+       {
+        "en": "name",
+        "tr": "isim, ad"
+       }
+      ]
+     }
+    },
+    {
+     "en": "part",
+     "tur": "n",
+     "tr": "parça, kısım",
+     "ornek": {
+      "en": "This part is easy.",
+      "tr": "Bu kısım kolay.",
+      "sozcukler": [
+       {
+        "en": "This",
+        "tr": "bu"
+       },
+       {
+        "en": "part",
+        "tr": "kısım, parça"
+       },
+       {
+        "en": "is",
+        "tr": "-dir (olmak)"
+       },
+       {
+        "en": "easy",
+        "tr": "kolay"
+       }
+      ]
+     }
+    },
+    {
+     "en": "very",
+     "tur": "d",
+     "tr": "çok",
+     "ornek": {
+      "en": "The water is very cold.",
+      "tr": "Su çok soğuk.",
+      "sozcukler": [
+       {
+        "en": "The",
+        "tr": "belirli olanı gösterir"
+       },
+       {
+        "en": "water",
+        "tr": "su"
+       },
+       {
+        "en": "is",
+        "tr": "-dir (olmak)"
+       },
+       {
+        "en": "very",
+        "tr": "çok"
+       },
+       {
+        "en": "cold",
+        "tr": "soğuk"
+       }
+      ]
+     }
+    },
+    {
+     "en": "his",
+     "tur": "f",
+     "tr": "onun (erkek)",
+     "ornek": {
+      "en": "His car is new.",
+      "tr": "Onun arabası yeni.",
+      "sozcukler": [
+       {
+        "en": "His",
+        "tr": "onun (erkek)"
+       },
+       {
+        "en": "car",
+        "tr": "araba"
+       },
+       {
+        "en": "is",
+        "tr": "-dir (olmak)"
+       },
+       {
+        "en": "new",
+        "tr": "yeni"
+       }
+      ]
+     }
+    },
+    {
+     "en": "see",
+     "tur": "v",
+     "tr": "görmek",
+     "ornek": {
+      "en": "I can see the sea.",
+      "tr": "Denizi görebiliyorum.",
+      "sozcukler": [
+       {
+        "en": "I",
+        "tr": "ben"
+       },
+       {
+        "en": "can",
+        "tr": "-ebiliyorum"
+       },
+       {
+        "en": "see",
+        "tr": "görmek"
+       },
+       {
+        "en": "the",
+        "tr": "belirli olanı gösterir"
+       },
+       {
+        "en": "sea",
+        "tr": "deniz"
+       }
+      ]
+     }
+    },
+    {
+     "en": "place",
+     "tur": "n",
+     "tr": "yer",
+     "ornek": {
+      "en": "This is a nice place.",
+      "tr": "Burası güzel bir yer.",
+      "sozcukler": [
+       {
+        "en": "This",
+        "tr": "bu"
+       },
+       {
+        "en": "is",
+        "tr": "-dir (olmak)"
+       },
+       {
+        "en": "a",
+        "tr": "bir"
+       },
+       {
+        "en": "nice",
+        "tr": "güzel"
+       },
+       {
+        "en": "place",
+        "tr": "yer"
+       }
+      ]
+     }
+    }
+   ],
+   "hazir": true
+  },
+  {
+   "ders": 7,
+   "kelimeler": [
+    {
+     "en": "week",
+     "tur": "n",
+     "tr": "hafta",
+     "ornek": {
+      "en": "I work five days a week.",
+      "tr": "Haftada beş gün çalışırım.",
+      "sozcukler": [
+       {
+        "en": "I",
+        "tr": "ben"
+       },
+       {
+        "en": "work",
+        "tr": "çalışırım"
+       },
+       {
+        "en": "five",
+        "tr": "beş"
+       },
+       {
+        "en": "days",
+        "tr": "günler"
+       },
+       {
+        "en": "a",
+        "tr": "bir"
+       },
+       {
+        "en": "week",
+        "tr": "hafta"
+       }
+      ]
+     }
+    },
+    {
+     "en": "big",
+     "tur": "a",
+     "tr": "büyük",
+     "ornek": {
+      "en": "He has a big dog.",
+      "tr": "Onun büyük bir köpeği var.",
+      "sozcukler": [
+       {
+        "en": "He",
+        "tr": "o (erkek)"
+       },
+       {
+        "en": "has",
+        "tr": "sahip, var"
+       },
+       {
+        "en": "a",
+        "tr": "bir"
+       },
+       {
+        "en": "big",
+        "tr": "büyük"
+       },
+       {
+        "en": "dog",
+        "tr": "köpek"
+       }
+      ]
+     }
+    },
+    {
+     "en": "our",
+     "tur": "f",
+     "tr": "bizim",
+     "ornek": {
+      "en": "Our teacher is very kind.",
+      "tr": "Öğretmenimiz çok nazik.",
+      "sozcukler": [
+       {
+        "en": "Our",
+        "tr": "bizim"
+       },
+       {
+        "en": "teacher",
+        "tr": "öğretmen"
+       },
+       {
+        "en": "is",
+        "tr": "-dir (olmak)"
+       },
+       {
+        "en": "very",
+        "tr": "çok"
+       },
+       {
+        "en": "kind",
+        "tr": "nazik"
+       }
+      ]
+     }
+    },
+    {
+     "en": "want",
+     "tur": "v",
+     "tr": "istemek",
+     "ornek": {
+      "en": "I want a cup of tea.",
+      "tr": "Bir fincan çay istiyorum.",
+      "sozcukler": [
+       {
+        "en": "I",
+        "tr": "ben"
+       },
+       {
+        "en": "want",
+        "tr": "istiyorum"
+       },
+       {
+        "en": "a",
+        "tr": "bir"
+       },
+       {
+        "en": "cup",
+        "tr": "fincan"
+       },
+       {
+        "en": "of",
+        "tr": "-in (ait olma)"
+       },
+       {
+        "en": "tea",
+        "tr": "çay"
+       }
+      ]
+     }
+    },
+    {
+     "en": "company",
+     "tur": "n",
+     "tr": "şirket",
+     "ornek": {
+      "en": "She works at a big company.",
+      "tr": "O büyük bir şirkette çalışıyor.",
+      "sozcukler": [
+       {
+        "en": "She",
+        "tr": "o (kadın)"
+       },
+       {
+        "en": "works",
+        "tr": "çalışıyor"
+       },
+       {
+        "en": "at",
+        "tr": "-de, -da"
+       },
+       {
+        "en": "a",
+        "tr": "bir"
+       },
+       {
+        "en": "big",
+        "tr": "büyük"
+       },
+       {
+        "en": "company",
+        "tr": "şirket"
+       }
+      ]
+     }
+    },
+    {
+     "en": "only",
+     "tur": "d",
+     "tr": "sadece",
+     "ornek": {
+      "en": "I have only one brother.",
+      "tr": "Sadece bir erkek kardeşim var.",
+      "sozcukler": [
+       {
+        "en": "I",
+        "tr": "ben"
+       },
+       {
+        "en": "have",
+        "tr": "sahibim, var"
+       },
+       {
+        "en": "only",
+        "tr": "sadece"
+       },
+       {
+        "en": "one",
+        "tr": "bir"
+       },
+       {
+        "en": "brother",
+        "tr": "erkek kardeş"
+       }
+      ]
+     }
+    },
+    {
+     "en": "their",
+     "tur": "f",
+     "tr": "onların",
+     "ornek": {
+      "en": "Their house is old.",
+      "tr": "Onların evi eski.",
+      "sozcukler": [
+       {
+        "en": "Their",
+        "tr": "onların"
+       },
+       {
+        "en": "house",
+        "tr": "ev"
+       },
+       {
+        "en": "is",
+        "tr": "-dir (olmak)"
+       },
+       {
+        "en": "old",
+        "tr": "eski"
+       }
+      ]
+     }
+    },
+    {
+     "en": "system",
+     "tur": "n",
+     "tr": "sistem",
+     "ornek": {
+      "en": "The new system is very fast.",
+      "tr": "Yeni sistem çok hızlı.",
+      "sozcukler": [
+       {
+        "en": "The",
+        "tr": "belirli olanı gösterir"
+       },
+       {
+        "en": "new",
+        "tr": "yeni"
+       },
+       {
+        "en": "system",
+        "tr": "sistem"
+       },
+       {
+        "en": "is",
+        "tr": "-dir (olmak)"
+       },
+       {
+        "en": "very",
+        "tr": "çok"
+       },
+       {
+        "en": "fast",
+        "tr": "hızlı"
+       }
+      ]
+     }
+    },
+    {
+     "en": "look",
+     "tur": "v",
+     "tr": "bakmak",
+     "ornek": {
+      "en": "Look at this picture.",
+      "tr": "Bu resme bak.",
+      "sozcukler": [
+       {
+        "en": "Look",
+        "tr": "bak"
+       },
+       {
+        "en": "at",
+        "tr": "-e, -a"
+       },
+       {
+        "en": "this",
+        "tr": "bu"
+       },
+       {
+        "en": "picture",
+        "tr": "resim"
+       }
+      ]
+     }
+    },
+    {
+     "en": "this",
+     "tur": "f",
+     "tr": "bu",
+     "ornek": {
+      "en": "This is my mother.",
+      "tr": "Bu benim annem.",
+      "sozcukler": [
+       {
+        "en": "This",
+        "tr": "bu"
+       },
+       {
+        "en": "is",
+        "tr": "-dir (olmak)"
+       },
+       {
+        "en": "my",
+        "tr": "benim"
+       },
+       {
+        "en": "mother",
+        "tr": "anne"
+       }
+      ]
+     }
+    }
+   ],
+   "hazir": true
+  },
+  {
+   "ders": 8,
+   "kelimeler": [
+    {
+     "en": "long",
+     "tur": "a",
+     "tr": "uzun",
+     "ornek": {
+      "en": "It is a long road.",
+      "tr": "Bu uzun bir yol.",
+      "sozcukler": [
+       {
+        "en": "It",
+        "tr": "o"
+       },
+       {
+        "en": "is",
+        "tr": "-dir (olmak)"
+       },
+       {
+        "en": "a",
+        "tr": "bir"
+       },
+       {
+        "en": "long",
+        "tr": "uzun"
+       },
+       {
+        "en": "road",
+        "tr": "yol"
+       }
+      ]
+     }
+    },
+    {
+     "en": "program",
+     "tur": "n",
+     "tr": "program",
+     "ornek": {
+      "en": "This program is free.",
+      "tr": "Bu program ücretsiz.",
+      "sozcukler": [
+       {
+        "en": "This",
+        "tr": "bu"
+       },
+       {
+        "en": "program",
+        "tr": "program"
+       },
+       {
+        "en": "is",
+        "tr": "-dir (olmak)"
+       },
+       {
+        "en": "free",
+        "tr": "ücretsiz"
+       }
+      ]
+     }
+    },
+    {
+     "en": "question",
+     "tur": "n",
+     "tr": "soru",
+     "ornek": {
+      "en": "I have a question.",
+      "tr": "Bir sorum var.",
+      "sozcukler": [
+       {
+        "en": "I",
+        "tr": "ben"
+       },
+       {
+        "en": "have",
+        "tr": "sahibim, var"
+       },
+       {
+        "en": "a",
+        "tr": "bir"
+       },
+       {
+        "en": "question",
+        "tr": "soru"
+       }
+      ]
+     }
+    },
+    {
+     "en": "that",
+     "tur": "f",
+     "tr": "şu, o",
+     "ornek": {
+      "en": "That is my school.",
+      "tr": "Şu benim okulum.",
+      "sozcukler": [
+       {
+        "en": "That",
+        "tr": "şu, o"
+       },
+       {
+        "en": "is",
+        "tr": "-dir (olmak)"
+       },
+       {
+        "en": "my",
+        "tr": "benim"
+       },
+       {
+        "en": "school",
+        "tr": "okul"
+       }
+      ]
+     }
+    },
+    {
+     "en": "just",
+     "tur": "d",
+     "tr": "sadece; az önce",
+     "ornek": {
+      "en": "I just want some water.",
+      "tr": "Sadece biraz su istiyorum.",
+      "sozcukler": [
+       {
+        "en": "I",
+        "tr": "ben"
+       },
+       {
+        "en": "just",
+        "tr": "sadece"
+       },
+       {
+        "en": "want",
+        "tr": "istiyorum"
+       },
+       {
+        "en": "some",
+        "tr": "biraz"
+       },
+       {
+        "en": "water",
+        "tr": "su"
+       }
+      ]
+     }
+    },
+    {
+     "en": "use",
+     "tur": "v",
+     "tr": "kullanmak",
+     "ornek": {
+      "en": "Can I use your phone?",
+      "tr": "Telefonunu kullanabilir miyim?",
+      "sozcukler": [
+       {
+        "en": "Can",
+        "tr": "-ebilir mi"
+       },
+       {
+        "en": "I",
+        "tr": "ben"
+       },
+       {
+        "en": "use",
+        "tr": "kullanmak"
+       },
+       {
+        "en": "your",
+        "tr": "senin"
+       },
+       {
+        "en": "phone",
+        "tr": "telefon"
+       }
+      ]
+     }
+    },
+    {
+     "en": "government",
+     "tur": "n",
+     "tr": "hükümet",
+     "ornek": {
+      "en": "The government makes the laws.",
+      "tr": "Kanunları hükümet yapar.",
+      "sozcukler": [
+       {
+        "en": "The",
+        "tr": "belirli olanı gösterir"
+       },
+       {
+        "en": "government",
+        "tr": "hükümet"
+       },
+       {
+        "en": "makes",
+        "tr": "yapar"
+       },
+       {
+        "en": "the",
+        "tr": "belirli olanı gösterir"
+       },
+       {
+        "en": "laws",
+        "tr": "kanunlar"
+       }
+      ]
+     }
+    },
+    {
+     "en": "these",
+     "tur": "f",
+     "tr": "bunlar",
+     "ornek": {
+      "en": "These are my books.",
+      "tr": "Bunlar benim kitaplarım.",
+      "sozcukler": [
+       {
+        "en": "These",
+        "tr": "bunlar"
+       },
+       {
+        "en": "are",
+        "tr": "-ler (olmak)"
+       },
+       {
+        "en": "my",
+        "tr": "benim"
+       },
+       {
+        "en": "books",
+        "tr": "kitaplar"
+       }
+      ]
+     }
+    },
+    {
+     "en": "little",
+     "tur": "a",
+     "tr": "küçük, az",
+     "ornek": {
+      "en": "She has a little cat.",
+      "tr": "Onun küçük bir kedisi var.",
+      "sozcukler": [
+       {
+        "en": "She",
+        "tr": "o (kadın)"
+       },
+       {
+        "en": "has",
+        "tr": "sahip, var"
+       },
+       {
+        "en": "a",
+        "tr": "bir"
+       },
+       {
+        "en": "little",
+        "tr": "küçük"
+       },
+       {
+        "en": "cat",
+        "tr": "kedi"
+       }
+      ]
+     }
+    },
+    {
+     "en": "number",
+     "tur": "n",
+     "tr": "sayı, numara",
+     "ornek": {
+      "en": "What is your phone number?",
+      "tr": "Telefon numaran ne?",
+      "sozcukler": [
+       {
+        "en": "What",
+        "tr": "ne"
+       },
+       {
+        "en": "is",
+        "tr": "-dir (olmak)"
+       },
+       {
+        "en": "your",
+        "tr": "senin"
+       },
+       {
+        "en": "phone",
+        "tr": "telefon"
+       },
+       {
+        "en": "number",
+        "tr": "numara"
+       }
+      ]
+     }
+    }
+   ],
+   "hazir": true
+  },
+  {
+   "ders": 9,
+   "kelimeler": [
+    {
+     "en": "find",
+     "tur": "v",
+     "tr": "bulmak",
+     "ornek": {
+      "en": "I cannot find my key.",
+      "tr": "Anahtarımı bulamıyorum.",
+      "sozcukler": [
+       {
+        "en": "I",
+        "tr": "ben"
+       },
+       {
+        "en": "cannot",
+        "tr": "-emiyorum"
+       },
+       {
+        "en": "find",
+        "tr": "bulmak"
+       },
+       {
+        "en": "my",
+        "tr": "benim"
+       },
+       {
+        "en": "key",
+        "tr": "anahtar"
+       }
+      ]
+     }
+    },
+    {
+     "en": "those",
+     "tur": "f",
+     "tr": "şunlar, onlar",
+     "ornek": {
+      "en": "Those are my shoes.",
+      "tr": "Şunlar benim ayakkabılarım.",
+      "sozcukler": [
+       {
+        "en": "Those",
+        "tr": "şunlar, onlar"
+       },
+       {
+        "en": "are",
+        "tr": "-ler (olmak)"
+       },
+       {
+        "en": "my",
+        "tr": "benim"
+       },
+       {
+        "en": "shoes",
+        "tr": "ayakkabılar"
+       }
+      ]
+     }
+    },
+    {
+     "en": "night",
+     "tur": "n",
+     "tr": "gece",
+     "ornek": {
+      "en": "Good night, mother.",
+      "tr": "İyi geceler anne.",
+      "sozcukler": [
+       {
+        "en": "Good",
+        "tr": "iyi"
+       },
+       {
+        "en": "night",
+        "tr": "gece"
+       },
+       {
+        "en": "mother",
+        "tr": "anne"
+       }
+      ]
+     }
+    },
+    {
+     "en": "still",
+     "tur": "d",
+     "tr": "hâlâ",
+     "ornek": {
+      "en": "He is still at school.",
+      "tr": "O hâlâ okulda.",
+      "sozcukler": [
+       {
+        "en": "He",
+        "tr": "o (erkek)"
+       },
+       {
+        "en": "is",
+        "tr": "-dir (olmak)"
+       },
+       {
+        "en": "still",
+        "tr": "hâlâ"
+       },
+       {
+        "en": "at",
+        "tr": "-de, -da"
+       },
+       {
+        "en": "school",
+        "tr": "okul"
+       }
+      ]
+     }
+    },
+    {
+     "en": "home",
+     "tur": "n",
+     "tr": "ev, yuva",
+     "ornek": {
+      "en": "I am going home.",
+      "tr": "Eve gidiyorum.",
+      "sozcukler": [
+       {
+        "en": "I",
+        "tr": "ben"
+       },
+       {
+        "en": "am",
+        "tr": "-im (olmak)"
+       },
+       {
+        "en": "going",
+        "tr": "gidiyor"
+       },
+       {
+        "en": "home",
+        "tr": "ev, eve"
+       }
+      ]
+     }
+    },
+    {
+     "en": "the",
+     "tur": "f",
+     "tr": "belirli bir şeyi gösterir (Türkçede karşılığı yok)",
+     "ornek": {
+      "en": "The sun is hot.",
+      "tr": "Güneş sıcak.",
+      "sozcukler": [
+       {
+        "en": "The",
+        "tr": "belirli olanı gösterir"
+       },
+       {
+        "en": "sun",
+        "tr": "güneş"
+       },
+       {
+        "en": "is",
+        "tr": "-dir (olmak)"
+       },
+       {
+        "en": "hot",
+        "tr": "sıcak"
+       }
+      ]
+     }
+    },
+    {
+     "en": "give",
+     "tur": "v",
+     "tr": "vermek",
+     "ornek": {
+      "en": "Please give me the book.",
+      "tr": "Lütfen kitabı bana ver.",
+      "sozcukler": [
+       {
+        "en": "Please",
+        "tr": "lütfen"
+       },
+       {
+        "en": "give",
+        "tr": "ver"
+       },
+       {
+        "en": "me",
+        "tr": "bana"
+       },
+       {
+        "en": "the",
+        "tr": "belirli olanı gösterir"
+       },
+       {
+        "en": "book",
+        "tr": "kitap"
+       }
+      ]
+     }
+    },
+    {
+     "en": "young",
+     "tur": "a",
+     "tr": "genç",
+     "ornek": {
+      "en": "My sister is very young.",
+      "tr": "Kız kardeşim çok genç.",
+      "sozcukler": [
+       {
+        "en": "My",
+        "tr": "benim"
+       },
+       {
+        "en": "sister",
+        "tr": "kız kardeş"
+       },
+       {
+        "en": "is",
+        "tr": "-dir (olmak)"
+       },
+       {
+        "en": "very",
+        "tr": "çok"
+       },
+       {
+        "en": "young",
+        "tr": "genç"
+       }
+      ]
+     }
+    },
+    {
+     "en": "water",
+     "tur": "n",
+     "tr": "su",
+     "ornek": {
+      "en": "I drink water every day.",
+      "tr": "Her gün su içerim.",
+      "sozcukler": [
+       {
+        "en": "I",
+        "tr": "ben"
+       },
+       {
+        "en": "drink",
+        "tr": "içerim"
+       },
+       {
+        "en": "water",
+        "tr": "su"
+       },
+       {
+        "en": "every",
+        "tr": "her"
+       },
+       {
+        "en": "day",
+        "tr": "gün"
+       }
+      ]
+     }
+    },
+    {
+     "en": "a",
+     "tur": "f",
+     "tr": "bir",
+     "ornek": {
+      "en": "I have a cat.",
+      "tr": "Bir kedim var.",
+      "sozcukler": [
+       {
+        "en": "I",
+        "tr": "ben"
+       },
+       {
+        "en": "have",
+        "tr": "sahibim, var"
+       },
+       {
+        "en": "a",
+        "tr": "bir"
+       },
+       {
+        "en": "cat",
+        "tr": "kedi"
+       }
+      ]
+     }
+    }
+   ],
+   "hazir": true
+  },
+  {
+   "ders": 10,
+   "kelimeler": [
+    {
+     "en": "room",
+     "tur": "n",
+     "tr": "oda",
+     "ornek": {
+      "en": "This is my room.",
+      "tr": "Burası benim odam.",
+      "sozcukler": [
+       {
+        "en": "This",
+        "tr": "bu"
+       },
+       {
+        "en": "is",
+        "tr": "-dir (olmak)"
+       },
+       {
+        "en": "my",
+        "tr": "benim"
+       },
+       {
+        "en": "room",
+        "tr": "oda"
+       }
+      ]
+     }
+    },
+    {
+     "en": "tell",
+     "tur": "v",
+     "tr": "söylemek, anlatmak",
+     "ornek": {
+      "en": "Tell me your name.",
+      "tr": "Bana adını söyle.",
+      "sozcukler": [
+       {
+        "en": "Tell",
+        "tr": "söyle"
+       },
+       {
+        "en": "me",
+        "tr": "bana"
+       },
+       {
+        "en": "your",
+        "tr": "senin"
+       },
+       {
+        "en": "name",
+        "tr": "isim, ad"
+       }
+      ]
+     }
+    },
+    {
+     "en": "again",
+     "tur": "d",
+     "tr": "tekrar",
+     "ornek": {
+      "en": "Please say it again.",
+      "tr": "Lütfen tekrar söyle.",
+      "sozcukler": [
+       {
+        "en": "Please",
+        "tr": "lütfen"
+       },
+       {
+        "en": "say",
+        "tr": "söyle"
+       },
+       {
+        "en": "it",
+        "tr": "onu"
+       },
+       {
+        "en": "again",
+        "tr": "tekrar"
+       }
+      ]
+     }
+    },
+    {
+     "en": "and",
+     "tur": "f",
+     "tr": "ve",
+     "ornek": {
+      "en": "I have a cat and a dog.",
+      "tr": "Bir kedim ve bir köpeğim var.",
+      "sozcukler": [
+       {
+        "en": "I",
+        "tr": "ben"
+       },
+       {
+        "en": "have",
+        "tr": "sahibim, var"
+       },
+       {
+        "en": "a",
+        "tr": "bir"
+       },
+       {
+        "en": "cat",
+        "tr": "kedi"
+       },
+       {
+        "en": "and",
+        "tr": "ve"
+       },
+       {
+        "en": "a",
+        "tr": "bir"
+       },
+       {
+        "en": "dog",
+        "tr": "köpek"
+       }
+      ]
+     }
+    },
+    {
+     "en": "mother",
+     "tur": "n",
+     "tr": "anne",
+     "ornek": {
+      "en": "My mother is a doctor.",
+      "tr": "Annem doktor.",
+      "sozcukler": [
+       {
+        "en": "My",
+        "tr": "benim"
+       },
+       {
+        "en": "mother",
+        "tr": "anne"
+       },
+       {
+        "en": "is",
+        "tr": "-dir (olmak)"
+       },
+       {
+        "en": "a",
+        "tr": "bir"
+       },
+       {
+        "en": "doctor",
+        "tr": "doktor"
+       }
+      ]
+     }
+    },
+    {
+     "en": "important",
+     "tur": "a",
+     "tr": "önemli",
+     "ornek": {
+      "en": "This is an important lesson.",
+      "tr": "Bu önemli bir ders.",
+      "sozcukler": [
+       {
+        "en": "This",
+        "tr": "bu"
+       },
+       {
+        "en": "is",
+        "tr": "-dir (olmak)"
+       },
+       {
+        "en": "an",
+        "tr": "bir"
+       },
+       {
+        "en": "important",
+        "tr": "önemli"
+       },
+       {
+        "en": "lesson",
+        "tr": "ders"
+       }
+      ]
+     }
+    },
+    {
+     "en": "area",
+     "tur": "n",
+     "tr": "alan, bölge",
+     "ornek": {
+      "en": "This area is very quiet.",
+      "tr": "Bu bölge çok sessiz.",
+      "sozcukler": [
+       {
+        "en": "This",
+        "tr": "bu"
+       },
+       {
+        "en": "area",
+        "tr": "bölge, alan"
+       },
+       {
+        "en": "is",
+        "tr": "-dir (olmak)"
+       },
+       {
+        "en": "very",
+        "tr": "çok"
+       },
+       {
+        "en": "quiet",
+        "tr": "sessiz"
+       }
+      ]
+     }
+    },
+    {
+     "en": "work",
+     "tur": "v",
+     "tr": "çalışmak",
+     "ornek": {
+      "en": "I work at a bank.",
+      "tr": "Bir bankada çalışıyorum.",
+      "sozcukler": [
+       {
+        "en": "I",
+        "tr": "ben"
+       },
+       {
+        "en": "work",
+        "tr": "çalışıyorum"
+       },
+       {
+        "en": "at",
+        "tr": "-de, -da"
+       },
+       {
+        "en": "a",
+        "tr": "bir"
+       },
+       {
+        "en": "bank",
+        "tr": "banka"
+       }
+      ]
+     }
+    },
+    {
+     "en": "or",
+     "tur": "f",
+     "tr": "veya",
+     "ornek": {
+      "en": "Do you want tea or coffee?",
+      "tr": "Çay mı kahve mi istersin?",
+      "sozcukler": [
+       {
+        "en": "Do",
+        "tr": "soru cümlesi kurar"
+       },
+       {
+        "en": "you",
+        "tr": "sen"
+       },
+       {
+        "en": "want",
+        "tr": "istemek"
+       },
+       {
+        "en": "tea",
+        "tr": "çay"
+       },
+       {
+        "en": "or",
+        "tr": "veya"
+       },
+       {
+        "en": "coffee",
+        "tr": "kahve"
+       }
+      ]
+     }
+    },
+    {
+     "en": "money",
+     "tur": "n",
+     "tr": "para",
+     "ornek": {
+      "en": "I do not have money.",
+      "tr": "Param yok.",
+      "sozcukler": [
+       {
+        "en": "I",
+        "tr": "ben"
+       },
+       {
+        "en": "do",
+        "tr": "olumsuz cümle kurar (not ile)"
+       },
+       {
+        "en": "not",
+        "tr": "değil"
+       },
+       {
+        "en": "have",
+        "tr": "sahip olmak"
+       },
+       {
+        "en": "money",
+        "tr": "para"
+       }
+      ]
+     }
+    }
+   ],
+   "hazir": true
+  },
+  {
+   "ders": 11,
+   "kelimeler": [
+    {
+     "en": "always",
+     "tur": "d",
+     "tr": "her zaman"
+    },
+    {
+     "en": "but",
+     "tur": "f",
+     "tr": "ama"
+    },
+    {
+     "en": "call",
+     "tur": "v",
+     "tr": "aramak, çağırmak"
+    },
+    {
+     "en": "story",
+     "tur": "n",
+     "tr": "hikâye"
+    },
+    {
+     "en": "bad",
+     "tur": "a",
+     "tr": "kötü"
+    },
+    {
+     "en": "because",
+     "tur": "f",
+     "tr": "çünkü"
+    },
+    {
+     "en": "fact",
+     "tur": "n",
+     "tr": "gerçek"
+    },
+    {
+     "en": "try",
+     "tur": "v",
+     "tr": "denemek"
+    },
+    {
+     "en": "month",
+     "tur": "n",
+     "tr": "ay"
+    },
+    {
+     "en": "if",
+     "tur": "f",
+     "tr": "eğer"
+    }
+   ]
+  },
+  {
+   "ders": 12,
+   "kelimeler": [
+    {
+     "en": "never",
+     "tur": "d",
+     "tr": "asla"
+    },
+    {
+     "en": "book",
+     "tur": "n",
+     "tr": "kitap"
+    },
+    {
+     "en": "different",
+     "tur": "a",
+     "tr": "farklı"
+    },
+    {
+     "en": "so",
+     "tur": "f",
+     "tr": "bu yüzden; çok"
+    },
+    {
+     "en": "ask",
+     "tur": "v",
+     "tr": "sormak"
+    },
+    {
+     "en": "eye",
+     "tur": "n",
+     "tr": "göz"
+    },
+    {
+     "en": "than",
+     "tur": "f",
+     "tr": "-den daha"
+    },
+    {
+     "en": "job",
+     "tur": "n",
+     "tr": "iş, meslek"
+    },
+    {
+     "en": "often",
+     "tur": "d",
+     "tr": "sık sık"
+    },
+    {
+     "en": "need",
+     "tur": "v",
+     "tr": "ihtiyacı olmak"
+    }
+   ]
+  },
+  {
+   "ders": 13,
+   "kelimeler": [
+    {
+     "en": "word",
+     "tur": "n",
+     "tr": "kelime"
+    },
+    {
+     "en": "real",
+     "tur": "a",
+     "tr": "gerçek"
+    },
+    {
+     "en": "as",
+     "tur": "f",
+     "tr": "gibi; olarak"
+    },
+    {
+     "en": "business",
+     "tur": "n",
+     "tr": "iş, işletme"
+    },
+    {
+     "en": "feel",
+     "tur": "v",
+     "tr": "hissetmek"
+    },
+    {
+     "en": "when",
+     "tur": "f",
+     "tr": "ne zaman; -dığında"
+    },
+    {
+     "en": "side",
+     "tur": "n",
+     "tr": "taraf, yan"
+    },
+    {
+     "en": "sometimes",
+     "tur": "d",
+     "tr": "bazen"
+    },
+    {
+     "en": "best",
+     "tur": "a",
+     "tr": "en iyi"
+    },
+    {
+     "en": "where",
+     "tur": "f",
+     "tr": "nerede"
+    }
+   ]
+  },
+  {
+   "ders": 14,
+   "kelimeler": [
+    {
+     "en": "kind",
+     "tur": "n",
+     "tr": "tür, çeşit"
+    },
+    {
+     "en": "become",
+     "tur": "v",
+     "tr": "olmak, haline gelmek"
+    },
+    {
+     "en": "head",
+     "tur": "n",
+     "tr": "baş, kafa"
+    },
+    {
+     "en": "what",
+     "tur": "f",
+     "tr": "ne"
+    },
+    {
+     "en": "house",
+     "tur": "n",
+     "tr": "ev"
+    },
+    {
+     "en": "leave",
+     "tur": "v",
+     "tr": "ayrılmak, bırakmak"
+    },
+    {
+     "en": "usually",
+     "tur": "d",
+     "tr": "genellikle"
+    },
+    {
+     "en": "who",
+     "tur": "f",
+     "tr": "kim"
+    },
+    {
+     "en": "right",
+     "tur": "a",
+     "tr": "doğru; sağ"
+    },
+    {
+     "en": "service",
+     "tur": "n",
+     "tr": "hizmet"
+    }
+   ]
+  },
+  {
+   "ders": 15,
+   "kelimeler": [
+    {
+     "en": "why",
+     "tur": "f",
+     "tr": "neden"
+    },
+    {
+     "en": "friend",
+     "tur": "n",
+     "tr": "arkadaş"
+    },
+    {
+     "en": "put",
+     "tur": "v",
+     "tr": "koymak"
+    },
+    {
+     "en": "father",
+     "tur": "n",
+     "tr": "baba"
+    },
+    {
+     "en": "how",
+     "tur": "f",
+     "tr": "nasıl"
+    },
+    {
+     "en": "already",
+     "tur": "d",
+     "tr": "zaten, çoktan"
+    },
+    {
+     "en": "sure",
+     "tur": "a",
+     "tr": "emin"
+    },
+    {
+     "en": "power",
+     "tur": "n",
+     "tr": "güç"
+    },
+    {
+     "en": "mean",
+     "tur": "v",
+     "tr": "anlamına gelmek"
+    },
+    {
+     "en": "which",
+     "tur": "f",
+     "tr": "hangi"
+    }
+   ]
+  },
+  {
+   "ders": 16,
+   "kelimeler": [
+    {
+     "en": "hour",
+     "tur": "n",
+     "tr": "saat (60 dakika)"
+    },
+    {
+     "en": "keep",
+     "tur": "v",
+     "tr": "tutmak, saklamak"
+    },
+    {
+     "en": "game",
+     "tur": "n",
+     "tr": "oyun"
+    },
+    {
+     "en": "in",
+     "tur": "f",
+     "tr": "içinde"
+    },
+    {
+     "en": "better",
+     "tur": "a",
+     "tr": "daha iyi"
+    },
+    {
+     "en": "maybe",
+     "tur": "d",
+     "tr": "belki"
+    },
+    {
+     "en": "line",
+     "tur": "n",
+     "tr": "çizgi, sıra"
+    },
+    {
+     "en": "on",
+     "tur": "f",
+     "tr": "üzerinde"
+    },
+    {
+     "en": "let",
+     "tur": "v",
+     "tr": "izin vermek"
+    },
+    {
+     "en": "end",
+     "tur": "n",
+     "tr": "son"
+    }
+   ]
+  },
+  {
+   "ders": 17,
+   "kelimeler": [
+    {
+     "en": "at",
+     "tur": "f",
+     "tr": "-de, -da"
+    },
+    {
+     "en": "member",
+     "tur": "n",
+     "tr": "üye"
+    },
+    {
+     "en": "free",
+     "tur": "a",
+     "tr": "ücretsiz; özgür"
+    },
+    {
+     "en": "really",
+     "tur": "d",
+     "tr": "gerçekten"
+    },
+    {
+     "en": "begin",
+     "tur": "v",
+     "tr": "başlamak"
+    },
+    {
+     "en": "law",
+     "tur": "n",
+     "tr": "kanun, hukuk"
+    },
+    {
+     "en": "to",
+     "tur": "f",
+     "tr": "-e, -a; -mek"
+    },
+    {
+     "en": "car",
+     "tur": "n",
+     "tr": "araba"
+    },
+    {
+     "en": "from",
+     "tur": "f",
+     "tr": "-den, -dan"
+    },
+    {
+     "en": "seem",
+     "tur": "v",
+     "tr": "görünmek"
+    }
+   ]
+  },
+  {
+   "ders": 18,
+   "kelimeler": [
+    {
+     "en": "city",
+     "tur": "n",
+     "tr": "şehir"
+    },
+    {
+     "en": "low",
+     "tur": "a",
+     "tr": "alçak, düşük"
+    },
+    {
+     "en": "well",
+     "tur": "d",
+     "tr": "iyi (bir şekilde)"
+    },
+    {
+     "en": "with",
+     "tur": "f",
+     "tr": "ile"
+    },
+    {
+     "en": "name",
+     "tur": "n",
+     "tr": "isim, ad"
+    },
+    {
+     "en": "help",
+     "tur": "v",
+     "tr": "yardım etmek"
+    },
+    {
+     "en": "team",
+     "tur": "n",
+     "tr": "takım"
+    },
+    {
+     "en": "without",
+     "tur": "f",
+     "tr": "-sız, olmadan"
+    },
+    {
+     "en": "minute",
+     "tur": "n",
+     "tr": "dakika"
+    },
+    {
+     "en": "public",
+     "tur": "a",
+     "tr": "halka açık, kamusal"
+    }
+   ]
+  },
+  {
+   "ders": 19,
+   "kelimeler": [
+    {
+     "en": "for",
+     "tur": "f",
+     "tr": "için"
+    },
+    {
+     "en": "talk",
+     "tur": "v",
+     "tr": "konuşmak"
+    },
+    {
+     "en": "together",
+     "tur": "d",
+     "tr": "birlikte"
+    },
+    {
+     "en": "idea",
+     "tur": "n",
+     "tr": "fikir"
+    },
+    {
+     "en": "of",
+     "tur": "f",
+     "tr": "-in, -ın (ait olma)"
+    },
+    {
+     "en": "body",
+     "tur": "n",
+     "tr": "vücut"
+    },
+    {
+     "en": "turn",
+     "tur": "v",
+     "tr": "dönmek, çevirmek"
+    },
+    {
+     "en": "whole",
+     "tur": "a",
+     "tr": "bütün, tüm"
+    },
+    {
+     "en": "information",
+     "tur": "n",
+     "tr": "bilgi"
+    },
+    {
+     "en": "by",
+     "tur": "f",
+     "tr": "tarafından; ile"
+    }
+   ]
+  },
+  {
+   "ders": 20,
+   "kelimeler": [
+    {
+     "en": "almost",
+     "tur": "d",
+     "tr": "neredeyse"
+    },
+    {
+     "en": "parent",
+     "tur": "n",
+     "tr": "ebeveyn"
+    },
+    {
+     "en": "start",
+     "tur": "v",
+     "tr": "başlamak"
+    },
+    {
+     "en": "about",
+     "tur": "f",
+     "tr": "hakkında"
+    },
+    {
+     "en": "face",
+     "tur": "n",
+     "tr": "yüz"
+    },
+    {
+     "en": "up",
+     "tur": "f",
+     "tr": "yukarı"
+    },
+    {
+     "en": "clear",
+     "tur": "a",
+     "tr": "açık, net"
+    },
+    {
+     "en": "level",
+     "tur": "n",
+     "tr": "seviye"
+    },
+    {
+     "en": "show",
+     "tur": "v",
+     "tr": "göstermek"
+    },
+    {
+     "en": "even",
+     "tur": "d",
+     "tr": "bile"
+    }
+   ]
+  },
+  {
+   "ders": 21,
+   "kelimeler": [
+    {
+     "en": "office",
+     "tur": "n",
+     "tr": "ofis"
+    },
+    {
+     "en": "down",
+     "tur": "f",
+     "tr": "aşağı"
+    },
+    {
+     "en": "hear",
+     "tur": "v",
+     "tr": "duymak"
+    },
+    {
+     "en": "door",
+     "tur": "n",
+     "tr": "kapı"
+    },
+    {
+     "en": "out",
+     "tur": "f",
+     "tr": "dışarı"
+    },
+    {
+     "en": "easy",
+     "tur": "a",
+     "tr": "kolay"
+    },
+    {
+     "en": "health",
+     "tur": "n",
+     "tr": "sağlık"
+    },
+    {
+     "en": "yet",
+     "tur": "d",
+     "tr": "henüz"
+    },
+    {
+     "en": "over",
+     "tur": "f",
+     "tr": "üzerinde; bitmiş"
+    },
+    {
+     "en": "play",
+     "tur": "v",
+     "tr": "oynamak"
+    }
+   ]
+  },
+  {
+   "ders": 22,
+   "kelimeler": [
+    {
+     "en": "person",
+     "tur": "n",
+     "tr": "kişi"
+    },
+    {
+     "en": "art",
+     "tur": "n",
+     "tr": "sanat"
+    },
+    {
+     "en": "under",
+     "tur": "f",
+     "tr": "altında"
+    },
+    {
+     "en": "hard",
+     "tur": "a",
+     "tr": "zor; sert"
+    },
+    {
+     "en": "run",
+     "tur": "v",
+     "tr": "koşmak"
+    },
+    {
+     "en": "war",
+     "tur": "n",
+     "tr": "savaş"
+    },
+    {
+     "en": "between",
+     "tur": "f",
+     "tr": "arasında"
+    },
+    {
+     "en": "soon",
+     "tur": "d",
+     "tr": "yakında"
+    },
+    {
+     "en": "history",
+     "tur": "n",
+     "tr": "tarih"
+    },
+    {
+     "en": "move",
+     "tur": "v",
+     "tr": "hareket etmek, taşınmak"
+    }
+   ]
+  },
+  {
+   "ders": 23,
+   "kelimeler": [
+    {
+     "en": "after",
+     "tur": "f",
+     "tr": "sonra"
+    },
+    {
+     "en": "party",
+     "tur": "n",
+     "tr": "parti"
+    },
+    {
+     "en": "strong",
+     "tur": "a",
+     "tr": "güçlü"
+    },
+    {
+     "en": "result",
+     "tur": "n",
+     "tr": "sonuç"
+    },
+    {
+     "en": "before",
+     "tur": "f",
+     "tr": "önce"
+    },
+    {
+     "en": "like",
+     "tur": "v",
+     "tr": "sevmek, hoşlanmak"
+    },
+    {
+     "en": "today",
+     "tur": "d",
+     "tr": "bugün"
+    },
+    {
+     "en": "morning",
+     "tur": "n",
+     "tr": "sabah"
+    },
+    {
+     "en": "during",
+     "tur": "f",
+     "tr": "sırasında"
+    },
+    {
+     "en": "reason",
+     "tur": "n",
+     "tr": "sebep"
+    }
+   ]
+  },
+  {
+   "ders": 24,
+   "kelimeler": [
+    {
+     "en": "possible",
+     "tur": "a",
+     "tr": "mümkün"
+    },
+    {
+     "en": "live",
+     "tur": "v",
+     "tr": "yaşamak"
+    },
+    {
+     "en": "until",
+     "tur": "f",
+     "tr": "-e kadar"
+    },
+    {
+     "en": "girl",
+     "tur": "n",
+     "tr": "kız"
+    },
+    {
+     "en": "tomorrow",
+     "tur": "d",
+     "tr": "yarın"
+    },
+    {
+     "en": "moment",
+     "tur": "n",
+     "tr": "an"
+    },
+    {
+     "en": "since",
+     "tur": "f",
+     "tr": "-den beri"
+    },
+    {
+     "en": "believe",
+     "tur": "v",
+     "tr": "inanmak"
+    },
+    {
+     "en": "air",
+     "tur": "n",
+     "tr": "hava"
+    },
+    {
+     "en": "special",
+     "tur": "a",
+     "tr": "özel"
+    }
+   ]
+  },
+  {
+   "ders": 25,
+   "kelimeler": [
+    {
+     "en": "into",
+     "tur": "f",
+     "tr": "içine"
+    },
+    {
+     "en": "teacher",
+     "tur": "n",
+     "tr": "öğretmen"
+    },
+    {
+     "en": "hold",
+     "tur": "v",
+     "tr": "tutmak"
+    },
+    {
+     "en": "through",
+     "tur": "f",
+     "tr": "içinden"
+    },
+    {
+     "en": "yesterday",
+     "tur": "d",
+     "tr": "dün"
+    },
+    {
+     "en": "education",
+     "tur": "n",
+     "tr": "eğitim"
+    },
+    {
+     "en": "short",
+     "tur": "a",
+     "tr": "kısa"
+    },
+    {
+     "en": "foot",
+     "tur": "n",
+     "tr": "ayak"
+    },
+    {
+     "en": "bring",
+     "tur": "v",
+     "tr": "getirmek"
+    },
+    {
+     "en": "against",
+     "tur": "f",
+     "tr": "karşı"
+    }
+   ]
+  },
+  {
+   "ders": 26,
+   "kelimeler": [
+    {
+     "en": "boy",
+     "tur": "n",
+     "tr": "erkek çocuk"
+    },
+    {
+     "en": "near",
+     "tur": "f",
+     "tr": "yakın"
+    },
+    {
+     "en": "tonight",
+     "tur": "d",
+     "tr": "bu gece"
+    },
+    {
+     "en": "happen",
+     "tur": "v",
+     "tr": "olmak, meydana gelmek"
+    },
+    {
+     "en": "age",
+     "tur": "n",
+     "tr": "yaş"
+    },
+    {
+     "en": "first",
+     "tur": "a",
+     "tr": "ilk, birinci"
+    },
+    {
+     "en": "behind",
+     "tur": "f",
+     "tr": "arkasında"
+    },
+    {
+     "en": "music",
+     "tur": "n",
+     "tr": "müzik"
+    },
+    {
+     "en": "write",
+     "tur": "v",
+     "tr": "yazmak"
+    },
+    {
+     "en": "market",
+     "tur": "n",
+     "tr": "pazar, market"
+    }
+   ]
+  },
+  {
+   "ders": 27,
+   "kelimeler": [
+    {
+     "en": "around",
+     "tur": "f",
+     "tr": "etrafında"
+    },
+    {
+     "en": "away",
+     "tur": "d",
+     "tr": "uzakta, uzağa"
+    },
+    {
+     "en": "death",
+     "tur": "n",
+     "tr": "ölüm"
+    },
+    {
+     "en": "can",
+     "tur": "f",
+     "tr": "-ebilmek"
+    },
+    {
+     "en": "second",
+     "tur": "a",
+     "tr": "ikinci; saniye"
+    },
+    {
+     "en": "sit",
+     "tur": "v",
+     "tr": "oturmak"
+    },
+    {
+     "en": "experience",
+     "tur": "n",
+     "tr": "deneyim"
+    },
+    {
+     "en": "will",
+     "tur": "f",
+     "tr": "-ecek (gelecek zaman)"
+    },
+    {
+     "en": "class",
+     "tur": "n",
+     "tr": "sınıf"
+    },
+    {
+     "en": "stand",
+     "tur": "v",
+     "tr": "ayakta durmak"
+    }
+   ]
+  },
+  {
+   "ders": 28,
+   "kelimeler": [
+    {
+     "en": "heart",
+     "tur": "n",
+     "tr": "kalp"
+    },
+    {
+     "en": "back",
+     "tur": "d",
+     "tr": "geri"
+    },
+    {
+     "en": "would",
+     "tur": "f",
+     "tr": "-erdi; istek bildirir"
+    },
+    {
+     "en": "third",
+     "tur": "a",
+     "tr": "üçüncü"
+    },
+    {
+     "en": "light",
+     "tur": "n",
+     "tr": "ışık"
+    },
+    {
+     "en": "lose",
+     "tur": "v",
+     "tr": "kaybetmek"
+    },
+    {
+     "en": "should",
+     "tur": "f",
+     "tr": "-meli, -malı"
+    },
+    {
+     "en": "voice",
+     "tur": "n",
+     "tr": "ses"
+    },
+    {
+     "en": "must",
+     "tur": "f",
+     "tr": "zorunda olmak"
+    },
+    {
+     "en": "wife",
+     "tur": "n",
+     "tr": "eş (kadın)"
+    }
+   ]
+  },
+  {
+   "ders": 29,
+   "kelimeler": [
+    {
+     "en": "ever",
+     "tur": "d",
+     "tr": "hiç (herhangi bir zamanda)"
+    },
+    {
+     "en": "pay",
+     "tur": "v",
+     "tr": "ödemek"
+    },
+    {
+     "en": "last",
+     "tur": "a",
+     "tr": "son; geçen"
+    },
+    {
+     "en": "police",
+     "tur": "n",
+     "tr": "polis"
+    },
+    {
+     "en": "may",
+     "tur": "f",
+     "tr": "-ebilir, olabilir"
+    },
+    {
+     "en": "mind",
+     "tur": "n",
+     "tr": "akıl, zihin"
+    },
+    {
+     "en": "meet",
+     "tur": "v",
+     "tr": "buluşmak, tanışmak"
+    },
+    {
+     "en": "could",
+     "tur": "f",
+     "tr": "-ebilirdi; -ebilir misin"
+    },
+    {
+     "en": "price",
+     "tur": "n",
+     "tr": "fiyat"
+    },
+    {
+     "en": "quite",
+     "tur": "d",
+     "tr": "oldukça"
+    }
+   ]
+  },
+  {
+   "ders": 30,
+   "kelimeler": [
+    {
+     "en": "next",
+     "tur": "a",
+     "tr": "sonraki, gelecek"
+    },
+    {
+     "en": "not",
+     "tur": "f",
+     "tr": "değil"
+    },
+    {
+     "en": "decision",
+     "tur": "n",
+     "tr": "karar"
+    },
+    {
+     "en": "continue",
+     "tur": "v",
+     "tr": "devam etmek"
+    },
+    {
+     "en": "son",
+     "tur": "n",
+     "tr": "oğul"
+    },
+    {
+     "en": "no",
+     "tur": "f",
+     "tr": "hayır"
+    },
+    {
+     "en": "view",
+     "tur": "n",
+     "tr": "manzara, görüş"
+    },
+    {
+     "en": "learn",
+     "tur": "v",
+     "tr": "öğrenmek"
+    },
+    {
+     "en": "perhaps",
+     "tur": "d",
+     "tr": "belki"
+    },
+    {
+     "en": "full",
+     "tur": "a",
+     "tr": "dolu"
+    }
+   ]
+  },
+  {
+   "ders": 31,
+   "kelimeler": [
+    {
+     "en": "yes",
+     "tur": "f",
+     "tr": "evet"
+    },
+    {
+     "en": "town",
+     "tur": "n",
+     "tr": "kasaba"
+    },
+    {
+     "en": "change",
+     "tur": "v",
+     "tr": "değiştirmek"
+    },
+    {
+     "en": "road",
+     "tur": "n",
+     "tr": "yol"
+    },
+    {
+     "en": "all",
+     "tur": "f",
+     "tr": "hepsi, bütün"
+    },
+    {
+     "en": "arm",
+     "tur": "n",
+     "tr": "kol"
+    },
+    {
+     "en": "true",
+     "tur": "a",
+     "tr": "doğru, gerçek"
+    },
+    {
+     "en": "probably",
+     "tur": "d",
+     "tr": "muhtemelen"
+    },
+    {
+     "en": "some",
+     "tur": "f",
+     "tr": "bazı, biraz"
+    },
+    {
+     "en": "understand",
+     "tur": "v",
+     "tr": "anlamak"
+    }
+   ]
+  },
+  {
+   "ders": 32,
+   "kelimeler": [
+    {
+     "en": "difference",
+     "tur": "n",
+     "tr": "fark"
+    },
+    {
+     "en": "any",
+     "tur": "f",
+     "tr": "herhangi, hiç"
+    },
+    {
+     "en": "value",
+     "tur": "n",
+     "tr": "değer"
+    },
+    {
+     "en": "watch",
+     "tur": "v",
+     "tr": "izlemek"
+    },
+    {
+     "en": "ready",
+     "tur": "a",
+     "tr": "hazır"
+    },
+    {
+     "en": "building",
+     "tur": "n",
+     "tr": "bina"
+    },
+    {
+     "en": "many",
+     "tur": "f",
+     "tr": "çok (sayılabilen)"
+    },
+    {
+     "en": "actually",
+     "tur": "d",
+     "tr": "aslında"
+    },
+    {
+     "en": "season",
+     "tur": "n",
+     "tr": "mevsim"
+    },
+    {
+     "en": "much",
+     "tur": "f",
+     "tr": "çok (sayılamayan)"
+    }
+   ]
+  },
+  {
+   "ders": 33,
+   "kelimeler": [
+    {
+     "en": "follow",
+     "tur": "v",
+     "tr": "takip etmek"
+    },
+    {
+     "en": "society",
+     "tur": "n",
+     "tr": "toplum"
+    },
+    {
+     "en": "more",
+     "tur": "f",
+     "tr": "daha fazla"
+    },
+    {
+     "en": "simple",
+     "tur": "a",
+     "tr": "basit"
+    },
+    {
+     "en": "tax",
+     "tur": "n",
+     "tr": "vergi"
+    },
+    {
+     "en": "finally",
+     "tur": "d",
+     "tr": "sonunda"
+    },
+    {
+     "en": "stop",
+     "tur": "v",
+     "tr": "durmak, durdurmak"
+    },
+    {
+     "en": "player",
+     "tur": "n",
+     "tr": "oyuncu"
+    },
+    {
+     "en": "most",
+     "tur": "f",
+     "tr": "en çok"
+    },
+    {
+     "en": "paper",
+     "tur": "n",
+     "tr": "kâğıt"
+    }
+   ]
+  },
+  {
+   "ders": 34,
+   "kelimeler": [
+    {
+     "en": "create",
+     "tur": "v",
+     "tr": "yaratmak, oluşturmak"
+    },
+    {
+     "en": "few",
+     "tur": "f",
+     "tr": "az, birkaç"
+    },
+    {
+     "en": "nice",
+     "tur": "a",
+     "tr": "güzel, hoş"
+    },
+    {
+     "en": "space",
+     "tur": "n",
+     "tr": "uzay; boş alan"
+    },
+    {
+     "en": "quickly",
+     "tur": "d",
+     "tr": "hızlıca"
+    },
+    {
+     "en": "other",
+     "tur": "f",
+     "tr": "diğer"
+    },
+    {
+     "en": "ground",
+     "tur": "n",
+     "tr": "zemin, yer"
+    },
+    {
+     "en": "speak",
+     "tur": "v",
+     "tr": "konuşmak"
+    },
+    {
+     "en": "event",
+     "tur": "n",
+     "tr": "etkinlik, olay"
+    },
+    {
+     "en": "another",
+     "tur": "f",
+     "tr": "başka bir"
+    }
+   ]
+  },
+  {
+   "ders": 35,
+   "kelimeler": [
+    {
+     "en": "happy",
+     "tur": "a",
+     "tr": "mutlu"
+    },
+    {
+     "en": "center",
+     "tur": "n",
+     "tr": "merkez"
+    },
+    {
+     "en": "read",
+     "tur": "v",
+     "tr": "okumak"
+    },
+    {
+     "en": "slowly",
+     "tur": "d",
+     "tr": "yavaşça"
+    },
+    {
+     "en": "each",
+     "tur": "f",
+     "tr": "her bir"
+    },
+    {
+     "en": "project",
+     "tur": "n",
+     "tr": "proje"
+    },
+    {
+     "en": "every",
+     "tur": "f",
+     "tr": "her"
+    },
+    {
+     "en": "activity",
+     "tur": "n",
+     "tr": "etkinlik, faaliyet"
+    },
+    {
+     "en": "allow",
+     "tur": "v",
+     "tr": "izin vermek"
+    },
+    {
+     "en": "serious",
+     "tur": "a",
+     "tr": "ciddi"
+    }
+   ]
+  },
+  {
+   "ders": 36,
+   "kelimeler": [
+    {
+     "en": "star",
+     "tur": "n",
+     "tr": "yıldız"
+    },
+    {
+     "en": "both",
+     "tur": "f",
+     "tr": "her ikisi"
+    },
+    {
+     "en": "easily",
+     "tur": "d",
+     "tr": "kolayca"
+    },
+    {
+     "en": "add",
+     "tur": "v",
+     "tr": "eklemek"
+    },
+    {
+     "en": "table",
+     "tur": "n",
+     "tr": "masa"
+    },
+    {
+     "en": "such",
+     "tur": "f",
+     "tr": "böyle"
+    },
+    {
+     "en": "situation",
+     "tur": "n",
+     "tr": "durum"
+    },
+    {
+     "en": "common",
+     "tur": "a",
+     "tr": "yaygın, ortak"
+    },
+    {
+     "en": "everyone",
+     "tur": "f",
+     "tr": "herkes"
+    },
+    {
+     "en": "spend",
+     "tur": "v",
+     "tr": "harcamak"
+    }
+   ]
+  },
+  {
+   "ders": 37,
+   "kelimeler": [
+    {
+     "en": "industry",
+     "tur": "n",
+     "tr": "sanayi"
+    },
+    {
+     "en": "suddenly",
+     "tur": "d",
+     "tr": "aniden"
+    },
+    {
+     "en": "street",
+     "tur": "n",
+     "tr": "sokak, cadde"
+    },
+    {
+     "en": "someone",
+     "tur": "f",
+     "tr": "birisi"
+    },
+    {
+     "en": "grow",
+     "tur": "v",
+     "tr": "büyümek"
+    },
+    {
+     "en": "phone",
+     "tur": "n",
+     "tr": "telefon"
+    },
+    {
+     "en": "poor",
+     "tur": "a",
+     "tr": "fakir"
+    },
+    {
+     "en": "anyone",
+     "tur": "f",
+     "tr": "herhangi biri"
+    },
+    {
+     "en": "picture",
+     "tur": "n",
+     "tr": "resim"
+    },
+    {
+     "en": "especially",
+     "tur": "d",
+     "tr": "özellikle"
+    }
+   ]
+  },
+  {
+   "ders": 38,
+   "kelimeler": [
+    {
+     "en": "open",
+     "tur": "v",
+     "tr": "açmak"
+    },
+    {
+     "en": "nobody",
+     "tur": "f",
+     "tr": "hiç kimse"
+    },
+    {
+     "en": "piece",
+     "tur": "n",
+     "tr": "parça"
+    },
+    {
+     "en": "final",
+     "tur": "a",
+     "tr": "son, nihai"
+    },
+    {
+     "en": "half",
+     "tur": "n",
+     "tr": "yarım"
+    },
+    {
+     "en": "something",
+     "tur": "f",
+     "tr": "bir şey"
+    },
+    {
+     "en": "walk",
+     "tur": "v",
+     "tr": "yürümek"
+    },
+    {
+     "en": "land",
+     "tur": "n",
+     "tr": "toprak, arazi"
+    },
+    {
+     "en": "enough",
+     "tur": "d",
+     "tr": "yeterince"
+    },
+    {
+     "en": "anything",
+     "tur": "f",
+     "tr": "herhangi bir şey"
+    }
+   ]
+  },
+  {
+   "ders": 39,
+   "kelimeler": [
+    {
+     "en": "product",
+     "tur": "n",
+     "tr": "ürün"
+    },
+    {
+     "en": "win",
+     "tur": "v",
+     "tr": "kazanmak"
+    },
+    {
+     "en": "main",
+     "tur": "a",
+     "tr": "ana, temel"
+    },
+    {
+     "en": "nothing",
+     "tur": "f",
+     "tr": "hiçbir şey"
+    },
+    {
+     "en": "doctor",
+     "tur": "n",
+     "tr": "doktor"
+    },
+    {
+     "en": "wall",
+     "tur": "n",
+     "tr": "duvar"
+    },
+    {
+     "en": "everything",
+     "tur": "f",
+     "tr": "her şey"
+    },
+    {
+     "en": "offer",
+     "tur": "v",
+     "tr": "teklif etmek"
+    },
+    {
+     "en": "else",
+     "tur": "d",
+     "tr": "başka"
+    },
+    {
+     "en": "news",
+     "tur": "n",
+     "tr": "haber"
+    }
+   ]
+  },
+  {
+   "ders": 40,
+   "kelimeler": [
+    {
+     "en": "myself",
+     "tur": "f",
+     "tr": "kendim"
+    },
+    {
+     "en": "beautiful",
+     "tur": "a",
+     "tr": "güzel"
+    },
+    {
+     "en": "test",
+     "tur": "n",
+     "tr": "test, sınav"
+    },
+    {
+     "en": "remember",
+     "tur": "v",
+     "tr": "hatırlamak"
+    },
+    {
+     "en": "yourself",
+     "tur": "f",
+     "tr": "kendin"
+    },
+    {
+     "en": "movie",
+     "tur": "n",
+     "tr": "film"
+    },
+    {
+     "en": "once",
+     "tur": "d",
+     "tr": "bir kez"
+    },
+    {
+     "en": "step",
+     "tur": "n",
+     "tr": "adım"
+    },
+    {
+     "en": "love",
+     "tur": "v",
+     "tr": "sevmek"
+    },
+    {
+     "en": "one",
+     "tur": "f",
+     "tr": "bir"
+    }
+   ]
+  },
+  {
+   "ders": 41,
+   "kelimeler": [
+    {
+     "en": "hot",
+     "tur": "a",
+     "tr": "sıcak"
+    },
+    {
+     "en": "window",
+     "tur": "n",
+     "tr": "pencere"
+    },
+    {
+     "en": "two",
+     "tur": "f",
+     "tr": "iki"
+    },
+    {
+     "en": "buy",
+     "tur": "v",
+     "tr": "satın almak"
+    },
+    {
+     "en": "future",
+     "tur": "n",
+     "tr": "gelecek"
+    },
+    {
+     "en": "twice",
+     "tur": "d",
+     "tr": "iki kez"
+    },
+    {
+     "en": "three",
+     "tur": "f",
+     "tr": "üç"
+    },
+    {
+     "en": "husband",
+     "tur": "n",
+     "tr": "koca, eş (erkek)"
+    },
+    {
+     "en": "cold",
+     "tur": "a",
+     "tr": "soğuk"
+    },
+    {
+     "en": "wait",
+     "tur": "v",
+     "tr": "beklemek"
+    }
+   ]
+  },
+  {
+   "ders": 42,
+   "kelimeler": [
+    {
+     "en": "daughter",
+     "tur": "n",
+     "tr": "kız evlat"
+    },
+    {
+     "en": "four",
+     "tur": "f",
+     "tr": "dört"
+    },
+    {
+     "en": "brother",
+     "tur": "n",
+     "tr": "erkek kardeş"
+    },
+    {
+     "en": "later",
+     "tur": "d",
+     "tr": "daha sonra"
+    },
+    {
+     "en": "five",
+     "tur": "f",
+     "tr": "beş"
+    },
+    {
+     "en": "die",
+     "tur": "v",
+     "tr": "ölmek"
+    },
+    {
+     "en": "sister",
+     "tur": "n",
+     "tr": "kız kardeş"
+    },
+    {
+     "en": "dead",
+     "tur": "a",
+     "tr": "ölü"
+    },
+    {
+     "en": "six",
+     "tur": "f",
+     "tr": "altı"
+    },
+    {
+     "en": "baby",
+     "tur": "n",
+     "tr": "bebek"
+    }
+   ]
+  },
+  {
+   "ders": 43,
+   "kelimeler": [
+    {
+     "en": "send",
+     "tur": "v",
+     "tr": "göndermek"
+    },
+    {
+     "en": "dog",
+     "tur": "n",
+     "tr": "köpek"
+    },
+    {
+     "en": "seven",
+     "tur": "f",
+     "tr": "yedi"
+    },
+    {
+     "en": "early",
+     "tur": "d",
+     "tr": "erken"
+    },
+    {
+     "en": "cat",
+     "tur": "n",
+     "tr": "kedi"
+    },
+    {
+     "en": "safe",
+     "tur": "a",
+     "tr": "güvenli"
+    },
+    {
+     "en": "expect",
+     "tur": "v",
+     "tr": "beklemek, ummak"
+    },
+    {
+     "en": "eight",
+     "tur": "f",
+     "tr": "sekiz"
+    },
+    {
+     "en": "bird",
+     "tur": "n",
+     "tr": "kuş"
+    },
+    {
+     "en": "nine",
+     "tur": "f",
+     "tr": "dokuz"
+    }
+   ]
+  },
+  {
+   "ders": 44,
+   "kelimeler": [
+    {
+     "en": "fish",
+     "tur": "n",
+     "tr": "balık"
+    },
+    {
+     "en": "build",
+     "tur": "v",
+     "tr": "inşa etmek"
+    },
+    {
+     "en": "late",
+     "tur": "d",
+     "tr": "geç"
+    },
+    {
+     "en": "rich",
+     "tur": "a",
+     "tr": "zengin"
+    },
+    {
+     "en": "horse",
+     "tur": "n",
+     "tr": "at"
+    },
+    {
+     "en": "ten",
+     "tur": "f",
+     "tr": "on"
+    },
+    {
+     "en": "animal",
+     "tur": "n",
+     "tr": "hayvan"
+    },
+    {
+     "en": "stay",
+     "tur": "v",
+     "tr": "kalmak"
+    },
+    {
+     "en": "hundred",
+     "tur": "f",
+     "tr": "yüz"
+    },
+    {
+     "en": "tree",
+     "tur": "n",
+     "tr": "ağaç"
+    }
+   ]
+  },
+  {
+   "ders": 45,
+   "kelimeler": [
+    {
+     "en": "far",
+     "tur": "d",
+     "tr": "uzak"
+    },
+    {
+     "en": "fast",
+     "tur": "a",
+     "tr": "hızlı"
+    },
+    {
+     "en": "thousand",
+     "tur": "f",
+     "tr": "bin"
+    },
+    {
+     "en": "flower",
+     "tur": "n",
+     "tr": "çiçek"
+    },
+    {
+     "en": "fall",
+     "tur": "v",
+     "tr": "düşmek"
+    },
+    {
+     "en": "food",
+     "tur": "n",
+     "tr": "yiyecek, yemek"
+    },
+    {
+     "en": "million",
+     "tur": "f",
+     "tr": "milyon"
+    },
+    {
+     "en": "bread",
+     "tur": "n",
+     "tr": "ekmek"
+    },
+    {
+     "en": "cut",
+     "tur": "v",
+     "tr": "kesmek"
+    },
+    {
+     "en": "slow",
+     "tur": "a",
+     "tr": "yavaş"
+    }
+   ]
+  },
+  {
+   "ders": 46,
+   "kelimeler": [
+    {
+     "en": "milk",
+     "tur": "n",
+     "tr": "süt"
+    },
+    {
+     "en": "reach",
+     "tur": "v",
+     "tr": "ulaşmak"
+    },
+    {
+     "en": "coffee",
+     "tur": "n",
+     "tr": "kahve"
+    },
+    {
+     "en": "tea",
+     "tur": "n",
+     "tr": "çay"
+    },
+    {
+     "en": "cheap",
+     "tur": "a",
+     "tr": "ucuz"
+    },
+    {
+     "en": "kill",
+     "tur": "v",
+     "tr": "öldürmek"
+    },
+    {
+     "en": "egg",
+     "tur": "n",
+     "tr": "yumurta"
+    },
+    {
+     "en": "meat",
+     "tur": "n",
+     "tr": "et"
+    },
+    {
+     "en": "sell",
+     "tur": "v",
+     "tr": "satmak"
+    },
+    {
+     "en": "fruit",
+     "tur": "n",
+     "tr": "meyve"
+    }
+   ]
+  },
+  {
+   "ders": 47,
+   "kelimeler": [
+    {
+     "en": "expensive",
+     "tur": "a",
+     "tr": "pahalı"
+    },
+    {
+     "en": "apple",
+     "tur": "n",
+     "tr": "elma"
+    },
+    {
+     "en": "decide",
+     "tur": "v",
+     "tr": "karar vermek"
+    },
+    {
+     "en": "sugar",
+     "tur": "n",
+     "tr": "şeker"
+    },
+    {
+     "en": "salt",
+     "tur": "n",
+     "tr": "tuz"
+    },
+    {
+     "en": "dirty",
+     "tur": "a",
+     "tr": "kirli"
+    },
+    {
+     "en": "pull",
+     "tur": "v",
+     "tr": "çekmek"
+    },
+    {
+     "en": "rice",
+     "tur": "n",
+     "tr": "pirinç"
+    },
+    {
+     "en": "cheese",
+     "tur": "n",
+     "tr": "peynir"
+    },
+    {
+     "en": "return",
+     "tur": "v",
+     "tr": "geri dönmek"
+    }
+   ]
+  },
+  {
+   "ders": 48,
+   "kelimeler": [
+    {
+     "en": "chicken",
+     "tur": "n",
+     "tr": "tavuk"
+    },
+    {
+     "en": "dark",
+     "tur": "a",
+     "tr": "karanlık, koyu"
+    },
+    {
+     "en": "breakfast",
+     "tur": "n",
+     "tr": "kahvaltı"
+    },
+    {
+     "en": "explain",
+     "tur": "v",
+     "tr": "açıklamak"
+    },
+    {
+     "en": "lunch",
+     "tur": "n",
+     "tr": "öğle yemeği"
+    },
+    {
+     "en": "heavy",
+     "tur": "a",
+     "tr": "ağır"
+    },
+    {
+     "en": "dinner",
+     "tur": "n",
+     "tr": "akşam yemeği"
+    },
+    {
+     "en": "hope",
+     "tur": "v",
+     "tr": "ummak"
+    },
+    {
+     "en": "kitchen",
+     "tur": "n",
+     "tr": "mutfak"
+    },
+    {
+     "en": "bed",
+     "tur": "n",
+     "tr": "yatak"
+    }
+   ]
+  },
+  {
+   "ders": 49,
+   "kelimeler": [
+    {
+     "en": "carry",
+     "tur": "v",
+     "tr": "taşımak"
+    },
+    {
+     "en": "empty",
+     "tur": "a",
+     "tr": "boş"
+    },
+    {
+     "en": "chair",
+     "tur": "n",
+     "tr": "sandalye"
+    },
+    {
+     "en": "break",
+     "tur": "v",
+     "tr": "kırmak"
+    },
+    {
+     "en": "floor",
+     "tur": "n",
+     "tr": "zemin; kat"
+    },
+    {
+     "en": "garden",
+     "tur": "n",
+     "tr": "bahçe"
+    },
+    {
+     "en": "wrong",
+     "tur": "a",
+     "tr": "yanlış"
+    },
+    {
+     "en": "receive",
+     "tur": "v",
+     "tr": "almak, teslim almak"
+    },
+    {
+     "en": "key",
+     "tur": "n",
+     "tr": "anahtar"
+    },
+    {
+     "en": "bag",
+     "tur": "n",
+     "tr": "çanta"
+    }
+   ]
+  },
+  {
+   "ders": 50,
+   "kelimeler": [
+    {
+     "en": "agree",
+     "tur": "v",
+     "tr": "aynı fikirde olmak"
+    },
+    {
+     "en": "box",
+     "tur": "n",
+     "tr": "kutu"
+    },
+    {
+     "en": "sick",
+     "tur": "a",
+     "tr": "hasta"
+    },
+    {
+     "en": "shirt",
+     "tur": "n",
+     "tr": "gömlek"
+    },
+    {
+     "en": "eat",
+     "tur": "v",
+     "tr": "yemek yemek"
+    },
+    {
+     "en": "shoe",
+     "tur": "n",
+     "tr": "ayakkabı"
+    },
+    {
+     "en": "hat",
+     "tur": "n",
+     "tr": "şapka"
+    },
+    {
+     "en": "healthy",
+     "tur": "a",
+     "tr": "sağlıklı"
+    },
+    {
+     "en": "catch",
+     "tur": "v",
+     "tr": "yakalamak"
+    },
+    {
+     "en": "clothes",
+     "tur": "n",
+     "tr": "kıyafet"
+    }
+   ]
+  },
+  {
+   "ders": 51,
+   "kelimeler": [
+    {
+     "en": "color",
+     "tur": "n",
+     "tr": "renk"
+    },
+    {
+     "en": "choose",
+     "tur": "v",
+     "tr": "seçmek"
+    },
+    {
+     "en": "sun",
+     "tur": "n",
+     "tr": "güneş"
+    },
+    {
+     "en": "tired",
+     "tur": "a",
+     "tr": "yorgun"
+    },
+    {
+     "en": "moon",
+     "tur": "n",
+     "tr": "ay (gökteki)"
+    },
+    {
+     "en": "listen",
+     "tur": "v",
+     "tr": "dinlemek"
+    },
+    {
+     "en": "sky",
+     "tur": "n",
+     "tr": "gökyüzü"
+    },
+    {
+     "en": "rain",
+     "tur": "n",
+     "tr": "yağmur"
+    },
+    {
+     "en": "close",
+     "tur": "v",
+     "tr": "kapatmak"
+    },
+    {
+     "en": "hungry",
+     "tur": "a",
+     "tr": "aç"
+    }
+   ]
+  },
+  {
+   "ders": 52,
+   "kelimeler": [
+    {
+     "en": "snow",
+     "tur": "n",
+     "tr": "kar"
+    },
+    {
+     "en": "wind",
+     "tur": "n",
+     "tr": "rüzgâr"
+    },
+    {
+     "en": "save",
+     "tur": "v",
+     "tr": "kurtarmak; biriktirmek"
+    },
+    {
+     "en": "weather",
+     "tur": "n",
+     "tr": "hava durumu"
+    },
+    {
+     "en": "thirsty",
+     "tur": "a",
+     "tr": "susamış"
+    },
+    {
+     "en": "thank",
+     "tur": "v",
+     "tr": "teşekkür etmek"
+    },
+    {
+     "en": "sea",
+     "tur": "n",
+     "tr": "deniz"
+    },
+    {
+     "en": "river",
+     "tur": "n",
+     "tr": "nehir"
+    },
+    {
+     "en": "drink",
+     "tur": "v",
+     "tr": "içmek"
+    },
+    {
+     "en": "angry",
+     "tur": "a",
+     "tr": "kızgın"
+    }
+   ]
+  },
+  {
+   "ders": 53,
+   "kelimeler": [
+    {
+     "en": "mountain",
+     "tur": "n",
+     "tr": "dağ"
+    },
+    {
+     "en": "island",
+     "tur": "n",
+     "tr": "ada"
+    },
+    {
+     "en": "sleep",
+     "tur": "v",
+     "tr": "uyumak"
+    },
+    {
+     "en": "beach",
+     "tur": "n",
+     "tr": "plaj"
+    },
+    {
+     "en": "sad",
+     "tur": "a",
+     "tr": "üzgün"
+    },
+    {
+     "en": "forest",
+     "tur": "n",
+     "tr": "orman"
+    },
+    {
+     "en": "drive",
+     "tur": "v",
+     "tr": "araba sürmek"
+    },
+    {
+     "en": "lake",
+     "tur": "n",
+     "tr": "göl"
+    },
+    {
+     "en": "fire",
+     "tur": "n",
+     "tr": "ateş, yangın"
+    },
+    {
+     "en": "fly",
+     "tur": "v",
+     "tr": "uçmak"
+    }
+   ]
+  },
+  {
+   "ders": 54,
+   "kelimeler": [
+    {
+     "en": "afraid",
+     "tur": "a",
+     "tr": "korkmuş"
+    },
+    {
+     "en": "stone",
+     "tur": "n",
+     "tr": "taş"
+    },
+    {
+     "en": "gold",
+     "tur": "n",
+     "tr": "altın"
+    },
+    {
+     "en": "swim",
+     "tur": "v",
+     "tr": "yüzmek"
+    },
+    {
+     "en": "glass",
+     "tur": "n",
+     "tr": "cam; bardak"
+    },
+    {
+     "en": "proud",
+     "tur": "a",
+     "tr": "gururlu"
+    },
+    {
+     "en": "metal",
+     "tur": "n",
+     "tr": "metal"
+    },
+    {
+     "en": "sing",
+     "tur": "v",
+     "tr": "şarkı söylemek"
+    },
+    {
+     "en": "wood",
+     "tur": "n",
+     "tr": "tahta, odun"
+    },
+    {
+     "en": "machine",
+     "tur": "n",
+     "tr": "makine"
+    }
+   ]
+  },
+  {
+   "ders": 55,
+   "kelimeler": [
+    {
+     "en": "dance",
+     "tur": "v",
+     "tr": "dans etmek"
+    },
+    {
+     "en": "polite",
+     "tur": "a",
+     "tr": "kibar"
+    },
+    {
+     "en": "computer",
+     "tur": "n",
+     "tr": "bilgisayar"
+    },
+    {
+     "en": "internet",
+     "tur": "n",
+     "tr": "internet"
+    },
+    {
+     "en": "cook",
+     "tur": "v",
+     "tr": "yemek pişirmek"
+    },
+    {
+     "en": "message",
+     "tur": "n",
+     "tr": "mesaj"
+    },
+    {
+     "en": "rude",
+     "tur": "a",
+     "tr": "kaba"
+    },
+    {
+     "en": "wash",
+     "tur": "v",
+     "tr": "yıkamak"
+    },
+    {
+     "en": "letter",
+     "tur": "n",
+     "tr": "mektup; harf"
+    },
+    {
+     "en": "language",
+     "tur": "n",
+     "tr": "dil"
+    }
+   ]
+  },
+  {
+   "ders": 56,
+   "kelimeler": [
+    {
+     "en": "clean",
+     "tur": "v",
+     "tr": "temizlemek"
+    },
+    {
+     "en": "lesson",
+     "tur": "n",
+     "tr": "ders"
+    },
+    {
+     "en": "funny",
+     "tur": "a",
+     "tr": "komik"
+    },
+    {
+     "en": "exam",
+     "tur": "n",
+     "tr": "sınav"
+    },
+    {
+     "en": "wear",
+     "tur": "v",
+     "tr": "giymek"
+    },
+    {
+     "en": "university",
+     "tur": "n",
+     "tr": "üniversite"
+    },
+    {
+     "en": "boring",
+     "tur": "a",
+     "tr": "sıkıcı"
+    },
+    {
+     "en": "library",
+     "tur": "n",
+     "tr": "kütüphane"
+    },
+    {
+     "en": "teach",
+     "tur": "v",
+     "tr": "öğretmek"
+    },
+    {
+     "en": "hospital",
+     "tur": "n",
+     "tr": "hastane"
+    }
+   ]
+  },
+  {
+   "ders": 57,
+   "kelimeler": [
+    {
+     "en": "bank",
+     "tur": "n",
+     "tr": "banka"
+    },
+    {
+     "en": "study",
+     "tur": "v",
+     "tr": "ders çalışmak"
+    },
+    {
+     "en": "interesting",
+     "tur": "a",
+     "tr": "ilginç"
+    },
+    {
+     "en": "shop",
+     "tur": "n",
+     "tr": "dükkân"
+    },
+    {
+     "en": "store",
+     "tur": "n",
+     "tr": "mağaza"
+    },
+    {
+     "en": "travel",
+     "tur": "v",
+     "tr": "seyahat etmek"
+    },
+    {
+     "en": "restaurant",
+     "tur": "n",
+     "tr": "restoran"
+    },
+    {
+     "en": "famous",
+     "tur": "a",
+     "tr": "ünlü"
+    },
+    {
+     "en": "hotel",
+     "tur": "n",
+     "tr": "otel"
+    },
+    {
+     "en": "visit",
+     "tur": "v",
+     "tr": "ziyaret etmek"
+    }
+   ]
+  },
+  {
+   "ders": 58,
+   "kelimeler": [
+    {
+     "en": "airport",
+     "tur": "n",
+     "tr": "havalimanı"
+    },
+    {
+     "en": "station",
+     "tur": "n",
+     "tr": "istasyon"
+    },
+    {
+     "en": "answer",
+     "tur": "v",
+     "tr": "cevap vermek"
+    },
+    {
+     "en": "popular",
+     "tur": "a",
+     "tr": "popüler"
+    },
+    {
+     "en": "bus",
+     "tur": "n",
+     "tr": "otobüs"
+    },
+    {
+     "en": "train",
+     "tur": "n",
+     "tr": "tren"
+    },
+    {
+     "en": "forget",
+     "tur": "v",
+     "tr": "unutmak"
+    },
+    {
+     "en": "plane",
+     "tur": "n",
+     "tr": "uçak"
+    },
+    {
+     "en": "modern",
+     "tur": "a",
+     "tr": "modern"
+    },
+    {
+     "en": "finish",
+     "tur": "v",
+     "tr": "bitirmek"
+    }
+   ]
+  },
+  {
+   "ders": 59,
+   "kelimeler": [
+    {
+     "en": "ship",
+     "tur": "n",
+     "tr": "gemi"
+    },
+    {
+     "en": "bicycle",
+     "tur": "n",
+     "tr": "bisiklet"
+    },
+    {
+     "en": "enjoy",
+     "tur": "v",
+     "tr": "keyif almak"
+    },
+    {
+     "en": "ticket",
+     "tur": "n",
+     "tr": "bilet"
+    },
+    {
+     "en": "ancient",
+     "tur": "a",
+     "tr": "antik, çok eski"
+    },
+    {
+     "en": "trip",
+     "tur": "n",
+     "tr": "gezi, yolculuk"
+    },
+    {
+     "en": "smile",
+     "tur": "v",
+     "tr": "gülümsemek"
+    },
+    {
+     "en": "holiday",
+     "tur": "n",
+     "tr": "tatil"
+    },
+    {
+     "en": "map",
+     "tur": "n",
+     "tr": "harita"
+    },
+    {
+     "en": "strange",
+     "tur": "a",
+     "tr": "garip"
+    }
+   ]
+  },
+  {
+   "ders": 60,
+   "kelimeler": [
+    {
+     "en": "laugh",
+     "tur": "v",
+     "tr": "gülmek"
+    },
+    {
+     "en": "bridge",
+     "tur": "n",
+     "tr": "köprü"
+    },
+    {
+     "en": "park",
+     "tur": "n",
+     "tr": "park"
+    },
+    {
+     "en": "cry",
+     "tur": "v",
+     "tr": "ağlamak"
+    },
+    {
+     "en": "normal",
+     "tur": "a",
+     "tr": "normal"
+    },
+    {
+     "en": "village",
+     "tur": "n",
+     "tr": "köy"
+    },
+    {
+     "en": "farm",
+     "tur": "n",
+     "tr": "çiftlik"
+    },
+    {
+     "en": "jump",
+     "tur": "v",
+     "tr": "zıplamak"
+    },
+    {
+     "en": "king",
+     "tur": "n",
+     "tr": "kral"
+    },
+    {
+     "en": "perfect",
+     "tur": "a",
+     "tr": "mükemmel"
+    }
+   ]
+  },
+  {
+   "ders": 61,
+   "kelimeler": [
+    {
+     "en": "queen",
+     "tur": "n",
+     "tr": "kraliçe"
+    },
+    {
+     "en": "throw",
+     "tur": "v",
+     "tr": "atmak, fırlatmak"
+    },
+    {
+     "en": "soldier",
+     "tur": "n",
+     "tr": "asker"
+    },
+    {
+     "en": "army",
+     "tur": "n",
+     "tr": "ordu"
+    },
+    {
+     "en": "push",
+     "tur": "v",
+     "tr": "itmek"
+    },
+    {
+     "en": "terrible",
+     "tur": "a",
+     "tr": "berbat"
+    },
+    {
+     "en": "enemy",
+     "tur": "n",
+     "tr": "düşman"
+    },
+    {
+     "en": "touch",
+     "tur": "v",
+     "tr": "dokunmak"
+    },
+    {
+     "en": "peace",
+     "tur": "n",
+     "tr": "barış"
+    },
+    {
+     "en": "summer",
+     "tur": "n",
+     "tr": "yaz"
+    }
+   ]
+  },
+  {
+   "ders": 62,
+   "kelimeler": [
+    {
+     "en": "wonderful",
+     "tur": "a",
+     "tr": "harika"
+    },
+    {
+     "en": "cost",
+     "tur": "v",
+     "tr": "mal olmak, tutmak"
+    },
+    {
+     "en": "winter",
+     "tur": "n",
+     "tr": "kış"
+    },
+    {
+     "en": "spring",
+     "tur": "n",
+     "tr": "ilkbahar"
+    },
+    {
+     "en": "miss",
+     "tur": "v",
+     "tr": "özlemek; kaçırmak"
+    },
+    {
+     "en": "autumn",
+     "tur": "n",
+     "tr": "sonbahar"
+    },
+    {
+     "en": "dangerous",
+     "tur": "a",
+     "tr": "tehlikeli"
+    },
+    {
+     "en": "birthday",
+     "tur": "n",
+     "tr": "doğum günü"
+    },
+    {
+     "en": "share",
+     "tur": "v",
+     "tr": "paylaşmak"
+    },
+    {
+     "en": "gift",
+     "tur": "n",
+     "tr": "hediye"
+    }
+   ]
+  },
+  {
+   "ders": 63,
+   "kelimeler": [
+    {
+     "en": "clock",
+     "tur": "n",
+     "tr": "saat (duvar saati)"
+    },
+    {
+     "en": "careful",
+     "tur": "a",
+     "tr": "dikkatli"
+    },
+    {
+     "en": "join",
+     "tur": "v",
+     "tr": "katılmak"
+    },
+    {
+     "en": "camera",
+     "tur": "n",
+     "tr": "kamera"
+    },
+    {
+     "en": "photo",
+     "tur": "n",
+     "tr": "fotoğraf"
+    },
+    {
+     "en": "plan",
+     "tur": "v",
+     "tr": "planlamak"
+    },
+    {
+     "en": "song",
+     "tur": "n",
+     "tr": "şarkı"
+    },
+    {
+     "en": "quiet",
+     "tur": "a",
+     "tr": "sessiz"
+    },
+    {
+     "en": "sport",
+     "tur": "n",
+     "tr": "spor"
+    },
+    {
+     "en": "check",
+     "tur": "v",
+     "tr": "kontrol etmek"
+    }
+   ]
+  },
+  {
+   "ders": 64,
+   "kelimeler": [
+    {
+     "en": "football",
+     "tur": "n",
+     "tr": "futbol"
+    },
+    {
+     "en": "loud",
+     "tur": "a",
+     "tr": "yüksek sesli"
+    },
+    {
+     "en": "ball",
+     "tur": "n",
+     "tr": "top"
+    },
+    {
+     "en": "fill",
+     "tur": "v",
+     "tr": "doldurmak"
+    },
+    {
+     "en": "prize",
+     "tur": "n",
+     "tr": "ödül"
+    },
+    {
+     "en": "mistake",
+     "tur": "n",
+     "tr": "hata"
+    },
+    {
+     "en": "pick",
+     "tur": "v",
+     "tr": "seçmek, toplamak"
+    },
+    {
+     "en": "soft",
+     "tur": "a",
+     "tr": "yumuşak"
+    },
+    {
+     "en": "example",
+     "tur": "n",
+     "tr": "örnek"
+    },
+    {
+     "en": "protect",
+     "tur": "v",
+     "tr": "korumak"
+    }
+   ]
+  },
+  {
+   "ders": 65,
+   "kelimeler": [
+    {
+     "en": "rule",
+     "tur": "n",
+     "tr": "kural"
+    },
+    {
+     "en": "choice",
+     "tur": "n",
+     "tr": "seçim"
+    },
+    {
+     "en": "sweet",
+     "tur": "a",
+     "tr": "tatlı"
+    },
+    {
+     "en": "prepare",
+     "tur": "v",
+     "tr": "hazırlamak"
+    },
+    {
+     "en": "chance",
+     "tur": "n",
+     "tr": "şans, fırsat"
+    },
+    {
+     "en": "risk",
+     "tur": "n",
+     "tr": "risk"
+    },
+    {
+     "en": "improve",
+     "tur": "v",
+     "tr": "geliştirmek"
+    },
+    {
+     "en": "danger",
+     "tur": "n",
+     "tr": "tehlike"
+    },
+    {
+     "en": "bitter",
+     "tur": "a",
+     "tr": "acı (tat)"
+    },
+    {
+     "en": "safety",
+     "tur": "n",
+     "tr": "güvenlik"
+    }
+   ]
+  },
+  {
+   "ders": 66,
+   "kelimeler": [
+    {
+     "en": "worry",
+     "tur": "v",
+     "tr": "endişelenmek"
+    },
+    {
+     "en": "truth",
+     "tur": "n",
+     "tr": "gerçek, doğru"
+    },
+    {
+     "en": "dream",
+     "tur": "n",
+     "tr": "rüya, hayal"
+    },
+    {
+     "en": "sour",
+     "tur": "a",
+     "tr": "ekşi"
+    },
+    {
+     "en": "enter",
+     "tur": "v",
+     "tr": "girmek"
+    },
+    {
+     "en": "fear",
+     "tur": "n",
+     "tr": "korku"
+    },
+    {
+     "en": "pain",
+     "tur": "n",
+     "tr": "acı, ağrı"
+    },
+    {
+     "en": "arrive",
+     "tur": "v",
+     "tr": "varmak"
+    },
+    {
+     "en": "noise",
+     "tur": "n",
+     "tr": "gürültü"
+    },
+    {
+     "en": "fresh",
+     "tur": "a",
+     "tr": "taze"
+    }
+   ]
+  },
+  {
+   "ders": 67,
+   "kelimeler": [
+    {
+     "en": "size",
+     "tur": "n",
+     "tr": "boyut, beden"
+    },
+    {
+     "en": "repeat",
+     "tur": "v",
+     "tr": "tekrarlamak"
+    },
+    {
+     "en": "shape",
+     "tur": "n",
+     "tr": "şekil"
+    },
+    {
+     "en": "weight",
+     "tur": "n",
+     "tr": "ağırlık"
+    },
+    {
+     "en": "dry",
+     "tur": "a",
+     "tr": "kuru"
+    },
+    {
+     "en": "count",
+     "tur": "v",
+     "tr": "saymak"
+    },
+    {
+     "en": "speed",
+     "tur": "n",
+     "tr": "hız"
+    },
+    {
+     "en": "distance",
+     "tur": "n",
+     "tr": "mesafe"
+    },
+    {
+     "en": "borrow",
+     "tur": "v",
+     "tr": "ödünç almak"
+    },
+    {
+     "en": "wet",
+     "tur": "a",
+     "tr": "ıslak"
+    }
+   ]
+  },
+  {
+   "ders": 68,
+   "kelimeler": [
+    {
+     "en": "top",
+     "tur": "n",
+     "tr": "üst, tepe"
+    },
+    {
+     "en": "lend",
+     "tur": "v",
+     "tr": "ödünç vermek"
+    },
+    {
+     "en": "bottom",
+     "tur": "n",
+     "tr": "alt, dip"
+    },
+    {
+     "en": "front",
+     "tur": "n",
+     "tr": "ön"
+    },
+    {
+     "en": "warm",
+     "tur": "a",
+     "tr": "ılık, sıcak"
+    },
+    {
+     "en": "invite",
+     "tur": "v",
+     "tr": "davet etmek"
+    },
+    {
+     "en": "middle",
+     "tur": "n",
+     "tr": "orta"
+    },
+    {
+     "en": "corner",
+     "tur": "n",
+     "tr": "köşe"
+    },
+    {
+     "en": "promise",
+     "tur": "v",
+     "tr": "söz vermek"
+    },
+    {
+     "en": "edge",
+     "tur": "n",
+     "tr": "kenar"
+    }
+   ]
+  },
+  {
+   "ders": 69,
+   "kelimeler": [
+    {
+     "en": "cool",
+     "tur": "a",
+     "tr": "serin; havalı"
+    },
+    {
+     "en": "hole",
+     "tur": "n",
+     "tr": "delik"
+    },
+    {
+     "en": "guess",
+     "tur": "v",
+     "tr": "tahmin etmek"
+    },
+    {
+     "en": "circle",
+     "tur": "n",
+     "tr": "daire"
+    },
+    {
+     "en": "square",
+     "tur": "n",
+     "tr": "kare; meydan"
+    },
+    {
+     "en": "hate",
+     "tur": "v",
+     "tr": "nefret etmek"
+    },
+    {
+     "en": "deep",
+     "tur": "a",
+     "tr": "derin"
+    },
+    {
+     "en": "north",
+     "tur": "n",
+     "tr": "kuzey"
+    },
+    {
+     "en": "south",
+     "tur": "n",
+     "tr": "güney"
+    },
+    {
+     "en": "fix",
+     "tur": "v",
+     "tr": "tamir etmek"
+    }
+   ]
+  },
+  {
+   "ders": 70,
+   "kelimeler": [
+    {
+     "en": "east",
+     "tur": "n",
+     "tr": "doğu"
+    },
+    {
+     "en": "wide",
+     "tur": "a",
+     "tr": "geniş"
+    },
+    {
+     "en": "west",
+     "tur": "n",
+     "tr": "batı"
+    },
+    {
+     "en": "rest",
+     "tur": "v",
+     "tr": "dinlenmek"
+    },
+    {
+     "en": "sign",
+     "tur": "n",
+     "tr": "işaret, tabela"
+    },
+    {
+     "en": "list",
+     "tur": "n",
+     "tr": "liste"
+    },
+    {
+     "en": "marry",
+     "tur": "v",
+     "tr": "evlenmek"
+    },
+    {
+     "en": "narrow",
+     "tur": "a",
+     "tr": "dar"
+    },
+    {
+     "en": "page",
+     "tur": "n",
+     "tr": "sayfa"
+    },
+    {
+     "en": "note",
+     "tur": "n",
+     "tr": "not"
+    }
+   ]
+  },
+  {
+   "ders": 71,
+   "kelimeler": [
+    {
+     "en": "shout",
+     "tur": "v",
+     "tr": "bağırmak"
+    },
+    {
+     "en": "pen",
+     "tur": "n",
+     "tr": "tükenmez kalem"
+    },
+    {
+     "en": "thick",
+     "tur": "a",
+     "tr": "kalın"
+    },
+    {
+     "en": "climb",
+     "tur": "v",
+     "tr": "tırmanmak"
+    },
+    {
+     "en": "pencil",
+     "tur": "n",
+     "tr": "kurşun kalem"
+    },
+    {
+     "en": "desk",
+     "tur": "n",
+     "tr": "çalışma masası"
+    },
+    {
+     "en": "order",
+     "tur": "v",
+     "tr": "sipariş vermek"
+    },
+    {
+     "en": "board",
+     "tur": "n",
+     "tr": "tahta, pano"
+    },
+    {
+     "en": "thin",
+     "tur": "a",
+     "tr": "ince, zayıf"
+    },
+    {
+     "en": "bottle",
+     "tur": "n",
+     "tr": "şişe"
+    }
+   ]
+  },
+  {
+   "ders": 72,
+   "kelimeler": [
+    {
+     "en": "wake",
+     "tur": "v",
+     "tr": "uyanmak"
+    },
+    {
+     "en": "cup",
+     "tur": "n",
+     "tr": "fincan"
+    },
+    {
+     "en": "tall",
+     "tur": "a",
+     "tr": "uzun boylu"
+    },
+    {
+     "en": "plate",
+     "tur": "n",
+     "tr": "tabak"
+    },
+    {
+     "en": "hurt",
+     "tur": "v",
+     "tr": "acıtmak, incitmek"
+    },
+    {
+     "en": "knife",
+     "tur": "n",
+     "tr": "bıçak"
+    },
+    {
+     "en": "spoon",
+     "tur": "n",
+     "tr": "kaşık"
+    },
+    {
+     "en": "burn",
+     "tur": "v",
+     "tr": "yanmak, yakmak"
+    },
+    {
+     "en": "fat",
+     "tur": "a",
+     "tr": "şişman"
+    },
+    {
+     "en": "fork",
+     "tur": "n",
+     "tr": "çatal"
+    }
+   ]
+  },
+  {
+   "ders": 73,
+   "kelimeler": [
+    {
+     "en": "soap",
+     "tur": "n",
+     "tr": "sabun"
+    },
+    {
+     "en": "hide",
+     "tur": "v",
+     "tr": "saklamak, saklanmak"
+    },
+    {
+     "en": "towel",
+     "tur": "n",
+     "tr": "havlu"
+    },
+    {
+     "en": "weak",
+     "tur": "a",
+     "tr": "zayıf, güçsüz"
+    },
+    {
+     "en": "bath",
+     "tur": "n",
+     "tr": "banyo"
+    },
+    {
+     "en": "steal",
+     "tur": "v",
+     "tr": "çalmak"
+    },
+    {
+     "en": "shower",
+     "tur": "n",
+     "tr": "duş"
+    },
+    {
+     "en": "toilet",
+     "tur": "n",
+     "tr": "tuvalet"
+    },
+    {
+     "en": "fight",
+     "tur": "v",
+     "tr": "kavga etmek, savaşmak"
+    },
+    {
+     "en": "busy",
+     "tur": "a",
+     "tr": "meşgul"
+    }
+   ]
+  },
+  {
+   "ders": 74,
+   "kelimeler": [
+    {
+     "en": "mirror",
+     "tur": "n",
+     "tr": "ayna"
+    },
+    {
+     "en": "roof",
+     "tur": "n",
+     "tr": "çatı"
+    },
+    {
+     "en": "ride",
+     "tur": "v",
+     "tr": "binmek, sürmek"
+    },
+    {
+     "en": "stairs",
+     "tur": "n",
+     "tr": "merdiven"
+    },
+    {
+     "en": "lazy",
+     "tur": "a",
+     "tr": "tembel"
+    },
+    {
+     "en": "smell",
+     "tur": "v",
+     "tr": "koklamak, kokmak"
+    },
+    {
+     "en": "gate",
+     "tur": "n",
+     "tr": "büyük kapı, giriş"
+    },
+    {
+     "en": "engine",
+     "tur": "n",
+     "tr": "motor"
+    },
+    {
+     "en": "taste",
+     "tur": "v",
+     "tr": "tatmak"
+    },
+    {
+     "en": "wheel",
+     "tur": "n",
+     "tr": "tekerlek"
+    }
+   ]
+  },
+  {
+   "ders": 75,
+   "kelimeler": [
+    {
+     "en": "smart",
+     "tur": "a",
+     "tr": "akıllı"
+    },
+    {
+     "en": "fuel",
+     "tur": "n",
+     "tr": "yakıt"
+    },
+    {
+     "en": "paint",
+     "tur": "v",
+     "tr": "boyamak"
+    },
+    {
+     "en": "gas",
+     "tur": "n",
+     "tr": "gaz"
+    },
+    {
+     "en": "electricity",
+     "tur": "n",
+     "tr": "elektrik"
+    },
+    {
+     "en": "clever",
+     "tur": "a",
+     "tr": "zeki"
+    },
+    {
+     "en": "describe",
+     "tur": "v",
+     "tr": "tarif etmek"
+    },
+    {
+     "en": "battery",
+     "tur": "n",
+     "tr": "pil, batarya"
+    },
+    {
+     "en": "screen",
+     "tur": "n",
+     "tr": "ekran"
+    },
+    {
+     "en": "compare",
+     "tur": "v",
+     "tr": "karşılaştırmak"
+    }
+   ]
+  },
+  {
+   "ders": 76,
+   "kelimeler": [
+    {
+     "en": "stupid",
+     "tur": "a",
+     "tr": "aptal"
+    },
+    {
+     "en": "button",
+     "tur": "n",
+     "tr": "düğme"
+    },
+    {
+     "en": "tool",
+     "tur": "n",
+     "tr": "alet"
+    },
+    {
+     "en": "manage",
+     "tur": "v",
+     "tr": "yönetmek, başarmak"
+    },
+    {
+     "en": "rope",
+     "tur": "n",
+     "tr": "ip, halat"
+    },
+    {
+     "en": "crazy",
+     "tur": "a",
+     "tr": "çılgın"
+    },
+    {
+     "en": "pocket",
+     "tur": "n",
+     "tr": "cep"
+    },
+    {
+     "en": "discuss",
+     "tur": "v",
+     "tr": "tartışmak, görüşmek"
+    },
+    {
+     "en": "wallet",
+     "tur": "n",
+     "tr": "cüzdan"
+    },
+    {
+     "en": "coin",
+     "tur": "n",
+     "tr": "madeni para"
+    }
+   ]
+  },
+  {
+   "ders": 77,
+   "kelimeler": [
+    {
+     "en": "accept",
+     "tur": "v",
+     "tr": "kabul etmek"
+    },
+    {
+     "en": "calm",
+     "tur": "a",
+     "tr": "sakin"
+    },
+    {
+     "en": "bill",
+     "tur": "n",
+     "tr": "fatura"
+    },
+    {
+     "en": "salary",
+     "tur": "n",
+     "tr": "maaş"
+    },
+    {
+     "en": "refuse",
+     "tur": "v",
+     "tr": "reddetmek"
+    },
+    {
+     "en": "customer",
+     "tur": "n",
+     "tr": "müşteri"
+    },
+    {
+     "en": "nervous",
+     "tur": "a",
+     "tr": "gergin"
+    },
+    {
+     "en": "avoid",
+     "tur": "v",
+     "tr": "kaçınmak"
+    },
+    {
+     "en": "manager",
+     "tur": "n",
+     "tr": "müdür, yönetici"
+    },
+    {
+     "en": "boss",
+     "tur": "n",
+     "tr": "patron"
+    }
+   ]
+  },
+  {
+   "ders": 78,
+   "kelimeler": [
+    {
+     "en": "imagine",
+     "tur": "v",
+     "tr": "hayal etmek"
+    },
+    {
+     "en": "employee",
+     "tur": "n",
+     "tr": "çalışan"
+    },
+    {
+     "en": "lonely",
+     "tur": "a",
+     "tr": "yalnız"
+    },
+    {
+     "en": "engineer",
+     "tur": "n",
+     "tr": "mühendis"
+    },
+    {
+     "en": "notice",
+     "tur": "v",
+     "tr": "fark etmek"
+    },
+    {
+     "en": "lawyer",
+     "tur": "n",
+     "tr": "avukat"
+    },
+    {
+     "en": "nurse",
+     "tur": "n",
+     "tr": "hemşire"
+    },
+    {
+     "en": "lucky",
+     "tur": "a",
+     "tr": "şanslı"
+    },
+    {
+     "en": "complain",
+     "tur": "v",
+     "tr": "şikâyet etmek"
+    },
+    {
+     "en": "driver",
+     "tur": "n",
+     "tr": "sürücü"
+    }
+   ]
+  },
+  {
+   "ders": 79,
+   "kelimeler": [
+    {
+     "en": "farmer",
+     "tur": "n",
+     "tr": "çiftçi"
+    },
+    {
+     "en": "celebrate",
+     "tur": "v",
+     "tr": "kutlamak"
+    },
+    {
+     "en": "artist",
+     "tur": "n",
+     "tr": "sanatçı"
+    },
+    {
+     "en": "honest",
+     "tur": "a",
+     "tr": "dürüst"
+    },
+    {
+     "en": "writer",
+     "tur": "n",
+     "tr": "yazar"
+    },
+    {
+     "en": "deliver",
+     "tur": "v",
+     "tr": "teslim etmek"
+    },
+    {
+     "en": "singer",
+     "tur": "n",
+     "tr": "şarkıcı"
+    },
+    {
+     "en": "brave",
+     "tur": "a",
+     "tr": "cesur"
+    },
+    {
+     "en": "actor",
+     "tur": "n",
+     "tr": "oyuncu, aktör"
+    },
+    {
+     "en": "collect",
+     "tur": "v",
+     "tr": "toplamak"
+    }
+   ]
+  },
+  {
+   "ders": 80,
+   "kelimeler": [
+    {
+     "en": "neighbor",
+     "tur": "n",
+     "tr": "komşu"
+    },
+    {
+     "en": "guest",
+     "tur": "n",
+     "tr": "misafir"
+    },
+    {
+     "en": "connect",
+     "tur": "v",
+     "tr": "bağlamak"
+    },
+    {
+     "en": "friendly",
+     "tur": "a",
+     "tr": "arkadaş canlısı"
+    },
+    {
+     "en": "stranger",
+     "tur": "n",
+     "tr": "yabancı"
+    },
+    {
+     "en": "adult",
+     "tur": "n",
+     "tr": "yetişkin"
+    },
+    {
+     "en": "depend",
+     "tur": "v",
+     "tr": "bağlı olmak"
+    },
+    {
+     "en": "crowd",
+     "tur": "n",
+     "tr": "kalabalık"
+    },
+    {
+     "en": "foreign",
+     "tur": "a",
+     "tr": "yabancı"
+    },
+    {
+     "en": "destroy",
+     "tur": "v",
+     "tr": "yok etmek"
+    }
+   ]
+  },
+  {
+   "ders": 81,
+   "kelimeler": [
+    {
+     "en": "population",
+     "tur": "n",
+     "tr": "nüfus"
+    },
+    {
+     "en": "culture",
+     "tur": "n",
+     "tr": "kültür"
+    },
+    {
+     "en": "discover",
+     "tur": "v",
+     "tr": "keşfetmek"
+    },
+    {
+     "en": "religion",
+     "tur": "n",
+     "tr": "din"
+    },
+    {
+     "en": "local",
+     "tur": "a",
+     "tr": "yerel"
+    },
+    {
+     "en": "science",
+     "tur": "n",
+     "tr": "bilim"
+    },
+    {
+     "en": "introduce",
+     "tur": "v",
+     "tr": "tanıştırmak, tanıtmak"
+    },
+    {
+     "en": "nature",
+     "tur": "n",
+     "tr": "doğa"
+    },
+    {
+     "en": "environment",
+     "tur": "n",
+     "tr": "çevre"
+    },
+    {
+     "en": "national",
+     "tur": "a",
+     "tr": "ulusal"
+    }
+   ]
+  },
+  {
+   "ders": 82,
+   "kelimeler": [
+    {
+     "en": "measure",
+     "tur": "v",
+     "tr": "ölçmek"
+    },
+    {
+     "en": "energy",
+     "tur": "n",
+     "tr": "enerji"
+    },
+    {
+     "en": "technology",
+     "tur": "n",
+     "tr": "teknoloji"
+    },
+    {
+     "en": "prevent",
+     "tur": "v",
+     "tr": "önlemek"
+    },
+    {
+     "en": "quality",
+     "tur": "n",
+     "tr": "kalite"
+    },
+    {
+     "en": "international",
+     "tur": "a",
+     "tr": "uluslararası"
+    },
+    {
+     "en": "amount",
+     "tur": "n",
+     "tr": "miktar"
+    },
+    {
+     "en": "reduce",
+     "tur": "v",
+     "tr": "azaltmak"
+    },
+    {
+     "en": "percent",
+     "tur": "n",
+     "tr": "yüzde"
+    },
+    {
+     "en": "total",
+     "tur": "n",
+     "tr": "toplam"
+    }
+   ]
+  },
+  {
+   "ders": 83,
+   "kelimeler": [
+    {
+     "en": "natural",
+     "tur": "a",
+     "tr": "doğal"
+    },
+    {
+     "en": "replace",
+     "tur": "v",
+     "tr": "yerine koymak"
+    },
+    {
+     "en": "average",
+     "tur": "n",
+     "tr": "ortalama"
+    },
+    {
+     "en": "type",
+     "tur": "n",
+     "tr": "tip, tür"
+    },
+    {
+     "en": "solve",
+     "tur": "v",
+     "tr": "çözmek"
+    },
+    {
+     "en": "physical",
+     "tur": "a",
+     "tr": "fiziksel"
+    },
+    {
+     "en": "style",
+     "tur": "n",
+     "tr": "tarz"
+    },
+    {
+     "en": "method",
+     "tur": "n",
+     "tr": "yöntem"
+    },
+    {
+     "en": "succeed",
+     "tur": "v",
+     "tr": "başarmak"
+    },
+    {
+     "en": "process",
+     "tur": "n",
+     "tr": "süreç"
+    }
+   ]
+  },
+  {
+   "ders": 84,
+   "kelimeler": [
+    {
+     "en": "personal",
+     "tur": "a",
+     "tr": "kişisel"
+    },
+    {
+     "en": "fail",
+     "tur": "v",
+     "tr": "başarısız olmak"
+    },
+    {
+     "en": "purpose",
+     "tur": "n",
+     "tr": "amaç"
+    },
+    {
+     "en": "goal",
+     "tur": "n",
+     "tr": "hedef; gol"
+    },
+    {
+     "en": "earn",
+     "tur": "v",
+     "tr": "para kazanmak"
+    },
+    {
+     "en": "success",
+     "tur": "n",
+     "tr": "başarı"
+    },
+    {
+     "en": "private",
+     "tur": "a",
+     "tr": "özel, kişiye ait"
+    },
+    {
+     "en": "skill",
+     "tur": "n",
+     "tr": "beceri"
+    },
+    {
+     "en": "waste",
+     "tur": "v",
+     "tr": "israf etmek"
+    },
+    {
+     "en": "habit",
+     "tur": "n",
+     "tr": "alışkanlık"
+    }
+   ]
+  },
+  {
+   "ders": 85,
+   "kelimeler": [
+    {
+     "en": "behavior",
+     "tur": "n",
+     "tr": "davranış"
+    },
+    {
+     "en": "social",
+     "tur": "a",
+     "tr": "sosyal"
+    },
+    {
+     "en": "belong",
+     "tur": "v",
+     "tr": "ait olmak"
+    },
+    {
+     "en": "opinion",
+     "tur": "n",
+     "tr": "fikir, görüş"
+    },
+    {
+     "en": "advice",
+     "tur": "n",
+     "tr": "tavsiye"
+    },
+    {
+     "en": "exist",
+     "tur": "v",
+     "tr": "var olmak"
+    },
+    {
+     "en": "secret",
+     "tur": "n",
+     "tr": "sır"
+    },
+    {
+     "en": "political",
+     "tur": "a",
+     "tr": "siyasi"
+    },
+    {
+     "en": "joke",
+     "tur": "n",
+     "tr": "şaka"
+    },
+    {
+     "en": "relax",
+     "tur": "v",
+     "tr": "rahatlamak"
+    }
+   ]
+  },
+  {
+   "ders": 86,
+   "kelimeler": [
+    {
+     "en": "luck",
+     "tur": "n",
+     "tr": "şans"
+    },
+    {
+     "en": "hero",
+     "tur": "n",
+     "tr": "kahraman"
+    },
+    {
+     "en": "search",
+     "tur": "v",
+     "tr": "aramak"
+    },
+    {
+     "en": "economic",
+     "tur": "a",
+     "tr": "ekonomik"
+    },
+    {
+     "en": "skin",
+     "tur": "n",
+     "tr": "cilt, deri"
+    },
+    {
+     "en": "hair",
+     "tur": "n",
+     "tr": "saç"
+    },
+    {
+     "en": "attack",
+     "tur": "v",
+     "tr": "saldırmak"
+    },
+    {
+     "en": "nose",
+     "tur": "n",
+     "tr": "burun"
+    },
+    {
+     "en": "legal",
+     "tur": "a",
+     "tr": "yasal"
+    },
+    {
+     "en": "mouth",
+     "tur": "n",
+     "tr": "ağız"
+    }
+   ]
+  },
+  {
+   "ders": 87,
+   "kelimeler": [
+    {
+     "en": "attend",
+     "tur": "v",
+     "tr": "katılmak, devam etmek"
+    },
+    {
+     "en": "tooth",
+     "tur": "n",
+     "tr": "diş"
+    },
+    {
+     "en": "hang",
+     "tur": "v",
+     "tr": "asmak"
+    },
+    {
+     "en": "ear",
+     "tur": "n",
+     "tr": "kulak"
+    },
+    {
+     "en": "medical",
+     "tur": "a",
+     "tr": "tıbbi"
+    },
+    {
+     "en": "neck",
+     "tur": "n",
+     "tr": "boyun"
+    },
+    {
+     "en": "kick",
+     "tur": "v",
+     "tr": "tekmelemek"
+    },
+    {
+     "en": "shoulder",
+     "tur": "n",
+     "tr": "omuz"
+    },
+    {
+     "en": "military",
+     "tur": "a",
+     "tr": "askeri"
+    },
+    {
+     "en": "chest",
+     "tur": "n",
+     "tr": "göğüs"
+    }
+   ]
+  },
+  {
+   "ders": 88,
+   "kelimeler": [
+    {
+     "en": "lie",
+     "tur": "v",
+     "tr": "yalan söylemek; uzanmak"
+    },
+    {
+     "en": "stomach",
+     "tur": "n",
+     "tr": "mide"
+    },
+    {
+     "en": "leg",
+     "tur": "n",
+     "tr": "bacak"
+    },
+    {
+     "en": "mix",
+     "tur": "v",
+     "tr": "karıştırmak"
+    },
+    {
+     "en": "human",
+     "tur": "a",
+     "tr": "insan, insani"
+    },
+    {
+     "en": "knee",
+     "tur": "n",
+     "tr": "diz"
+    },
+    {
+     "en": "finger",
+     "tur": "n",
+     "tr": "parmak"
+    },
+    {
+     "en": "pour",
+     "tur": "v",
+     "tr": "dökmek"
+    },
+    {
+     "en": "blood",
+     "tur": "n",
+     "tr": "kan"
+    },
+    {
+     "en": "general",
+     "tur": "a",
+     "tr": "genel"
+    }
+   ]
+  },
+  {
+   "ders": 89,
+   "kelimeler": [
+    {
+     "en": "bone",
+     "tur": "n",
+     "tr": "kemik"
+    },
+    {
+     "en": "pray",
+     "tur": "v",
+     "tr": "dua etmek"
+    },
+    {
+     "en": "brain",
+     "tur": "n",
+     "tr": "beyin"
+    },
+    {
+     "en": "medicine",
+     "tur": "n",
+     "tr": "ilaç"
+    },
+    {
+     "en": "shut",
+     "tur": "v",
+     "tr": "kapatmak"
+    },
+    {
+     "en": "certain",
+     "tur": "a",
+     "tr": "kesin, belirli"
+    },
+    {
+     "en": "illness",
+     "tur": "n",
+     "tr": "hastalık"
+    },
+    {
+     "en": "disease",
+     "tur": "n",
+     "tr": "hastalık (ciddi)"
+    },
+    {
+     "en": "boil",
+     "tur": "v",
+     "tr": "kaynatmak"
+    },
+    {
+     "en": "fever",
+     "tur": "n",
+     "tr": "ateş (hastalık)"
+    }
+   ]
+  },
+  {
+   "ders": 90,
+   "kelimeler": [
+    {
+     "en": "available",
+     "tur": "a",
+     "tr": "mevcut, müsait"
+    },
+    {
+     "en": "accident",
+     "tur": "n",
+     "tr": "kaza"
+    },
+    {
+     "en": "freeze",
+     "tur": "v",
+     "tr": "donmak"
+    },
+    {
+     "en": "emergency",
+     "tur": "n",
+     "tr": "acil durum"
+    },
+    {
+     "en": "deserve",
+     "tur": "v",
+     "tr": "hak etmek"
+    },
+    {
+     "en": "crime",
+     "tur": "n",
+     "tr": "suç"
+    },
+    {
+     "en": "necessary",
+     "tur": "a",
+     "tr": "gerekli"
+    },
+    {
+     "en": "prison",
+     "tur": "n",
+     "tr": "hapishane"
+    },
+    {
+     "en": "encourage",
+     "tur": "v",
+     "tr": "cesaretlendirmek"
+    },
+    {
+     "en": "judge",
+     "tur": "n",
+     "tr": "hâkim"
+    }
+   ]
+  },
+  {
+   "ders": 91,
+   "kelimeler": [
+    {
+     "en": "vote",
+     "tur": "n",
+     "tr": "oy"
+    },
+    {
+     "en": "similar",
+     "tur": "a",
+     "tr": "benzer"
+    },
+    {
+     "en": "recognize",
+     "tur": "v",
+     "tr": "tanımak"
+    },
+    {
+     "en": "election",
+     "tur": "n",
+     "tr": "seçim (siyasi)"
+    },
+    {
+     "en": "freedom",
+     "tur": "n",
+     "tr": "özgürlük"
+    },
+    {
+     "en": "recommend",
+     "tur": "v",
+     "tr": "tavsiye etmek"
+    },
+    {
+     "en": "difficult",
+     "tur": "a",
+     "tr": "zor"
+    },
+    {
+     "en": "duty",
+     "tur": "n",
+     "tr": "görev"
+    },
+    {
+     "en": "tradition",
+     "tur": "n",
+     "tr": "gelenek"
+    },
+    {
+     "en": "remind",
+     "tur": "v",
+     "tr": "hatırlatmak"
+    }
+   ]
+  },
+  {
+   "ders": 92,
+   "kelimeler": [
+    {
+     "en": "wedding",
+     "tur": "n",
+     "tr": "düğün"
+    },
+    {
+     "en": "impossible",
+     "tur": "a",
+     "tr": "imkânsız"
+    },
+    {
+     "en": "meeting",
+     "tur": "n",
+     "tr": "toplantı"
+    },
+    {
+     "en": "respect",
+     "tur": "v",
+     "tr": "saygı duymak"
+    },
+    {
+     "en": "conversation",
+     "tur": "n",
+     "tr": "sohbet"
+    },
+    {
+     "en": "speech",
+     "tur": "n",
+     "tr": "konuşma"
+    },
+    {
+     "en": "trust",
+     "tur": "v",
+     "tr": "güvenmek"
+    },
+    {
+     "en": "successful",
+     "tur": "a",
+     "tr": "başarılı"
+    },
+    {
+     "en": "agreement",
+     "tur": "n",
+     "tr": "anlaşma"
+    },
+    {
+     "en": "contract",
+     "tur": "n",
+     "tr": "sözleşme"
+    }
+   ]
+  },
+  {
+   "ders": 93,
+   "kelimeler": [
+    {
+     "en": "wish",
+     "tur": "v",
+     "tr": "dilemek"
+    },
+    {
+     "en": "document",
+     "tur": "n",
+     "tr": "belge"
+    },
+    {
+     "en": "useful",
+     "tur": "a",
+     "tr": "faydalı"
+    },
+    {
+     "en": "address",
+     "tur": "n",
+     "tr": "adres"
+    },
+    {
+     "en": "wonder",
+     "tur": "v",
+     "tr": "merak etmek"
+    },
+    {
+     "en": "title",
+     "tur": "n",
+     "tr": "başlık"
+    },
+    {
+     "en": "act",
+     "tur": "v",
+     "tr": "davranmak, rol yapmak"
+    },
+    {
+     "en": "subject",
+     "tur": "n",
+     "tr": "konu; ders"
+    },
+    {
+     "en": "comfortable",
+     "tur": "a",
+     "tr": "rahat"
+    },
+    {
+     "en": "topic",
+     "tur": "n",
+     "tr": "konu"
+    }
+   ]
+  },
+  {
+   "ders": 94,
+   "kelimeler": [
+    {
+     "en": "apply",
+     "tur": "v",
+     "tr": "başvurmak, uygulamak"
+    },
+    {
+     "en": "detail",
+     "tur": "n",
+     "tr": "ayrıntı"
+    },
+    {
+     "en": "section",
+     "tur": "n",
+     "tr": "bölüm"
+    },
+    {
+     "en": "favorite",
+     "tur": "a",
+     "tr": "en sevilen"
+    },
+    {
+     "en": "argue",
+     "tur": "v",
+     "tr": "tartışmak"
+    },
+    {
+     "en": "chapter",
+     "tur": "n",
+     "tr": "bölüm (kitap)"
+    },
+    {
+     "en": "sentence",
+     "tur": "n",
+     "tr": "cümle"
+    },
+    {
+     "en": "achieve",
+     "tur": "v",
+     "tr": "başarmak, elde etmek"
+    },
+    {
+     "en": "grammar",
+     "tur": "n",
+     "tr": "dil bilgisi"
+    },
+    {
+     "en": "single",
+     "tur": "a",
+     "tr": "tek; bekâr"
+    }
+   ]
+  },
+  {
+   "ders": 95,
+   "kelimeler": [
+    {
+     "en": "dictionary",
+     "tur": "n",
+     "tr": "sözlük"
+    },
+    {
+     "en": "blow",
+     "tur": "v",
+     "tr": "üflemek, esmek"
+    },
+    {
+     "en": "meaning",
+     "tur": "n",
+     "tr": "anlam"
+    },
+    {
+     "en": "double",
+     "tur": "a",
+     "tr": "çift, iki kat"
+    },
+    {
+     "en": "sound",
+     "tur": "n",
+     "tr": "ses"
+    },
+    {
+     "en": "include",
+     "tur": "v",
+     "tr": "içermek"
+    },
+    {
+     "en": "silence",
+     "tur": "n",
+     "tr": "sessizlik"
+    },
+    {
+     "en": "shadow",
+     "tur": "n",
+     "tr": "gölge"
+    },
+    {
+     "en": "provide",
+     "tur": "v",
+     "tr": "sağlamak"
+    },
+    {
+     "en": "left",
+     "tur": "a",
+     "tr": "sol"
+    }
+   ]
+  },
+  {
+   "ders": 96,
+   "kelimeler": [
+    {
+     "en": "heat",
+     "tur": "n",
+     "tr": "sıcaklık, ısı"
+    },
+    {
+     "en": "temperature",
+     "tur": "n",
+     "tr": "sıcaklık derecesi"
+    },
+    {
+     "en": "suggest",
+     "tur": "v",
+     "tr": "önermek"
+    },
+    {
+     "en": "degree",
+     "tur": "n",
+     "tr": "derece"
+    },
+    {
+     "en": "red",
+     "tur": "a",
+     "tr": "kırmızı"
+    },
+    {
+     "en": "storm",
+     "tur": "n",
+     "tr": "fırtına"
+    },
+    {
+     "en": "require",
+     "tur": "v",
+     "tr": "gerektirmek"
+    },
+    {
+     "en": "cloud",
+     "tur": "n",
+     "tr": "bulut"
+    },
+    {
+     "en": "develop",
+     "tur": "v",
+     "tr": "geliştirmek"
+    },
+    {
+     "en": "earth",
+     "tur": "n",
+     "tr": "dünya; toprak"
+    }
+   ]
+  },
+  {
+   "ders": 97,
+   "kelimeler": [
+    {
+     "en": "blue",
+     "tur": "a",
+     "tr": "mavi"
+    },
+    {
+     "en": "planet",
+     "tur": "n",
+     "tr": "gezegen"
+    },
+    {
+     "en": "support",
+     "tur": "v",
+     "tr": "desteklemek"
+    },
+    {
+     "en": "century",
+     "tur": "n",
+     "tr": "yüzyıl"
+    },
+    {
+     "en": "date",
+     "tur": "n",
+     "tr": "tarih (gün)"
+    },
+    {
+     "en": "green",
+     "tur": "a",
+     "tr": "yeşil"
+    },
+    {
+     "en": "produce",
+     "tur": "v",
+     "tr": "üretmek"
+    },
+    {
+     "en": "calendar",
+     "tur": "n",
+     "tr": "takvim"
+    },
+    {
+     "en": "schedule",
+     "tur": "n",
+     "tr": "program, tarife"
+    },
+    {
+     "en": "cover",
+     "tur": "v",
+     "tr": "örtmek, kapsamak"
+    }
+   ]
+  },
+  {
+   "ders": 98,
+   "kelimeler": [
+    {
+     "en": "period",
+     "tur": "n",
+     "tr": "dönem"
+    },
+    {
+     "en": "yellow",
+     "tur": "a",
+     "tr": "sarı"
+    },
+    {
+     "en": "past",
+     "tur": "n",
+     "tr": "geçmiş"
+    },
+    {
+     "en": "draw",
+     "tur": "v",
+     "tr": "çizmek"
+    },
+    {
+     "en": "beginning",
+     "tur": "n",
+     "tr": "başlangıç"
+    },
+    {
+     "en": "community",
+     "tur": "n",
+     "tr": "topluluk"
+    },
+    {
+     "en": "black",
+     "tur": "a",
+     "tr": "siyah"
+    },
+    {
+     "en": "realize",
+     "tur": "v",
+     "tr": "farkına varmak"
+    },
+    {
+     "en": "president",
+     "tur": "n",
+     "tr": "başkan, cumhurbaşkanı"
+    },
+    {
+     "en": "research",
+     "tur": "n",
+     "tr": "araştırma"
+    }
+   ]
+  },
+  {
+   "ders": 99,
+   "kelimeler": [
+    {
+     "en": "increase",
+     "tur": "v",
+     "tr": "artırmak"
+    },
+    {
+     "en": "white",
+     "tur": "a",
+     "tr": "beyaz"
+    },
+    {
+     "en": "policy",
+     "tur": "n",
+     "tr": "politika, ilke"
+    },
+    {
+     "en": "interest",
+     "tur": "n",
+     "tr": "ilgi; faiz"
+    },
+    {
+     "en": "raise",
+     "tur": "v",
+     "tr": "kaldırmak, yükseltmek"
+    },
+    {
+     "en": "effect",
+     "tur": "n",
+     "tr": "etki"
+    },
+    {
+     "en": "brown",
+     "tur": "a",
+     "tr": "kahverengi"
+    },
+    {
+     "en": "field",
+     "tur": "n",
+     "tr": "alan, tarla"
+    },
+    {
+     "en": "pass",
+     "tur": "v",
+     "tr": "geçmek"
+    },
+    {
+     "en": "development",
+     "tur": "n",
+     "tr": "gelişme"
+    }
+   ]
+  },
+  {
+   "ders": 100,
+   "kelimeler": [
+    {
+     "en": "serve",
+     "tur": "v",
+     "tr": "servis etmek, hizmet etmek"
+    },
+    {
+     "en": "role",
+     "tur": "n",
+     "tr": "rol"
+    },
+    {
+     "en": "pink",
+     "tur": "a",
+     "tr": "pembe"
+    },
+    {
+     "en": "effort",
+     "tur": "n",
+     "tr": "çaba"
+    },
+    {
+     "en": "consider",
+     "tur": "v",
+     "tr": "düşünmek, göz önüne almak"
+    },
+    {
+     "en": "leader",
+     "tur": "n",
+     "tr": "lider"
+    },
+    {
+     "en": "relationship",
+     "tur": "n",
+     "tr": "ilişki"
+    },
+    {
+     "en": "gray",
+     "tur": "a",
+     "tr": "gri"
+    },
+    {
+     "en": "appear",
+     "tur": "v",
+     "tr": "görünmek, ortaya çıkmak"
+    },
+    {
+     "en": "action",
+     "tur": "n",
+     "tr": "eylem, hareket"
+    }
+   ]
+  }
+ ]
+}

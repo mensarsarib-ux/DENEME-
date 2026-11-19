@@ -1,0 +1,455 @@
+time|n|zaman, saat
+year|n|yıl
+people|n|insanlar
+way|n|yol, yöntem
+day|n|gün
+man|n|adam
+thing|n|şey
+woman|n|kadın
+life|n|hayat
+child|n|çocuk
+world|n|dünya
+school|n|okul
+family|n|aile
+student|n|öğrenci
+group|n|grup
+country|n|ülke
+problem|n|sorun
+hand|n|el
+part|n|parça, kısım
+place|n|yer
+week|n|hafta
+company|n|şirket
+system|n|sistem
+program|n|program
+question|n|soru
+government|n|hükümet
+number|n|sayı, numara
+night|n|gece
+home|n|ev, yuva
+water|n|su
+room|n|oda
+mother|n|anne
+area|n|alan, bölge
+money|n|para
+story|n|hikâye
+fact|n|gerçek
+month|n|ay
+book|n|kitap
+eye|n|göz
+job|n|iş, meslek
+word|n|kelime
+business|n|iş, işletme
+side|n|taraf, yan
+kind|n|tür, çeşit
+head|n|baş, kafa
+house|n|ev
+service|n|hizmet
+friend|n|arkadaş
+father|n|baba
+power|n|güç
+hour|n|saat (60 dakika)
+game|n|oyun
+line|n|çizgi, sıra
+end|n|son
+member|n|üye
+law|n|kanun, hukuk
+car|n|araba
+city|n|şehir
+name|n|isim, ad
+team|n|takım
+minute|n|dakika
+idea|n|fikir
+body|n|vücut
+information|n|bilgi
+parent|n|ebeveyn
+face|n|yüz
+level|n|seviye
+office|n|ofis
+door|n|kapı
+health|n|sağlık
+person|n|kişi
+art|n|sanat
+war|n|savaş
+history|n|tarih
+party|n|parti
+result|n|sonuç
+morning|n|sabah
+reason|n|sebep
+girl|n|kız
+moment|n|an
+air|n|hava
+teacher|n|öğretmen
+education|n|eğitim
+foot|n|ayak
+boy|n|erkek çocuk
+age|n|yaş
+music|n|müzik
+market|n|pazar, market
+death|n|ölüm
+experience|n|deneyim
+class|n|sınıf
+heart|n|kalp
+light|n|ışık
+voice|n|ses
+wife|n|eş (kadın)
+police|n|polis
+mind|n|akıl, zihin
+price|n|fiyat
+decision|n|karar
+son|n|oğul
+view|n|manzara, görüş
+town|n|kasaba
+road|n|yol
+arm|n|kol
+difference|n|fark
+value|n|değer
+building|n|bina
+season|n|mevsim
+society|n|toplum
+tax|n|vergi
+player|n|oyuncu
+paper|n|kâğıt
+space|n|uzay; boş alan
+ground|n|zemin, yer
+event|n|etkinlik, olay
+center|n|merkez
+project|n|proje
+activity|n|etkinlik, faaliyet
+star|n|yıldız
+table|n|masa
+situation|n|durum
+industry|n|sanayi
+street|n|sokak, cadde
+phone|n|telefon
+picture|n|resim
+piece|n|parça
+half|n|yarım
+land|n|toprak, arazi
+product|n|ürün
+doctor|n|doktor
+wall|n|duvar
+news|n|haber
+test|n|test, sınav
+movie|n|film
+step|n|adım
+window|n|pencere
+future|n|gelecek
+husband|n|koca, eş (erkek)
+daughter|n|kız evlat
+brother|n|erkek kardeş
+sister|n|kız kardeş
+baby|n|bebek
+dog|n|köpek
+cat|n|kedi
+bird|n|kuş
+fish|n|balık
+horse|n|at
+animal|n|hayvan
+tree|n|ağaç
+flower|n|çiçek
+food|n|yiyecek, yemek
+bread|n|ekmek
+milk|n|süt
+coffee|n|kahve
+tea|n|çay
+egg|n|yumurta
+meat|n|et
+fruit|n|meyve
+apple|n|elma
+sugar|n|şeker
+salt|n|tuz
+rice|n|pirinç
+cheese|n|peynir
+chicken|n|tavuk
+breakfast|n|kahvaltı
+lunch|n|öğle yemeği
+dinner|n|akşam yemeği
+kitchen|n|mutfak
+bed|n|yatak
+chair|n|sandalye
+floor|n|zemin; kat
+garden|n|bahçe
+key|n|anahtar
+bag|n|çanta
+box|n|kutu
+shirt|n|gömlek
+shoe|n|ayakkabı
+hat|n|şapka
+clothes|n|kıyafet
+color|n|renk
+sun|n|güneş
+moon|n|ay (gökteki)
+sky|n|gökyüzü
+rain|n|yağmur
+snow|n|kar
+wind|n|rüzgâr
+weather|n|hava durumu
+sea|n|deniz
+river|n|nehir
+mountain|n|dağ
+island|n|ada
+beach|n|plaj
+forest|n|orman
+lake|n|göl
+fire|n|ateş, yangın
+stone|n|taş
+gold|n|altın
+glass|n|cam; bardak
+metal|n|metal
+wood|n|tahta, odun
+machine|n|makine
+computer|n|bilgisayar
+internet|n|internet
+message|n|mesaj
+letter|n|mektup; harf
+language|n|dil
+lesson|n|ders
+exam|n|sınav
+university|n|üniversite
+library|n|kütüphane
+hospital|n|hastane
+bank|n|banka
+shop|n|dükkân
+store|n|mağaza
+restaurant|n|restoran
+hotel|n|otel
+airport|n|havalimanı
+station|n|istasyon
+bus|n|otobüs
+train|n|tren
+plane|n|uçak
+ship|n|gemi
+bicycle|n|bisiklet
+ticket|n|bilet
+trip|n|gezi, yolculuk
+holiday|n|tatil
+map|n|harita
+bridge|n|köprü
+park|n|park
+village|n|köy
+farm|n|çiftlik
+king|n|kral
+queen|n|kraliçe
+soldier|n|asker
+army|n|ordu
+enemy|n|düşman
+peace|n|barış
+summer|n|yaz
+winter|n|kış
+spring|n|ilkbahar
+autumn|n|sonbahar
+birthday|n|doğum günü
+gift|n|hediye
+clock|n|saat (duvar saati)
+camera|n|kamera
+photo|n|fotoğraf
+song|n|şarkı
+sport|n|spor
+football|n|futbol
+ball|n|top
+prize|n|ödül
+mistake|n|hata
+example|n|örnek
+rule|n|kural
+choice|n|seçim
+chance|n|şans, fırsat
+risk|n|risk
+danger|n|tehlike
+safety|n|güvenlik
+truth|n|gerçek, doğru
+dream|n|rüya, hayal
+fear|n|korku
+pain|n|acı, ağrı
+noise|n|gürültü
+size|n|boyut, beden
+shape|n|şekil
+weight|n|ağırlık
+speed|n|hız
+distance|n|mesafe
+top|n|üst, tepe
+bottom|n|alt, dip
+front|n|ön
+middle|n|orta
+corner|n|köşe
+edge|n|kenar
+hole|n|delik
+circle|n|daire
+square|n|kare; meydan
+north|n|kuzey
+south|n|güney
+east|n|doğu
+west|n|batı
+sign|n|işaret, tabela
+list|n|liste
+page|n|sayfa
+note|n|not
+pen|n|tükenmez kalem
+pencil|n|kurşun kalem
+desk|n|çalışma masası
+board|n|tahta, pano
+bottle|n|şişe
+cup|n|fincan
+plate|n|tabak
+knife|n|bıçak
+spoon|n|kaşık
+fork|n|çatal
+soap|n|sabun
+towel|n|havlu
+bath|n|banyo
+shower|n|duş
+toilet|n|tuvalet
+mirror|n|ayna
+roof|n|çatı
+stairs|n|merdiven
+gate|n|büyük kapı, giriş
+engine|n|motor
+wheel|n|tekerlek
+fuel|n|yakıt
+gas|n|gaz
+electricity|n|elektrik
+battery|n|pil, batarya
+screen|n|ekran
+button|n|düğme
+tool|n|alet
+rope|n|ip, halat
+pocket|n|cep
+wallet|n|cüzdan
+coin|n|madeni para
+bill|n|fatura
+salary|n|maaş
+customer|n|müşteri
+manager|n|müdür, yönetici
+boss|n|patron
+employee|n|çalışan
+engineer|n|mühendis
+lawyer|n|avukat
+nurse|n|hemşire
+driver|n|sürücü
+farmer|n|çiftçi
+artist|n|sanatçı
+writer|n|yazar
+singer|n|şarkıcı
+actor|n|oyuncu, aktör
+neighbor|n|komşu
+guest|n|misafir
+stranger|n|yabancı
+adult|n|yetişkin
+crowd|n|kalabalık
+population|n|nüfus
+culture|n|kültür
+religion|n|din
+science|n|bilim
+nature|n|doğa
+environment|n|çevre
+energy|n|enerji
+technology|n|teknoloji
+quality|n|kalite
+amount|n|miktar
+percent|n|yüzde
+total|n|toplam
+average|n|ortalama
+type|n|tip, tür
+style|n|tarz
+method|n|yöntem
+process|n|süreç
+purpose|n|amaç
+goal|n|hedef; gol
+success|n|başarı
+skill|n|beceri
+habit|n|alışkanlık
+behavior|n|davranış
+opinion|n|fikir, görüş
+advice|n|tavsiye
+secret|n|sır
+joke|n|şaka
+luck|n|şans
+hero|n|kahraman
+skin|n|cilt, deri
+hair|n|saç
+nose|n|burun
+mouth|n|ağız
+tooth|n|diş
+ear|n|kulak
+neck|n|boyun
+shoulder|n|omuz
+chest|n|göğüs
+stomach|n|mide
+leg|n|bacak
+knee|n|diz
+finger|n|parmak
+blood|n|kan
+bone|n|kemik
+brain|n|beyin
+medicine|n|ilaç
+illness|n|hastalık
+disease|n|hastalık (ciddi)
+fever|n|ateş (hastalık)
+accident|n|kaza
+emergency|n|acil durum
+crime|n|suç
+prison|n|hapishane
+judge|n|hâkim
+vote|n|oy
+election|n|seçim (siyasi)
+freedom|n|özgürlük
+duty|n|görev
+tradition|n|gelenek
+wedding|n|düğün
+meeting|n|toplantı
+conversation|n|sohbet
+speech|n|konuşma
+agreement|n|anlaşma
+contract|n|sözleşme
+document|n|belge
+address|n|adres
+title|n|başlık
+subject|n|konu; ders
+topic|n|konu
+detail|n|ayrıntı
+section|n|bölüm
+chapter|n|bölüm (kitap)
+sentence|n|cümle
+grammar|n|dil bilgisi
+dictionary|n|sözlük
+meaning|n|anlam
+sound|n|ses
+silence|n|sessizlik
+shadow|n|gölge
+heat|n|sıcaklık, ısı
+temperature|n|sıcaklık derecesi
+degree|n|derece
+storm|n|fırtına
+cloud|n|bulut
+earth|n|dünya; toprak
+planet|n|gezegen
+century|n|yüzyıl
+date|n|tarih (gün)
+calendar|n|takvim
+schedule|n|program, tarife
+period|n|dönem
+past|n|geçmiş
+beginning|n|başlangıç
+community|n|topluluk
+president|n|başkan, cumhurbaşkanı
+research|n|araştırma
+policy|n|politika, ilke
+interest|n|ilgi; faiz
+effect|n|etki
+field|n|alan, tarla
+development|n|gelişme
+role|n|rol
+effort|n|çaba
+leader|n|lider
+relationship|n|ilişki
+action|n|eylem, hareket
+position|n|konum, pozisyon
+record|n|kayıt; rekor
+form|n|form, biçim
+matter|n|mesele, konu
+couple|n|çift
+practice|n|pratik, alıştırma
+patient|n|hasta
+worker|n|işçi
+data|n|veri
+image|n|görüntü

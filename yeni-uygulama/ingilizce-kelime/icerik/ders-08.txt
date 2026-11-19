@@ -1,0 +1,11 @@
+# kelime | cümle | çeviri | sözcük=anlam; ...
+long | It is a long road. | Bu uzun bir yol. | It=o; is=-dir (olmak); a=bir; long=uzun; road=yol
+program | This program is free. | Bu program ücretsiz. | This=bu; program=program; is=-dir (olmak); free=ücretsiz
+question | I have a question. | Bir sorum var. | I=ben; have=sahibim, var; a=bir; question=soru
+that | That is my school. | Şu benim okulum. | That=şu, o; is=-dir (olmak); my=benim; school=okul
+just | I just want some water. | Sadece biraz su istiyorum. | I=ben; just=sadece; want=istiyorum; some=biraz; water=su
+use | Can I use your phone? | Telefonunu kullanabilir miyim? | Can=-ebilir mi; I=ben; use=kullanmak; your=senin; phone=telefon
+government | The government makes the laws. | Kanunları hükümet yapar. | The=belirli olanı gösterir; government=hükümet; makes=yapar; the=belirli olanı gösterir; laws=kanunlar
+these | These are my books. | Bunlar benim kitaplarım. | These=bunlar; are=-ler (olmak); my=benim; books=kitaplar
+little | She has a little cat. | Onun küçük bir kedisi var. | She=o (kadın); has=sahip, var; a=bir; little=küçük; cat=kedi
+number | What is your phone number? | Telefon numaran ne? | What=ne; is=-dir (olmak); your=senin; phone=telefon; number=numara

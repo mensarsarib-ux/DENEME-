@@ -1,0 +1,11 @@
+# kelime | cümle | çeviri | sözcük=anlam; ...
+room | This is my room. | Burası benim odam. | This=bu; is=-dir (olmak); my=benim; room=oda
+tell | Tell me your name. | Bana adını söyle. | Tell=söyle; me=bana; your=senin; name=isim, ad
+again | Please say it again. | Lütfen tekrar söyle. | Please=lütfen; say=söyle; it=onu; again=tekrar
+and | I have a cat and a dog. | Bir kedim ve bir köpeğim var. | I=ben; have=sahibim, var; a=bir; cat=kedi; and=ve; dog=köpek
+mother | My mother is a doctor. | Annem doktor. | My=benim; mother=anne; is=-dir (olmak); a=bir; doctor=doktor
+important | This is an important lesson. | Bu önemli bir ders. | This=bu; is=-dir (olmak); an=bir; important=önemli; lesson=ders
+area | This area is very quiet. | Bu bölge çok sessiz. | This=bu; area=bölge, alan; is=-dir (olmak); very=çok; quiet=sessiz
+work | I work at a bank. | Bir bankada çalışıyorum. | I=ben; work=çalışıyorum; at=-de, -da; a=bir; bank=banka
+or | Do you want tea or coffee? | Çay mı kahve mi istersin? | Do=soru cümlesi kurar; you=sen; want=istemek; tea=çay; or=veya; coffee=kahve
+money | I do not have money. | Param yok. | I=ben; do=olumsuz cümle kurar (not ile); not=değil; have=sahip olmak; money=para

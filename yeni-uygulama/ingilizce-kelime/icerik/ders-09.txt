@@ -1,0 +1,11 @@
+# kelime | cümle | çeviri | sözcük=anlam; ...
+find | I cannot find my key. | Anahtarımı bulamıyorum. | I=ben; cannot=-emiyorum; find=bulmak; my=benim; key=anahtar
+those | Those are my shoes. | Şunlar benim ayakkabılarım. | Those=şunlar, onlar; are=-ler (olmak); my=benim; shoes=ayakkabılar
+night | Good night, mother. | İyi geceler anne. | Good=iyi; night=gece; mother=anne
+still | He is still at school. | O hâlâ okulda. | He=o (erkek); is=-dir (olmak); still=hâlâ; at=-de, -da; school=okul
+home | I am going home. | Eve gidiyorum. | I=ben; am=-im (olmak); going=gidiyor; home=ev, eve
+the | The sun is hot. | Güneş sıcak. | The=belirli olanı gösterir; sun=güneş; is=-dir (olmak); hot=sıcak
+give | Please give me the book. | Lütfen kitabı bana ver. | Please=lütfen; give=ver; me=bana; the=belirli olanı gösterir; book=kitap
+young | My sister is very young. | Kız kardeşim çok genç. | My=benim; sister=kız kardeş; is=-dir (olmak); very=çok; young=genç
+water | I drink water every day. | Her gün su içerim. | I=ben; drink=içerim; water=su; every=her; day=gün
+a | I have a cat. | Bir kedim var. | I=ben; have=sahibim, var; a=bir; cat=kedi

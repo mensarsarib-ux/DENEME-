@@ -1,0 +1,11 @@
+# kelime | cümle | çeviri | sözcük=anlam; ...
+I | I am a student. | Ben bir öğrenciyim. | I=ben; am=-im (olmak); a=bir; student=öğrenci
+be | I want to be a doctor. | Doktor olmak istiyorum. | I=ben; want=istiyorum; to=-mek; be=olmak; a=bir; doctor=doktor
+time | What time is it? | Saat kaç? | What=ne, kaç; time=saat, zaman; is=-dir (olmak); it=o
+good | This is a good book. | Bu iyi bir kitap. | This=bu; is=-dir (olmak); a=bir; good=iyi; book=kitap
+there | My bag is there. | Çantam orada. | My=benim; bag=çanta; is=-dir (olmak); there=orada
+year | This year is very good. | Bu yıl çok iyi. | This=bu; year=yıl; is=-dir (olmak); very=çok; good=iyi
+you | You are my friend. | Sen benim arkadaşımsın. | You=sen; are=-sin (olmak); my=benim; friend=arkadaş
+have | I have a car. | Bir arabam var. | I=ben; have=sahibim, var; a=bir; car=araba
+people | Many people live here. | Burada çok insan yaşıyor. | Many=çok; people=insanlar; live=yaşıyor; here=burada
+he | He is my brother. | O benim erkek kardeşim. | He=o (erkek); is=-dir (olmak); my=benim; brother=erkek kardeş

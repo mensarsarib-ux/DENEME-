@@ -1,0 +1,11 @@
+# kelime | cümle | çeviri | sözcük=anlam; ...
+new | I have a new phone. | Yeni bir telefonum var. | I=ben; have=sahibim, var; a=bir; new=yeni; phone=telefon
+way | This is the way to school. | Okula giden yol bu. | This=bu; is=-dir (olmak); the=belirli olanı gösterir; way=yol; to=-e, -a; school=okul
+here | Come here, please. | Buraya gel lütfen. | Come=gel; here=buraya, burada; please=lütfen
+do | I do my homework every day. | Her gün ödevimi yaparım. | I=ben; do=yaparım; my=benim; homework=ödev; every=her; day=gün
+day | Today is a nice day. | Bugün güzel bir gün. | Today=bugün; is=-dir (olmak); a=bir; nice=güzel; day=gün
+she | She is a teacher. | O bir öğretmen. | She=o (kadın); is=-dir (olmak); a=bir; teacher=öğretmen
+man | The man is very tall. | Adam çok uzun boylu. | The=belirli olanı gösterir; man=adam; is=-dir (olmak); very=çok; tall=uzun boylu
+it | It is a small cat. | O küçük bir kedi. | It=o (nesne, hayvan); is=-dir (olmak); a=bir; small=küçük; cat=kedi
+go | We go to school together. | Okula birlikte gideriz. | We=biz; go=gideriz; to=-e, -a; school=okul; together=birlikte
+old | My father is not old. | Babam yaşlı değil. | My=benim; father=baba; is=-dir (olmak); not=değil; old=yaşlı

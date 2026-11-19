@@ -1,0 +1,11 @@
+# kelime | cümle | çeviri | sözcük=anlam; ...
+my | My name is Ali. | Benim adım Ali. | My=benim; name=isim, ad; is=-dir (olmak); Ali=Ali (isim)
+take | Take your bag. | Çantanı al. | Take=al; your=senin; bag=çanta
+hand | Give me your hand. | Elini ver. | Give=ver; me=bana; your=senin; hand=el
+large | They live in a large house. | Büyük bir evde yaşıyorlar. | They=onlar; live=yaşıyorlar; in=içinde; a=bir; large=büyük, geniş; house=ev
+your | What is your name? | Adın ne? | What=ne; is=-dir (olmak); your=senin; name=isim, ad
+part | This part is easy. | Bu kısım kolay. | This=bu; part=kısım, parça; is=-dir (olmak); easy=kolay
+very | The water is very cold. | Su çok soğuk. | The=belirli olanı gösterir; water=su; is=-dir (olmak); very=çok; cold=soğuk
+his | His car is new. | Onun arabası yeni. | His=onun (erkek); car=araba; is=-dir (olmak); new=yeni
+see | I can see the sea. | Denizi görebiliyorum. | I=ben; can=-ebiliyorum; see=görmek; the=belirli olanı gösterir; sea=deniz
+place | This is a nice place. | Burası güzel bir yer. | This=bu; is=-dir (olmak); a=bir; nice=güzel; place=yer

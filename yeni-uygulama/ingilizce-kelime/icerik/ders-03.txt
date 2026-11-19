@@ -1,0 +1,11 @@
+# kelime | cümle | çeviri | sözcük=anlam; ...
+thing | What is this thing? | Bu şey ne? | What=ne; is=-dir (olmak); this=bu; thing=şey
+now | I am at home now. | Şimdi evdeyim. | I=ben; am=-im (olmak); at=-de, -da; home=ev; now=şimdi
+we | We are a big family. | Biz büyük bir aileyiz. | We=biz; are=-iz (olmak); a=bir; big=büyük; family=aile
+woman | The woman has two children. | Kadının iki çocuğu var. | The=belirli olanı gösterir; woman=kadın; has=sahip, var; two=iki; children=çocuklar
+come | Can you come with me? | Benimle gelebilir misin? | Can=-ebilir mi; you=sen; come=gelmek; with=ile; me=ben, beni
+life | Life is beautiful. | Hayat güzeldir. | Life=hayat; is=-dir (olmak); beautiful=güzel
+they | They are my friends. | Onlar benim arkadaşlarım. | They=onlar; are=-ler (olmak); my=benim; friends=arkadaşlar
+great | You are a great friend. | Sen harika bir arkadaşsın. | You=sen; are=-sin (olmak); a=bir; great=harika; friend=arkadaş
+child | The child is happy. | Çocuk mutlu. | The=belirli olanı gösterir; child=çocuk; is=-dir (olmak); happy=mutlu
+then | We eat dinner, then we sleep. | Akşam yemeği yeriz, sonra uyuruz. | We=biz; eat=yeriz; dinner=akşam yemeği; then=sonra; we=biz; sleep=uyuruz

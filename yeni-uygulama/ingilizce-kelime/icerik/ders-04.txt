@@ -1,0 +1,11 @@
+# kelime | cümle | çeviri | sözcük=anlam; ...
+me | Please help me. | Lütfen bana yardım et. | Please=lütfen; help=yardım et; me=bana, beni
+get | I get a gift every year. | Her yıl bir hediye alırım. | I=ben; get=alırım; a=bir; gift=hediye; every=her; year=yıl
+world | The world is very big. | Dünya çok büyük. | The=belirli olanı gösterir; world=dünya; is=-dir (olmak); very=çok; big=büyük
+him | I know him. | Onu tanıyorum. | I=ben; know=tanıyorum, biliyorum; him=onu (erkek)
+school | My school is near my home. | Okulum evime yakın. | My=benim; school=okul; is=-dir (olmak); near=yakın; my=benim; home=ev
+make | I make tea every morning. | Her sabah çay yaparım. | I=ben; make=yaparım; tea=çay; every=her; morning=sabah
+high | This mountain is very high. | Bu dağ çok yüksek. | This=bu; mountain=dağ; is=-dir (olmak); very=çok; high=yüksek
+family | I love my family. | Ailemi seviyorum. | I=ben; love=seviyorum; my=benim; family=aile
+her | This is her book. | Bu onun kitabı. | This=bu; is=-dir (olmak); her=onun (kadın); book=kitap
+also | I also like coffee. | Kahveyi de severim. | I=ben; also=de, ayrıca; like=severim; coffee=kahve

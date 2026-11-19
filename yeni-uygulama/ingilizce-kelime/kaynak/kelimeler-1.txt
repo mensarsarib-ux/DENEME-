@@ -1,0 +1,404 @@
+I|f|ben
+you|f|sen, siz
+he|f|o (erkek)
+she|f|o (kadın)
+it|f|o (nesne, hayvan)
+we|f|biz
+they|f|onlar
+me|f|beni, bana
+him|f|onu, ona (erkek)
+her|f|onu, ona; onun (kadın)
+us|f|bizi, bize
+them|f|onları, onlara
+my|f|benim
+your|f|senin, sizin
+his|f|onun (erkek)
+our|f|bizim
+their|f|onların
+this|f|bu
+that|f|şu, o
+these|f|bunlar
+those|f|şunlar, onlar
+the|f|belirli bir şeyi gösterir (Türkçede karşılığı yok)
+a|f|bir
+and|f|ve
+or|f|veya
+but|f|ama
+because|f|çünkü
+if|f|eğer
+so|f|bu yüzden; çok
+than|f|-den daha
+as|f|gibi; olarak
+when|f|ne zaman; -dığında
+where|f|nerede
+what|f|ne
+who|f|kim
+why|f|neden
+how|f|nasıl
+which|f|hangi
+in|f|içinde
+on|f|üzerinde
+at|f|-de, -da
+to|f|-e, -a; -mek
+from|f|-den, -dan
+with|f|ile
+without|f|-sız, olmadan
+for|f|için
+of|f|-in, -ın (ait olma)
+by|f|tarafından; ile
+about|f|hakkında
+up|f|yukarı
+down|f|aşağı
+out|f|dışarı
+over|f|üzerinde; bitmiş
+under|f|altında
+between|f|arasında
+after|f|sonra
+before|f|önce
+during|f|sırasında
+until|f|-e kadar
+since|f|-den beri
+into|f|içine
+through|f|içinden
+against|f|karşı
+near|f|yakın
+behind|f|arkasında
+around|f|etrafında
+can|f|-ebilmek
+will|f|-ecek (gelecek zaman)
+would|f|-erdi; istek bildirir
+should|f|-meli, -malı
+must|f|zorunda olmak
+may|f|-ebilir, olabilir
+could|f|-ebilirdi; -ebilir misin
+not|f|değil
+no|f|hayır
+yes|f|evet
+all|f|hepsi, bütün
+some|f|bazı, biraz
+any|f|herhangi, hiç
+many|f|çok (sayılabilen)
+much|f|çok (sayılamayan)
+more|f|daha fazla
+most|f|en çok
+few|f|az, birkaç
+other|f|diğer
+another|f|başka bir
+each|f|her bir
+every|f|her
+both|f|her ikisi
+such|f|böyle
+everyone|f|herkes
+someone|f|birisi
+anyone|f|herhangi biri
+nobody|f|hiç kimse
+something|f|bir şey
+anything|f|herhangi bir şey
+nothing|f|hiçbir şey
+everything|f|her şey
+myself|f|kendim
+yourself|f|kendin
+one|f|bir
+two|f|iki
+three|f|üç
+four|f|dört
+five|f|beş
+six|f|altı
+seven|f|yedi
+eight|f|sekiz
+nine|f|dokuz
+ten|f|on
+hundred|f|yüz
+thousand|f|bin
+million|f|milyon
+there|d|orada
+here|d|burada
+now|d|şimdi
+then|d|sonra, o zaman
+also|d|ayrıca
+too|d|de, da; fazla
+very|d|çok
+only|d|sadece
+just|d|sadece; az önce
+still|d|hâlâ
+again|d|tekrar
+always|d|her zaman
+never|d|asla
+often|d|sık sık
+sometimes|d|bazen
+usually|d|genellikle
+already|d|zaten, çoktan
+maybe|d|belki
+really|d|gerçekten
+well|d|iyi (bir şekilde)
+together|d|birlikte
+almost|d|neredeyse
+even|d|bile
+yet|d|henüz
+soon|d|yakında
+today|d|bugün
+tomorrow|d|yarın
+yesterday|d|dün
+tonight|d|bu gece
+away|d|uzakta, uzağa
+back|d|geri
+ever|d|hiç (herhangi bir zamanda)
+quite|d|oldukça
+perhaps|d|belki
+probably|d|muhtemelen
+actually|d|aslında
+finally|d|sonunda
+quickly|d|hızlıca
+slowly|d|yavaşça
+easily|d|kolayca
+suddenly|d|aniden
+especially|d|özellikle
+enough|d|yeterince
+else|d|başka
+once|d|bir kez
+twice|d|iki kez
+later|d|daha sonra
+early|d|erken
+late|d|geç
+far|d|uzak
+be|v|olmak
+have|v|sahip olmak
+do|v|yapmak
+go|v|gitmek
+come|v|gelmek
+get|v|almak, elde etmek
+make|v|yapmak, üretmek
+know|v|bilmek
+think|v|düşünmek
+take|v|almak
+see|v|görmek
+want|v|istemek
+look|v|bakmak
+use|v|kullanmak
+find|v|bulmak
+give|v|vermek
+tell|v|söylemek, anlatmak
+work|v|çalışmak
+call|v|aramak, çağırmak
+try|v|denemek
+ask|v|sormak
+need|v|ihtiyacı olmak
+feel|v|hissetmek
+become|v|olmak, haline gelmek
+leave|v|ayrılmak, bırakmak
+put|v|koymak
+mean|v|anlamına gelmek
+keep|v|tutmak, saklamak
+let|v|izin vermek
+begin|v|başlamak
+seem|v|görünmek
+help|v|yardım etmek
+talk|v|konuşmak
+turn|v|dönmek, çevirmek
+start|v|başlamak
+show|v|göstermek
+hear|v|duymak
+play|v|oynamak
+run|v|koşmak
+move|v|hareket etmek, taşınmak
+like|v|sevmek, hoşlanmak
+live|v|yaşamak
+believe|v|inanmak
+hold|v|tutmak
+bring|v|getirmek
+happen|v|olmak, meydana gelmek
+write|v|yazmak
+sit|v|oturmak
+stand|v|ayakta durmak
+lose|v|kaybetmek
+pay|v|ödemek
+meet|v|buluşmak, tanışmak
+continue|v|devam etmek
+learn|v|öğrenmek
+change|v|değiştirmek
+understand|v|anlamak
+watch|v|izlemek
+follow|v|takip etmek
+stop|v|durmak, durdurmak
+create|v|yaratmak, oluşturmak
+speak|v|konuşmak
+read|v|okumak
+allow|v|izin vermek
+add|v|eklemek
+spend|v|harcamak
+grow|v|büyümek
+open|v|açmak
+walk|v|yürümek
+win|v|kazanmak
+offer|v|teklif etmek
+remember|v|hatırlamak
+love|v|sevmek
+buy|v|satın almak
+wait|v|beklemek
+die|v|ölmek
+send|v|göndermek
+expect|v|beklemek, ummak
+build|v|inşa etmek
+stay|v|kalmak
+fall|v|düşmek
+cut|v|kesmek
+reach|v|ulaşmak
+kill|v|öldürmek
+sell|v|satmak
+decide|v|karar vermek
+pull|v|çekmek
+return|v|geri dönmek
+explain|v|açıklamak
+hope|v|ummak
+carry|v|taşımak
+break|v|kırmak
+receive|v|almak, teslim almak
+agree|v|aynı fikirde olmak
+eat|v|yemek yemek
+catch|v|yakalamak
+choose|v|seçmek
+listen|v|dinlemek
+close|v|kapatmak
+save|v|kurtarmak; biriktirmek
+thank|v|teşekkür etmek
+drink|v|içmek
+sleep|v|uyumak
+drive|v|araba sürmek
+fly|v|uçmak
+swim|v|yüzmek
+sing|v|şarkı söylemek
+dance|v|dans etmek
+cook|v|yemek pişirmek
+wash|v|yıkamak
+clean|v|temizlemek
+wear|v|giymek
+teach|v|öğretmek
+study|v|ders çalışmak
+travel|v|seyahat etmek
+visit|v|ziyaret etmek
+answer|v|cevap vermek
+forget|v|unutmak
+finish|v|bitirmek
+enjoy|v|keyif almak
+smile|v|gülümsemek
+laugh|v|gülmek
+cry|v|ağlamak
+jump|v|zıplamak
+throw|v|atmak, fırlatmak
+push|v|itmek
+touch|v|dokunmak
+cost|v|mal olmak, tutmak
+miss|v|özlemek; kaçırmak
+share|v|paylaşmak
+join|v|katılmak
+plan|v|planlamak
+check|v|kontrol etmek
+fill|v|doldurmak
+pick|v|seçmek, toplamak
+protect|v|korumak
+prepare|v|hazırlamak
+improve|v|geliştirmek
+worry|v|endişelenmek
+enter|v|girmek
+arrive|v|varmak
+repeat|v|tekrarlamak
+count|v|saymak
+borrow|v|ödünç almak
+lend|v|ödünç vermek
+invite|v|davet etmek
+promise|v|söz vermek
+guess|v|tahmin etmek
+hate|v|nefret etmek
+fix|v|tamir etmek
+rest|v|dinlenmek
+marry|v|evlenmek
+shout|v|bağırmak
+climb|v|tırmanmak
+order|v|sipariş vermek
+wake|v|uyanmak
+hurt|v|acıtmak, incitmek
+burn|v|yanmak, yakmak
+hide|v|saklamak, saklanmak
+steal|v|çalmak
+fight|v|kavga etmek, savaşmak
+ride|v|binmek, sürmek
+smell|v|koklamak, kokmak
+taste|v|tatmak
+paint|v|boyamak
+describe|v|tarif etmek
+compare|v|karşılaştırmak
+manage|v|yönetmek, başarmak
+discuss|v|tartışmak, görüşmek
+accept|v|kabul etmek
+refuse|v|reddetmek
+avoid|v|kaçınmak
+imagine|v|hayal etmek
+notice|v|fark etmek
+complain|v|şikâyet etmek
+celebrate|v|kutlamak
+deliver|v|teslim etmek
+collect|v|toplamak
+connect|v|bağlamak
+depend|v|bağlı olmak
+destroy|v|yok etmek
+discover|v|keşfetmek
+introduce|v|tanıştırmak, tanıtmak
+measure|v|ölçmek
+prevent|v|önlemek
+reduce|v|azaltmak
+replace|v|yerine koymak
+solve|v|çözmek
+succeed|v|başarmak
+fail|v|başarısız olmak
+earn|v|para kazanmak
+waste|v|israf etmek
+belong|v|ait olmak
+exist|v|var olmak
+relax|v|rahatlamak
+search|v|aramak
+attack|v|saldırmak
+attend|v|katılmak, devam etmek
+hang|v|asmak
+kick|v|tekmelemek
+lie|v|yalan söylemek; uzanmak
+mix|v|karıştırmak
+pour|v|dökmek
+pray|v|dua etmek
+shut|v|kapatmak
+boil|v|kaynatmak
+freeze|v|donmak
+deserve|v|hak etmek
+encourage|v|cesaretlendirmek
+recognize|v|tanımak
+recommend|v|tavsiye etmek
+remind|v|hatırlatmak
+respect|v|saygı duymak
+trust|v|güvenmek
+wish|v|dilemek
+wonder|v|merak etmek
+act|v|davranmak, rol yapmak
+apply|v|başvurmak, uygulamak
+argue|v|tartışmak
+achieve|v|başarmak, elde etmek
+blow|v|üflemek, esmek
+include|v|içermek
+provide|v|sağlamak
+suggest|v|önermek
+require|v|gerektirmek
+develop|v|geliştirmek
+support|v|desteklemek
+produce|v|üretmek
+cover|v|örtmek, kapsamak
+draw|v|çizmek
+realize|v|farkına varmak
+increase|v|artırmak
+raise|v|kaldırmak, yükseltmek
+pass|v|geçmek
+serve|v|servis etmek, hizmet etmek
+consider|v|düşünmek, göz önüne almak
+appear|v|görünmek, ortaya çıkmak
+lead|v|önderlik etmek
+set|v|kurmak, ayarlamak
+remain|v|kalmak
+report|v|bildirmek
+hit|v|vurmak

@@ -1,0 +1,159 @@
+good|a|iyi
+new|a|yeni
+old|a|eski; yaşlı
+great|a|harika, büyük
+high|a|yüksek
+small|a|küçük
+large|a|geniş, büyük
+big|a|büyük
+long|a|uzun
+little|a|küçük, az
+young|a|genç
+important|a|önemli
+bad|a|kötü
+different|a|farklı
+real|a|gerçek
+best|a|en iyi
+right|a|doğru; sağ
+sure|a|emin
+better|a|daha iyi
+free|a|ücretsiz; özgür
+low|a|alçak, düşük
+public|a|halka açık, kamusal
+whole|a|bütün, tüm
+clear|a|açık, net
+easy|a|kolay
+hard|a|zor; sert
+strong|a|güçlü
+possible|a|mümkün
+special|a|özel
+short|a|kısa
+first|a|ilk, birinci
+second|a|ikinci; saniye
+third|a|üçüncü
+last|a|son; geçen
+next|a|sonraki, gelecek
+full|a|dolu
+true|a|doğru, gerçek
+ready|a|hazır
+simple|a|basit
+nice|a|güzel, hoş
+happy|a|mutlu
+serious|a|ciddi
+common|a|yaygın, ortak
+poor|a|fakir
+final|a|son, nihai
+main|a|ana, temel
+beautiful|a|güzel
+hot|a|sıcak
+cold|a|soğuk
+dead|a|ölü
+safe|a|güvenli
+rich|a|zengin
+fast|a|hızlı
+slow|a|yavaş
+cheap|a|ucuz
+expensive|a|pahalı
+dirty|a|kirli
+dark|a|karanlık, koyu
+heavy|a|ağır
+empty|a|boş
+wrong|a|yanlış
+sick|a|hasta
+healthy|a|sağlıklı
+tired|a|yorgun
+hungry|a|aç
+thirsty|a|susamış
+angry|a|kızgın
+sad|a|üzgün
+afraid|a|korkmuş
+proud|a|gururlu
+polite|a|kibar
+rude|a|kaba
+funny|a|komik
+boring|a|sıkıcı
+interesting|a|ilginç
+famous|a|ünlü
+popular|a|popüler
+modern|a|modern
+ancient|a|antik, çok eski
+strange|a|garip
+normal|a|normal
+perfect|a|mükemmel
+terrible|a|berbat
+wonderful|a|harika
+dangerous|a|tehlikeli
+careful|a|dikkatli
+quiet|a|sessiz
+loud|a|yüksek sesli
+soft|a|yumuşak
+sweet|a|tatlı
+bitter|a|acı (tat)
+sour|a|ekşi
+fresh|a|taze
+dry|a|kuru
+wet|a|ıslak
+warm|a|ılık, sıcak
+cool|a|serin; havalı
+deep|a|derin
+wide|a|geniş
+narrow|a|dar
+thick|a|kalın
+thin|a|ince, zayıf
+tall|a|uzun boylu
+fat|a|şişman
+weak|a|zayıf, güçsüz
+busy|a|meşgul
+lazy|a|tembel
+smart|a|akıllı
+clever|a|zeki
+stupid|a|aptal
+crazy|a|çılgın
+calm|a|sakin
+nervous|a|gergin
+lonely|a|yalnız
+lucky|a|şanslı
+honest|a|dürüst
+brave|a|cesur
+friendly|a|arkadaş canlısı
+foreign|a|yabancı
+local|a|yerel
+national|a|ulusal
+international|a|uluslararası
+natural|a|doğal
+physical|a|fiziksel
+personal|a|kişisel
+private|a|özel, kişiye ait
+social|a|sosyal
+political|a|siyasi
+economic|a|ekonomik
+legal|a|yasal
+medical|a|tıbbi
+military|a|askeri
+human|a|insan, insani
+general|a|genel
+certain|a|kesin, belirli
+available|a|mevcut, müsait
+necessary|a|gerekli
+similar|a|benzer
+difficult|a|zor
+impossible|a|imkânsız
+successful|a|başarılı
+useful|a|faydalı
+comfortable|a|rahat
+favorite|a|en sevilen
+single|a|tek; bekâr
+double|a|çift, iki kat
+left|a|sol
+red|a|kırmızı
+blue|a|mavi
+green|a|yeşil
+yellow|a|sarı
+black|a|siyah
+white|a|beyaz
+brown|a|kahverengi
+pink|a|pembe
+gray|a|gri
+orange|a|turuncu; portakal
+same|a|aynı
+own|a|kendi

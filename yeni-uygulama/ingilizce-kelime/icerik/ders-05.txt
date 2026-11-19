@@ -1,0 +1,11 @@
+# kelime | cümle | çeviri | sözcük=anlam; ...
+student | She is a good student. | O iyi bir öğrenci. | She=o (kadın); is=-dir (olmak); a=bir; good=iyi; student=öğrenci
+know | I know the answer. | Cevabı biliyorum. | I=ben; know=biliyorum; the=belirli olanı gösterir; answer=cevap
+us | Come with us. | Bizimle gel. | Come=gel; with=ile; us=biz, bizi
+group | We work in a small group. | Küçük bir grupta çalışıyoruz. | We=biz; work=çalışıyoruz; in=içinde; a=bir; small=küçük; group=grup
+small | My room is small. | Odam küçük. | My=benim; room=oda; is=-dir (olmak); small=küçük
+them | I see them every day. | Onları her gün görüyorum. | I=ben; see=görüyorum; them=onları; every=her; day=gün
+country | Turkey is a beautiful country. | Türkiye güzel bir ülke. | Turkey=Türkiye; is=-dir (olmak); a=bir; beautiful=güzel; country=ülke
+think | I think you are right. | Bence haklısın. | I=ben; think=düşünüyorum; you=sen; are=-sin (olmak); right=haklı, doğru
+too | I like tea too. | Ben de çay severim. | I=ben; like=severim; tea=çay; too=de, da
+problem | We have a big problem. | Büyük bir sorunumuz var. | We=biz; have=sahibiz, var; a=bir; big=büyük; problem=sorun
