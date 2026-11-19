@@ -109,6 +109,12 @@ function phoneError(body: AuthBody, phone: string | undefined): CloudError {
 
 function authError(body: AuthBody): CloudError {
   const text = `${body.error_code ?? ""} ${body.msg ?? ""} ${body.error_description ?? ""} ${body.message ?? ""}`.toLowerCase();
+  // Aynı adrese 60 sn içinde ikinci kez kod istendi: kod zaten gönderilmiştir ("…request this after 27 seconds")
+  if (text.includes("request this after")) return new CloudError("code_recently_sent", text);
+  // Sunucunun saatlik e-posta sınırı doldu: kod gönderilemedi
+  if (text.includes("rate limit") || text.includes("over_email_send_rate_limit")) return new CloudError("email_busy", text);
+  // Supabase adresi geçersiz buldu (ör. alan adı hatalı)
+  if (text.includes("validate email") || text.includes("email_address_invalid")) return new CloudError("invalid_email", text);
   if (text.includes("already") || text.includes("registered")) return new CloudError("email_taken", text);
   if (text.includes("not confirmed")) return new CloudError("email_not_confirmed", text);
   if (text.includes("different from the old")) return new CloudError("same_password", text);
@@ -247,8 +253,13 @@ async function refreshSession(session: Session): Promise<Session | null> {
       const latest = loadSession();
       return latest && latest.userId === session.userId && latest.expiresAt - Date.now() > 60_000 ? latest : null;
     }
-    // Oturum yalnızca sunucu gerçekten geçersiz dediğinde (400/401) silinir
-    if (res.status === 400 || res.status === 401) saveSession(null);
+    // Oturum yalnızca sunucu gerçekten geçersiz dediğinde (400/401) silinir.
+    // Ama bu arada başka bir istek oturumu yenileyip kaydettiyse (eski belirteç "zaten kullanıldı") yeni oturum kullanılır.
+    if (res.status === 400 || res.status === 401) {
+      const latest = loadSession();
+      if (latest && latest.userId === session.userId && latest.refreshToken !== session.refreshToken) return latest;
+      saveSession(null);
+    }
     return null;
   }
   const next = toSession((await res.json()) as AuthBody, session.email);
@@ -404,16 +415,17 @@ export async function confirmEmailChange(session: Session, email: string, code: 
 }
 
 /** Ad ve telefonu hesabın bilgilerine yazar */
-export async function updateAccountProfile(session: Session, name: string, phone: string): Promise<true | "expired"> {
+export async function updateAccountProfile(session: Session, name: string): Promise<true | "expired"> {
   const s = await fresh(session);
   if (!s) return "expired";
   const res = await call("/auth/v1/user", {
     method: "PUT",
     token: s.accessToken,
-    body: JSON.stringify({ data: { name, phone } }),
+    // Yalnızca ad yazılır: telefon SMS ile doğrulanarak sunucuda değiştirilir (eski numara geri yazılmasın)
+    body: JSON.stringify({ data: { name } }),
   });
   if (res.status === 401) return "expired";
-  if (!res.ok) throw phoneError((await res.json().catch(() => ({}))) as AuthBody, phone);
+  if (!res.ok) throw authError((await res.json().catch(() => ({}))) as AuthBody);
   return true;
 }
 
@@ -784,10 +796,11 @@ export async function verifySignupCode(email: string, code: string, save = true)
 
 /** Doğrulama kodunu e-postaya yeniden gönderir */
 export async function resendSignupCode(email: string): Promise<void> {
-  await call("/auth/v1/resend", {
+  const res = await call("/auth/v1/resend", {
     method: "POST",
     body: JSON.stringify({ type: "signup", email: email.trim() }),
   });
+  if (!res.ok) throw authError((await res.json().catch(() => ({}))) as AuthBody);
 }
 
 export interface Membership {

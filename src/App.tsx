@@ -823,7 +823,22 @@ export default function App() {
       case "notes":
         return <NotesPage notes={notes} onChange={setNotes} onBack={toHome} />;
       case "archive":
-        return <ArchivePage parties={parties} groups={groups} onRestore={(id) => setArchived(id, false)} onBack={toHome} />;
+        return (
+          <ArchivePage
+            parties={parties}
+            groups={groups}
+            onRestore={(id) => {
+              // Arşivden geri alınan kayıt da listedeki kayıt sınırına sayılır
+              const kind = parties.find((p) => p.id === id)?.kind;
+              if (kind && !canAddItem(membersOf(kind).length, limitPlan)) {
+                limitReached();
+                return;
+              }
+              setArchived(id, false);
+            }}
+            onBack={toHome}
+          />
+        );
       case "contacts":
         return (
           <ContactsPage

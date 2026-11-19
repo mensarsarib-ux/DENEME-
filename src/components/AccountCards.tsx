@@ -68,7 +68,7 @@ function ProfileCard({ session, onExpired }: { session: Session; onExpired: () =
     setBusy(true);
     setMessage(null);
     try {
-      const r = await updateAccountProfile(session, name.trim(), profile.phone);
+      const r = await updateAccountProfile(session, name.trim());
       if (r === "expired") return onExpired();
       haptic("success");
       setProfile({ ...profile, name: name.trim() });
@@ -169,7 +169,18 @@ function LoginCard({
 
   /** Numaraya SMS kodu gönderir ve kod alanını açar */
   async function sendSms(phone: string) {
-    await sendSmsCode(phone, (idToken) => void finishPhone(idToken));
+    await sendSmsCode(phone, (idToken) =>
+      void finishPhone(idToken).catch((e: unknown) => {
+        haptic("warning");
+        setMessage({
+          ok: false,
+          text:
+            e instanceof CloudError && e.code === "phone_taken"
+              ? t("Bu telefon numarası başka bir hesapta kullanılıyor.")
+              : t("Gönderilemedi; bağlantınızı kontrol edin."),
+        });
+      }),
+    );
     haptic("success");
     setSentTo(phone);
     setCode("");

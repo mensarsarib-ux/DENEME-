@@ -544,4 +544,6 @@ export const extra: Record<string, string> = {
   "Kod gönderilemedi. Biraz bekleyip tekrar deneyin.": "The code could not be sent. Wait a moment and try again.",
   "E-postanız doğrulandı.": "Your email is verified.",
   "Şimdilik yalnızca Türkiye numaralarına SMS gönderilebiliyor.": "For now, SMS can only be sent to Turkish numbers.",
+  "Kod az önce gönderildi. Biraz bekleyip tekrar deneyin.": "The code was just sent. Wait a moment and try again.",
+  "Şu anda çok fazla istek var. Birkaç dakika sonra tekrar deneyin.": "There are too many requests right now. Try again in a few minutes.",
 };

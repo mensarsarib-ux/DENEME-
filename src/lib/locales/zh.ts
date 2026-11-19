@@ -785,6 +785,8 @@ const dict: Record<string, string> = {
   "Kod gönderilemedi. Biraz bekleyip tekrar deneyin.": "验证码发送失败，请稍后重试。",
   "E-postanız doğrulandı.": "您的邮箱已验证。",
   "Şimdilik yalnızca Türkiye numaralarına SMS gönderilebiliyor.": "目前只能向土耳其号码发送短信。",
+  "Kod az önce gönderildi. Biraz bekleyip tekrar deneyin.": "验证码刚刚已发送。请稍候再试。",
+  "Şu anda çok fazla istek var. Birkaç dakika sonra tekrar deneyin.": "当前请求过多。请几分钟后再试。",
 };
 
 export default dict;

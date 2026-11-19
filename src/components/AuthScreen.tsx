@@ -215,6 +215,9 @@ export default function AuthScreen({
       case "weak_password": return t("Şifre en az 6 karakter olmalı.");
       case "email_not_confirmed": return t("E-postanız henüz doğrulanmadı. E-postanıza gelen 6 haneli kodu girin.");
       case "network": return t("Sunucuya ulaşılamadı. İnternet bağlantınızı kontrol edin.");
+      case "code_recently_sent": return t("Kod az önce gönderildi. Biraz bekleyip tekrar deneyin.");
+      case "email_busy": return t("Şu anda çok fazla istek var. Birkaç dakika sonra tekrar deneyin.");
+      case "invalid_email": return t("Geçerli bir e-posta adresi yazın.");
       default: return t("Bir sorun oluştu; biraz sonra tekrar deneyin.");
     }
   }
@@ -244,7 +247,13 @@ export default function AuthScreen({
 
   /** Numaraya SMS kodu gönderir ve verilen kod ekranını açar (kayıt, ekibe katılma ya da şifre yenileme) */
   async function sendSms(to: string, codeScreen: SmsScreen) {
-    await sendSmsCode(to, (idToken) => void smsVerified(idToken, codeScreen));
+    // Android SMS'i kendisi okuyup doğrularsa: hata olursa ekranda gösterilir (kod elle de girilebilir)
+    await sendSmsCode(to, (idToken) =>
+      void smsVerified(idToken, codeScreen).catch((e: unknown) => {
+        haptic("warning");
+        setError(describe(e));
+      }),
+    );
     haptic("success");
     setSmsTo(to);
     setCode("");
@@ -356,7 +365,19 @@ export default function AuthScreen({
 
   /** Kayıt ya da katılma: hesap e-postayla açılır ve kod gönderilir. Gerçek şifre kodla doğrulamadan sonra alınır. */
   async function createAccount(next: Screen, afterCode: Screen) {
-    const result = await signUp(email.trim(), randomPassword());
+    let result: Session | "pending";
+    try {
+      result = await signUp(email.trim(), randomPassword());
+    } catch (e) {
+      // DEVAM'a art arda basıldı ya da kod ekranından geri gelinip tekrar basıldı: kod az önce gönderildi, kod ekranı açılır
+      if (e instanceof CloudError && e.code === "code_recently_sent") {
+        codeSent(email.trim(), next);
+        const wait = Number(/after (\d+) seconds/.exec(e.message)?.[1] ?? RESEND_WAIT);
+        setResendIn(Math.min(RESEND_WAIT, Math.max(1, wait)));
+        return;
+      }
+      throw e;
+    }
     haptic("success");
     if (result === "pending") {
       codeSent(email.trim(), next);
@@ -590,8 +611,12 @@ export default function AuthScreen({
       setResendIn(RESEND_WAIT);
       setError(null);
       setInfo(t("Yeni doğrulama kodu gönderildi."));
-    } catch {
-      setError(t("Gönderilemedi; bağlantınızı kontrol edin."));
+    } catch (e) {
+      setError(
+        e instanceof CloudError && (e.code === "code_recently_sent" || e.code === "email_busy")
+          ? describe(e)
+          : t("Gönderilemedi; bağlantınızı kontrol edin."),
+      );
     }
   }
 

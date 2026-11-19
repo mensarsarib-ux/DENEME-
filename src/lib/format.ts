@@ -10,11 +10,20 @@ let currency = DEFAULT_CURRENCY;
  * çünkü o yönde önce yazılan öğe ekranın sağında kalır.
  * Sayı ve sembol burada birleştirilir; tarayıcıya göre sembolün yeri değişmez.
  */
+/** Sayı biçimleyicileri dil ve basamak sayısına göre bir kez oluşturulur (uzun listelerde her satırda yeniden kurulmaz) */
+const formatters = new Map<string, Intl.NumberFormat>();
+function numberFormat(digits: [number, number]): Intl.NumberFormat {
+  const key = `${locale()}|${digits[0]}|${digits[1]}`;
+  let f = formatters.get(key);
+  if (!f) {
+    f = new Intl.NumberFormat(locale(), { minimumFractionDigits: digits[0], maximumFractionDigits: digits[1] });
+    formatters.set(key, f);
+  }
+  return f;
+}
+
 function withSymbol(value: number, digits: [number, number]): string {
-  const num = new Intl.NumberFormat(locale(), {
-    minimumFractionDigits: digits[0],
-    maximumFractionDigits: digits[1],
-  }).format(value);
+  const num = numberFormat(digits).format(value);
   const symbol = currencyOf(currency).symbol;
   const rtl = LANGUAGES.find((l) => l.code === getLanguage())?.rtl;
   return rtl ? `\u200F${symbol}\u00A0${num}` : `${num}\u00A0${symbol}`;
