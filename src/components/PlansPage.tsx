@@ -133,11 +133,27 @@ export default function PlansPage({
   onBack,
   onPrivacy,
   onTerms,
+  onContinueFree,
+  onNeedAccount,
+  autoBuy,
+  onAutoBuyStarted,
 }: {
   onBack: () => void;
   onPrivacy: () => void;
   onTerms: () => void;
+  /** Misafir: en altta "Ücretsiz devam et" */
+  onContinueFree?: () => void;
+  /**
+   * Misafir: hesap yokken ödeme alınamaz (abonelik hesaba bağlanır). Paket seçilince hesap açma ekranı,
+   * geri yüklemede giriş ekranı (null) açılır. Verilince sayfa Premium'u öne çıkarır, diğer paketler "Tüm paketler"de.
+   */
+  onNeedAccount?: (plan: Exclude<Plan, "free"> | null) => void;
+  /** Hesap yeni açıldı: bu paketin ödemesi fiyatlar gelince kendiliğinden başlar */
+  autoBuy?: Exclude<Plan, "free">;
+  onAutoBuyStarted?: () => void;
 }) {
+  const offer = !!onNeedAccount;
+  const [showAll, setShowAll] = useState(false);
   // App Store'dan gelen fiyatlar (yalnızca yerel uygulamada); satın alma sürüyorsa düğmeler kilitlenir
   const [storePrices, setStorePrices] = useState<Record<string, string>>({});
   const [busy, setBusy] = useState(false);
@@ -175,7 +191,20 @@ export default function PlansPage({
       });
   }
 
+  // Hesap açıldıktan sonra seçilen paketin ödemesi, fiyatı gelince bir kez başlar
+  useEffect(() => {
+    if (!autoBuy || !storePrices[planProduct(autoBuy)]) return;
+    onAutoBuyStarted?.();
+    void purchase(autoBuy);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoBuy, storePrices]);
+
   async function purchase(plan: Exclude<Plan, "free">) {
+    if (onNeedAccount) {
+      haptic("medium");
+      onNeedAccount(plan);
+      return;
+    }
     if (busy) return;
     haptic("medium");
     setBusy(true);
@@ -205,6 +234,10 @@ export default function PlansPage({
   }
 
   async function restore() {
+    if (onNeedAccount) {
+      onNeedAccount(null);
+      return;
+    }
     if (busy) return;
     haptic("light");
     setBusy(true);
@@ -232,7 +265,12 @@ export default function PlansPage({
           <p className="paywall-lead">{t("Daha fazla işletme, sekme ve kayıt için paketinizi yükseltin.")}</p>
         </div>
 
-        {PLANS.filter((p) => RANK[p.id] >= RANK[shownPlan] && (PURCHASES_OPEN || p.id === "free")).map((p) => {
+        {PLANS.filter((p) =>
+          offer
+            ? // Misafir: yalnızca Premium; "Tüm paketler" ile Pro ve Pro Plus da açılır (ücretsiz en alttaki düğmede)
+              p.id === "premium" || (showAll && p.id !== "free")
+            : RANK[p.id] >= RANK[shownPlan] && (PURCHASES_OPEN || p.id === "free"),
+        ).map((p) => {
           const current = p.id === shownPlan;
           return (
             <section key={p.id} className={`paywall-card tone-${p.tone} ${current ? "is-current" : ""}`} aria-label={t(PLAN_NAME[p.id])}>
@@ -270,10 +308,10 @@ export default function PlansPage({
                 <button
                   type="button"
                   className="paywall-btn"
-                  disabled={busy || !storePrices[planProduct(p.id as Exclude<Plan, "free">)]}
+                  disabled={!offer && (busy || !storePrices[planProduct(p.id as Exclude<Plan, "free">)])}
                   onClick={() => void purchase(p.id as Exclude<Plan, "free">)}
                 >
-                  {storePrices[planProduct(p.id as Exclude<Plan, "free">)]
+                  {offer || storePrices[planProduct(p.id as Exclude<Plan, "free">)]
                     ? switchLabel(t(PLAN_NAME[p.id]))
                     : t("Fiyat bekleniyor…")}
                 </button>
@@ -282,7 +320,18 @@ export default function PlansPage({
           );
         })}
 
-        {PURCHASES_OPEN && (
+        {offer && !showAll && (
+          <button type="button" className="paywall-link" onClick={() => setShowAll(true)}>
+            {t("Tüm paketler")}
+          </button>
+        )}
+        {onContinueFree && (
+          <button type="button" className="paywall-free" onClick={onContinueFree}>
+            {t("Ücretsiz devam et")}
+          </button>
+        )}
+
+        {(PURCHASES_OPEN || offer) && (
           <>
             <p className="paywall-note">
               {ON_ANDROID

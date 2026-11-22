@@ -26,6 +26,7 @@ export default function MenuDrawer({
   onClose,
   onSignOut,
   isMember = false,
+  onAccount,
 }: {
   /** Okunmamış bildirim sayısı; Bildirimler satırında rozet olarak görünür */
   unread: number;
@@ -39,6 +40,8 @@ export default function MenuDrawer({
   onSignOut?: () => void;
   /** Ortak işletmede üye: ekibi yetkili yönetir, Ekiplerim paketlere değil açıklamaya götürür */
   isMember?: boolean;
+  /** Misafirde: giriş yap, üye ol, ekibe katıl. Giriş yapmış kişide verilmez, bunlar görünmez */
+  onAccount?: (start: "reg-business" | "login" | "join-phone") => void;
 }) {
   const panelRef = useRef<HTMLElement>(null);
   const [bizOpen, setBizOpen] = useState(false);
@@ -90,15 +93,31 @@ export default function MenuDrawer({
         aria-label={t("Menü")}
         onClick={(e) => e.stopPropagation()}
       >
+        {onAccount && (
+          <div className="guest-quick" role="group" aria-label={t("Hesap")}>
+            <button type="button" className="is-primary" onClick={() => requestClose(() => onAccount("login"))}>
+              {t("Giriş yap")}
+            </button>
+            <button type="button" onClick={() => requestClose(() => onAccount("reg-business"))}>
+              {t("Üye ol")}
+            </button>
+            <button type="button" onClick={() => requestClose(() => onAccount("join-phone"))}>
+              {t("Ekibe katıl")}
+            </button>
+          </div>
+        )}
+
         {/* Plan kartı: mevcut paket ve yükseltme */}
         <div className="plan-card">
           <div className="plan-card-text">
             <span className="plan-card-label">{t("Paket: {p}", { p: t(PLAN_NAME[CURRENT_PLAN]) })}</span>
             <small>{t("{b} işletme · {s} sekme · {k} kayıt", { b: LIMITS[CURRENT_PLAN].businesses === Infinity ? "∞" : LIMITS[CURRENT_PLAN].businesses, s: LIMITS[CURRENT_PLAN].tabs === Infinity ? "∞" : LIMITS[CURRENT_PLAN].tabs, k: LIMITS[CURRENT_PLAN].itemsPerTab === Infinity ? "∞" : LIMITS[CURRENT_PLAN].itemsPerTab })}</small>
           </div>
-          <button type="button" className="plan-card-btn" onClick={() => open("plans")}>
-            {t("Üst pakete geç")}
-          </button>
+          {CURRENT_PLAN !== "premium" && (
+            <button type="button" className="plan-card-btn" onClick={() => open("plans")}>
+              {t("Üst pakete geç")}
+            </button>
+          )}
         </div>
 
         {/* Açık olan işletmenin adı; dokununca altında işletme listesi (varsa) ve + açılır */}

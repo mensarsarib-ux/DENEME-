@@ -56,6 +56,8 @@ import { getLanguage, locale, setLanguage, t, type Language } from "./lib/i18n";
 import { setDarkHeader } from "./lib/theme";
 import AuthScreen from "./components/AuthScreen";
 import IntroSlides, { introDone } from "./components/IntroSlides";
+import { finishGuide, startGuideOnce } from "./components/Guide";
+import type { GuestStart } from "./components/GuestWelcome";
 import { cloudEnabled, heartbeat, loadSession, readRecoveryToken, signOut, syncAccountLanguage, type Session } from "./lib/cloud";
 import { useCloudSync } from "./lib/useCloudSync";
 import { clearStored, usePersistedState } from "./lib/storage";
@@ -129,7 +131,7 @@ export default function App() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   // Durum çubuğu (saat, pil): ana ekranın koyu üst kısmında açık renk, açık temalı sayfalarda koyu renk
   useEffect(() => {
-    setDarkHeader(view.name === "home" && !drawerOpen && (!cloudEnabled || !!session));
+    setDarkHeader(view.name === "home" && !drawerOpen && (!cloudEnabled || !!session || guest));
   });
   // Dil bu telefona özel; değişince tüm ekran yeni dille yeniden çizilir
   const [language, setLanguageState] = useState<Language>(getLanguage);
@@ -151,6 +153,66 @@ export default function App() {
   }, [sessionUser, language]);
   // E-postadaki şifre sıfırlama bağlantısından gelindiyse yeni şifre ekranı açılır
   const [recoveryToken, setRecoveryToken] = useState<string | null>(() => (cloudEnabled ? readRecoveryToken() : null));
+  /**
+   * Misafir (önce dene): hesap olmadan uygulama açılır, veriler yalnızca bu telefonda tutulur. Yalnızca bu telefonda
+   * daha önce hiçbir hesabın verisi yoksa geçerlidir; oturumu düşen eski kullanıcı bugünkü gibi giriş ekranını görür.
+   */
+  const guest = cloudEnabled && !session && !dataOwner() && !recoveryToken;
+  // Rehber ve ekran yalnızca misafirken bunu görür (rehber ayrı çizilir, uygulamanın ekranlarına dokunmaz)
+  document.documentElement.dataset.guest = guest ? "1" : "0";
+  // Misafir Menü'den hesap açmak ya da giriş yapmak isterse açılan ekran
+  const [authStart, setAuthStart] = useState<GuestStart | null>(null);
+  // İlk kurulum: tanıtımdan sonra işletme adı alınır (ekranda giriş yap, ekibe katıl, üye ol).
+  // Sonra rehber çalışır; rehber bitince ana ekranda ilk dokunuş hesap açma (telefon, kod, e-posta, şifre) ekranını açar.
+  const [isletmeHazir, setIsletmeHazir] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem("hesabim:misafir-isletme") === "1";
+    } catch {
+      return false;
+    }
+  });
+  // Rehberin son adımında (Tebrikler → İleri) paketler sayfası açılır: Premium öne çıkar, altta ücretsiz devam
+  useEffect(() => {
+    const onDone = () => {
+      setView({ name: "menu", page: "plans" });
+    };
+    window.addEventListener("hesabim:rehber-bitti", onDone);
+    return () => window.removeEventListener("hesabim:rehber-bitti", onDone);
+  }, []);
+  // Misafir paket seçti: önce hesap açılır (abonelik hesaba bağlanır), hesap açılınca bu paketin ödemesi başlar
+  const [buyAfterAccount, setBuyAfterAccount] = useState<Exclude<Plan, "free"> | null>(null);
+  // İşletme adı henüz alınmadıysa önce işletme ekranı açılır
+  useEffect(() => {
+    if (guest && !isletmeHazir) setAuthStart((prev) => prev ?? "reg-business");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [guest, isletmeHazir]);
+  // İşletme adı girildi: kayıt bu adla ana ekrana yazılır, hesap daha sonra açılır
+  const isletmeTamam = (name: string) => {
+    try {
+      localStorage.setItem("hesabim:misafir-isletme", "1");
+    } catch {
+      /* depolama yoksa yalnızca bu oturumda geçerli */
+    }
+    setProfile((p) => ({ ...p, name }));
+    setIsletmeHazir(true);
+    setAuthStart(null);
+  };
+  const openAccount = (start: GuestStart) => {
+    setAuthStart(start);
+  };
+  useEffect(() => {
+    if (session) finishGuide();
+  }, [session]);
+  // Misafirin işletmesine geçici bir ad verilir (Menü → İşletme profili'nden değişir); boş telefonda rehber başlar
+  useEffect(() => {
+    if (!guest) return;
+    if (!profile.name.trim()) setProfile((p) => ({ ...p, name: t("İşletmem") }));
+    // Boş telefonda rehber başlar. Eski sürümlerden kalan örnek kayıtlar varsa temizlenir (örnek veri artık yok)
+    if (parties.length === 0) startGuideOnce();
+    setParties((prev) => prev.filter((p) => !String(p.id).startsWith("ornek-")));
+    setTransactions((prev) => prev.filter((x) => !String(x.customerId).startsWith("ornek-")));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [guest]);
   // Titreşim cihaza özgüdür; diğer ayarlar hesapla birlikte eşitlenir
   // Bu tercihler yalnızca bu cihazda kalır; ekip üyeleriyle paylaşılan işletme verisine yazılmaz
   const DEVICE_ONLY_SETTINGS = ["haptics", "textSize", "listSort"] as const;
@@ -535,9 +597,14 @@ export default function App() {
     return <IntroSlides onDone={() => setIntroSeen(true)} />;
   }
 
-  if (cloudEnabled && !session) {
+  if (cloudEnabled && !session && (!guest || authStart)) {
     return (
       <AuthScreen
+        start={authStart ?? undefined}
+        onBusinessDone={guest && !isletmeHazir ? isletmeTamam : undefined}
+        initialBusiness={guest && isletmeHazir ? profile.name : undefined}
+        // İşletme adı alındıktan sonra (Menü ya da paketlerden) açılan hesap ekranından uygulamaya geri dönülebilir
+        onClose={guest && isletmeHazir ? () => { setAuthStart(null); setBuyAfterAccount(null); } : undefined}
         recoveryToken={recoveryToken}
         onRecoveryDone={() => {
           setRecoveryToken(null);
@@ -552,10 +619,16 @@ export default function App() {
             window.location.reload();
             return;
           }
+          // Misafirken girilen kayıtlar yeni hesaba taşınır (ilk eşitlemede sunucuya yazılır); yalnızca işletme adı güncellenir
+          const fromGuest = guest;
           setDataOwner(next.userId);
-          if (info?.isNew) emptyWorkspace(info.businessName);
+          if (info?.isNew && fromGuest) {
+            if (info.businessName) setProfile((p) => ({ ...p, name: info.businessName }));
+          } else if (info?.isNew) emptyWorkspace(info.businessName);
+          setAuthStart(null);
           setSession(next);
-          setView({ name: "home" });
+          // Paket seçip hesap açtıysa paketler sayfasına dönülür ve ödeme kendiliğinden başlar
+          setView(buyAfterAccount ? { name: "menu", page: "plans" } : { name: "home" });
         }}
       />
     );
@@ -703,9 +776,18 @@ export default function App() {
    * Paket sınırı dolunca: sahip paketler sayfasına gider. Ekip üyesi paket alsa da işe yaramaz
    * (sınır yetkilinin paketine bağlı), bu yüzden üyeye durum anlatılır.
    */
+  /** Misafir paketleri görür; paket seçince hesap açma ekranı gelir (PlansPage → onNeedAccount) */
+  function guestPaywall() {
+    go({ name: "menu", page: "plans" });
+  }
+
   function limitReached() {
     if (memberBusinessId) {
       window.alert(t("Bu işletmenin paket sınırına ulaşıldı. Daha fazlası için işletme yetkilisinin paketini yükseltmesi gerekir."));
+      return;
+    }
+    if (guest) {
+      guestPaywall();
       return;
     }
     go({ name: "menu", page: "plans" });
@@ -909,7 +991,25 @@ export default function App() {
       case "terms":
         return <TermsPage onBack={toHome} />;
       case "plans":
-        return <PlansPage onBack={toHome} onPrivacy={() => go({ name: "menu", page: "privacy" })} onTerms={() => go({ name: "menu", page: "terms" })} />;
+        return (
+          <PlansPage
+            onBack={toHome}
+            // Misafir: Premium öne çıkar, en altta ücretsiz devam; paket seçince önce hesap açılır
+            onContinueFree={guest ? toHome : undefined}
+            onNeedAccount={
+              guest
+                ? (plan) => {
+                    // Geri yükleme (plan yok): giriş ekranı; paket seçildi: hesap açma ekranı
+                    setBuyAfterAccount(plan);
+                    setAuthStart(plan ? "reg-phone" : "login");
+                  }
+                : undefined
+            }
+            autoBuy={session ? buyAfterAccount ?? undefined : undefined}
+            onAutoBuyStarted={() => setBuyAfterAccount(null)}
+            onPrivacy={() => go({ name: "menu", page: "privacy" })} onTerms={() => go({ name: "menu", page: "terms" })}
+          />
+        );
       case "newbusiness":
         return <NewBusinessPage onBack={toHome} onJoin={() => go({ name: "menu", page: "join" })} />;
       case "team":
@@ -981,7 +1081,7 @@ export default function App() {
       listSort={settings.listSort}
       onOpenKasa={() => go({ name: "kasa" })}
       onOpenPlans={() => go({ name: "menu", page: "newbusiness" })}
-      onPlans={() => go({ name: "menu", page: "plans" })}
+      onPlans={() => (guest ? guestPaywall() : go({ name: "menu", page: "plans" }))}
       serverBusinesses={serverBusinesses}
       canCreateBusiness={canCreateBusiness}
       parties={parties}
@@ -1015,11 +1115,16 @@ export default function App() {
         canCreateBusiness={canCreateBusiness}
         onNavigate={(page) => {
           setDrawerOpen(false);
+          if (guest && page === "plans") {
+            guestPaywall();
+            return;
+          }
           go({ name: "menu", page });
         }}
         onClose={() => setDrawerOpen(false)}
         onSignOut={session ? logout : undefined}
         isMember={!!memberBusinessId}
+        onAccount={guest ? openAccount : undefined}
       />
     )}
     </>
