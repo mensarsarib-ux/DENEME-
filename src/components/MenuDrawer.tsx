@@ -26,6 +26,7 @@ export default function MenuDrawer({
   onClose,
   onSignOut,
   isMember = false,
+  onAccount,
 }: {
   /** Okunmamış bildirim sayısı; Bildirimler satırında rozet olarak görünür */
   unread: number;
@@ -39,6 +40,8 @@ export default function MenuDrawer({
   onSignOut?: () => void;
   /** Ortak işletmede üye: ekibi yetkili yönetir, Ekiplerim paketlere değil açıklamaya götürür */
   isMember?: boolean;
+  /** Misafir (hesapsız) kullanımda: hesap kartı gösterilir; üye ol, giriş yap ya da ekibe katıl açılır */
+  onAccount?: (start: "reg-business" | "login" | "join-phone") => void;
 }) {
   const panelRef = useRef<HTMLElement>(null);
   const [bizOpen, setBizOpen] = useState(false);
@@ -90,6 +93,32 @@ export default function MenuDrawer({
         aria-label={t("Menü")}
         onClick={(e) => e.stopPropagation()}
       >
+        {/* Misafir: veriler yalnızca bu telefonda; hesap açma, giriş ve ekibe katılma buradan */}
+        {onAccount && (
+          <div className="guest-card">
+            <div className="guest-card-head">
+              <span className="guest-card-avatar" aria-hidden="true">
+                <Svg d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21c0-4 4-6 8-6s8 2 8 6" />
+              </span>
+              <div className="guest-card-text">
+                <b>{t("Misafir olarak kullanıyorsunuz")}</b>
+                <small>{t("Verileriniz yalnızca bu telefonda. Hesap açın; kaybolmasın, diğer cihazlarınızda ve ekibinizle görün.")}</small>
+              </div>
+            </div>
+            <div className="guest-card-actions">
+              <button type="button" className="is-primary" onClick={() => requestClose(() => onAccount("reg-business"))}>
+                {t("Üye ol")}
+              </button>
+              <button type="button" className="is-light" onClick={() => requestClose(() => onAccount("login"))}>
+                {t("Giriş yap")}
+              </button>
+            </div>
+            <button type="button" className="guest-card-join" onClick={() => requestClose(() => onAccount("join-phone"))}>
+              {t("Ekip davetiyle mi geldiniz? Ekibe katılın")}
+            </button>
+          </div>
+        )}
+
         {/* Plan kartı: mevcut paket ve yükseltme */}
         <div className="plan-card">
           <div className="plan-card-text">

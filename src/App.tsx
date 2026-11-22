@@ -56,6 +56,7 @@ import { getLanguage, locale, setLanguage, t, type Language } from "./lib/i18n";
 import { setDarkHeader } from "./lib/theme";
 import AuthScreen from "./components/AuthScreen";
 import IntroSlides, { introDone } from "./components/IntroSlides";
+import { finishGuide, startGuideOnce } from "./components/Guide";
 import { cloudEnabled, heartbeat, loadSession, readRecoveryToken, signOut, syncAccountLanguage, type Session } from "./lib/cloud";
 import { useCloudSync } from "./lib/useCloudSync";
 import { clearStored, usePersistedState } from "./lib/storage";
@@ -129,7 +130,7 @@ export default function App() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   // Durum çubuğu (saat, pil): ana ekranın koyu üst kısmında açık renk, açık temalı sayfalarda koyu renk
   useEffect(() => {
-    setDarkHeader(view.name === "home" && !drawerOpen && (!cloudEnabled || !!session));
+    setDarkHeader(view.name === "home" && !drawerOpen && (!cloudEnabled || !!session || guest));
   });
   // Dil bu telefona özel; değişince tüm ekran yeni dille yeniden çizilir
   const [language, setLanguageState] = useState<Language>(getLanguage);
@@ -151,6 +152,25 @@ export default function App() {
   }, [sessionUser, language]);
   // E-postadaki şifre sıfırlama bağlantısından gelindiyse yeni şifre ekranı açılır
   const [recoveryToken, setRecoveryToken] = useState<string | null>(() => (cloudEnabled ? readRecoveryToken() : null));
+  /**
+   * Misafir (önce dene): hesap olmadan uygulama açılır, veriler yalnızca bu telefonda tutulur. Yalnızca bu telefonda
+   * daha önce hiçbir hesabın verisi yoksa geçerlidir; oturumu düşen eski kullanıcı bugünkü gibi giriş ekranını görür.
+   */
+  const guest = cloudEnabled && !session && !dataOwner() && !recoveryToken;
+  // Misafir Menü'den hesap açmak ya da giriş yapmak isterse açılan ekran
+  const [authStart, setAuthStart] = useState<"reg-business" | "login" | "join-phone" | null>(null);
+  // Rehber ve ekran yalnızca misafirken bunu görür (rehber ayrı çizilir, uygulamanın ekranlarına dokunmaz)
+  document.documentElement.dataset.guest = guest ? "1" : "0";
+  useEffect(() => {
+    if (session) finishGuide();
+  }, [session]);
+  // Misafirin işletmesine geçici bir ad verilir (Menü → İşletme profili'nden değişir); boş telefonda rehber başlar
+  useEffect(() => {
+    if (!guest) return;
+    if (!profile.name.trim()) setProfile((p) => ({ ...p, name: t("İşletmem") }));
+    if (parties.length === 0) startGuideOnce();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [guest]);
   // Titreşim cihaza özgüdür; diğer ayarlar hesapla birlikte eşitlenir
   // Bu tercihler yalnızca bu cihazda kalır; ekip üyeleriyle paylaşılan işletme verisine yazılmaz
   const DEVICE_ONLY_SETTINGS = ["haptics", "textSize", "listSort"] as const;
@@ -535,9 +555,11 @@ export default function App() {
     return <IntroSlides onDone={() => setIntroSeen(true)} />;
   }
 
-  if (cloudEnabled && !session) {
+  if (cloudEnabled && !session && (!guest || authStart)) {
     return (
       <AuthScreen
+        start={authStart ?? undefined}
+        onClose={guest ? () => setAuthStart(null) : undefined}
         recoveryToken={recoveryToken}
         onRecoveryDone={() => {
           setRecoveryToken(null);
@@ -552,8 +574,13 @@ export default function App() {
             window.location.reload();
             return;
           }
+          // Misafirken girilen kayıtlar yeni hesaba taşınır (ilk eşitlemede sunucuya yazılır); yalnızca işletme adı güncellenir
+          const fromGuest = guest;
           setDataOwner(next.userId);
-          if (info?.isNew) emptyWorkspace(info.businessName);
+          if (info?.isNew && fromGuest) {
+            if (info.businessName) setProfile((p) => ({ ...p, name: info.businessName }));
+          } else if (info?.isNew) emptyWorkspace(info.businessName);
+          setAuthStart(null);
           setSession(next);
           setView({ name: "home" });
         }}
@@ -1018,6 +1045,7 @@ export default function App() {
         onClose={() => setDrawerOpen(false)}
         onSignOut={session ? logout : undefined}
         isMember={!!memberBusinessId}
+        onAccount={guest ? (start) => setAuthStart(start) : undefined}
       />
     )}
     </>

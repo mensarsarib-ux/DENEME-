@@ -116,14 +116,20 @@ export default function AuthScreen({
   recoveryToken,
   onSession,
   onRecoveryDone,
+  start,
+  onClose,
 }: {
   /** E-postadaki şifre sıfırlama bağlantısından gelindiyse geçici belirteç */
   recoveryToken?: string | null;
   /** Giriş başarılı olunca; yeni kayıtta isNew ve işletme adı da gelir */
   onSession: (session: Session, info?: { isNew: boolean; businessName: string }) => void;
   onRecoveryDone: () => void;
+  /** Misafir Menü'den açtıysa ilk ekran (üye ol, giriş yap ya da ekibe katıl) */
+  start?: "reg-business" | "login" | "join-phone";
+  /** Misafir Menü'den açtıysa: açılış ekranına dönmek yerine uygulamaya (misafir paneline) dönülür */
+  onClose?: () => void;
 }) {
-  const [screen, setScreen] = useState<Screen>(recoveryToken ? "new-password" : "welcome");
+  const [screen, setScreen] = useState<Screen>(recoveryToken ? "new-password" : start ?? "welcome");
   // Girişte e-posta mı telefon mu kullanılıyor
   const [method, setMethod] = useState<"email" | "phone">("email");
   const [business, setBusiness] = useState("");
@@ -197,6 +203,11 @@ export default function AuthScreen({
 
   function go(next: Screen) {
     haptic("light");
+    // Misafir Menü'den geldiyse açılış ekranı yoktur: geri dönüş uygulamaya olur
+    if (next === "welcome" && onClose) {
+      onClose();
+      return;
+    }
     // Ekibe katılım girişi yalnızca giriş ekranında geçerli; başka yere gidilince sıfırlanır
     if (next !== "login") setLoginForJoin(false);
     setScreen(next);
