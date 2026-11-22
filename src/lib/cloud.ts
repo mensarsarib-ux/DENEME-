@@ -452,16 +452,28 @@ export async function checkVerifiedPhone(idToken: string): Promise<{ phone: stri
   return (await res.json()) as { phone: string; taken: boolean };
 }
 
+/** Telefon numarasına gelmiş ekip daveti */
+export interface TeamInvite {
+  id: string;
+  businessName: string;
+}
+
 /**
- * SMS koduyla giriş ya da kayıt. Numarayı doğrulamış hesaba oturum açılır; hesap yoksa create ile numarayla yeni
- * hesap açılır (e-posta ve şifre istenmez). Hesap yoksa ve create verilmediyse no_account.
+ * SMS koduyla giriş ya da kayıt. Numarayı doğrulamış hesaba oturum açılır. Hesap yoksa: create verilmediyse
+ * { noAccount, invites } döner (numaraya gelmiş ekip davetleriyle); create ile numarayla yeni hesap açılır.
  */
-export async function smsSession(idToken: string, create: boolean): Promise<{ session: Session; isNew: boolean }> {
+export async function smsSession(
+  idToken: string,
+  create: boolean,
+): Promise<{ session: Session; isNew: boolean } | { noAccount: true; invites: TeamInvite[] }> {
   const res = await call("/functions/v1/phone-verify", {
     method: "POST",
     body: JSON.stringify({ idToken, action: "session", create, lang: getLanguage() }),
   });
-  if (res.status === 404) throw new CloudError("no_account", "no account");
+  if (res.status === 404) {
+    const body = (await res.json().catch(() => ({}))) as { invites?: TeamInvite[] };
+    return { noAccount: true, invites: Array.isArray(body.invites) ? body.invites : [] };
+  }
   if (res.status === 401) throw new CloudError("invalid_credentials", "token");
   if (!res.ok) throw new CloudError("unknown", String(res.status));
   const { tokenHash, isNew } = (await res.json()) as { tokenHash: string; isNew: boolean };
@@ -474,6 +486,39 @@ export async function smsSession(idToken: string, create: boolean): Promise<{ se
   if (!session) throw new CloudError("unknown", "no session");
   return { session, isNew };
 }
+
+/** Sunucudaki bir fonksiyonu (rpc) çağırır; oturum düştüyse "expired" */
+async function rpc<T>(session: Session, name: string, args: Record<string, unknown> = {}): Promise<T | "expired"> {
+  const s = await fresh(session);
+  if (!s) return "expired";
+  const res = await call(`/rest/v1/rpc/${name}`, { method: "POST", token: s.accessToken, body: JSON.stringify(args) });
+  if (res.status === 401) return "expired";
+  const text = await res.text();
+  if (!res.ok) {
+    if (text.includes("ekip_siniri")) throw new CloudError("team_limit", text);
+    throw new CloudError("unknown", String(res.status));
+  }
+  return (text ? JSON.parse(text) : null) as T;
+}
+
+/** Giriş yapmış kişinin numarasına gelmiş ekip davetleri */
+export async function myInvites(session: Session): Promise<TeamInvite[] | "expired"> {
+  const r = await rpc<{ id: string; business_name: string }[]>(session, "my_invites");
+  return r === "expired" ? r : (r ?? []).map((i) => ({ id: i.id, businessName: i.business_name }));
+}
+/** Daveti kabul eder: yetkilinin işletmesine üye olunur (ekip sınırı doluysa team_limit) */
+export const acceptInvite = (session: Session, id: string) => rpc<null>(session, "accept_invite", { inv: id });
+/** Yetkili: çalışanını telefon numarasıyla ekibe davet eder */
+export const inviteMember = (session: Session, businessId: string, phone: string) =>
+  rpc<null>(session, "invite_member", { biz: businessId, p: phone });
+export interface SentInvite {
+  id: string;
+  phone: string;
+  business_name: string;
+}
+/** Yetkili: gönderdiği ve henüz kabul edilmemiş davetler */
+export const sentInvites = (session: Session) => rpc<SentInvite[]>(session, "my_sent_invites");
+export const cancelInvite = (session: Session, id: string) => rpc<null>(session, "cancel_invite", { inv: id });
 
 /** Doğrulanan numarayı hesaba yazar; numara başka bir hesapta doğrulanmışsa phone_taken */
 export async function attachVerifiedPhone(session: Session, idToken: string): Promise<string | "expired"> {

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Share } from "@capacitor/share";
-import { teamPeople, type Session, type TeamPerson, displayIdentity } from "../lib/cloud";
+import { cancelInvite, CloudError, inviteMember, normalizePhone, sentInvites, teamPeople, type SentInvite, type Session, type TeamPerson, displayIdentity } from "../lib/cloud";
+import PhoneField from "./PhoneField";
 import { t } from "../lib/i18n";
 import { haptic } from "../lib/haptics";
 import { SUPPORT_ICON } from "../lib/menu";
@@ -12,17 +13,21 @@ import PageHeader from "./PageHeader";
 const SITE_URL = "https://hesabimmuhasebe.com";
 
 /**
- * Ekiplerim: yetkili için davet yolu ve ekip üyelerinin listesi (birine dokununca erişimleri açılır).
+ * Ekiplerim: yetkili çalışanını telefon numarasıyla davet eder; bekleyen davetler ve ekip üyeleri listelenir
+ * (üyeye dokununca erişimleri açılır). Davet edilen kişi o numarayla uygulamaya girince "Katıl" der.
  * Ekip üyesi bu sayfada yalnızca ekibin yetkili tarafından yönetildiğini görür.
  */
 export default function TeamPage({
   session,
+  businessId,
   isMember,
   onOpen,
   onPlans,
   onBack,
 }: {
   session: Session;
+  /** Davetin yapılacağı (yetkilinin açık) işletmesi */
+  businessId: string | null;
   /** Ortak işletmede üye olarak mı çalışıyor (ekibi yetkili yönetir) */
   isMember: boolean;
   onOpen: (person: TeamPerson) => void;
@@ -33,25 +38,69 @@ export default function TeamPage({
   const [people, setPeople] = useState<TeamPerson[] | null>(null);
   const [failed, setFailed] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [invites, setInvites] = useState<SentInvite[]>([]);
+  const [phoneInput, setPhoneInput] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);
+  // Az önce davet edilen numara: "Mesajla haber ver" bu kişiye gider
+  const [invited, setInvited] = useState<string | null>(null);
+  const phone = normalizePhone(phoneInput) ?? "";
 
+  function loadInvites() {
+    sentInvites(session)
+      .then((r) => r !== "expired" && setInvites(r ?? []))
+      .catch(() => undefined);
+  }
   useEffect(() => {
     if (isMember) return;
     teamPeople(session)
       .then((r) => (r === "expired" ? setFailed(true) : setPeople(r)))
       .catch(() => setFailed(true));
+    loadInvites();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session, isMember]);
 
-  // Ekip arkadaşı açılışta "Ekibe katıl"ı seçip yetkili olarak bu e-postayı ya da telefonu yazar
-  const inviteText = t("Hesabım Muhasebe'de işletmeme katıl: uygulamayı indir, açılışta Ekibe katıl'a dokun ve yetkili olarak şunu yaz: {m} — {url}", { m: session.email, url: SITE_URL });
-  /** Rehberden seçilen kişiye davet: telefonu varsa SMS, yoksa e-posta taslağı açılır */
-  async function inviteFromContacts() {
+  // Davet edilen kişiye gönderilen mesaj: uygulamayı indirip bu numarayla girmesi yeterli
+  const inviteText = t("Hesabım Muhasebe'de seni ekibime ekledim. Uygulamayı indir ve bu telefon numarasıyla giriş yap: {url}", { url: SITE_URL });
+
+  /** Rehberden kişi seçilince numarası kutuya yazılır */
+  async function fromContacts() {
     haptic("light");
     const picked = await pickContact();
-    if (!picked) return;
-    const body = encodeURIComponent(inviteText);
-    if (picked.phone) window.location.href = `sms:${picked.phone.replace(/[^\d+]/g, "")}&body=${body}`;
-    else if (picked.email) window.location.href = `mailto:${picked.email}?subject=${encodeURIComponent(t("Ekip davetiyesi"))}&body=${body}`;
-    else void shareInvite();
+    if (picked?.phone) setPhoneInput(picked.phone);
+  }
+
+  async function invite() {
+    if (!phone || !businessId || busy) return;
+    haptic("light");
+    setBusy(true);
+    setMessage(null);
+    try {
+      const r = await inviteMember(session, businessId, phone);
+      if (r === "expired") throw new CloudError("unknown", "expired");
+      haptic("success");
+      setInvited(phone);
+      setPhoneInput("");
+      setMessage({ ok: true, text: t("{p} davet edildi. Bu numarayla uygulamaya girince ekibinize katılır.", { p: phone }) });
+      loadInvites();
+    } catch {
+      haptic("warning");
+      setMessage({ ok: false, text: t("Davet gönderilemedi. Bağlantınızı kontrol edip tekrar deneyin.") });
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function cancel(id: string) {
+    haptic("light");
+    await cancelInvite(session, id).catch(() => undefined);
+    loadInvites();
+  }
+
+  /** Davet edilen kişiye SMS ile haber verilir (uygulama bağlantısıyla); olmazsa paylaşım penceresi */
+  function notify(to: string) {
+    haptic("light");
+    window.location.href = `sms:${to}&body=${encodeURIComponent(inviteText)}`;
   }
 
   async function shareInvite() {
@@ -92,21 +141,41 @@ export default function TeamPage({
             <button type="button" className="primary-btn" onClick={onPlans}>{t("Paketlere geç")}</button>
           </section>
         ) : (
-          <section className="card" aria-label={t("Ekip arkadaşını davet et")}>
-            <h2 className="card-title">{t("Ekip arkadaşını davet et")}</h2>
-            <ol className="invite-steps">
-              <li>{t("Ekip arkadaşınız Hesabım uygulamasını indirsin.")}</li>
-              <li>
-                {t("Açılışta Ekibe katıl'a dokunsun ve yetkili olarak şunu yazsın: {m}", { m: session.email })}
-              </li>
-              <li>{t("İstek Bildirimler'e gelir; onayladığınızda işletmenizi birlikte kullanırsınız.")}</li>
-            </ol>
+          <>
+          <section className="card" aria-label={t("Ekip üyesi ekle")}>
+            <h2 className="card-title">{t("Ekip üyesi ekle")}</h2>
+            <p className="field-hint">{t("Çalışanınızın telefon numarasını yazın. Uygulamayı indirip bu numarayla girdiğinde ekibinize katılır.")}</p>
+            <div className="field">
+              <label htmlFor="team-invite-phone">{t("Telefon")}</label>
+              <PhoneField id="team-invite-phone" value={phoneInput} onChange={setPhoneInput} />
+            </div>
             {contactPickerAvailable() && (
-              <button type="button" className="primary-btn" onClick={() => void inviteFromContacts()}>{t("Rehberden davet et")}</button>
+              <button type="button" className="help-link" onClick={() => void fromContacts()}>{t("Rehberden seç")}</button>
             )}
-            <button type="button" className={contactPickerAvailable() ? "action-btn is-center" : "primary-btn"} onClick={() => void shareInvite()}>{t("Davet mesajını paylaş")}</button>
+            <button type="button" className="primary-btn" disabled={!phone || !businessId || busy} onClick={() => void invite()}>
+              {busy ? t("Bekleyin…") : t("DAVET ET")}
+            </button>
+            {message && <p className={message.ok ? "form-success" : "form-error"} role="status">{message.text}</p>}
+            {invited && message?.ok && (
+              <div className="card-actions">
+                <button type="button" className="action-btn" onClick={() => notify(invited)}>{t("SMS ile haber ver")}</button>
+                <button type="button" className="action-btn" onClick={() => void shareInvite()}>{t("Paylaş")}</button>
+              </div>
+            )}
             {copied && <p className="form-success" role="status">{t("Davet mesajı kopyalandı.")}</p>}
           </section>
+          {invites.length > 0 && (
+            <section className="card" aria-label={t("Bekleyen davetler")}>
+              <h2 className="card-title">{t("Bekleyen davetler")}</h2>
+              {invites.map((inv) => (
+                <div key={inv.id} className="team-row">
+                  <span className="team-row-email">{inv.phone}</span>
+                  <button type="button" className="help-link" onClick={() => void cancel(inv.id)}>{t("İptal")}</button>
+                </div>
+              ))}
+            </section>
+          )}
+        </>
         )}
         <section className="card" aria-label={t("Ekip üyeleri")}>
           {failed && <p className="form-error" role="alert">{t("Ekip bilgileri yüklenemedi.")}</p>}

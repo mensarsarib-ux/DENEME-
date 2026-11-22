@@ -56,6 +56,7 @@ import { getLanguage, locale, setLanguage, t, type Language } from "./lib/i18n";
 import { setDarkHeader } from "./lib/theme";
 import AuthScreen from "./components/AuthScreen";
 import IntroSlides, { introDone } from "./components/IntroSlides";
+import { startGuide } from "./components/Guide";
 import { cloudEnabled, heartbeat, loadSession, readRecoveryToken, signOut, syncAccountLanguage, type Session } from "./lib/cloud";
 import { useCloudSync } from "./lib/useCloudSync";
 import { clearStored, usePersistedState } from "./lib/storage";
@@ -554,6 +555,8 @@ export default function App() {
           }
           setDataOwner(next.userId);
           if (info?.isNew) emptyWorkspace(info.businessName);
+          // Kendi işletmesini açan yeni hesapta ilk müşteri rehberi başlar (davetle katılan üyede başlamaz)
+          if (info?.isNew && info.businessName) startGuide();
           setSession(next);
           setView({ name: "home" });
         }}
@@ -926,6 +929,7 @@ export default function App() {
         return session ? (
           <TeamPage
             session={session}
+            businessId={effMembership?.role === "owner" ? effMembership.businessId : null}
             isMember={!!memberBusinessId}
             onOpen={setTeamPerson}
             onPlans={() => go({ name: "menu", page: "plans" })}

@@ -97,7 +97,19 @@ Deno.serve(async (req) => {
     if (error) return json({ error: "server" }, 500);
     let isNew = false;
     if (!uid) {
-      if (!input.create) return json({ error: "no_account" }, 404);
+      if (!input.create) {
+        // Kayıtlı değil: bu numaraya gelmiş ekip davetleri de döner (uygulama "Katıl" ya da işletme adı sorar)
+        const { data: invites } = await admin
+          .from("team_invites")
+          .select("id, businesses(name)")
+          .eq("phone", phone)
+          .order("created_at", { ascending: false });
+        const list = (invites ?? []).map((i) => ({
+          id: i.id as string,
+          businessName: ((i as { businesses?: { name?: string } | null }).businesses?.name ?? "") as string,
+        }));
+        return json({ error: "no_account", invites: list }, 404);
+      }
       const lang = typeof input.lang === "string" ? input.lang.slice(0, 5) : "tr";
       const created = await admin.auth.admin.createUser({
         email: `${phone.replace(/\D/g, "")}@${PHONE_EMAIL_DOMAIN}`,
