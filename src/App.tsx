@@ -771,9 +771,19 @@ export default function App() {
    * Paket sınırı dolunca: sahip paketler sayfasına gider. Ekip üyesi paket alsa da işe yaramaz
    * (sınır yetkilinin paketine bağlı), bu yüzden üyeye durum anlatılır.
    */
+  /** Misafire paketler gösterilmez: önce hesap açması söylenir, ardından giriş seçenekleri açılır */
+  function guestPaywall() {
+    window.alert(t("Ücretsiz planda kayıt sınırına ulaştınız. Daha fazlası için önce hesap açın."));
+    setKapi(true);
+  }
+
   function limitReached() {
     if (memberBusinessId) {
       window.alert(t("Bu işletmenin paket sınırına ulaşıldı. Daha fazlası için işletme yetkilisinin paketini yükseltmesi gerekir."));
+      return;
+    }
+    if (guest) {
+      guestPaywall();
       return;
     }
     go({ name: "menu", page: "plans" });
@@ -1049,7 +1059,7 @@ export default function App() {
       listSort={settings.listSort}
       onOpenKasa={() => go({ name: "kasa" })}
       onOpenPlans={() => go({ name: "menu", page: "newbusiness" })}
-      onPlans={() => go({ name: "menu", page: "plans" })}
+      onPlans={() => (guest ? guestPaywall() : go({ name: "menu", page: "plans" }))}
       serverBusinesses={serverBusinesses}
       canCreateBusiness={canCreateBusiness}
       parties={parties}
@@ -1084,6 +1094,10 @@ export default function App() {
         canCreateBusiness={canCreateBusiness}
         onNavigate={(page) => {
           setDrawerOpen(false);
+          if (guest && page === "plans") {
+            guestPaywall();
+            return;
+          }
           go({ name: "menu", page });
         }}
         onClose={() => setDrawerOpen(false)}

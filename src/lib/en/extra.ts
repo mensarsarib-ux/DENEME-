@@ -587,4 +587,7 @@ export const extra: Record<string, string> = {
   "Kısmi ödeme": "Partial payment",
   "Ambalaj alışı": "Packaging purchase",
   "Misafir olarak devam et": "Continue as guest",
+  "Tebrikler!": "Congratulations!",
+  "İlk müşterinizi ekleyip kayıt girdiniz. Devam etmek için İleri'ye dokunun.": "You added your first customer and recorded a transaction. Tap Next to continue.",
+  "Ücretsiz planda kayıt sınırına ulaştınız. Daha fazlası için önce hesap açın.": "You've reached the free plan's record limit. To go further, create an account first.",
 };

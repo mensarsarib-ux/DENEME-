@@ -151,10 +151,10 @@ function currentStep(state: GuideState, setState: (s: GuideState) => void, finis
   if (home && hasCollection) {
     return {
       id: "bitis", stage: 4, pad: 6, radius: 18, noTap: true, place: "below",
-      title: t("Hazırsınız"),
-      text: t("Uygulamanın temelini öğrendiniz. Devam etmek için bir hesap oluşturmanız gerekecek."),
-      targets: [".topbar-menu"],
-      action: { label: t("TAMAM"), run: finish },
+      title: t("Tebrikler!"),
+      text: t("İlk müşterinizi ekleyip kayıt girdiniz. Devam etmek için İleri'ye dokunun."),
+      targets: [() => document.querySelector("button.row:not(.row-big)")],
+      action: { label: t("İLERİ"), run: finish },
     };
   }
 

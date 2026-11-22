@@ -828,6 +828,9 @@ const dict: Record<string, string> = {
   "Kısmi ödeme": "Pagamento parcial",
   "Ambalaj alışı": "Compra de embalagens",
   "Misafir olarak devam et": "Continuar como convidado",
+  "Tebrikler!": "Parabéns!",
+  "İlk müşterinizi ekleyip kayıt girdiniz. Devam etmek için İleri'ye dokunun.": "Você adicionou seu primeiro cliente e registrou uma operação. Toque em Próximo para continuar.",
+  "Ücretsiz planda kayıt sınırına ulaştınız. Daha fazlası için önce hesap açın.": "Você atingiu o limite de registros do plano gratuito. Para continuar, crie uma conta primeiro.",
 };
 
 export default dict;
