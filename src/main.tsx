@@ -7,10 +7,12 @@ import "./styles.css";
 import { applyTheme } from "./lib/theme";
 import { initLanguage } from "./lib/i18n";
 import { keepAppFixedWhileKeyboard } from "./lib/keepScroll";
+import { initTapTrack } from "./lib/tapTrack";
 
 // Tema ilk çizimden önce uygulanır ki ekran bir an yanlış renkte görünmesin
 applyTheme();
 keepAppFixedWhileKeyboard();
+initTapTrack();
 
 // Seçili dilin sözlüğü yüklenince çizilir (Türkçe ve İngilizce beklemeden hazırdır)
 void initLanguage().then(() =>
