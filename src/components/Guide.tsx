@@ -64,6 +64,8 @@ interface Step {
   place?: "above" | "below";
   /** Balonun üstünde kalacağı öğe (açıklama kutusu gibi; balon onu örtmesin) */
   lift?: string;
+  /** Balonun örtmemesi gereken öğe (yazılan ad gibi); çakışırsa balon bu öğenin altına geçer, ok gizlenir */
+  avoid?: string;
   /** Dokunma işareti gösterilmez (yazı alanı ya da bilgi adımı) */
   noTap?: boolean;
   /** Bilgi adımı: balonda düğme vardır, aydınlık alana dokunmak gerekmez */
@@ -118,7 +120,7 @@ function currentStep(state: GuideState, setState: (s: GuideState) => void, finis
       };
     }
     return {
-      id: "ekle-musteri", stage: 1, pad: 4, radius: 22,
+      id: "ekle-musteri", stage: 1, pad: 4, radius: 22, avoid: "#customer-name",
       title: t("Kaydetmek için EKLE'ye dokunun"),
       text: t("Müşteriniz ana sayfadaki listeye eklenecek."),
       targets: [".header-add"],
@@ -299,6 +301,19 @@ export default function Guide() {
     const lift = q(step.lift);
     if (visible(lift)) top = Math.min(top, lift!.getBoundingClientRect().top - balloonH - 14);
   }
+  // Balon, yazılan adı (ya da başka bir önemli alanı) örtüyorsa altına geçer; ok artık hedefi göstermez
+  let noArrow = false;
+  if (step.avoid) {
+    const av = q(step.avoid);
+    if (visible(av)) {
+      const ar = av!.getBoundingClientRect();
+      const overlaps = top < ar.bottom + 8 && top + balloonH > ar.top - 8;
+      if (overlaps) {
+        top = ar.bottom + 14;
+        noArrow = true;
+      }
+    }
+  }
   top = Math.max(12, top);
   const arrowX = Math.min(Math.max(left + 22, cx), left + bw - 22) - left;
 
@@ -326,7 +341,7 @@ export default function Guide() {
       {!step.noTap && !step.action && <div className="guide-tap" style={{ left: tapX - 10, top: tapY - 10 }} />}
       <div
         key={step.id}
-        className={`guide-card ${below ? "is-below" : "is-above"}`}
+        className={`guide-card ${below ? "is-below" : "is-above"} ${noArrow ? "no-arrow" : ""}`}
         style={{ left, top, width: bw, ["--arrow-x" as string]: `${arrowX}px` }}
         ref={(el) => {
           if (el && Math.abs(el.offsetHeight - balloonH) > 2) setBalloonH(el.offsetHeight);

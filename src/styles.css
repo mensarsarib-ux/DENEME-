@@ -4567,6 +4567,10 @@ a.action-btn:visited {
   border-bottom: 1px solid var(--line);
 }
 
+.guide-card.no-arrow::before {
+  display: none;
+}
+
 @keyframes guide-in {
   from {
     opacity: 0;
