@@ -80,7 +80,18 @@ const q = (sel: string) => document.querySelector(sel);
 const visible = (el: Element | null | undefined) => !!el && (el as HTMLElement).getClientRects().length > 0;
 const byText = (sel: string, text: string) =>
   [...document.querySelectorAll(sel)].find((e) => e.textContent?.trim() === text && visible(e));
-const b = (s: string) => <b className="guide-em">{s}</b>;
+/**
+ * Çevrilmiş cümlenin içindeki {ad} yer tutucularını kalın yazar. Cümle her dilde bütün olarak çevrilir,
+ * düğme adı (o dildeki karşılığıyla) cümlenin doğru yerine oturur.
+ */
+function rich(key: string, vars: Record<string, string>): ReactNode {
+  return t(key)
+    .split(/(\{\w+\})/)
+    .map((part, i) => {
+      const m = /^\{(\w+)\}$/.exec(part);
+      return m && m[1] in vars ? <b key={i} className="guide-em">{vars[m[1]]}</b> : part;
+    });
+}
 
 /** Rehberin ilk satışında açıklama hazır gelir; React'in duyacağı şekilde yazılır (bir kez) */
 function prefillDescription(text: string) {
@@ -122,7 +133,7 @@ function currentStep(state: GuideState, setState: (s: GuideState) => void, finis
     }
     return {
       id: "ekle-musteri", stage: 1, pad: 4, radius: 22, avoid: "#customer-name",
-      title: t("Kaydetmek için EKLE'ye dokunun"),
+      title: t("Kaydetmek için {btn} düğmesine dokunun", { btn: t("EKLE") }),
       text: t("Müşteriniz ana sayfadaki listeye eklenecek."),
       targets: [".header-add"],
     };
@@ -132,7 +143,7 @@ function currentStep(state: GuideState, setState: (s: GuideState) => void, finis
     return {
       id: "arti", stage: 1, pad: 4, radius: 22,
       title: t("İlk müşterinizi ekleyin"),
-      text: <>{t("Sağ üstteki")} {b("+")} {t("düğmesine dokunun.")}</>,
+      text: rich("{plus} düğmesine dokunun.", { plus: "+" }),
       targets: ['button[aria-label="' + t("Yeni müşteri ekle") + '"]'],
     };
   }
@@ -142,7 +153,7 @@ function currentStep(state: GuideState, setState: (s: GuideState) => void, finis
     return {
       id: "bitis", stage: 4, pad: 6, radius: 18, noTap: true, place: "below",
       title: t("Hazırsınız"),
-      text: <>{t("Verileriniz şimdilik yalnızca bu telefonda. Kaybolmasın diye hesabınızı istediğiniz zaman")} {b(t("Menü"))}{t("'den açabilirsiniz.")}</>,
+      text: t("Uygulamanın temelini öğrendiniz. Devam etmek için bir hesap oluşturmanız gerekecek."),
       targets: [".topbar-menu"],
       action: { label: t("TAMAM"), run: finish },
     };
@@ -170,13 +181,13 @@ function currentStep(state: GuideState, setState: (s: GuideState) => void, finis
       return {
         id: "satis-tutar", stage: 2, noTap: true, place: "above", pad: 6,
         title: t("İlk satışınızı girin"),
-        text: <>{b(t("SATIŞ"))} {t("seçili. Tutarı tuş takımıyla yazın. Açıklama hazır geldi, isterseniz değiştirin.")}</>,
+        text: rich("{tab} seçili. Tutarı tuş takımıyla yazın. Açıklama hazır geldi, isterseniz değiştirin.", { tab: t("SATIŞ") }),
         targets: [desc, ".amount-field", () => byText("button", t("SATIŞ")), ".keypad-inner"],
       };
     }
     return {
       id: "satis-ekle", stage: 2, pad: 6, place: "above",
-      title: t("EKLE'ye dokunun"),
+      title: t("{btn} düğmesine dokunun", { btn: t("EKLE") }),
       text: t("Satış kaydedilir ve müşterinizin borcu bu tutar kadar artar."),
       targets: [desc, ".amount-field", () => byText("button", t("SATIŞ")), ".keypad-inner"],
       focus: ".save-btn",
@@ -196,7 +207,7 @@ function currentStep(state: GuideState, setState: (s: GuideState) => void, finis
       return {
         id: "tahsilat-sec", stage: 3, pad: 6, place: "above",
         title: t("Şimdi bir tahsilat girin"),
-        text: <>{t("Müşteriniz ödeme yaptığında")} {b(t("TAHSİLAT"))} {t("seçilir. Ona dokunun.")}</>,
+        text: rich("Müşteriniz ödeme yaptığında {tab} sekmesine dokunun.", { tab: t("TAHSİLAT") }),
         targets: [() => byText("button", t("TAHSİLAT"))],
       };
     }
@@ -210,7 +221,7 @@ function currentStep(state: GuideState, setState: (s: GuideState) => void, finis
     }
     return {
       id: "tahsilat-ekle", stage: 3, pad: 6, place: "above",
-      title: t("EKLE'ye dokunun"),
+      title: t("{btn} düğmesine dokunun", { btn: t("EKLE") }),
       text: t("Tahsilat kaydedilir ve borç bu tutar kadar azalır."),
       targets: [".amount-field", () => byText("button", t("TAHSİLAT")), ".keypad-inner"],
       focus: ".save-btn",

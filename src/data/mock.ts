@@ -1,5 +1,6 @@
 import { regionCurrency } from "../lib/currencies";
 import { deviceRegion } from "../lib/region";
+import { getLanguage, t } from "../lib/i18n";
 // Geçici örnek veriler. Gerçek veri katmanı eklendiğinde bu dosya değiştirilecek.
 
 export type Period = "daily" | "weekly" | "monthly" | "yearly";
@@ -393,21 +394,35 @@ export const DEFAULT_SETTINGS: Settings = {
 };
 
 /**
- * Misafir (kayıtsız) kullanıcıya ana sayfa dolu görünsün diye örnek şirketler ve işlemler. Adlar uydurmadır;
- * hiçbiri gerçek bir kişinin ya da şirketin verisi değildir; hepsi "sample" işaretlidir ve hesap açılınca silinir (buluta gönderilmez).
+ * Misafir (kayıtsız) kullanıcıya ana sayfa dolu görünsün diye örnek şirketler ve işlemler. Firma adları uygulamanın
+ * diline göre seçilir ve uydurmadır; hiçbiri gerçek bir kişinin ya da şirketin verisi değildir. İşlem açıklamaları
+ * çeviriden gelir. Hepsi "sample" işaretlidir ve hesap açılınca silinir (buluta gönderilmez).
  * Ücretsiz paketin 10 kayıt sınırının altında kalır ki kişi kendi müşterisini ekleyebilsin.
  */
+const SAMPLE_NAMES: Record<string, string[]> = {
+  tr: ["Yıldız Gıda Ltd. Şti.", "Akdeniz Yapı İnşaat", "Kardeşler Mobilya", "Doğa Tekstil San. Tic.", "Güven Market", "Anadolu Toptan Gıda", "Hızlı Nakliyat", "Ege Ambalaj San."],
+  en: ["Brookfield Foods Ltd.", "Harborline Construction", "Oakridge Furniture", "Riverbend Textiles", "Corner Street Market", "Summit Wholesale Supply", "Swiftway Freight", "Coastal Pack Co."],
+  de: ["Bergmann Lebensmittel GmbH", "Rheinbau Bauunternehmen", "Holzwerk Möbel", "Weber Textil", "Marktladen Schulz", "Nordhandel Großhandel", "Schnell Spedition", "Elbe Verpackung"],
+  fr: ["Épicerie Durand SARL", "Bâtiments Lemoine", "Meubles Girard", "Textiles Moreau", "Supérette du Coin", "Grossiste Bernard", "Transports Rapido", "Emballages Loire"],
+  es: ["Alimentos Herrera S.L.", "Construcciones Ruiz", "Muebles Ortega", "Textiles Navarro", "Supermercado El Rincón", "Mayorista del Sur", "Transportes Veloz", "Envases Levante"],
+  it: ["Alimentari Rossi S.r.l.", "Edilizia Bianchi", "Mobili Ferrari", "Tessuti Galli", "Market Da Gino", "Ingrosso Conti", "Trasporti Veloci", "Imballaggi Adriatico"],
+  pt: ["Alimentos Souza Ltda.", "Construtora Almeida", "Móveis Carvalho", "Tecidos Ribeiro", "Mercadinho da Esquina", "Atacado Central", "Transportes Ligeiro", "Embalagens Sul"],
+  ru: ["ООО «Волга Продукт»", "СтройГрад", "Мебель Кедр", "Текстиль Ока", "Магазин «Уголок»", "Оптовая база Урал", "Быстрая Доставка", "Упаковка Дон"],
+  uk: ["ТОВ «Дніпро Продукт»", "БудМайстер", "Меблі Дуб", "Текстиль Десна", "Магазин «Куточок»", "Оптова база Карпати", "Швидка Доставка", "Пакування Буг"],
+  pl: ["Spożywka Nowak Sp. z o.o.", "Budex Kowalski", "Meble Dąb", "Tekstylia Wiśniewski", "Sklep Na Rogu", "Hurtownia Mazur", "Szybki Transport", "Opakowania Bałtyk"],
+  nl: ["Van Dijk Voeding B.V.", "Bouwbedrijf De Boer", "Meubelhuis Eik", "Textiel Jansen", "Buurtwinkel De Hoek", "Groothandel Noord", "Snel Transport", "Verpakking Maas"],
+  ar: ["شركة النخيل للأغذية", "مؤسسة البناء الحديث", "أثاث الأرز", "نسيج الواحة", "بقالة الحي", "مستودع الجملة الشرقي", "النقل السريع", "تغليف الخليج"],
+  id: ["PT Sumber Pangan", "CV Bangun Jaya", "Mebel Jati Indah", "Tekstil Nusantara", "Toko Sejahtera", "Grosir Makmur", "Ekspedisi Cepat", "Kemasan Mandiri"],
+  hi: ["शर्मा फूड्स प्रा. लि.", "गणेश कंस्ट्रक्शन", "वर्मा फर्नीचर", "गंगा टेक्सटाइल्स", "मोहल्ला किराना स्टोर", "मिलन होलसेल", "तेज़ ट्रांसपोर्ट", "सागर पैकेजिंग"],
+  ja: ["山田食品株式会社", "さくら建設", "木村家具店", "青葉テキスタイル", "まちかどマート", "東和卸売", "はやて運輸", "みなと包装"],
+  ko: ["한빛식품(주)", "새솔건설", "나무결가구", "푸른섬유", "골목마트", "한결도매", "빠른물류", "바다포장"],
+  zh: ["华丰食品有限公司", "建安建筑", "林木家具", "锦绣纺织", "街角超市", "通达批发", "快捷物流", "海联包装"],
+};
+
 export function guestSamples(): { parties: Customer[]; transactions: Transaction[] } {
-  const parties: Customer[] = [
-    { id: "ornek-m1", name: "Yıldız Gıda Ltd. Şti.", kind: "customer", sample: true },
-    { id: "ornek-m2", name: "Akdeniz Yapı İnşaat", kind: "customer", sample: true },
-    { id: "ornek-m3", name: "Kardeşler Mobilya", kind: "customer", sample: true },
-    { id: "ornek-m4", name: "Doğa Tekstil San. Tic.", kind: "customer", sample: true },
-    { id: "ornek-m5", name: "Güven Market", kind: "customer", sample: true },
-    { id: "ornek-t1", name: "Anadolu Toptan Gıda", kind: "supplier", sample: true },
-    { id: "ornek-t2", name: "Hızlı Nakliyat", kind: "supplier", sample: true },
-    { id: "ornek-t3", name: "Ege Ambalaj San.", kind: "supplier", sample: true },
-  ];
+  const n8 = SAMPLE_NAMES[getLanguage()] ?? SAMPLE_NAMES.en;
+  const ids = ["ornek-m1", "ornek-m2", "ornek-m3", "ornek-m4", "ornek-m5", "ornek-t1", "ornek-t2", "ornek-t3"];
+  const parties: Customer[] = ids.map((id, i) => ({ id, name: n8[i], kind: i < 5 ? "customer" : "supplier", sample: true }));
   const tx: Transaction[] = [];
   let n = 0;
   const add = (customerId: string, type: TxType, days: number, amount: number, description: string, account?: AccountId) =>
@@ -415,21 +430,21 @@ export function guestSamples(): { parties: Customer[]; transactions: Transaction
   // Son altı ay: her ay satış ve alış, ardından kısmi tahsilat ve ödeme (grafikler dolu görünür)
   const months = [150, 120, 90, 60, 30, 3];
   months.forEach((d, i) => {
-    add("ornek-m1", "SATIŞ", d, 18000 + i * 2500, "Ürün satışı");
-    add("ornek-m2", "SATIŞ", d - 1, 9500 + i * 1200, "Malzeme satışı");
-    add("ornek-m3", "SATIŞ", d - 2, 14000 + (i % 3) * 3000, "Mobilya satışı");
-    add("ornek-t1", "ALIŞ", d, 11000 + i * 900, "Mal alışı");
-    add("ornek-t2", "ALIŞ", d - 1, 3200 + (i % 2) * 800, "Nakliye");
+    add("ornek-m1", "SATIŞ", d, 18000 + i * 2500, t("Ürün satışı"));
+    add("ornek-m2", "SATIŞ", d - 1, 9500 + i * 1200, t("Malzeme satışı"));
+    add("ornek-m3", "SATIŞ", d - 2, 14000 + (i % 3) * 3000, t("Mobilya satışı"));
+    add("ornek-t1", "ALIŞ", d, 11000 + i * 900, t("Mal alışı"));
+    add("ornek-t2", "ALIŞ", d - 1, 3200 + (i % 2) * 800, t("Nakliye"));
     if (d > 3) {
-      add("ornek-m1", "TAHSİLAT", d - 8, 15000 + i * 2000, "Ödeme", "bank");
-      add("ornek-m2", "TAHSİLAT", d - 9, 8000 + i * 1000, "Ödeme", "cash");
-      add("ornek-t1", "ÖDEME", d - 10, 9000 + i * 800, "Ödeme", "bank");
-      add("ornek-t2", "ÖDEME", d - 7, 3000, "Ödeme", "cash");
+      add("ornek-m1", "TAHSİLAT", d - 8, 15000 + i * 2000, t("Ödeme"), "bank");
+      add("ornek-m2", "TAHSİLAT", d - 9, 8000 + i * 1000, t("Ödeme"), "cash");
+      add("ornek-t1", "ÖDEME", d - 10, 9000 + i * 800, t("Ödeme"), "bank");
+      add("ornek-t2", "ÖDEME", d - 7, 3000, t("Ödeme"), "cash");
     }
   });
-  add("ornek-m4", "SATIŞ", 45, 26000, "Kumaş satışı");
-  add("ornek-m4", "TAHSİLAT", 20, 12000, "Kısmi ödeme", "cash");
-  add("ornek-m5", "SATIŞ", 12, 7400, "Ürün satışı");
-  add("ornek-t3", "ALIŞ", 25, 4800, "Ambalaj alışı");
+  add("ornek-m4", "SATIŞ", 45, 26000, t("Kumaş satışı"));
+  add("ornek-m4", "TAHSİLAT", 20, 12000, t("Kısmi ödeme"), "cash");
+  add("ornek-m5", "SATIŞ", 12, 7400, t("Ürün satışı"));
+  add("ornek-t3", "ALIŞ", 25, 4800, t("Ambalaj alışı"));
   return { parties, transactions: tx };
 }
