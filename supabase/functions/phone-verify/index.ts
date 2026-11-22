@@ -92,7 +92,7 @@ Deno.serve(async (req) => {
 
   if (input.action === "session") {
     // SMS koduyla giriş ya da kayıt: numarayı doğrulamış hesaba oturum açılır. Hesap yoksa ve create istendiyse
-    // (Üye ol, Ekibe katıl) numarayla yeni hesap açılır. E-posta istenmez; hesabın iç e-postası numaradan üretilir.
+    // (işletme adı girildi ya da davete katılındı) numarayla yeni hesap açılır. E-posta istenmez; iç e-posta rastgeledir.
     let { data: uid, error } = await admin.rpc("phone_owner", { p: phone });
     if (error) return json({ error: "server" }, 500);
     let isNew = false;
