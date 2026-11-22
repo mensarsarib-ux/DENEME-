@@ -393,20 +393,20 @@ export const DEFAULT_SETTINGS: Settings = {
 };
 
 /**
- * Misafir (kayıtsız) kullanıcıya ana sayfa dolu görünsün diye örnek şirketler ve işlemler. Hiçbiri gerçek bir
- * kişinin verisi değildir; hepsi "sample" işaretlidir ve hesap açılınca silinir (buluta gönderilmez).
+ * Misafir (kayıtsız) kullanıcıya ana sayfa dolu görünsün diye örnek şirketler ve işlemler. Adlar uydurmadır;
+ * hiçbiri gerçek bir kişinin ya da şirketin verisi değildir; hepsi "sample" işaretlidir ve hesap açılınca silinir (buluta gönderilmez).
  * Ücretsiz paketin 10 kayıt sınırının altında kalır ki kişi kendi müşterisini ekleyebilsin.
  */
 export function guestSamples(): { parties: Customer[]; transactions: Transaction[] } {
   const parties: Customer[] = [
-    { id: "ornek-m1", name: "Örnek Ticaret A.Ş.", kind: "customer", sample: true },
-    { id: "ornek-m2", name: "Örnek Gıda Ltd. Şti.", kind: "customer", sample: true },
-    { id: "ornek-m3", name: "Örnek İnşaat", kind: "customer", sample: true },
-    { id: "ornek-m4", name: "Örnek Mobilya", kind: "customer", sample: true },
-    { id: "ornek-m5", name: "Örnek Market", kind: "customer", sample: true },
-    { id: "ornek-t1", name: "Örnek Toptan Gıda", kind: "supplier", sample: true },
-    { id: "ornek-t2", name: "Örnek Lojistik", kind: "supplier", sample: true },
-    { id: "ornek-t3", name: "Örnek Ambalaj", kind: "supplier", sample: true },
+    { id: "ornek-m1", name: "Yıldız Gıda Ltd. Şti.", kind: "customer", sample: true },
+    { id: "ornek-m2", name: "Akdeniz Yapı İnşaat", kind: "customer", sample: true },
+    { id: "ornek-m3", name: "Kardeşler Mobilya", kind: "customer", sample: true },
+    { id: "ornek-m4", name: "Doğa Tekstil San. Tic.", kind: "customer", sample: true },
+    { id: "ornek-m5", name: "Güven Market", kind: "customer", sample: true },
+    { id: "ornek-t1", name: "Anadolu Toptan Gıda", kind: "supplier", sample: true },
+    { id: "ornek-t2", name: "Hızlı Nakliyat", kind: "supplier", sample: true },
+    { id: "ornek-t3", name: "Ege Ambalaj San.", kind: "supplier", sample: true },
   ];
   const tx: Transaction[] = [];
   let n = 0;
@@ -416,8 +416,8 @@ export function guestSamples(): { parties: Customer[]; transactions: Transaction
   const months = [150, 120, 90, 60, 30, 3];
   months.forEach((d, i) => {
     add("ornek-m1", "SATIŞ", d, 18000 + i * 2500, "Ürün satışı");
-    add("ornek-m2", "SATIŞ", d - 1, 9500 + i * 1200, "Ürün satışı");
-    add("ornek-m3", "SATIŞ", d - 2, 14000 + (i % 3) * 3000, "Malzeme satışı");
+    add("ornek-m2", "SATIŞ", d - 1, 9500 + i * 1200, "Malzeme satışı");
+    add("ornek-m3", "SATIŞ", d - 2, 14000 + (i % 3) * 3000, "Mobilya satışı");
     add("ornek-t1", "ALIŞ", d, 11000 + i * 900, "Mal alışı");
     add("ornek-t2", "ALIŞ", d - 1, 3200 + (i % 2) * 800, "Nakliye");
     if (d > 3) {
@@ -427,7 +427,7 @@ export function guestSamples(): { parties: Customer[]; transactions: Transaction
       add("ornek-t2", "ÖDEME", d - 7, 3000, "Ödeme", "cash");
     }
   });
-  add("ornek-m4", "SATIŞ", 45, 26000, "Mobilya satışı");
+  add("ornek-m4", "SATIŞ", 45, 26000, "Kumaş satışı");
   add("ornek-m4", "TAHSİLAT", 20, 12000, "Kısmi ödeme", "cash");
   add("ornek-m5", "SATIŞ", 12, 7400, "Ürün satışı");
   add("ornek-t3", "ALIŞ", 25, 4800, "Ambalaj alışı");
