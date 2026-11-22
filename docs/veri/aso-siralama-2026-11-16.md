@@ -28,3 +28,7 @@ Puan: 3, ortalama 5,0. Sürüm 1.1.
 ## 18 Kasım 2026, ~18:15 (sürüm 1.2 yayında, 4 puan / 5,0)
 hesabım muhasebe 1 · hesabım 8 · tedarikçi 14 · veresiye takip 15 · borç alacak 19 · esnaf defteri 19 · veresiye 21 · veresiye defteri 32 · cari hesap 32 · ekstre 32 · bakkal 35 · esnaf 39 · kasa takibi 42 · tahsilat 45 · ön muhasebe 45 · muhasebe 47.
 İlk 50 dışı: cari, cari takip, gelir gider, müşteri takip, defter, borç takibi.
+
+## 22 Kasım 2026 (sürüm 1.3, 7 puan / 4,43)
+hesabım muhasebe 1 · hesabım 2 · muhasebe 8 · veresiye takip 15 · tedarikçi 15 · borç alacak 21 · veresiye 26 · ekstre 33 · bakkal 33 · kasa takibi 37 · tahsilat 46 · müşteri takip 46.
+İlk 50 dışı: veresiye defteri, esnaf defteri, esnaf, cari hesap, cari, cari takip, ön muhasebe, gelir gider, defter, borç takibi.
