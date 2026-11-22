@@ -116,29 +116,17 @@ export default function AuthScreen({
   recoveryToken,
   onSession,
   onRecoveryDone,
-  start,
-  onClose,
-  onBusinessDone,
-  initialBusiness,
 }: {
   /** E-postadaki şifre sıfırlama bağlantısından gelindiyse geçici belirteç */
   recoveryToken?: string | null;
   /** Giriş başarılı olunca; yeni kayıtta isNew ve işletme adı da gelir */
   onSession: (session: Session, info?: { isNew: boolean; businessName: string }) => void;
   onRecoveryDone: () => void;
-  /** Misafir Menü'den açtıysa ilk ekran (üye ol, giriş yap ya da ekibe katıl) */
-  start?: "welcome" | "reg-business" | "reg-phone" | "login" | "join-phone";
-  /** Misafir Menü'den açtıysa: açılış ekranına dönmek yerine uygulamaya (misafir paneline) dönülür */
-  onClose?: () => void;
-  /** Tanıtımdan sonraki ilk kurulum: işletme adı alınır, hesap açılmaz (kayıt daha sonra ana ekrana dokununca) */
-  onBusinessDone?: (name: string) => void;
-  /** Misafirken girilen işletme adı: hesap açılırken tekrar sorulmaz */
-  initialBusiness?: string;
 }) {
-  const [screen, setScreen] = useState<Screen>(recoveryToken ? "new-password" : start ?? "welcome");
+  const [screen, setScreen] = useState<Screen>(recoveryToken ? "new-password" : "welcome");
   // Girişte e-posta mı telefon mu kullanılıyor
   const [method, setMethod] = useState<"email" | "phone">("email");
-  const [business, setBusiness] = useState(initialBusiness ?? "");
+  const [business, setBusiness] = useState("");
   const [email, setEmail] = useState("");
   // Girişte telefon kutusu ayrı tutulur: e-posta ve telefon birbirinin kutusuna ya da şifre yenilemeye geçmez
   const [loginPhoneInput, setLoginPhoneInput] = useState("");
@@ -209,11 +197,6 @@ export default function AuthScreen({
 
   function go(next: Screen) {
     haptic("light");
-    // Misafir Menü'den geldiyse açılış ekranı yoktur: geri dönüş uygulamaya olur
-    if (next === "welcome" && onClose) {
-      onClose();
-      return;
-    }
     // Ekibe katılım girişi yalnızca giriş ekranında geçerli; başka yere gidilince sıfırlanır
     if (next !== "login") setLoginForJoin(false);
     setScreen(next);
@@ -500,12 +483,7 @@ export default function AuthScreen({
           setInfo(t("Şifreniz yenilendi. Yeni şifrenizle giriş yapın."));
         });
       case "reg-business":
-        if (!business.trim()) return;
-        if (onBusinessDone) {
-          onBusinessDone(business.trim());
-          return;
-        }
-        go(phoneToken ? "reg-email" : "reg-phone");
+        if (business.trim()) go(phoneToken ? "reg-email" : "reg-phone");
         return;
       case "reg-phone":
       case "join-phone":
@@ -647,11 +625,6 @@ export default function AuthScreen({
   if (screen === "welcome") {
     return (
       <div className="ob-page ob-welcome">
-        {onClose && (
-          <button type="button" className="round-btn guest-welcome-close" aria-label={t("Geri")} onClick={onClose}>
-            <Svg d="M15 5l-7 7 7 7" />
-          </button>
-        )}
         <div className="ob-hero">
           <img className="ob-logo" src="/logo.svg" alt="" />
           <h1 className="ob-title">Hesabım Muhasebe</h1>
@@ -751,11 +724,7 @@ export default function AuthScreen({
 
   const flow = REGISTER.includes(screen) ? REGISTER : JOIN.includes(screen) ? JOIN : null;
   const step = flow ? flow.indexOf(screen) + 1 : 0;
-  let back = screen === "login" && loginForJoin ? "join-phone" : BACK[screen];
-  // Tanıtımdan sonraki ekranlarda giriş ve katılma ekranından işletme ekranına dönülür
-  if (onBusinessDone && (screen === "login" || screen === "join-phone")) back = "reg-business";
-  // Paketler sayfasından açılan hesap ekranının ilk adımında geri düğmesi paketlere döner
-  if (start === "reg-phone" && screen === "reg-phone") back = onClose ? "welcome" : undefined;
+  const back = screen === "login" && loginForJoin ? "join-phone" : BACK[screen];
 
   // Ekran içeriği: başlık, açıklama, alanlar ve alttaki düğme
   let title = "";
@@ -1048,15 +1017,6 @@ export default function AuthScreen({
         </div>
         {/* Geri düğmesi üstte sabit; içerik altında ortalanır (klavye açılınca kesilmez, kaydırılır) */}
         <div className="ob-body">
-          {onBusinessDone && screen === "reg-business" && (
-            <div className="guest-auth-top">
-              <div className="guest-auth-row">
-                <button type="button" onClick={() => go("login")}>{t("Giriş yap")}</button>
-                <button type="button" onClick={() => go("join-phone")}>{t("Ekibe katıl")}</button>
-              </div>
-              <button type="button" className="is-on" aria-pressed="true">{t("Üye ol")}</button>
-            </div>
-          )}
           {done && body}
           <h2 className="ob-heading">{title}</h2>
           {lead && <p className="ob-lead">{lead}</p>}
