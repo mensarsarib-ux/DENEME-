@@ -4661,61 +4661,64 @@ a.action-btn:visited {
   }
 }
 
-/* ---------- Menü: misafir hesap kartı (kompakt) ---------- */
+/* ---------- Menü: misafir bağlantısı ---------- */
 
-.guest-card {
-  display: grid;
-  gap: 8px;
+.guest-menu-link {
+  display: block;
+  width: calc(100% - 28px);
   margin: 10px 14px 2px;
   padding: 10px 12px;
-  border-radius: 14px;
-  background: var(--surface-head);
   border: 1px solid var(--line);
-}
-
-.guest-card-text {
-  font-size: 0.85rem;
-  line-height: 1.35;
-  color: var(--muted);
-}
-
-.guest-card-text b {
-  color: var(--text);
-  font-weight: 700;
-}
-
-.guest-card-actions {
-  display: flex;
-  gap: 8px;
-}
-
-.guest-card-actions button {
-  flex: 1;
-  padding: 8px;
-  border-radius: 10px;
-  font-weight: 700;
-  font-size: 0.85rem;
-}
-
-.guest-card-actions .is-primary {
-  border: 0;
-  background: var(--blue);
-  color: #fff;
-}
-
-.guest-card-actions .is-light {
-  border: 1px solid var(--line);
+  border-radius: 12px;
   background: transparent;
-  color: var(--text);
-  font-weight: 600;
-}
-
-.guest-card-join {
-  border: 0;
-  background: none;
-  padding: 0;
-  justify-self: start;
   color: var(--blue);
   font-weight: 600;
-  font-size: 0.8rem;
+  text-align: start;
+}
+
+/* ---------- Rehber bitince açılış kartı (eski karşılama ekranı) ---------- */
+
+.guest-welcome {
+  position: fixed;
+  inset: 0;
+  z-index: 85;
+  animation: guest-welcome-in 0.35s ease-out;
+}
+
+.guest-welcome-note {
+  margin: 0;
+  max-width: 280px;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: #9fb3c6;
+  animation: ob-fade-up 0.5s ease-out 1.2s both;
+}
+
+.guest-welcome-later {
+  border: 0;
+  background: none;
+  padding: 10px;
+  color: #c6d3e0;
+  font: inherit;
+  font-size: 0.95rem;
+  animation: ob-fade-up 0.45s ease-out 1.5s both;
+}
+
+.guest-welcome-close {
+  position: absolute;
+  top: calc(env(safe-area-inset-top, 0px) + 12px);
+  inset-inline-start: 16px;
+  z-index: 1;
+}
+
+@keyframes guest-welcome-in {
+  from { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .guest-welcome,
+  .guest-welcome-note,
+  .guest-welcome-later {
+    animation: none;
+  }
 }

@@ -125,7 +125,7 @@ export default function AuthScreen({
   onSession: (session: Session, info?: { isNew: boolean; businessName: string }) => void;
   onRecoveryDone: () => void;
   /** Misafir Menü'den açtıysa ilk ekran (üye ol, giriş yap ya da ekibe katıl) */
-  start?: "reg-business" | "login" | "join-phone";
+  start?: "welcome" | "reg-business" | "login" | "join-phone";
   /** Misafir Menü'den açtıysa: açılış ekranına dönmek yerine uygulamaya (misafir paneline) dönülür */
   onClose?: () => void;
 }) {
@@ -636,6 +636,11 @@ export default function AuthScreen({
   if (screen === "welcome") {
     return (
       <div className="ob-page ob-welcome">
+        {onClose && (
+          <button type="button" className="round-btn guest-welcome-close" aria-label={t("Geri")} onClick={onClose}>
+            <Svg d="M15 5l-7 7 7 7" />
+          </button>
+        )}
         <div className="ob-hero">
           <img className="ob-logo" src="/logo.svg" alt="" />
           <h1 className="ob-title">Hesabım Muhasebe</h1>

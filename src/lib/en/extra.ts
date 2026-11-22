@@ -586,4 +586,8 @@ export const extra: Record<string, string> = {
   "Misafirsiniz.": "You are a guest.",
   "Verileriniz bu telefonda.": "Your data is on this phone only.",
   "Ekibe katılın": "Join a team",
+  "Şimdilik kendim bakayım": "Let me look around first",
+  "Verileriniz şimdilik yalnızca bu telefonda. Hesap açarsanız kaybolmaz ve diğer cihazlarınızda görünür.": "Your data is only on this phone for now. If you create an account it won't be lost, and you can see it on your other devices.",
+  "Giriş yap veya üye ol": "Log in or sign up",
+  "Hesabınızı oluşturun": "Create your account",
 };

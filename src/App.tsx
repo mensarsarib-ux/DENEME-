@@ -57,6 +57,7 @@ import { setDarkHeader } from "./lib/theme";
 import AuthScreen from "./components/AuthScreen";
 import IntroSlides, { introDone } from "./components/IntroSlides";
 import { finishGuide, startGuideOnce } from "./components/Guide";
+import GuestWelcome, { type GuestStart } from "./components/GuestWelcome";
 import { cloudEnabled, heartbeat, loadSession, readRecoveryToken, signOut, syncAccountLanguage, type Session } from "./lib/cloud";
 import { useCloudSync } from "./lib/useCloudSync";
 import { clearStored, usePersistedState } from "./lib/storage";
@@ -158,7 +159,24 @@ export default function App() {
    */
   const guest = cloudEnabled && !session && !dataOwner() && !recoveryToken;
   // Misafir Menü'den hesap açmak ya da giriş yapmak isterse açılan ekran
-  const [authStart, setAuthStart] = useState<"reg-business" | "login" | "join-phone" | null>(null);
+  const [authStart, setAuthStart] = useState<GuestStart | null>(null);
+  // Rehber bitince çıkan açılış kartı (misafir, bir kez; Menü'den de açılabilir)
+  const [acilis, setAcilis] = useState(false);
+  useEffect(() => {
+    const onDone = () => setAcilis(true);
+    window.addEventListener("hesabim:rehber-bitti", onDone);
+    return () => window.removeEventListener("hesabim:rehber-bitti", onDone);
+  }, []);
+  // Hesap açma ya da giriş seçilince kart kapanır; panele dönülürse tekrar çıkmaz
+  const openAccount = (start: GuestStart) => {
+    setAcilis(false);
+    // Menü'den "giriş ya da üye ol": karşılama kartı yeniden açılır
+    if (start === "welcome") {
+      setAcilis(true);
+      return;
+    }
+    setAuthStart(start);
+  };
   // Rehber ve ekran yalnızca misafirken bunu görür (rehber ayrı çizilir, uygulamanın ekranlarına dokunmaz)
   document.documentElement.dataset.guest = guest ? "1" : "0";
   useEffect(() => {
@@ -1033,6 +1051,12 @@ export default function App() {
       onRenameTab={renameTab}
       onDeleteTab={deleteTab}
     />
+    {guest && acilis && (
+      <GuestWelcome
+        onAccount={openAccount}
+        onDismiss={() => setAcilis(false)}
+      />
+    )}
     {drawerOpen && (
       <MenuDrawer
         unread={pendingCount}
@@ -1045,7 +1069,7 @@ export default function App() {
         onClose={() => setDrawerOpen(false)}
         onSignOut={session ? logout : undefined}
         isMember={!!memberBusinessId}
-        onAccount={guest ? (start) => setAuthStart(start) : undefined}
+        onAccount={guest ? openAccount : undefined}
       />
     )}
     </>

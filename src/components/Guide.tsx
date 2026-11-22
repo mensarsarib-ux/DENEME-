@@ -261,6 +261,8 @@ export default function Guide() {
   const finish = () => {
     haptic("light");
     setState("bitti");
+    // Açılış kartı (App) bu olayla çıkar
+    window.dispatchEvent(new Event("hesabim:rehber-bitti"));
   };
 
   const active = (state === "aktif" || state === "bakiye") && document.documentElement.dataset.guest === "1";

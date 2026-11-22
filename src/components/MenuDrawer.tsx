@@ -41,7 +41,7 @@ export default function MenuDrawer({
   /** Ortak işletmede üye: ekibi yetkili yönetir, Ekiplerim paketlere değil açıklamaya götürür */
   isMember?: boolean;
   /** Misafir (hesapsız) kullanımda: hesap kartı gösterilir; üye ol, giriş yap ya da ekibe katıl açılır */
-  onAccount?: (start: "reg-business" | "login" | "join-phone") => void;
+  onAccount?: (start: "welcome" | "reg-business" | "login" | "join-phone") => void;
 }) {
   const panelRef = useRef<HTMLElement>(null);
   const [bizOpen, setBizOpen] = useState(false);
@@ -93,24 +93,11 @@ export default function MenuDrawer({
         aria-label={t("Menü")}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Misafir: hesap açma, giriş ve ekibe katılma (kısa; uzun açıklama yok) */}
+        {/* Misafir: hesap açma ya da giriş için tek bağlantı (karşılama kartını yeniden açar) */}
         {onAccount && (
-          <div className="guest-card">
-            <div className="guest-card-text">
-              <b>{t("Misafirsiniz.")}</b> {t("Verileriniz bu telefonda.")}
-            </div>
-            <div className="guest-card-actions">
-              <button type="button" className="is-primary" onClick={() => requestClose(() => onAccount("reg-business"))}>
-                {t("Üye ol")}
-              </button>
-              <button type="button" className="is-light" onClick={() => requestClose(() => onAccount("login"))}>
-                {t("Giriş yap")}
-              </button>
-            </div>
-            <button type="button" className="guest-card-join" onClick={() => requestClose(() => onAccount("join-phone"))}>
-              {t("Ekibe katılın")}
-            </button>
-          </div>
+          <button type="button" className="guest-menu-link" onClick={() => requestClose(() => onAccount("welcome"))}>
+            {t("Giriş yap veya üye ol")}
+          </button>
         )}
 
         {/* Plan kartı: mevcut paket ve yükseltme */}
