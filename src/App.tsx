@@ -37,7 +37,6 @@ import {
   DEFAULT_PROFILE,
   DEFAULT_SETTINGS,
   balanceOf,
-  guestSamples,
   initialAccounts,
   initialCustomers,
   initialNotes,
@@ -96,6 +95,9 @@ function setDataOwner(userId: string) {
     /* depolama erişilemiyorsa kontrol atlanır */
   }
 }
+
+/** Misafir "devam" tercihi: yalnızca bu açılış (sayfa belleği); depolamaya yazılmaz */
+let misafirDevamBu = false;
 
 export default function App() {
   const [view, setView] = useState<View>({ name: "home" });
@@ -172,6 +174,14 @@ export default function App() {
     }
   });
   const [kapi, setKapi] = useState(false);
+  // "Misafir olarak devam et" yalnızca bu uygulama açılışında geçerlidir: sayfa bellekte tutulur,
+  // uygulama yeniden açılınca (ya da sayfa yenilenince) kapı yeniden çıkar
+  const [misafirDevam, setMisafirDevam] = useState<boolean>(() => misafirDevamBu);
+  const devamEt = () => {
+    misafirDevamBu = true;
+    setMisafirDevam(true);
+    setKapi(false);
+  };
   useEffect(() => {
     const onDone = () => setRehberBitti(true);
     window.addEventListener("hesabim:rehber-bitti", onDone);
@@ -179,7 +189,7 @@ export default function App() {
   }, []);
   // Kapı açılınca dokunuş ana sayfaya gitmez; kapı girişle kapanana kadar ana sayfa kullanılamaz
   useEffect(() => {
-    if (!guest || !rehberBitti || kapi || authStart) return;
+    if (!guest || !rehberBitti || kapi || authStart || misafirDevam) return;
     const onTap = (e: Event) => {
       e.preventDefault();
       e.stopPropagation();
@@ -187,7 +197,7 @@ export default function App() {
     };
     document.addEventListener("click", onTap, true);
     return () => document.removeEventListener("click", onTap, true);
-  }, [guest, rehberBitti, kapi, authStart]);
+  }, [guest, rehberBitti, kapi, authStart, misafirDevam]);
   const openAccount = (start: GuestStart) => {
     setKapi(false);
     setAuthStart(start);
@@ -199,13 +209,10 @@ export default function App() {
   useEffect(() => {
     if (!guest) return;
     if (!profile.name.trim()) setProfile((p) => ({ ...p, name: t("İşletmem") }));
-    // Boş telefonda: rehber başlar ve ana sayfa örnek şirketlerle dolu açılır (örnekler hesaba taşınmaz)
-    if (parties.length === 0) {
-      startGuideOnce();
-      const samples = guestSamples();
-      setParties(samples.parties);
-      setTransactions(samples.transactions);
-    }
+    // Boş telefonda rehber başlar. Eski sürümlerden kalan örnek kayıtlar varsa temizlenir (örnek veri artık yok)
+    if (parties.length === 0) startGuideOnce();
+    setParties((prev) => prev.filter((p) => !String(p.id).startsWith("ornek-")));
+    setTransactions((prev) => prev.filter((x) => !String(x.customerId).startsWith("ornek-")));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [guest]);
   // Titreşim cihaza özgüdür; diğer ayarlar hesapla birlikte eşitlenir
@@ -613,12 +620,6 @@ export default function App() {
           // Misafirken girilen kayıtlar yeni hesaba taşınır (ilk eşitlemede sunucuya yazılır); yalnızca işletme adı güncellenir
           const fromGuest = guest;
           setDataOwner(next.userId);
-          // Örnek şirketler ve işlemleri hesaba yazılmaz: hesap açılmadan / giriş yapılmadan önce silinir
-          if (fromGuest) {
-            const sampleIds = new Set(parties.filter((p) => p.sample).map((p) => p.id));
-            setParties((prev) => prev.filter((p) => !p.sample));
-            setTransactions((prev) => prev.filter((x) => !sampleIds.has(x.customerId)));
-          }
           if (info?.isNew && fromGuest) {
             if (info.businessName) setProfile((p) => ({ ...p, name: info.businessName }));
           } else if (info?.isNew) emptyWorkspace(info.businessName);
@@ -1075,7 +1076,7 @@ export default function App() {
       onRenameTab={renameTab}
       onDeleteTab={deleteTab}
     />
-    {guest && kapi && <GuestWelcome onAccount={openAccount} />}
+    {guest && kapi && <GuestWelcome onAccount={openAccount} onContinue={devamEt} />}
     {drawerOpen && (
       <MenuDrawer
         unread={pendingCount}
@@ -1088,6 +1089,7 @@ export default function App() {
         onClose={() => setDrawerOpen(false)}
         onSignOut={session ? logout : undefined}
         isMember={!!memberBusinessId}
+        onAccount={guest ? openAccount : undefined}
       />
     )}
     </>

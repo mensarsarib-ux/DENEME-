@@ -39,7 +39,7 @@ export function finishGuide() {
   if (readState() !== "bitti") writeState("bitti");
 }
 
-interface Party { id: string; name: string; kind: string; archived?: boolean; sample?: boolean }
+interface Party { id: string; name: string; kind: string; archived?: boolean }
 interface Tx { customerId: string; type: string; sub?: string }
 
 function readList<T>(key: string): T[] {
@@ -110,8 +110,7 @@ function currentStep(state: GuideState, setState: (s: GuideState) => void, finis
   if (q(".drawer") || sheets.some((el) => !el.querySelector(".account-btn"))) return null;
   const parties = readList<Party>("parties");
   const txs = readList<Tx>("transactions");
-  // Örnek şirketler değil, kişinin kendi eklediği ilk müşteri
-  const cust = parties.find((p) => p.kind === "customer" && !p.archived && !p.sample);
+  const cust = parties.find((p) => p.kind === "customer" && !p.archived);
   const mine = cust ? txs.filter((x) => x.customerId === cust.id) : [];
   const hasSale = mine.some((x) => x.type === "SATIŞ" && !x.sub);
   const hasCollection = mine.some((x) => x.type === "TAHSİLAT");

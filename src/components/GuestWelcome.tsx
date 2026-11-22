@@ -8,8 +8,11 @@ export type GuestStart = "welcome" | "reg-business" | "login" | "join-phone";
  */
 export default function GuestWelcome({
   onAccount,
+  onContinue,
 }: {
   onAccount: (start: GuestStart) => void;
+  /** Misafir olarak devam: bu oturumda kapı tekrar çıkmaz */
+  onContinue: () => void;
 }) {
   return (
     <div className="ob-page ob-welcome guest-welcome" role="dialog" aria-modal="true" aria-label={t("Hesabınızı oluşturun")}>
@@ -27,6 +30,9 @@ export default function GuestWelcome({
         </button>
         <button type="button" className="ob-btn is-outline" onClick={() => onAccount("join-phone")}>
           {t("Ekibe katıl")}
+        </button>
+        <button type="button" className="guest-welcome-later" onClick={onContinue}>
+          {t("Misafir olarak devam et")}
         </button>
       </div>
     </div>

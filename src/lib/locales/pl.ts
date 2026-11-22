@@ -827,6 +827,7 @@ const dict: Record<string, string> = {
   "Ödeme": "Płatność",
   "Kısmi ödeme": "Płatność częściowa",
   "Ambalaj alışı": "Zakup opakowań",
+  "Misafir olarak devam et": "Kontynuuj jako gość",
 };
 
 export default dict;

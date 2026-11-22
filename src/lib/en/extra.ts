@@ -586,4 +586,5 @@ export const extra: Record<string, string> = {
   "Ödeme": "Payment",
   "Kısmi ödeme": "Partial payment",
   "Ambalaj alışı": "Packaging purchase",
+  "Misafir olarak devam et": "Continue as guest",
 };
