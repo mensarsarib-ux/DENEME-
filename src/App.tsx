@@ -162,8 +162,15 @@ export default function App() {
   document.documentElement.dataset.guest = guest ? "1" : "0";
   // Misafir Menü'den hesap açmak ya da giriş yapmak isterse açılan ekran
   const [authStart, setAuthStart] = useState<GuestStart | null>(null);
-  // Rehber bitince misafir doğrudan üye olma ekranına gider (ana menü açıldıktan sonra).
-  // Rehber zaten bitmişse (uygulama yeniden açıldı) aynı ekran hemen açılır.
+  // İlk kurulum: tanıtımdan sonra işletme adı alınır (ekranda giriş yap, ekibe katıl, üye ol).
+  // Sonra rehber çalışır; rehber bitince ana ekranda ilk dokunuş hesap açma (telefon, kod, e-posta, şifre) ekranını açar.
+  const [isletmeHazir, setIsletmeHazir] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem("hesabim:misafir-isletme") === "1";
+    } catch {
+      return false;
+    }
+  });
   const [rehberBitti, setRehberBitti] = useState<boolean>(() => {
     try {
       return localStorage.getItem("hesabim:rehber") === "bitti";
@@ -172,17 +179,37 @@ export default function App() {
     }
   });
   useEffect(() => {
-    const onDone = () => {
-      setRehberBitti(true);
-      window.setTimeout(() => setAuthStart("reg-business"), 400);
-    };
+    const onDone = () => setRehberBitti(true);
     window.addEventListener("hesabim:rehber-bitti", onDone);
     return () => window.removeEventListener("hesabim:rehber-bitti", onDone);
   }, []);
+  // İşletme adı henüz alınmadıysa önce işletme ekranı açılır
   useEffect(() => {
-    if (guest && rehberBitti) setAuthStart((prev) => prev ?? "reg-business");
+    if (guest && !isletmeHazir) setAuthStart((prev) => prev ?? "reg-business");
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [guest, rehberBitti]);
+  }, [guest, isletmeHazir]);
+  // Rehber bitince ana ekranda ilk dokunuş hesap açma ekranını açar (dokunuş ana ekrana gitmez)
+  useEffect(() => {
+    if (!guest || !isletmeHazir || !rehberBitti || authStart) return;
+    const onTap = (e: Event) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setAuthStart("reg-phone");
+    };
+    document.addEventListener("click", onTap, true);
+    return () => document.removeEventListener("click", onTap, true);
+  }, [guest, isletmeHazir, rehberBitti, authStart]);
+  // İşletme adı girildi: kayıt bu adla ana ekrana yazılır, hesap daha sonra açılır
+  const isletmeTamam = (name: string) => {
+    try {
+      localStorage.setItem("hesabim:misafir-isletme", "1");
+    } catch {
+      /* depolama yoksa yalnızca bu oturumda geçerli */
+    }
+    setProfile((p) => ({ ...p, name }));
+    setIsletmeHazir(true);
+    setAuthStart(null);
+  };
   const openAccount = (start: GuestStart) => {
     setAuthStart(start);
   };
@@ -587,6 +614,7 @@ export default function App() {
     return (
       <AuthScreen
         start={authStart ?? undefined}
+        onBusinessDone={guest && !isletmeHazir ? isletmeTamam : undefined}
         recoveryToken={recoveryToken}
         onRecoveryDone={() => {
           setRecoveryToken(null);
@@ -760,7 +788,7 @@ export default function App() {
   /** Misafire paketler gösterilmez: önce hesap açması söylenir, ardından giriş seçenekleri açılır */
   function guestPaywall() {
     window.alert(t("Ücretsiz planda kayıt sınırına ulaştınız. Daha fazlası için önce hesap açın."));
-    setAuthStart("reg-business");
+    setAuthStart("reg-phone");
   }
 
   function limitReached() {

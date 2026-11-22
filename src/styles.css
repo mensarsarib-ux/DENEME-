@@ -4789,21 +4789,32 @@ a.action-btn:visited {
   }
 }
 
-/* Üye olma ekranının üstündeki kısa bağlantılar (zaten hesabı olanlar için) */
-.guest-auth-links {
-  display: flex;
-  justify-content: center;
+/* Tanıtımdan sonraki ilk ekran: Giriş yap (solda) ve Ekibe katıl (sağda), altında seçili Üye ol */
+.guest-auth-top {
+  display: grid;
   gap: 8px;
-  margin-bottom: 14px;
+  margin-bottom: 18px;
 }
 
-.guest-auth-links button {
-  padding: 7px 14px;
-  border-radius: 999px;
+.guest-auth-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.guest-auth-top button {
+  padding: 10px 12px;
+  border-radius: 12px;
   border: 1px solid var(--line);
   background: transparent;
   color: var(--text);
   font: inherit;
-  font-size: 0.82rem;
+  font-size: 0.9rem;
   font-weight: 600;
+}
+
+.guest-auth-top button.is-on {
+  background: var(--blue);
+  border-color: var(--blue);
+  color: #fff;
 }

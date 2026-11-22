@@ -118,6 +118,7 @@ export default function AuthScreen({
   onRecoveryDone,
   start,
   onClose,
+  onBusinessDone,
 }: {
   /** E-postadaki şifre sıfırlama bağlantısından gelindiyse geçici belirteç */
   recoveryToken?: string | null;
@@ -125,9 +126,11 @@ export default function AuthScreen({
   onSession: (session: Session, info?: { isNew: boolean; businessName: string }) => void;
   onRecoveryDone: () => void;
   /** Misafir Menü'den açtıysa ilk ekran (üye ol, giriş yap ya da ekibe katıl) */
-  start?: "welcome" | "reg-business" | "login" | "join-phone";
+  start?: "welcome" | "reg-business" | "reg-phone" | "login" | "join-phone";
   /** Misafir Menü'den açtıysa: açılış ekranına dönmek yerine uygulamaya (misafir paneline) dönülür */
   onClose?: () => void;
+  /** Tanıtımdan sonraki ilk kurulum: işletme adı alınır, hesap açılmaz (kayıt daha sonra ana ekrana dokununca) */
+  onBusinessDone?: (name: string) => void;
 }) {
   const [screen, setScreen] = useState<Screen>(recoveryToken ? "new-password" : start ?? "welcome");
   // Girişte e-posta mı telefon mu kullanılıyor
@@ -494,7 +497,12 @@ export default function AuthScreen({
           setInfo(t("Şifreniz yenilendi. Yeni şifrenizle giriş yapın."));
         });
       case "reg-business":
-        if (business.trim()) go(phoneToken ? "reg-email" : "reg-phone");
+        if (!business.trim()) return;
+        if (onBusinessDone) {
+          onBusinessDone(business.trim());
+          return;
+        }
+        go(phoneToken ? "reg-email" : "reg-phone");
         return;
       case "reg-phone":
       case "join-phone":
@@ -740,7 +748,11 @@ export default function AuthScreen({
 
   const flow = REGISTER.includes(screen) ? REGISTER : JOIN.includes(screen) ? JOIN : null;
   const step = flow ? flow.indexOf(screen) + 1 : 0;
-  const back = screen === "login" && loginForJoin ? "join-phone" : BACK[screen];
+  let back = screen === "login" && loginForJoin ? "join-phone" : BACK[screen];
+  // Tanıtımdan sonraki ekranlarda giriş ve katılma ekranından işletme ekranına dönülür
+  if (onBusinessDone && (screen === "login" || screen === "join-phone")) back = "reg-business";
+  // Ana ekrandan açılan doğrulamanın ilk adımında geri yok: hesap açılmadan uygulamaya dönülmez
+  if (start === "reg-phone" && screen === "reg-phone") back = undefined;
 
   // Ekran içeriği: başlık, açıklama, alanlar ve alttaki düğme
   let title = "";
@@ -1033,10 +1045,13 @@ export default function AuthScreen({
         </div>
         {/* Geri düğmesi üstte sabit; içerik altında ortalanır (klavye açılınca kesilmez, kaydırılır) */}
         <div className="ob-body">
-          {start === "reg-business" && screen === "reg-business" && (
-            <div className="guest-auth-links">
-              <button type="button" onClick={() => go("login")}>{t("Giriş yap")}</button>
-              <button type="button" onClick={() => go("join-phone")}>{t("Ekibe katıl")}</button>
+          {onBusinessDone && screen === "reg-business" && (
+            <div className="guest-auth-top">
+              <div className="guest-auth-row">
+                <button type="button" onClick={() => go("login")}>{t("Giriş yap")}</button>
+                <button type="button" onClick={() => go("join-phone")}>{t("Ekibe katıl")}</button>
+              </div>
+              <button type="button" className="is-on" aria-pressed="true">{t("Üye ol")}</button>
             </div>
           )}
           {done && body}

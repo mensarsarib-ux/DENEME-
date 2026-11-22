@@ -1,6 +1,6 @@
 import { t } from "../lib/i18n";
 
-export type GuestStart = "welcome" | "reg-business" | "login" | "join-phone";
+export type GuestStart = "welcome" | "reg-business" | "reg-phone" | "login" | "join-phone";
 
 /**
  * Misafir ana sayfada bir yere dokunduğunda çıkan kapı: arkada karartılmış ana sayfa, üstte logo ve

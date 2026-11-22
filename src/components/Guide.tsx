@@ -104,7 +104,7 @@ function prefillDescription(text: string) {
 }
 
 /** Ekranın ve kayıtların şu anki durumuna göre gösterilecek adım (yoksa rehber gizlenir) */
-function currentStep(state: GuideState, setState: (s: GuideState) => void, finish: () => void): Step | null {
+function currentStep(finish: () => void): Step | null {
   // Menü ya da başka bir pencere açıkken rehber bekler (nakit/banka sorusu hariç: o rehberin adımı)
   const sheets = [...document.querySelectorAll(".action-backdrop")];
   if (q(".drawer") || sheets.some((el) => !el.querySelector(".account-btn"))) return null;
@@ -113,7 +113,6 @@ function currentStep(state: GuideState, setState: (s: GuideState) => void, finis
   const cust = parties.find((p) => p.kind === "customer" && !p.archived);
   const mine = cust ? txs.filter((x) => x.customerId === cust.id) : [];
   const hasSale = mine.some((x) => x.type === "SATIŞ" && !x.sub);
-  const hasCollection = mine.some((x) => x.type === "TAHSİLAT");
 
   const home = visible(q(".topbar-menu"));
   const newPage = visible(q(".header-add"));
@@ -148,7 +147,7 @@ function currentStep(state: GuideState, setState: (s: GuideState) => void, finis
   }
   if (!cust) return null;
 
-  if (home && hasCollection) {
+  if (home && hasSale) {
     return {
       id: "bitis", stage: 4, pad: 6, radius: 18, noTap: true, place: "below",
       title: t("Tebrikler!"),
@@ -171,7 +170,6 @@ function currentStep(state: GuideState, setState: (s: GuideState) => void, finis
 
   const amountEmpty = !!q(".amount-field.is-empty");
   const activeTab = (q(".entry-tabs .is-active") as HTMLElement | null)?.textContent?.trim();
-  const sheetOpen = visible(q(".account-btn"));
   const desc = 'textarea[placeholder="' + t("Açıklama") + '"]';
 
   if (!hasSale) {
@@ -193,51 +191,9 @@ function currentStep(state: GuideState, setState: (s: GuideState) => void, finis
     };
   }
 
-  if (!hasCollection) {
-    if (sheetOpen) {
-      return {
-        id: "nakit-banka", stage: 3, noTap: true, place: "above", pad: 10,
-        title: t("Para nereye girdi?"),
-        text: t("Nakit mi, banka mı? Seçiminiz Kasa'daki bakiyeye yansır."),
-        targets: [() => q(".account-btn")?.closest(".action-sheet")],
-      };
-    }
-    if (activeTab !== "TAHSİLAT" && activeTab !== t("TAHSİLAT")) {
-      return {
-        id: "tahsilat-sec", stage: 3, pad: 6, place: "above",
-        title: t("Şimdi bir tahsilat girin"),
-        text: rich("Müşteriniz ödeme yaptığında {tab} sekmesine dokunun.", { tab: t("TAHSİLAT") }),
-        targets: [() => byText("button", t("TAHSİLAT"))],
-      };
-    }
-    if (amountEmpty) {
-      return {
-        id: "tahsilat-tutar", stage: 3, noTap: true, place: "above", pad: 6,
-        title: t("Tahsil edilen tutarı yazın"),
-        text: t("Müşterinizin ödediği tutarı tuş takımıyla girin."),
-        targets: [".amount-field", () => byText("button", t("TAHSİLAT")), ".keypad-inner"],
-      };
-    }
-    return {
-      id: "tahsilat-ekle", stage: 3, pad: 6, place: "above",
-      title: t("{btn} düğmesine dokunun", { btn: t("EKLE") }),
-      text: t("Tahsilat kaydedilir ve borç bu tutar kadar azalır."),
-      targets: [".amount-field", () => byText("button", t("TAHSİLAT")), ".keypad-inner"],
-      focus: ".save-btn",
-    };
-  }
-
-  if (state === "aktif") {
-    return {
-      id: "bakiye", stage: 4, noTap: true, place: "above", pad: 2, radius: 8,
-      title: t("Kalan borcu burada görürsünüz"),
-      text: t("Satış borcu artırdı, tahsilat düşürdü. Uygulamanın temeli bu kadar."),
-      targets: [() => byText("span", t("TOPLAM"))?.parentElement],
-      action: { label: t("İLERİ"), run: () => setState("bakiye") },
-    };
-  }
+  // Satış girildi: tahsilat istenmez, müşteri sayfasından geri dönülür
   return {
-    id: "geri", stage: 4, pad: 4, radius: 24,
+    id: "geri", stage: 3, pad: 4, radius: 24,
     title: t("Ana sayfaya dönün"),
     text: t("Müşterinizin bakiyesi listede görünür."),
     targets: ['button[aria-label="' + t("Geri") + '"]'],
@@ -291,7 +247,7 @@ export default function Guide() {
   }, [state]);
 
   if (!active || !state) return null;
-  const step = currentStep(state, setState, finish);
+  const step = currentStep(finish);
   if (!step) return null;
   const rect = measure(step.targets);
   if (!rect) return null;
