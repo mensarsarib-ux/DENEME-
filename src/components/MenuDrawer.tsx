@@ -93,17 +93,11 @@ export default function MenuDrawer({
         aria-label={t("Menü")}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Misafir: veriler yalnızca bu telefonda; hesap açma, giriş ve ekibe katılma buradan */}
+        {/* Misafir: hesap açma, giriş ve ekibe katılma (kısa; uzun açıklama yok) */}
         {onAccount && (
           <div className="guest-card">
-            <div className="guest-card-head">
-              <span className="guest-card-avatar" aria-hidden="true">
-                <Svg d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21c0-4 4-6 8-6s8 2 8 6" />
-              </span>
-              <div className="guest-card-text">
-                <b>{t("Misafir olarak kullanıyorsunuz")}</b>
-                <small>{t("Verileriniz yalnızca bu telefonda. Hesap açın; kaybolmasın, diğer cihazlarınızda ve ekibinizle görün.")}</small>
-              </div>
+            <div className="guest-card-text">
+              <b>{t("Misafirsiniz.")}</b> {t("Verileriniz bu telefonda.")}
             </div>
             <div className="guest-card-actions">
               <button type="button" className="is-primary" onClick={() => requestClose(() => onAccount("reg-business"))}>
@@ -114,7 +108,7 @@ export default function MenuDrawer({
               </button>
             </div>
             <button type="button" className="guest-card-join" onClick={() => requestClose(() => onAccount("join-phone"))}>
-              {t("Ekip davetiyle mi geldiniz? Ekibe katılın")}
+              {t("Ekibe katılın")}
             </button>
           </div>
         )}

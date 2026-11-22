@@ -4487,7 +4487,7 @@ a.action-btn:visited {
 /* Karartma dört parçadır; aydınlık alanın dışına dokunulamaz */
 .guide-dim {
   position: absolute;
-  background: rgba(6, 10, 16, 0.78);
+  background: rgba(6, 10, 16, 0.5);
   pointer-events: auto;
 }
 
@@ -4657,44 +4657,27 @@ a.action-btn:visited {
   }
 }
 
-/* ---------- Menü: misafir hesap kartı ---------- */
+/* ---------- Menü: misafir hesap kartı (kompakt) ---------- */
 
 .guest-card {
   display: grid;
-  gap: 10px;
-  margin: 12px 14px 4px;
-  padding: 14px;
-  border-radius: 16px;
-  background: #2a323d;
+  gap: 8px;
+  margin: 10px 14px 2px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: var(--surface-head);
   border: 1px solid var(--line);
 }
 
-.guest-card-head {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-
-.guest-card-avatar {
-  flex: none;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  background: var(--surface-head);
-  color: var(--muted);
-}
-
 .guest-card-text {
-  display: grid;
-  gap: 2px;
-  min-width: 0;
+  font-size: 0.85rem;
+  line-height: 1.35;
+  color: var(--muted);
 }
 
-.guest-card-text small {
-  color: var(--muted);
-  line-height: 1.35;
+.guest-card-text b {
+  color: var(--text);
+  font-weight: 700;
 }
 
 .guest-card-actions {
@@ -4704,10 +4687,10 @@ a.action-btn:visited {
 
 .guest-card-actions button {
   flex: 1;
-  padding: 10px;
-  border-radius: 12px;
+  padding: 8px;
+  border-radius: 10px;
   font-weight: 700;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
 }
 
 .guest-card-actions .is-primary {
@@ -4718,7 +4701,7 @@ a.action-btn:visited {
 
 .guest-card-actions .is-light {
   border: 1px solid var(--line);
-  background: var(--surface-head);
+  background: transparent;
   color: var(--text);
   font-weight: 600;
 }
@@ -4726,8 +4709,9 @@ a.action-btn:visited {
 .guest-card-join {
   border: 0;
   background: none;
-  padding: 2px 0 0;
+  padding: 0;
+  justify-self: start;
   color: var(--blue);
   font-weight: 600;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
 }
