@@ -57,7 +57,7 @@ import { setDarkHeader } from "./lib/theme";
 import AuthScreen from "./components/AuthScreen";
 import IntroSlides, { introDone } from "./components/IntroSlides";
 import { finishGuide, startGuideOnce } from "./components/Guide";
-import GuestWelcome, { type GuestStart } from "./components/GuestWelcome";
+import type { GuestStart } from "./components/GuestWelcome";
 import { cloudEnabled, heartbeat, loadSession, readRecoveryToken, signOut, syncAccountLanguage, type Session } from "./lib/cloud";
 import { useCloudSync } from "./lib/useCloudSync";
 import { clearStored, usePersistedState } from "./lib/storage";
@@ -95,9 +95,6 @@ function setDataOwner(userId: string) {
     /* depolama erişilemiyorsa kontrol atlanır */
   }
 }
-
-/** Misafir "devam" tercihi: yalnızca bu açılış (sayfa belleği); depolamaya yazılmaz */
-let misafirDevamBu = false;
 
 export default function App() {
   const [view, setView] = useState<View>({ name: "home" });
@@ -165,7 +162,8 @@ export default function App() {
   document.documentElement.dataset.guest = guest ? "1" : "0";
   // Misafir Menü'den hesap açmak ya da giriş yapmak isterse açılan ekran
   const [authStart, setAuthStart] = useState<GuestStart | null>(null);
-  // Rehber bitti mi (olay ya da önceki açılış). Bittiyse misafir ana sayfada ilk dokunuşta kapı açılır.
+  // Rehber bitince misafir doğrudan üye olma ekranına gider (ana menü açıldıktan sonra).
+  // Rehber zaten bitmişse (uygulama yeniden açıldı) aynı ekran hemen açılır.
   const [rehberBitti, setRehberBitti] = useState<boolean>(() => {
     try {
       return localStorage.getItem("hesabim:rehber") === "bitti";
@@ -173,33 +171,19 @@ export default function App() {
       return false;
     }
   });
-  const [kapi, setKapi] = useState(false);
-  // "Misafir olarak devam et" yalnızca bu uygulama açılışında geçerlidir: sayfa bellekte tutulur,
-  // uygulama yeniden açılınca (ya da sayfa yenilenince) kapı yeniden çıkar
-  const [misafirDevam, setMisafirDevam] = useState<boolean>(() => misafirDevamBu);
-  const devamEt = () => {
-    misafirDevamBu = true;
-    setMisafirDevam(true);
-    setKapi(false);
-  };
   useEffect(() => {
-    const onDone = () => setRehberBitti(true);
+    const onDone = () => {
+      setRehberBitti(true);
+      window.setTimeout(() => setAuthStart("reg-business"), 400);
+    };
     window.addEventListener("hesabim:rehber-bitti", onDone);
     return () => window.removeEventListener("hesabim:rehber-bitti", onDone);
   }, []);
-  // Kapı açılınca dokunuş ana sayfaya gitmez; kapı girişle kapanana kadar ana sayfa kullanılamaz
   useEffect(() => {
-    if (!guest || !rehberBitti || kapi || authStart || misafirDevam) return;
-    const onTap = (e: Event) => {
-      e.preventDefault();
-      e.stopPropagation();
-      setKapi(true);
-    };
-    document.addEventListener("click", onTap, true);
-    return () => document.removeEventListener("click", onTap, true);
-  }, [guest, rehberBitti, kapi, authStart, misafirDevam]);
+    if (guest && rehberBitti) setAuthStart((prev) => prev ?? "reg-business");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [guest, rehberBitti]);
   const openAccount = (start: GuestStart) => {
-    setKapi(false);
     setAuthStart(start);
   };
   useEffect(() => {
@@ -776,7 +760,7 @@ export default function App() {
   /** Misafire paketler gösterilmez: önce hesap açması söylenir, ardından giriş seçenekleri açılır */
   function guestPaywall() {
     window.alert(t("Ücretsiz planda kayıt sınırına ulaştınız. Daha fazlası için önce hesap açın."));
-    setKapi(true);
+    setAuthStart("reg-business");
   }
 
   function limitReached() {
@@ -1099,7 +1083,6 @@ export default function App() {
       onRenameTab={renameTab}
       onDeleteTab={deleteTab}
     />
-    {guest && kapi && <GuestWelcome onAccount={openAccount} onContinue={devamEt} />}
     {drawerOpen && (
       <MenuDrawer
         unread={pendingCount}

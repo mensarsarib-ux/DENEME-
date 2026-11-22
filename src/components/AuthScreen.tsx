@@ -1033,6 +1033,12 @@ export default function AuthScreen({
         </div>
         {/* Geri düğmesi üstte sabit; içerik altında ortalanır (klavye açılınca kesilmez, kaydırılır) */}
         <div className="ob-body">
+          {start === "reg-business" && screen === "reg-business" && (
+            <div className="guest-auth-links">
+              <button type="button" onClick={() => go("login")}>{t("Giriş yap")}</button>
+              <button type="button" onClick={() => go("join-phone")}>{t("Ekibe katıl")}</button>
+            </div>
+          )}
           {done && body}
           <h2 className="ob-heading">{title}</h2>
           {lead && <p className="ob-lead">{lead}</p>}
