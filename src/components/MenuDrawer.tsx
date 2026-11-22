@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 const CLOSE_MS = 260;
 import { haptic } from "../lib/haptics";
 import { MENU_ITEMS, SUPPORT_ICON, type MenuPage } from "../lib/menu";
-import { CURRENT_PLAN, PLAN_NAME, canAddBusiness, canUseTeam } from "../lib/plan";
+import { CURRENT_PLAN, LIMITS, PLAN_NAME, canAddBusiness, canUseTeam } from "../lib/plan";
 
 /** Şimdilik menüde gösterilmeyen sayfalar; kodları durur, listeden çıkarılarak tekrar açılabilir */
 const HIDDEN_PAGES: MenuPage[] = ["reports"];
@@ -26,7 +26,6 @@ export default function MenuDrawer({
   onClose,
   onSignOut,
   isMember = false,
-  onAccount,
 }: {
   /** Okunmamış bildirim sayısı; Bildirimler satırında rozet olarak görünür */
   unread: number;
@@ -40,8 +39,6 @@ export default function MenuDrawer({
   onSignOut?: () => void;
   /** Ortak işletmede üye: ekibi yetkili yönetir, Ekiplerim paketlere değil açıklamaya götürür */
   isMember?: boolean;
-  /** Misafir (hesapsız) kullanımda: hesap kartı gösterilir; üye ol, giriş yap ya da ekibe katıl açılır */
-  onAccount?: (start: "reg-business" | "login" | "join-phone") => void;
 }) {
   const panelRef = useRef<HTMLElement>(null);
   const [bizOpen, setBizOpen] = useState(false);
@@ -93,24 +90,12 @@ export default function MenuDrawer({
         aria-label={t("Menü")}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Misafir: giriş yap, üye ol, ekibe katıl; giriş yapmış kişi bunları görmez */}
-        {onAccount && (
-          <div className="guest-quick" role="group" aria-label={t("Hesap")}>
-            <button type="button" className="is-primary" onClick={() => requestClose(() => onAccount("login"))}>
-              {t("Giriş yap")}
-            </button>
-            <button type="button" onClick={() => requestClose(() => onAccount("reg-business"))}>
-              {t("Üye ol")}
-            </button>
-            <button type="button" onClick={() => requestClose(() => onAccount("join-phone"))}>
-              {t("Ekibe katıl")}
-            </button>
+        {/* Plan kartı: mevcut paket ve yükseltme */}
+        <div className="plan-card">
+          <div className="plan-card-text">
+            <span className="plan-card-label">{t("Paket: {p}", { p: t(PLAN_NAME[CURRENT_PLAN]) })}</span>
+            <small>{t("{b} işletme · {s} sekme · {k} kayıt", { b: LIMITS[CURRENT_PLAN].businesses === Infinity ? "∞" : LIMITS[CURRENT_PLAN].businesses, s: LIMITS[CURRENT_PLAN].tabs === Infinity ? "∞" : LIMITS[CURRENT_PLAN].tabs, k: LIMITS[CURRENT_PLAN].itemsPerTab === Infinity ? "∞" : LIMITS[CURRENT_PLAN].itemsPerTab })}</small>
           </div>
-        )}
-
-        {/* Plan kartı: yalnızca plan adı, her planın kendi rengiyle; en üst pakette yükseltme yok */}
-        <div className={`plan-card plan-${CURRENT_PLAN}`}>
-          <span className="plan-card-label">{t("{p} plan", { p: t(PLAN_NAME[CURRENT_PLAN]) })}</span>
           {CURRENT_PLAN !== "premium" && (
             <button type="button" className="plan-card-btn" onClick={() => open("plans")}>
               {t("Üst pakete geç")}

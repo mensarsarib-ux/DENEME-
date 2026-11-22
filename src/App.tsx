@@ -160,25 +160,35 @@ export default function App() {
   const guest = cloudEnabled && !session && !dataOwner() && !recoveryToken;
   // Misafir Menü'den hesap açmak ya da giriş yapmak isterse açılan ekran
   const [authStart, setAuthStart] = useState<GuestStart | null>(null);
-  // Rehber bitince çıkan açılış kartı (misafir, bir kez; Menü'den de açılabilir)
-  const [acilis, setAcilis] = useState(false);
+  // Rehber bitti mi (olay ya da önceki açılış). Bittiyse misafir ana sayfada ilk dokunuşta kapı açılır.
+  const [rehberBitti, setRehberBitti] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem("hesabim:rehber") === "bitti";
+    } catch {
+      return false;
+    }
+  });
+  const [kapi, setKapi] = useState(false);
   useEffect(() => {
-    const onDone = () => setAcilis(true);
+    const onDone = () => setRehberBitti(true);
     window.addEventListener("hesabim:rehber-bitti", onDone);
     return () => window.removeEventListener("hesabim:rehber-bitti", onDone);
   }, []);
-  // Hesap açma ya da giriş seçilince kart kapanır; panele dönülürse tekrar çıkmaz
+  // Kapı açılınca dokunuş ana sayfaya gitmez; kapı girişle kapanana kadar ana sayfa kullanılamaz
+  useEffect(() => {
+    if (!guest || !rehberBitti || kapi || authStart) return;
+    const onTap = (e: Event) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setKapi(true);
+    };
+    document.addEventListener("click", onTap, true);
+    return () => document.removeEventListener("click", onTap, true);
+  }, [guest, rehberBitti, kapi, authStart]);
   const openAccount = (start: GuestStart) => {
-    setAcilis(false);
-    // Menü'den "giriş ya da üye ol": karşılama kartı yeniden açılır
-    if (start === "welcome") {
-      setAcilis(true);
-      return;
-    }
+    setKapi(false);
     setAuthStart(start);
   };
-  // Rehber ve ekran yalnızca misafirken bunu görür (rehber ayrı çizilir, uygulamanın ekranlarına dokunmaz)
-  document.documentElement.dataset.guest = guest ? "1" : "0";
   useEffect(() => {
     if (session) finishGuide();
   }, [session]);
@@ -577,7 +587,6 @@ export default function App() {
     return (
       <AuthScreen
         start={authStart ?? undefined}
-        onClose={guest ? () => setAuthStart(null) : undefined}
         recoveryToken={recoveryToken}
         onRecoveryDone={() => {
           setRecoveryToken(null);
@@ -1051,12 +1060,7 @@ export default function App() {
       onRenameTab={renameTab}
       onDeleteTab={deleteTab}
     />
-    {guest && acilis && (
-      <GuestWelcome
-        onAccount={openAccount}
-        onDismiss={() => setAcilis(false)}
-      />
-    )}
+    {guest && kapi && <GuestWelcome onAccount={openAccount} />}
     {drawerOpen && (
       <MenuDrawer
         unread={pendingCount}
@@ -1069,7 +1073,6 @@ export default function App() {
         onClose={() => setDrawerOpen(false)}
         onSignOut={session ? logout : undefined}
         isMember={!!memberBusinessId}
-        onAccount={guest ? openAccount : undefined}
       />
     )}
     </>
