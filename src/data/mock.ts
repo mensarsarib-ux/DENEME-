@@ -45,6 +45,8 @@ export interface Customer {
   note?: string;
   /** Arşivdeki kayıt ana listede görünmez; verileri ve analizleri silinmez */
   archived?: boolean;
+  /** Misafire gösterilen örnek kayıt; hesap açılınca silinir, buluta gönderilmez */
+  sample?: boolean;
 }
 
 export const initialCustomers: Customer[] = [
@@ -389,3 +391,45 @@ export const DEFAULT_SETTINGS: Settings = {
   lowCashLimit: 50000,
   supportEmail: "",
 };
+
+/**
+ * Misafir (kayıtsız) kullanıcıya ana sayfa dolu görünsün diye örnek şirketler ve işlemler. Hiçbiri gerçek bir
+ * kişinin verisi değildir; hepsi "sample" işaretlidir ve hesap açılınca silinir (buluta gönderilmez).
+ * Ücretsiz paketin 10 kayıt sınırının altında kalır ki kişi kendi müşterisini ekleyebilsin.
+ */
+export function guestSamples(): { parties: Customer[]; transactions: Transaction[] } {
+  const parties: Customer[] = [
+    { id: "ornek-m1", name: "Örnek Ticaret A.Ş.", kind: "customer", sample: true },
+    { id: "ornek-m2", name: "Örnek Gıda Ltd. Şti.", kind: "customer", sample: true },
+    { id: "ornek-m3", name: "Örnek İnşaat", kind: "customer", sample: true },
+    { id: "ornek-m4", name: "Örnek Mobilya", kind: "customer", sample: true },
+    { id: "ornek-m5", name: "Örnek Market", kind: "customer", sample: true },
+    { id: "ornek-t1", name: "Örnek Toptan Gıda", kind: "supplier", sample: true },
+    { id: "ornek-t2", name: "Örnek Lojistik", kind: "supplier", sample: true },
+    { id: "ornek-t3", name: "Örnek Ambalaj", kind: "supplier", sample: true },
+  ];
+  const tx: Transaction[] = [];
+  let n = 0;
+  const add = (customerId: string, type: TxType, days: number, amount: number, description: string, account?: AccountId) =>
+    tx.push({ id: `ornek-tx-${++n}`, customerId, type, date: ago(days, 10 + (n % 7), (n * 13) % 60), description, amount, account });
+  // Son altı ay: her ay satış ve alış, ardından kısmi tahsilat ve ödeme (grafikler dolu görünür)
+  const months = [150, 120, 90, 60, 30, 3];
+  months.forEach((d, i) => {
+    add("ornek-m1", "SATIŞ", d, 18000 + i * 2500, "Ürün satışı");
+    add("ornek-m2", "SATIŞ", d - 1, 9500 + i * 1200, "Ürün satışı");
+    add("ornek-m3", "SATIŞ", d - 2, 14000 + (i % 3) * 3000, "Malzeme satışı");
+    add("ornek-t1", "ALIŞ", d, 11000 + i * 900, "Mal alışı");
+    add("ornek-t2", "ALIŞ", d - 1, 3200 + (i % 2) * 800, "Nakliye");
+    if (d > 3) {
+      add("ornek-m1", "TAHSİLAT", d - 8, 15000 + i * 2000, "Ödeme", "bank");
+      add("ornek-m2", "TAHSİLAT", d - 9, 8000 + i * 1000, "Ödeme", "cash");
+      add("ornek-t1", "ÖDEME", d - 10, 9000 + i * 800, "Ödeme", "bank");
+      add("ornek-t2", "ÖDEME", d - 7, 3000, "Ödeme", "cash");
+    }
+  });
+  add("ornek-m4", "SATIŞ", 45, 26000, "Mobilya satışı");
+  add("ornek-m4", "TAHSİLAT", 20, 12000, "Kısmi ödeme", "cash");
+  add("ornek-m5", "SATIŞ", 12, 7400, "Ürün satışı");
+  add("ornek-t3", "ALIŞ", 25, 4800, "Ambalaj alışı");
+  return { parties, transactions: tx };
+}

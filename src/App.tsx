@@ -37,6 +37,7 @@ import {
   DEFAULT_PROFILE,
   DEFAULT_SETTINGS,
   balanceOf,
+  guestSamples,
   initialAccounts,
   initialCustomers,
   initialNotes,
@@ -158,6 +159,8 @@ export default function App() {
    * daha önce hiçbir hesabın verisi yoksa geçerlidir; oturumu düşen eski kullanıcı bugünkü gibi giriş ekranını görür.
    */
   const guest = cloudEnabled && !session && !dataOwner() && !recoveryToken;
+  // Rehber ve ekran yalnızca misafirken bunu görür (rehber ayrı çizilir, uygulamanın ekranlarına dokunmaz)
+  document.documentElement.dataset.guest = guest ? "1" : "0";
   // Misafir Menü'den hesap açmak ya da giriş yapmak isterse açılan ekran
   const [authStart, setAuthStart] = useState<GuestStart | null>(null);
   // Rehber bitti mi (olay ya da önceki açılış). Bittiyse misafir ana sayfada ilk dokunuşta kapı açılır.
@@ -196,7 +199,13 @@ export default function App() {
   useEffect(() => {
     if (!guest) return;
     if (!profile.name.trim()) setProfile((p) => ({ ...p, name: t("İşletmem") }));
-    if (parties.length === 0) startGuideOnce();
+    // Boş telefonda: rehber başlar ve ana sayfa örnek şirketlerle dolu açılır (örnekler hesaba taşınmaz)
+    if (parties.length === 0) {
+      startGuideOnce();
+      const samples = guestSamples();
+      setParties(samples.parties);
+      setTransactions(samples.transactions);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [guest]);
   // Titreşim cihaza özgüdür; diğer ayarlar hesapla birlikte eşitlenir
@@ -604,6 +613,12 @@ export default function App() {
           // Misafirken girilen kayıtlar yeni hesaba taşınır (ilk eşitlemede sunucuya yazılır); yalnızca işletme adı güncellenir
           const fromGuest = guest;
           setDataOwner(next.userId);
+          // Örnek şirketler ve işlemleri hesaba yazılmaz: hesap açılmadan / giriş yapılmadan önce silinir
+          if (fromGuest) {
+            const sampleIds = new Set(parties.filter((p) => p.sample).map((p) => p.id));
+            setParties((prev) => prev.filter((p) => !p.sample));
+            setTransactions((prev) => prev.filter((x) => !sampleIds.has(x.customerId)));
+          }
           if (info?.isNew && fromGuest) {
             if (info.businessName) setProfile((p) => ({ ...p, name: info.businessName }));
           } else if (info?.isNew) emptyWorkspace(info.businessName);
