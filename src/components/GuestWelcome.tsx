@@ -19,9 +19,6 @@ export default function GuestWelcome({
         <img className="ob-logo" src="/logo.svg" alt="" />
         <h1 className="ob-title">Hesabım Muhasebe</h1>
         <p className="ob-tagline">{t("Cari hesap, kasa ve ekibiniz tek uygulamada")}</p>
-        <p className="guest-welcome-note">
-          {t("Verileriniz şimdilik yalnızca bu telefonda. Hesap açarsanız kaybolmaz ve diğer cihazlarınızda görünür.")}
-        </p>
       </div>
       <div className="ob-actions">
         <button type="button" className="ob-btn is-primary" onClick={() => onAccount("login")}>

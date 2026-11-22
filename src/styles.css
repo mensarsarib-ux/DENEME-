@@ -4661,19 +4661,64 @@ a.action-btn:visited {
   }
 }
 
-/* ---------- Menü: misafir bağlantısı ---------- */
+/* ---------- Menü: misafir giriş seçenekleri (yalnızca misafir görür) ---------- */
 
-.guest-menu-link {
-  display: block;
-  width: calc(100% - 28px);
-  margin: 10px 14px 2px;
-  padding: 10px 12px;
+.guest-quick {
+  display: flex;
+  gap: 6px;
+  margin: 10px 14px 0;
+}
+
+.guest-quick button {
+  flex: 1;
+  min-width: 0;
+  padding: 7px 4px;
+  border-radius: 999px;
   border: 1px solid var(--line);
-  border-radius: 12px;
   background: transparent;
-  color: var(--blue);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.76rem;
   font-weight: 600;
-  text-align: start;
+  white-space: nowrap;
+}
+
+.guest-quick button.is-primary {
+  background: var(--blue);
+  border-color: var(--blue);
+  color: #fff;
+}
+
+/* ---------- Menü: plan kartı (her planın kendi rengi) ---------- */
+
+.plan-card.plan-free,
+.plan-card.plan-pro,
+.plan-card.plan-proplus,
+.plan-card.plan-premium {
+  color: #fff;
+  border: 0;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 8px 18px rgba(0, 0, 0, 0.28);
+}
+
+.plan-card.plan-free { background: linear-gradient(135deg, #7d8796, #5b6676); }
+.plan-card.plan-pro { background: linear-gradient(135deg, #3772a3, #2a5a88); }
+.plan-card.plan-proplus { background: linear-gradient(135deg, #4f9a84, #2d7258); }
+.plan-card.plan-premium { background: linear-gradient(135deg, #e6c98a, #b08a4f); color: #1f1709; }
+
+.plan-card.plan-premium .plan-card-label {
+  color: #1f1709;
+}
+
+.plan-card.plan-free .plan-card-btn,
+.plan-card.plan-pro .plan-card-btn,
+.plan-card.plan-proplus .plan-card-btn {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+.plan-card .plan-card-label {
+  font-size: 1rem;
+  font-weight: 700;
 }
 
 /* ---------- Rehber bitince açılış kartı (eski karşılama ekranı) ---------- */
@@ -4682,7 +4727,28 @@ a.action-btn:visited {
   position: fixed;
   inset: 0;
   z-index: 85;
+  background: transparent;
+  justify-content: center;
   animation: guest-welcome-in 0.35s ease-out;
+}
+
+/* Arkada ana menü karartılmış olarak kalır */
+.guest-welcome::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: rgba(6, 10, 16, 0.82);
+  animation: guest-welcome-in 0.4s ease-out;
+}
+
+.guest-welcome .ob-hero {
+  flex: none;
+  padding-top: 0;
+}
+
+.guest-welcome .ob-actions {
+  margin-top: 26px;
 }
 
 .guest-welcome-note {

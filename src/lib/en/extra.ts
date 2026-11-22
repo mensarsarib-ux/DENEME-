@@ -590,4 +590,5 @@ export const extra: Record<string, string> = {
   "Verileriniz şimdilik yalnızca bu telefonda. Hesap açarsanız kaybolmaz ve diğer cihazlarınızda görünür.": "Your data is only on this phone for now. If you create an account it won't be lost, and you can see it on your other devices.",
   "Giriş yap veya üye ol": "Log in or sign up",
   "Hesabınızı oluşturun": "Create your account",
+  "{p} plan": "{p} plan",
 };
