@@ -57,6 +57,7 @@ import { setDarkHeader } from "./lib/theme";
 import AuthScreen from "./components/AuthScreen";
 import IntroSlides, { introDone } from "./components/IntroSlides";
 import { startGuide } from "./components/Guide";
+import InviteCard from "./components/InviteCard";
 import { cloudEnabled, heartbeat, loadSession, readRecoveryToken, signOut, syncAccountLanguage, type Session } from "./lib/cloud";
 import { useCloudSync } from "./lib/useCloudSync";
 import { clearStored, usePersistedState } from "./lib/storage";
@@ -978,6 +979,8 @@ export default function App() {
 
   return (
     <>
+    {/* Numaraya gelen ekip daveti (Menü açıkken gösterilmez) */}
+    {session && !drawerOpen && <InviteCard session={session} />}
     <Dashboard
       profile={profile}
       accounts={accounts}

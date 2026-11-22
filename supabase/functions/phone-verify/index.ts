@@ -112,7 +112,8 @@ Deno.serve(async (req) => {
       }
       const lang = typeof input.lang === "string" ? input.lang.slice(0, 5) : "tr";
       const created = await admin.auth.admin.createUser({
-        email: `${phone.replace(/\D/g, "")}@${PHONE_EMAIL_DOMAIN}`,
+        // Tahmin edilemeyen iç adres: numaradan türetilseydi biri bu adresle önceden kayıt olup numarayı kilitleyebilirdi
+        email: `${crypto.randomUUID()}@${PHONE_EMAIL_DOMAIN}`,
         email_confirm: true,
         password: crypto.randomUUID() + crypto.randomUUID(),
         // Numara burada yazılmaz: attach_verified_phone yazar (başka hesapta doğrulanmamış aynı numara varsa önce oradan kaldırır)

@@ -826,6 +826,7 @@ const dict: Record<string, string> = {
   "{p} davet edildi. Bu numarayla uygulamaya girince ekibinize katılır.": "{p} запрошено. Він приєднається, коли увійде з цим номером.",
   "Çalışanınızın telefon numarasını yazın. Uygulamayı indirip bu numarayla girdiğinde ekibinize katılır.": "Введіть номер телефону працівника. Коли він завантажить застосунок і увійде з цим номером, він приєднається до команди.",
   "İptal": "Скасувати",
+  "Ekip daveti": "Запрошення до команди",
 };
 
 export default dict;

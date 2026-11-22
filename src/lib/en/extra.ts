@@ -585,4 +585,5 @@ export const extra: Record<string, string> = {
   "{p} davet edildi. Bu numarayla uygulamaya girince ekibinize katılır.": "{p} was invited. They'll join your team when they sign in with this number.",
   "Çalışanınızın telefon numarasını yazın. Uygulamayı indirip bu numarayla girdiğinde ekibinize katılır.": "Enter your employee's phone number. When they download the app and sign in with this number, they'll join your team.",
   "İptal": "Cancel",
+  "Ekip daveti": "Team invite",
 };

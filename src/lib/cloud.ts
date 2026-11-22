@@ -73,7 +73,7 @@ interface AuthBody {
   access_token?: string;
   refresh_token?: string;
   expires_in?: number;
-  user?: { id: string; email?: string; phone?: string };
+  user?: { id: string; email?: string; phone?: string; app_metadata?: { phone_verified?: string } };
   error_code?: string;
   msg?: string;
   error_description?: string;
@@ -83,9 +83,12 @@ interface AuthBody {
 /** Telefonla (SMS koduyla) açılan hesabın iç e-postası: numaradan üretilir, kullanıcıya gösterilmez */
 const PHONE_EMAIL_DOMAIN = "@tel.hesabimmuhasebe.com";
 export const isPhoneAccountEmail = (email: string | null | undefined) => !!email && email.toLowerCase().endsWith(PHONE_EMAIL_DOMAIN);
-/** Ekranda gösterilecek kimlik: telefonla açılan hesapta e-posta yerine numara (+90…) */
+/**
+ * Ekranda gösterilecek kimlik. Sunucu, telefonla açılan hesaplarda iç e-posta yerine SMS ile doğrulanmış numarayı
+ * döndürür; iç adres yine de gelirse (numarası doğrulanmamış) gösterilmez.
+ */
 export const displayIdentity = (email: string | null | undefined): string =>
-  isPhoneAccountEmail(email) ? `+${email!.split("@")[0]}` : email ?? "";
+  isPhoneAccountEmail(email) ? "—" : email ?? "";
 
 function toSession(body: AuthBody, fallbackEmail: string): Session | null {
   if (!body.access_token || !body.refresh_token || !body.user) return null;
@@ -95,9 +98,12 @@ function toSession(body: AuthBody, fallbackEmail: string): Session | null {
     expiresAt: Date.now() + (body.expires_in ?? 3600) * 1000,
     userId: body.user.id,
     // Telefonla açılan hesapta e-posta yoktur; giriş kimliği olarak +90… biçiminde telefon tutulur
-    email: body.user.email
-      ? displayIdentity(body.user.email)
-      : body.user.phone
+    // Telefonla açılan hesapta kimlik, sunucunun yazdığı doğrulanmış numaradır
+    email: isPhoneAccountEmail(body.user.email)
+      ? body.user.app_metadata?.phone_verified ?? ""
+      : body.user.email
+        ? body.user.email
+        : body.user.phone
         ? `+${body.user.phone.replace(/^\+/, "")}`
         : fallbackEmail,
   };
@@ -456,6 +462,8 @@ export async function checkVerifiedPhone(idToken: string): Promise<{ phone: stri
 export interface TeamInvite {
   id: string;
   businessName: string;
+  /** Giriş yapmış kişinin davetlerinde: katılınca bu işletmeye geçilir */
+  businessId?: string;
 }
 
 /**
@@ -503,11 +511,13 @@ async function rpc<T>(session: Session, name: string, args: Record<string, unkno
 
 /** Giriş yapmış kişinin numarasına gelmiş ekip davetleri */
 export async function myInvites(session: Session): Promise<TeamInvite[] | "expired"> {
-  const r = await rpc<{ id: string; business_name: string }[]>(session, "my_invites");
-  return r === "expired" ? r : (r ?? []).map((i) => ({ id: i.id, businessName: i.business_name }));
+  const r = await rpc<{ id: string; business_id: string; business_name: string }[]>(session, "my_invites");
+  return r === "expired" ? r : (r ?? []).map((i) => ({ id: i.id, businessName: i.business_name, businessId: i.business_id }));
 }
 /** Daveti kabul eder: yetkilinin işletmesine üye olunur (ekip sınırı doluysa team_limit) */
 export const acceptInvite = (session: Session, id: string) => rpc<null>(session, "accept_invite", { inv: id });
+/** Daveti reddeder: davet silinir, yetkilinin bekleyen davetlerinden kalkar */
+export const declineInvite = (session: Session, id: string) => rpc<null>(session, "decline_invite", { inv: id });
 /** Yetkili: çalışanını telefon numarasıyla ekibe davet eder */
 export const inviteMember = (session: Session, businessId: string, phone: string) =>
   rpc<null>(session, "invite_member", { biz: businessId, p: phone });

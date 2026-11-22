@@ -120,3 +120,77 @@ grant execute on function public.my_sent_invites() to authenticated;
 grant execute on function public.cancel_invite(uuid) to authenticated;
 grant execute on function public.my_invites() to authenticated;
 grant execute on function public.accept_invite(uuid) to authenticated;
+
+-- Davet edilen kişi reddeder: yalnızca kendi numarasına gelen davet silinir
+create or replace function public.decline_invite(inv uuid)
+returns void
+language plpgsql security definer set search_path = public, auth as $$
+begin
+  delete from public.team_invites i
+  using auth.users u
+  where i.id = inv and u.id = auth.uid() and i.phone = u.raw_app_meta_data->>'phone_verified';
+end;
+$$;
+revoke execute on function public.decline_invite(uuid) from public, anon;
+grant execute on function public.decline_invite(uuid) to authenticated;
+
+-- Kötüye kullanımı sınırlamak için: bir işletmede en fazla 50 bekleyen davet
+create or replace function public.limit_invites() returns trigger
+language plpgsql security definer set search_path = public as $$
+begin
+  if (select count(*) from public.team_invites where business_id = new.business_id) >= 50 then
+    raise exception 'davet_siniri';
+  end if;
+  return new;
+end;
+$$;
+drop trigger if exists team_invites_limit on public.team_invites;
+create trigger team_invites_limit before insert on public.team_invites
+  for each row execute function public.limit_invites();
+
+-- ---------- Telefonla açılan hesapların listelerde görünen kimliği ----------
+-- Bu hesapların e-postası rastgele bir iç adrestir (@tel.hesabimmuhasebe.com). Listelerde onun yerine SMS ile
+-- doğrulanmış numara gösterilir. Numara yalnızca sunucunun yazdığı app_metadata'dan okunur (kullanıcı değiştiremez).
+create or replace function public.user_label(uid uuid)
+returns text
+language sql security definer stable set search_path = public, auth as $$
+  select case
+    when lower(u.email) like '%@tel.hesabimmuhasebe.com' then coalesce(u.raw_app_meta_data->>'phone_verified', u.email::text)
+    else coalesce(u.email::text, '+' || u.phone::text)
+  end
+  from auth.users u where u.id = uid;
+$$;
+revoke execute on function public.user_label(uuid) from public, anon, authenticated;
+
+create or replace function public.team_people()
+returns table (user_id uuid, email text)
+language sql stable security definer set search_path = public as $$
+  select distinct u.id, public.user_label(u.id)
+  from auth.users u
+  where exists (
+      select 1 from public.join_requests r
+      where r.requester_id = u.id and r.status = 'approved' and public.is_owner(r.business_id))
+     or exists (
+      select 1 from public.business_members m
+      where m.user_id = u.id and m.role = 'member' and public.is_owner(m.business_id));
+$$;
+
+create or replace function public.pending_requests()
+returns table (request_id uuid, business_id uuid, business_name text, requester_email text, created_at timestamptz)
+language sql stable security definer set search_path = public as $$
+  select r.id, r.business_id, b.name, public.user_label(r.requester_id), r.created_at
+  from public.join_requests r
+  join public.businesses b on b.id = r.business_id
+  where r.status = 'pending' and public.is_owner(r.business_id)
+  order by r.created_at desc;
+$$;
+
+create or replace function public.team_overview()
+returns table (business_id uuid, business_name text, user_id uuid, email text, role text)
+language sql stable security definer set search_path = public as $$
+  select m.business_id, b.name, m.user_id, public.user_label(m.user_id), m.role
+  from public.business_members m
+  join public.businesses b on b.id = m.business_id
+  where public.is_owner(m.business_id)
+  order by b.created_at;
+$$;
