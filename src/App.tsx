@@ -597,6 +597,8 @@ export default function App() {
     : "customer";
   // Arşivdeki kayıtlar ana listede görünmez; analizler ise tüm kayıtları kullanmaya devam eder
   const membersOf = (kind: PartyKind) => parties.filter((p) => p.kind === kind && !p.archived);
+  // Paket sınırı arşivlenmiş kayıtları da sayar (arşivleyip yenisini eklemek sınırı aşmasın)
+  const allOf = (kind: PartyKind) => parties.filter((p) => p.kind === kind);
   function setArchived(id: string, archived: boolean) {
     setParties((prev) => prev.map((p) => (p.id === id ? { ...p, archived: archived || undefined } : p)));
   }
@@ -830,7 +832,7 @@ export default function App() {
             onRestore={(id) => {
               // Arşivden geri alınan kayıt da listedeki kayıt sınırına sayılır
               const kind = parties.find((p) => p.id === id)?.kind;
-              if (kind && !canAddItem(membersOf(kind).length, limitPlan)) {
+              if (kind && !canAddItem(allOf(kind).length, limitPlan)) {
                 limitReached();
                 return;
               }
@@ -849,7 +851,7 @@ export default function App() {
             }
             onOpenParty={openParty}
             onNewParty={(kind) => {
-              if (!canAddItem(membersOf(kind).length, limitPlan)) {
+              if (!canAddItem(allOf(kind).length, limitPlan)) {
                 limitReached();
                 return;
               }
@@ -995,7 +997,7 @@ export default function App() {
         setTransactions((prev) => prev.filter((t) => t.customerId !== id));
       }}
       onNewParty={() => {
-        if (!canAddItem(membersOf(currentTab).length, limitPlan)) {
+        if (!canAddItem(allOf(currentTab).length, limitPlan)) {
           limitReached();
           return;
         }
