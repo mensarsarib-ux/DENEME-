@@ -8,8 +8,7 @@ import {
   myBusinesses,
   markChangeNoticesRead,
   type ChangeNotice,
-  type PendingRequest,
-} from "../lib/cloud";
+  type PendingRequest, displayIdentity } from "../lib/cloud";
 import { locale, t } from "../lib/i18n";
 import { canAddTeamMember } from "../lib/plan";
 import { haptic } from "../lib/haptics";
@@ -143,7 +142,7 @@ export default function BusinessRequestsPage({ onBack }: { onBack: () => void })
             items.map((item) => (
               <div key={item.request_id} className="request-row">
                 <div className="request-text">
-                  <strong>{item.requester_email}</strong>
+                  <strong>{displayIdentity(item.requester_email)}</strong>
                   <small>{t("{name} işletmenize katılmak istiyor", { name: item.business_name })}</small>
                 </div>
                 {picking?.requestId === item.request_id ? (

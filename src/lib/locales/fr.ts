@@ -787,6 +787,13 @@ const dict: Record<string, string> = {
   "Şimdilik yalnızca Türkiye numaralarına SMS gönderilebiliyor.": "Pour l'instant, les SMS ne peuvent être envoyés qu'aux numéros turcs.",
   "Kod az önce gönderildi. Biraz bekleyip tekrar deneyin.": "Le code vient d'être envoyé. Patientez un instant et réessayez.",
   "Şu anda çok fazla istek var. Birkaç dakika sonra tekrar deneyin.": "Trop de demandes en ce moment. Réessayez dans quelques minutes.",
+  "E-posta ile giriş yap": "Se connecter avec l’e-mail",
+  "E-posta ile giriş": "Connexion par e-mail",
+  "Telefonunuzu ekleyin": "Ajoutez votre téléphone",
+  "Bundan sonra şifre yerine telefonunuza gelen SMS koduyla giriş yaparsınız.": "Désormais, vous vous connecterez avec un code SMS envoyé sur votre téléphone au lieu d’un mot de passe.",
+  "Daha sonra": "Plus tard",
+  "Telefon numaranıza SMS ile 6 haneli bir kod göndereceğiz.": "Nous vous enverrons un code à 6 chiffres par SMS.",
+  "Bu numarayla kayıtlı hesap yok. Üye olun ya da e-posta ile giriş yapın.": "Aucun compte n’est associé à ce numéro. Inscrivez-vous ou connectez-vous avec votre e-mail.",
 };
 
 export default dict;

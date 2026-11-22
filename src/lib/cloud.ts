@@ -80,6 +80,13 @@ interface AuthBody {
   message?: string;
 }
 
+/** Telefonla (SMS koduyla) açılan hesabın iç e-postası: numaradan üretilir, kullanıcıya gösterilmez */
+const PHONE_EMAIL_DOMAIN = "@tel.hesabimmuhasebe.com";
+export const isPhoneAccountEmail = (email: string | null | undefined) => !!email && email.toLowerCase().endsWith(PHONE_EMAIL_DOMAIN);
+/** Ekranda gösterilecek kimlik: telefonla açılan hesapta e-posta yerine numara (+90…) */
+export const displayIdentity = (email: string | null | undefined): string =>
+  isPhoneAccountEmail(email) ? `+${email!.split("@")[0]}` : email ?? "";
+
 function toSession(body: AuthBody, fallbackEmail: string): Session | null {
   if (!body.access_token || !body.refresh_token || !body.user) return null;
   return {
@@ -88,7 +95,11 @@ function toSession(body: AuthBody, fallbackEmail: string): Session | null {
     expiresAt: Date.now() + (body.expires_in ?? 3600) * 1000,
     userId: body.user.id,
     // Telefonla açılan hesapta e-posta yoktur; giriş kimliği olarak +90… biçiminde telefon tutulur
-    email: body.user.email || (body.user.phone ? `+${body.user.phone.replace(/^\+/, "")}` : fallbackEmail),
+    email: body.user.email
+      ? displayIdentity(body.user.email)
+      : body.user.phone
+        ? `+${body.user.phone.replace(/^\+/, "")}`
+        : fallbackEmail,
   };
 }
 
@@ -364,8 +375,10 @@ export async function getAccountProfile(session: Session): Promise<AccountProfil
     phone,
     phoneVerified: phone !== "" && user.app_metadata?.phone_verified === phone,
     // "Confirm email" kapalıyken Supabase yeni hesabı onaylı sayar; gerçekte doğrulanmadıysa sunucu email_unverified işaretler
-    emailConfirmed: !!user.email && !!user.email_confirmed_at && user.app_metadata?.email_unverified !== true,
-    loginEmail: user.email ?? "",
+    // Telefonla açılan hesabın iç e-postası gösterilmez: "E-posta eklenmedi" görünür
+    emailConfirmed:
+      !!user.email && !isPhoneAccountEmail(user.email) && !!user.email_confirmed_at && user.app_metadata?.email_unverified !== true,
+    loginEmail: isPhoneAccountEmail(user.email) ? "" : user.email ?? "",
   };
 }
 
@@ -437,6 +450,29 @@ export async function checkVerifiedPhone(idToken: string): Promise<{ phone: stri
   const res = await call("/functions/v1/phone-verify", { method: "POST", body: JSON.stringify({ idToken, action: "check" }) });
   if (!res.ok) throw new CloudError(res.status === 401 ? "invalid_credentials" : "unknown", String(res.status));
   return (await res.json()) as { phone: string; taken: boolean };
+}
+
+/**
+ * SMS koduyla giriş ya da kayıt. Numarayı doğrulamış hesaba oturum açılır; hesap yoksa create ile numarayla yeni
+ * hesap açılır (e-posta ve şifre istenmez). Hesap yoksa ve create verilmediyse no_account.
+ */
+export async function smsSession(idToken: string, create: boolean): Promise<{ session: Session; isNew: boolean }> {
+  const res = await call("/functions/v1/phone-verify", {
+    method: "POST",
+    body: JSON.stringify({ idToken, action: "session", create, lang: getLanguage() }),
+  });
+  if (res.status === 404) throw new CloudError("no_account", "no account");
+  if (res.status === 401) throw new CloudError("invalid_credentials", "token");
+  if (!res.ok) throw new CloudError("unknown", String(res.status));
+  const { tokenHash, isNew } = (await res.json()) as { tokenHash: string; isNew: boolean };
+  const verify = await call("/auth/v1/verify", {
+    method: "POST",
+    body: JSON.stringify({ type: "magiclink", token_hash: tokenHash }),
+  });
+  const body = (await verify.json().catch(() => ({}))) as AuthBody;
+  const session = verify.ok ? toSession(body, "") : null;
+  if (!session) throw new CloudError("unknown", "no session");
+  return { session, isNew };
 }
 
 /** Doğrulanan numarayı hesaba yazar; numara başka bir hesapta doğrulanmışsa phone_taken */

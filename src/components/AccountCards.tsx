@@ -334,8 +334,11 @@ function LoginCard({
       <div className="field">
         <span className="field-label">{t("E-posta")}</span>
         <div className="login-row">
-          <span className="login-row-value">{profile.loginEmail}</span>
-          {profile.emailConfirmed ? (
+          <span className="login-row-value">{profile.loginEmail || t("E-posta eklenmedi")}</span>
+          {/* Telefonla açılan hesapta e-posta yoktur: isteğe bağlı eklenir */}
+          {!profile.loginEmail ? (
+            <button type="button" className="action-btn" onClick={() => open("email")}>{t("E-posta ekle")}</button>
+          ) : profile.emailConfirmed ? (
             <VerifiedBadge />
           ) : (
             <>

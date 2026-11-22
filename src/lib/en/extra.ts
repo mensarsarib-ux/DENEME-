@@ -546,4 +546,11 @@ export const extra: Record<string, string> = {
   "Şimdilik yalnızca Türkiye numaralarına SMS gönderilebiliyor.": "For now, SMS can only be sent to Turkish numbers.",
   "Kod az önce gönderildi. Biraz bekleyip tekrar deneyin.": "The code was just sent. Wait a moment and try again.",
   "Şu anda çok fazla istek var. Birkaç dakika sonra tekrar deneyin.": "There are too many requests right now. Try again in a few minutes.",
+  "E-posta ile giriş yap": "Sign in with email",
+  "E-posta ile giriş": "Sign in with email",
+  "Telefonunuzu ekleyin": "Add your phone",
+  "Bundan sonra şifre yerine telefonunuza gelen SMS koduyla giriş yaparsınız.": "From now on you'll sign in with an SMS code sent to your phone instead of a password.",
+  "Daha sonra": "Later",
+  "Telefon numaranıza SMS ile 6 haneli bir kod göndereceğiz.": "We'll send a 6-digit code to your phone by SMS.",
+  "Bu numarayla kayıtlı hesap yok. Üye olun ya da e-posta ile giriş yapın.": "There's no account with this number. Sign up or sign in with email.",
 };

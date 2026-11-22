@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Share } from "@capacitor/share";
-import { teamPeople, type Session, type TeamPerson } from "../lib/cloud";
+import { teamPeople, type Session, type TeamPerson, displayIdentity } from "../lib/cloud";
 import { t } from "../lib/i18n";
 import { haptic } from "../lib/haptics";
 import { SUPPORT_ICON } from "../lib/menu";
@@ -123,7 +123,7 @@ export default function TeamPage({
                   onOpen(p);
                 }}
               >
-                <span className="team-row-email">{p.email}</span>
+                <span className="team-row-email">{displayIdentity(p.email)}</span>
                 <span aria-hidden="true">›</span>
               </button>
             ))}

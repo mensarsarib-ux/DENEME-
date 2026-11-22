@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { removeTeamMember, setBusinessShare, teamOverview, type Session, type TeamPerson, type TeamRow } from "../lib/cloud";
+import { removeTeamMember, setBusinessShare, teamOverview, type Session, type TeamPerson, type TeamRow, displayIdentity } from "../lib/cloud";
 import { t } from "../lib/i18n";
 import { haptic } from "../lib/haptics";
 import { SUPPORT_ICON } from "../lib/menu";
@@ -42,7 +42,7 @@ export default function TeamMemberPage({
 
   return (
     <div className="cust-page">
-      <PageHeader title={person.email} subtitle={t("Hangi işletmeleri görsün?")} icon={SUPPORT_ICON} onBack={onBack} />
+      <PageHeader title={displayIdentity(person.email)} subtitle={t("Hangi işletmeleri görsün?")} icon={SUPPORT_ICON} onBack={onBack} />
       <div className="stack">
         <section className="card" aria-label={t("İşletme erişimi")}>
           {failed && <p className="form-error" role="alert">{t("Bilgiler yüklenemedi.")}</p>}

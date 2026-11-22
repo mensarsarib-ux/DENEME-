@@ -787,6 +787,13 @@ const dict: Record<string, string> = {
   "Şimdilik yalnızca Türkiye numaralarına SMS gönderilebiliyor.": "目前只能向土耳其号码发送短信。",
   "Kod az önce gönderildi. Biraz bekleyip tekrar deneyin.": "验证码刚刚已发送。请稍候再试。",
   "Şu anda çok fazla istek var. Birkaç dakika sonra tekrar deneyin.": "当前请求过多。请几分钟后再试。",
+  "E-posta ile giriş yap": "使用邮箱登录",
+  "E-posta ile giriş": "邮箱登录",
+  "Telefonunuzu ekleyin": "添加手机号",
+  "Bundan sonra şifre yerine telefonunuza gelen SMS koduyla giriş yaparsınız.": "今后你将使用发送到手机的短信验证码登录，而不是密码。",
+  "Daha sonra": "稍后",
+  "Telefon numaranıza SMS ile 6 haneli bir kod göndereceğiz.": "我们将通过短信向你发送 6 位验证码。",
+  "Bu numarayla kayıtlı hesap yok. Üye olun ya da e-posta ile giriş yapın.": "此号码没有账户。请注册或使用邮箱登录。",
 };
 
 export default dict;
