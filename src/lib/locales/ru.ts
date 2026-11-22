@@ -831,6 +831,7 @@ const dict: Record<string, string> = {
   "Tebrikler!": "Поздравляем!",
   "İlk müşterinizi ekleyip kayıt girdiniz. Devam etmek için İleri'ye dokunun.": "Вы добавили первого клиента и внесли операцию. Нажмите «Далее», чтобы продолжить.",
   "Ücretsiz planda kayıt sınırına ulaştınız. Daha fazlası için önce hesap açın.": "Вы достигли лимита записей бесплатного плана. Чтобы продолжить, сначала создайте аккаунт.",
+  "{n} kayıt sınırına ulaştınız. Pro ile {p} kayıt, {b} işletme ve ekip.": "Вы достигли лимита в {n} записей. С Pro: {p} записей, {b} бизнеса и команда.",
 };
 
 export default dict;

@@ -590,4 +590,5 @@ export const extra: Record<string, string> = {
   "Tebrikler!": "Congratulations!",
   "İlk müşterinizi ekleyip kayıt girdiniz. Devam etmek için İleri'ye dokunun.": "You added your first customer and recorded a transaction. Tap Next to continue.",
   "Ücretsiz planda kayıt sınırına ulaştınız. Daha fazlası için önce hesap açın.": "You've reached the free plan's record limit. To go further, create an account first.",
+  "{n} kayıt sınırına ulaştınız. Pro ile {p} kayıt, {b} işletme ve ekip.": "You've reached the limit of {n} records. With Pro you get {p} records, {b} businesses and a team.",
 };

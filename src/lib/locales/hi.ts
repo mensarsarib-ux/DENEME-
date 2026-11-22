@@ -831,6 +831,7 @@ const dict: Record<string, string> = {
   "Tebrikler!": "बधाई हो!",
   "İlk müşterinizi ekleyip kayıt girdiniz. Devam etmek için İleri'ye dokunun.": "आपने पहला ग्राहक जोड़ा और एक लेन-देन दर्ज किया। आगे बढ़ने के लिए आगे पर टैप करें।",
   "Ücretsiz planda kayıt sınırına ulaştınız. Daha fazlası için önce hesap açın.": "आप मुफ़्त प्लान की रिकॉर्ड सीमा तक पहुँच गए हैं। आगे बढ़ने के लिए पहले खाता बनाएं।",
+  "{n} kayıt sınırına ulaştınız. Pro ile {p} kayıt, {b} işletme ve ekip.": "आप {n} रिकॉर्ड की सीमा तक पहुँच गए हैं। Pro में: {p} रिकॉर्ड, {b} व्यवसाय और टीम।",
 };
 
 export default dict;

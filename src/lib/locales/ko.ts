@@ -831,6 +831,7 @@ const dict: Record<string, string> = {
   "Tebrikler!": "축하합니다!",
   "İlk müşterinizi ekleyip kayıt girdiniz. Devam etmek için İleri'ye dokunun.": "첫 거래처를 추가하고 거래를 기록했습니다. 계속하려면 다음을 누르세요.",
   "Ücretsiz planda kayıt sınırına ulaştınız. Daha fazlası için önce hesap açın.": "무료 요금제의 기록 한도에 도달했습니다. 계속하려면 먼저 계정을 만드세요.",
+  "{n} kayıt sınırına ulaştınız. Pro ile {p} kayıt, {b} işletme ve ekip.": "{n}개 기록 한도에 도달했습니다. Pro에서는 {p}개 기록, {b}개 사업장, 팀을 사용할 수 있습니다.",
 };
 
 export default dict;
