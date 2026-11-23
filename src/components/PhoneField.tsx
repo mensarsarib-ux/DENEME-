@@ -100,7 +100,6 @@ export default function PhoneField({
         type="tel"
         inputMode="tel"
         autoComplete={autoComplete}
-        placeholder={t("5xx xxx xx xx")}
         value={digits}
         onChange={(e) => {
           const raw = e.target.value;
