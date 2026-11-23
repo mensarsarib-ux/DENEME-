@@ -12,7 +12,25 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Meta SDK: otomatik uygulama olayları (yükleme, açılış) için başlat. ATT izni istenmez.
         ApplicationDelegate.shared.application(application, didFinishLaunchingWithOptions: launchOptions)
+        // Telefon doğrulaması: Firebase, numarayı Apple'ın sessiz bildirimiyle doğrular (robot sayfası açılmaz).
+        // Bunun için uygulama bildirim jetonu alır; kullanıcıya bildirim izni sorulmaz.
+        if FirebaseApp.app() == nil { FirebaseApp.configure() }
+        application.registerForRemoteNotifications()
         return true
+    }
+
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        // Apple'ın verdiği jeton Firebase'e iletilir (geliştirme ya da yayın ortamını Firebase kendisi anlar)
+        Auth.auth().setAPNSToken(deviceToken, type: .unknown)
+    }
+
+    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        // Firebase'in doğrulama bildirimi: Firebase işler, başka bir şey yapılmaz
+        if Auth.auth().canHandleNotification(userInfo) {
+            completionHandler(.noData)
+            return
+        }
+        completionHandler(.noData)
     }
 
     func applicationWillResignActive(_ application: UIApplication) {
