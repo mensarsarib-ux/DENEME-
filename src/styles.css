@@ -4279,9 +4279,12 @@ a.action-btn:visited {
   overflow-y: auto;
   margin-top: 8px;
   padding: 18px max(22px, env(safe-area-inset-right, 0px)) calc(env(safe-area-inset-bottom, 0px) + 24px) max(22px, env(safe-area-inset-left, 0px));
-  border-radius: 26px 26px 0 0;
-  background: var(--surface);
-  color: var(--text);
+  /* Ayrı koyu panel yok: uygulamanın arka plan rengi baştan sona görünür */
+  width: 100%;
+  max-width: 480px;
+  margin-inline: auto;
+  background: transparent;
+  color: #f2f5f8;
   animation: ob-fade-up 0.25s ease-out both;
 }
 
@@ -4443,6 +4446,25 @@ a.action-btn:visited {
   gap: 14px;
   margin-block: auto;
 }
+/* Başlık ve açıklama ortada; alanlar ve düğme tam genişlik */
+.ob-sheet .ob-heading,
+.ob-sheet .ob-lead,
+.ob-sheet .form-success,
+.ob-sheet .form-error { text-align: center; }
+.ob-sheet .ob-lead,
+.ob-sheet .ob-step { color: #c6d3e0; }
+/* Uygulama renginin üstünde alanlar hafif saydam cam gibi durur */
+.ob-sheet input:not([type="checkbox"]):not([type="radio"]),
+.ob-sheet .phone-code {
+  background: rgba(10, 22, 34, 0.38);
+  border-color: rgba(242, 245, 248, 0.18);
+  color: #f2f5f8;
+}
+.ob-sheet input::placeholder { color: rgba(242, 245, 248, 0.45); }
+.ob-sheet .ob-progress { background: rgba(242, 245, 248, 0.16); }
+.ob-sheet .round-btn { background: rgba(242, 245, 248, 0.12); color: #f2f5f8; }
+.ob-sheet .auth-legal { text-align: center; }
+.ob-sheet .primary-btn:disabled { background: rgba(242, 245, 248, 0.14); color: rgba(242, 245, 248, 0.6); }
 .ob-sheet.is-done .ob-body { align-items: center; text-align: center; }
 .ob-sheet.is-done .ob-body .primary-btn { align-self: stretch; }
 
