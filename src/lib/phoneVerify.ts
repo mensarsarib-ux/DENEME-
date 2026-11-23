@@ -12,6 +12,7 @@
 import { Capacitor } from "@capacitor/core";
 import { firebaseConfig } from "./firebaseConfig";
 import { t } from "./i18n";
+import { trackEvent } from "./tapTrack";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const STORE_KEY = "hesabim-sms-log";
@@ -35,6 +36,10 @@ export type SmsErrorCode =
   | "expired"
   /** Firebase çok fazla istek dedi */
   | "quota"
+  /** Firebase bu cihazı olağandışı etkinlik nedeniyle geçici olarak engelledi */
+  | "blocked"
+  /** Uygulama doğrulaması (Apple bildirim jetonu) başarısız */
+  | "app_verify"
   /** Numaranın ülkesine SMS gönderimi kapalı (SMS bölge politikası) */
   | "region"
   /** Bağlantı ya da bilinmeyen hata */
@@ -44,6 +49,8 @@ export class SmsError extends Error {
   constructor(
     public code: SmsErrorCode,
     public seconds = 0,
+    /** Firebase'in ham hata metni (tanılama için ekranda kısaca gösterilir ve kaydedilir) */
+    public detail = "",
   ) {
     super(code);
   }
@@ -96,13 +103,21 @@ export async function resendWait(_phone: string): Promise<number> {
 /** Firebase hata metninden bizim hata kodumuza */
 function mapError(e: unknown): SmsError {
   if (e instanceof SmsError) return e;
-  const text = `${(e as { code?: string })?.code ?? ""} ${(e as Error)?.message ?? ""}`.toLowerCase();
-  if (text.includes("region") || text.includes("operation-not-allowed") || text.includes("operation_not_allowed")) return new SmsError("region");
-  if (text.includes("invalid-phone") || text.includes("invalid phone") || text.includes("invalid format")) return new SmsError("invalid_phone");
-  if (text.includes("invalid-verification-code") || text.includes("verification code") && text.includes("invalid")) return new SmsError("invalid_code");
-  if (text.includes("code-expired") || text.includes("session-expired") || text.includes("expired")) return new SmsError("expired");
-  if (text.includes("too-many") || text.includes("too many") || text.includes("quota")) return new SmsError("quota");
-  return new SmsError("failed");
+  const raw = `${(e as { code?: string })?.code ?? ""} ${(e as Error)?.message ?? ""}`.trim();
+  const text = raw.toLowerCase();
+  const err = (code: SmsErrorCode) => new SmsError(code, 0, raw);
+  // Firebase cihazı geçici engelledi: "We have blocked all requests from this device due to unusual activity"
+  if (text.includes("unusual activity") || text.includes("blocked all requests") || text.includes("too_many") || text.includes("17010"))
+    return err("blocked");
+  // Apple bildirim jetonuyla uygulama doğrulaması başarısız (APNs anahtarı ya da jeton uyuşmazlığı)
+  if (text.includes("apns") || text.includes("app credential") || text.includes("app_credential") || text.includes("canhandlenotification"))
+    return err("app_verify");
+  if (text.includes("region") || text.includes("operation-not-allowed") || text.includes("operation_not_allowed")) return err("region");
+  if (text.includes("invalid-phone") || text.includes("invalid phone") || text.includes("invalid format")) return err("invalid_phone");
+  if (text.includes("invalid-verification-code") || text.includes("verification code") && text.includes("invalid")) return err("invalid_code");
+  if (text.includes("code-expired") || text.includes("session-expired") || text.includes("expired")) return err("expired");
+  if (text.includes("too-many") || text.includes("too many") || text.includes("quota")) return err("quota");
+  return err("failed");
 }
 
 // Web: Firebase JavaScript kütüphanesi ve reCAPTCHA (görünmez)
@@ -208,7 +223,10 @@ export async function sendSmsCode(phone: string, onAutoVerified?: (idToken: stri
       webConfirmation = await auth.signInWithPhoneNumber(instance, phone, verifier);
     }
   } catch (e) {
-    throw mapError(e);
+    const err = mapError(e);
+    // Hata sunucuya kaydedilir (numara yazılmaz): hangi hatanın kaç kişide çıktığı görülebilsin
+    trackEvent("sms_hata", `${err.code}:${err.detail.replace(/\+?\d[\d\s]{5,}/g, "#")}`);
+    throw err;
   }
   const log = await readLog();
   log.push({ phone, at: Date.now() });
@@ -265,7 +283,11 @@ export function smsErrorText(e: unknown): string {
       return t("Şimdilik yalnızca Türkiye numaralarına SMS gönderilebiliyor.");
     case "quota":
       return t("Çok fazla deneme yapıldı. Birkaç dakika sonra tekrar deneyin ya da E-posta ile giriş yapın.");
+    case "blocked":
+      return t("Bu telefondan kısa sürede çok fazla kod istendiği için SMS servisi geçici olarak engelledi. Birkaç saat sonra tekrar deneyin ya da E-posta ile giriş yapın.");
+    case "app_verify":
+      return `${t("Uygulama doğrulanamadı; SMS gönderilemedi. Uygulamayı kapatıp yeniden açın.")}${err.detail ? ` (${err.detail.slice(0, 120)})` : ""}`;
     default:
-      return t("SMS gönderilemedi; bağlantınızı kontrol edip tekrar deneyin.");
+      return `${t("SMS gönderilemedi; bağlantınızı kontrol edip tekrar deneyin.")}${err.detail ? ` (${err.detail.slice(0, 120)})` : ""}`;
   }
 }

@@ -832,6 +832,8 @@ const dict: Record<string, string> = {
   "Bu numaraya bir saatte en fazla 5 kod gönderilebilir. Biraz sonra tekrar deneyin.": "此号码每小时最多可发送 5 个验证码，请稍后再试。",
   "Çok fazla deneme yapıldı. Birkaç dakika sonra tekrar deneyin ya da E-posta ile giriş yapın.": "尝试次数过多。请几分钟后再试，或使用邮箱登录。",
   "{p} numarasına az önce kod gönderdik. SMS'teki 6 haneli kodu girin.": "我们刚向 {p} 发送了验证码。请输入短信中的 6 位验证码。",
+  "Bu telefondan kısa sürede çok fazla kod istendiği için SMS servisi geçici olarak engelledi. Birkaç saat sonra tekrar deneyin ya da E-posta ile giriş yapın.": "该手机在短时间内请求了过多验证码，短信服务已暂时将其封锁。请几小时后再试，或使用邮箱登录。",
+  "Uygulama doğrulanamadı; SMS gönderilemedi. Uygulamayı kapatıp yeniden açın.": "无法验证应用，短信未发送。请关闭并重新打开应用。",
 };
 
 export default dict;

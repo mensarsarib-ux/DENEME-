@@ -591,4 +591,6 @@ export const extra: Record<string, string> = {
   "Bu numaraya bir saatte en fazla 5 kod gönderilebilir. Biraz sonra tekrar deneyin.": "Up to 5 codes can be sent to this number per hour. Try again a bit later.",
   "Çok fazla deneme yapıldı. Birkaç dakika sonra tekrar deneyin ya da E-posta ile giriş yapın.": "Too many attempts. Try again in a few minutes or sign in with email.",
   "{p} numarasına az önce kod gönderdik. SMS'teki 6 haneli kodu girin.": "We just sent a code to {p}. Enter the 6-digit code from the SMS.",
+  "Bu telefondan kısa sürede çok fazla kod istendiği için SMS servisi geçici olarak engelledi. Birkaç saat sonra tekrar deneyin ya da E-posta ile giriş yapın.": "Too many codes were requested from this phone in a short time, so the SMS service has temporarily blocked it. Try again in a few hours or sign in with email.",
+  "Uygulama doğrulanamadı; SMS gönderilemedi. Uygulamayı kapatıp yeniden açın.": "The app couldn't be verified, so the SMS wasn't sent. Close and reopen the app.",
 };

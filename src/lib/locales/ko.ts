@@ -832,6 +832,8 @@ const dict: Record<string, string> = {
   "Bu numaraya bir saatte en fazla 5 kod gönderilebilir. Biraz sonra tekrar deneyin.": "이 번호로는 1시간에 최대 5개의 코드를 보낼 수 있습니다. 잠시 후 다시 시도하세요.",
   "Çok fazla deneme yapıldı. Birkaç dakika sonra tekrar deneyin ya da E-posta ile giriş yapın.": "시도 횟수가 너무 많습니다. 몇 분 후 다시 시도하거나 이메일로 로그인하세요.",
   "{p} numarasına az önce kod gönderdik. SMS'teki 6 haneli kodu girin.": "{p}(으)로 방금 코드를 보냈습니다. SMS의 6자리 코드를 입력하세요.",
+  "Bu telefondan kısa sürede çok fazla kod istendiği için SMS servisi geçici olarak engelledi. Birkaç saat sonra tekrar deneyin ya da E-posta ile giriş yapın.": "짧은 시간에 이 휴대폰에서 너무 많은 코드를 요청하여 SMS 서비스가 일시적으로 차단했습니다. 몇 시간 후 다시 시도하거나 이메일로 로그인하세요.",
+  "Uygulama doğrulanamadı; SMS gönderilemedi. Uygulamayı kapatıp yeniden açın.": "앱을 확인할 수 없어 SMS를 보내지 못했습니다. 앱을 닫았다가 다시 여세요.",
 };
 
 export default dict;

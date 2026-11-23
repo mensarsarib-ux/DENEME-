@@ -94,6 +94,34 @@ function schedule() {
   if (timer === null) timer = window.setTimeout(() => void flush(), 4000);
 }
 
+/**
+ * Dokunma dışı bir olay kaydı (ör. SMS hatası): ekran adı ve kısa bir açıklama. Kişisel veri yazılmaz;
+ * çağıran taraf telefon numarası gibi bilgileri ayıklayıp gönderir.
+ */
+export function trackEvent(screen: string, element: string) {
+  if (!URL_BASE || !ANON) return;
+  try {
+    let version = "web";
+    try {
+      if (Capacitor.getPlatform() !== "web") version = appVersion();
+    } catch {
+      version = "web";
+    }
+    queue.push({
+      session_id: sessionId(),
+      screen: screen.slice(0, 40),
+      element: element.slice(0, 60),
+      x_pct: 0,
+      y_pct: 0,
+      viewport_w: Math.min(4000, Math.max(1, Math.round(window.innerWidth || 1))),
+      app_version: version.slice(0, 20),
+    });
+    schedule();
+  } catch {
+    /* kayıt hatası uygulamayı etkilemesin */
+  }
+}
+
 /** Uygulama açılışında bir kez çağrılır */
 export function initTapTrack() {
   if (!URL_BASE || !ANON || typeof document === "undefined") return;
