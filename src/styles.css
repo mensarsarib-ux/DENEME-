@@ -4488,7 +4488,8 @@ a.action-btn:visited {
   z-index: 50;
   display: flex;
   flex-direction: column;
-  padding: calc(env(safe-area-inset-top) + 12px) 20px calc(env(safe-area-inset-bottom) + 20px);
+  /* Görsel kenardan kenara; düğmeler ve yazılar kendi iç boşluğuyla */
+  padding: calc(env(safe-area-inset-top) + 12px) 0 calc(env(safe-area-inset-bottom) + 20px);
   background: var(--surface, #161b22);
   color: var(--text, #f2f5f8);
 }
@@ -4608,14 +4609,25 @@ a.action-btn:visited {
   justify-content: center;
   text-align: center;
   gap: 14px;
-  padding: 0 8px;
+  padding: 0;
   box-sizing: border-box;
+  /* Geniş görsel kartı genişletmesin (yoksa kartlar kaymaz) */
+  min-width: 0;
+  overflow: hidden;
 }
+.intro-top,
+.intro-actions { padding-left: 20px; padding-right: 20px; }
+.intro-slide .intro-title,
+.intro-slide .intro-text { padding: 0 24px; }
+/* Telefon görseli ekranın tam genişliğinde; boy kısa ekranlarda üstten kırpılmadan sınırlanır */
 .intro-slide .intro-shot {
-  height: min(62vh, 560px);
-  width: auto;
-  max-width: 100%;
-  object-fit: contain;
+  flex: none;
+  width: 100%;
+  height: auto;
+  max-height: 56vh;
+  max-height: min(56vh, calc(100dvh - 330px - env(safe-area-inset-top) - env(safe-area-inset-bottom)));
+  object-fit: cover;
+  object-position: top;
   border-radius: 0;
   border: 0;
   box-shadow: none;

@@ -108,7 +108,8 @@ export default function IntroSlides({ onDone }: { onDone: () => void }) {
     else if (dx > width * 0.2 && index > 0) go(index - 1);
   }
 
-  const offset = -index * width + drag;
+  // Kayma kartın kendi genişliğine göre (yüzde); genişlik ölçülmeden de doğru konuma gider
+  const offset = `calc(${-index * 100}% + ${drag}px)`;
 
   return (
     <div className="intro" role="dialog" aria-label={t("Hesabım tanıtımı")}>
@@ -130,7 +131,7 @@ export default function IntroSlides({ onDone }: { onDone: () => void }) {
       >
         <div
           className={`intro-track ${dragging ? "is-drag" : ""}`}
-          style={{ transform: `translate3d(${offset}px,0,0)` }}
+          style={{ transform: `translate3d(${offset},0,0)` }}
           aria-live="polite"
         >
           {SLIDES.map((slide, k) => (
