@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { t } from "../lib/i18n";
 
 /** Tanıtım tamamlandı işareti (cihaz başına; ilk açılışta bir kez gösterilir) */
@@ -65,22 +65,57 @@ const SLIDES: { title: string; text: string; icon: string; shot?: string }[] = [
 /** İlk açılışta gösterilen kısa tanıtım: slaytlar, ileri düğmesi ve atla */
 export default function IntroSlides({ onDone }: { onDone: () => void }) {
   const [index, setIndex] = useState(0);
+  // Geçiş yönü: ileri (1) ya da geri (-1); animasyon bu yöne göre kayar
+  const [dir, setDir] = useState<1 | -1>(1);
   const last = index === SLIDES.length - 1;
   const slide = SLIDES[index];
+  const touchX = useRef<number | null>(null);
+
+  function go(next: number) {
+    if (next < 0 || next >= SLIDES.length) return;
+    setDir(next > index ? 1 : -1);
+    setIndex(next);
+  }
 
   function finish() {
     markIntroDone();
     onDone();
   }
 
+  // Parmakla sağa/sola kaydırma (yatay hareket 50px'i geçerse geçiş yapılır)
+  function onTouchStart(e: React.TouchEvent) {
+    touchX.current = e.touches[0]?.clientX ?? null;
+  }
+  function onTouchEnd(e: React.TouchEvent) {
+    const start = touchX.current;
+    touchX.current = null;
+    const end = e.changedTouches[0]?.clientX;
+    if (start === null || end === undefined) return;
+    const dx = end - start;
+    if (dx < -50) {
+      if (last) return;
+      go(index + 1);
+    } else if (dx > 50) {
+      go(index - 1);
+    }
+  }
+
   return (
-    <div className="intro" role="dialog" aria-label={t("Hesabım tanıtımı")}>
+    <div
+      className="intro"
+      role="dialog"
+      aria-label={t("Hesabım tanıtımı")}
+      onTouchStart={onTouchStart}
+      onTouchEnd={onTouchEnd}
+      style={{ "--dir": dir } as React.CSSProperties}
+    >
       <div className="intro-top">
         <button type="button" className="intro-skip" onClick={finish} disabled={last}>
           {t("Atla")}
         </button>
       </div>
-      <div className="intro-body" aria-live="polite">
+      {/* key: her slayt değişince içerik yeniden çizilir ve giriş animasyonu baştan oynar */}
+      <div className="intro-body" aria-live="polite" key={index}>
         {slide.shot ? (
           <img className="intro-shot" src={slide.shot} alt={t("Uygulama ekran görüntüsü")} />
         ) : (
@@ -96,14 +131,14 @@ export default function IntroSlides({ onDone }: { onDone: () => void }) {
       </div>
       <div className="intro-actions">
         {index > 0 && (
-          <button type="button" className="intro-back" onClick={() => setIndex(index - 1)}>
+          <button type="button" className="intro-back" onClick={() => go(index - 1)}>
             {t("Geri")}
           </button>
         )}
         <button
           type="button"
           className="primary-btn intro-next"
-          onClick={() => (last ? finish() : setIndex(index + 1))}
+          onClick={() => (last ? finish() : go(index + 1))}
         >
           {last ? t("Başla") : t("İleri")}
         </button>
