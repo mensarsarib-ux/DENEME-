@@ -4625,7 +4625,7 @@ a.action-btn:visited {
   width: 100%;
   height: auto;
   max-height: 56vh;
-  max-height: min(56vh, calc(100dvh - 330px - env(safe-area-inset-top) - env(safe-area-inset-bottom)));
+  max-height: min(56vh, calc(100dvh - 370px - env(safe-area-inset-top) - env(safe-area-inset-bottom)));
   object-fit: cover;
   object-position: top;
   border-radius: 0;
@@ -4854,3 +4854,6 @@ a.action-btn:visited {
 .ob-sheet .auth-tabs { background: rgba(10, 22, 34, 0.38); }
 .ob-sheet .auth-tabs button { color: #c6d3e0; }
 .ob-sheet .auth-tabs button.is-active { color: #fff; }
+
+/* Tanıtımın altında kayıtlı kullanıcı için giriş bağlantısı */
+.intro-signin { align-self: center; margin-top: 10px; }

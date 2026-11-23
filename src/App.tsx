@@ -56,7 +56,7 @@ import { getLanguage, locale, setLanguage, t, type Language } from "./lib/i18n";
 import { setDarkHeader } from "./lib/theme";
 import AuthScreen from "./components/AuthScreen";
 import IntroSlides, { introDone } from "./components/IntroSlides";
-import { startGuide } from "./components/Guide";
+import { GUIDE_KEY, startGuide } from "./components/Guide";
 import InviteCard from "./components/InviteCard";
 import { cloudEnabled, heartbeat, loadSession, readRecoveryToken, signOut, syncAccountLanguage, type Session } from "./lib/cloud";
 import { useCloudSync } from "./lib/useCloudSync";
@@ -78,6 +78,27 @@ type View =
  * aksi halde yeni kurulan telefonda örnek veriler hesaba ve ekibe yazılabilirdi.
  */
 const SAMPLE_DATA = !cloudEnabled;
+
+/**
+ * Hesapsız deneme: yeni kullanıcı işletme adını yazınca uygulama hesap açılmadan kullanılır ve ilk müşteri
+ * rehberi başlar. Rehber bitince (ya da atlanınca) telefon doğrulanır; açılan hesaba telefondaki kayıtlar yazılır.
+ */
+const TRIAL_KEY = "hesabim:deneme";
+function readFlag(key: string): string | null {
+  try {
+    return localStorage.getItem(key);
+  } catch {
+    return null;
+  }
+}
+function writeFlag(key: string, value: string | null) {
+  try {
+    if (value === null) localStorage.removeItem(key);
+    else localStorage.setItem(key, value);
+  } catch {
+    /* depolama yoksa yalnızca bu oturumda geçerli */
+  }
+}
 
 /** Telefondaki işletme verisinin hangi hesaba ait olduğu */
 const DATA_OWNER_KEY = "hesabim:data-owner";
@@ -131,7 +152,7 @@ export default function App() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   // Durum çubuğu (saat, pil): ana ekranın koyu üst kısmında açık renk, açık temalı sayfalarda koyu renk
   useEffect(() => {
-    setDarkHeader(view.name === "home" && !drawerOpen && (!cloudEnabled || !!session));
+    setDarkHeader(view.name === "home" && !drawerOpen && (!cloudEnabled || !!session || trial));
   });
   // Dil bu telefona özel; değişince tüm ekran yeni dille yeniden çizilir
   const [language, setLanguageState] = useState<Language>(getLanguage);
@@ -142,6 +163,16 @@ export default function App() {
   // Hesap ve bulut eşitleme: Supabase tanımlıysa giriş gerekir; değilse uygulama yalnızca bu cihazda çalışır
   const [session, setSession] = useState<Session | null>(() => (cloudEnabled ? loadSession() : null));
   const [introSeen, setIntroSeen] = useState<boolean>(() => introDone());
+  // Tanıtımdaki "Giriş yap" bağlantısıyla gelindiyse giriş ekranı açılır
+  const [introSignin, setIntroSignin] = useState(false);
+  // Hesapsız deneme sürüyor mu ve ilk müşteri rehberi bitti mi (bitince telefon doğrulaması istenir)
+  const [trial, setTrial] = useState(() => cloudEnabled && readFlag(TRIAL_KEY) === "1");
+  const [guideOver, setGuideOver] = useState(() => readFlag(GUIDE_KEY) === "bitti");
+  useEffect(() => {
+    const onGuideEnd = () => setGuideOver(true);
+    window.addEventListener("hesabim:rehber-bitti", onGuideEnd);
+    return () => window.removeEventListener("hesabim:rehber-bitti", onGuideEnd);
+  }, []);
   // Önceki sürümlerden gelen oturumda telefondaki verinin sahibi bu hesaptır
   if (session && !dataOwner()) setDataOwner(session.userId);
   // Hesaba gönderilen e-postalar uygulamanın diliyle gelsin diye dil hesaba da yazılır
@@ -534,12 +565,31 @@ export default function App() {
 
   // İlk açılışta kısa tanıtım (bir kez); giriş ekranından önce gösterilir
   if (!introSeen) {
-    return <IntroSlides onDone={() => setIntroSeen(true)} />;
+    return (
+      <IntroSlides
+        onDone={(signin) => {
+          setIntroSignin(!!signin);
+          setIntroSeen(true);
+        }}
+      />
+    );
   }
 
-  if (cloudEnabled && !session) {
+  // Hesapsız deneme ve rehber sürüyorsa uygulama oturumsuz açılır (kayıtlar yalnızca bu telefonda)
+  if (cloudEnabled && !session && !(trial && !guideOver)) {
     return (
       <AuthScreen
+        mode={trial ? "verify" : "start"}
+        start={introSignin && !trial ? "signin-phone" : undefined}
+        trialBusiness={profile.name}
+        onTrial={(name) => {
+          emptyWorkspace(name);
+          writeFlag(TRIAL_KEY, "1");
+          startGuide();
+          setGuideOver(false);
+          setTrial(true);
+          setView({ name: "home" });
+        }}
         recoveryToken={recoveryToken}
         onRecoveryDone={() => {
           setRecoveryToken(null);
@@ -555,9 +605,16 @@ export default function App() {
             return;
           }
           setDataOwner(next.userId);
-          if (info?.isNew) emptyWorkspace(info.businessName);
-          // Kendi işletmesini açan yeni hesapta ilk müşteri rehberi başlar (davetle katılan üyede başlamaz)
-          if (info?.isNew && info.businessName) startGuide();
+          if (trial) {
+            // Denemeden gelindi: telefondaki kayıtlar korunur. Yeni hesapta sunucuda veri olmadığı için ilk
+            // eşitlemede hesaba yazılır; kayıtlı numarada hesabın kendi kayıtları açılır. Rehber zaten bitti.
+            writeFlag(TRIAL_KEY, null);
+            setTrial(false);
+          } else {
+            if (info?.isNew) emptyWorkspace(info.businessName);
+            // Kendi işletmesini açan yeni hesapta ilk müşteri rehberi başlar (davetle katılan üyede başlamaz)
+            if (info?.isNew && info.businessName) startGuide();
+          }
           setSession(next);
           setView({ name: "home" });
         }}

@@ -67,7 +67,7 @@ const SLIDES: { title: string; text: string; icon: string; shot?: string }[] = [
  * İlk açılışta gösterilen kısa tanıtım. Dört kart yan yana tek bir bant olarak dizilir; geçişte bant
  * bütün olarak kayar (parmağı takip eder), bırakılınca yerine oturur.
  */
-export default function IntroSlides({ onDone }: { onDone: () => void }) {
+export default function IntroSlides({ onDone }: { onDone: (signin?: boolean) => void }) {
   const [index, setIndex] = useState(0);
   // Parmak sürüklemesi sırasındaki yatay kayma (px); bırakılınca 0'a döner
   const [drag, setDrag] = useState(0);
@@ -82,9 +82,9 @@ export default function IntroSlides({ onDone }: { onDone: () => void }) {
     setIndex(next);
   }
 
-  function finish() {
+  function finish(signin = false) {
     markIntroDone();
-    onDone();
+    onDone(signin);
   }
 
   function onStart(x: number) {
@@ -114,7 +114,7 @@ export default function IntroSlides({ onDone }: { onDone: () => void }) {
   return (
     <div className="intro" role="dialog" aria-label={t("Hesabım tanıtımı")}>
       <div className="intro-top">
-        <button type="button" className="intro-skip" onClick={finish} disabled={last}>
+        <button type="button" className="intro-skip" onClick={() => finish()} disabled={last}>
           {t("Atla")}
         </button>
       </div>
@@ -166,6 +166,10 @@ export default function IntroSlides({ onDone }: { onDone: () => void }) {
           {last ? t("Başla") : t("İleri")}
         </button>
       </div>
+      {/* Kayıtlı kullanıcı tanıtımı ve kayıt adımlarını geçip doğrudan giriş yapar */}
+      <button type="button" className="help-link intro-signin" onClick={() => finish(true)}>
+        {t("Zaten hesabınız var mı? Giriş yap")}
+      </button>
     </div>
   );
 }

@@ -38,6 +38,7 @@ import PhoneField from "./PhoneField";
 type Screen =
   | "login"
   | "signin-phone"
+  | "biz-first"
   | "login-sms"
   | "login-email"
   | "add-phone"
@@ -51,7 +52,8 @@ type Screen =
   | "invite";
 
 /** Sihirbaz adımları (ilerleme çizgisi için) */
-const REGISTER: Screen[] = ["login", "login-sms", "reg-business"];
+/** Yeni kullanıcı: işletme adı → (uygulamayı rehberle dener) → telefon → SMS kodu */
+const REGISTER: Screen[] = ["biz-first", "login", "login-sms"];
 
 /** SMS kodu ekranları ve hangi amaçla kullanıldıkları */
 const SMS_SCREENS = ["forgot-sms", "login-sms", "add-sms"] as const;
@@ -94,14 +96,33 @@ export default function AuthScreen({
   recoveryToken,
   onSession,
   onRecoveryDone,
+  mode = "start",
+  start,
+  trialBusiness,
+  onTrial,
 }: {
+  /**
+   * start: tanıtımdan sonra işletme adı sorulur (sağ üstte Giriş yap); ad yazılınca uygulama hesapsız denenir.
+   * verify: deneme bitti (ilk müşteri rehberi); kayıtlar kaybolmasın diye telefon doğrulanıp hesap açılır.
+   */
+  mode?: "start" | "verify";
+  /** Açılış ekranı (tanıtımdaki "Giriş yap" bağlantısıyla gelindiyse giriş ekranı) */
+  start?: Screen;
+  /** Denemede yazılan işletme adı: hesap bu adla açılır, telefondaki kayıtlar hesaba taşınır */
+  trialBusiness?: string;
+  /** İşletme adı yazıldı: uygulama hesapsız açılır, ilk müşteri rehberi başlar */
+  onTrial?: (businessName: string) => void;
   /** E-postadaki şifre sıfırlama bağlantısından gelindiyse geçici belirteç */
   recoveryToken?: string | null;
   /** Giriş başarılı olunca; yeni kayıtta isNew ve işletme adı da gelir */
   onSession: (session: Session, info?: { isNew: boolean; businessName: string }) => void;
   onRecoveryDone: () => void;
 }) {
-  const [screen, setScreen] = useState<Screen>(recoveryToken ? "new-password" : "login");
+  const [screen, setScreen] = useState<Screen>(
+    recoveryToken ? "new-password" : (start ?? (mode === "verify" ? "login" : "biz-first")),
+  );
+  // Kayıt adımlarının başı: denemeden önce işletme adı, denemeden sonra telefon
+  const home: Screen = mode === "verify" ? "login" : "biz-first";
   const [business, setBusiness] = useState("");
   const [email, setEmail] = useState("");
   // Girişte telefon kutusu ayrı tutulur: e-posta ve telefon birbirinin kutusuna ya da şifre yenilemeye geçmez
@@ -133,7 +154,7 @@ export default function AuthScreen({
   // Klavye yüksekliği: alttaki düğme klavyenin üstünde kalsın diye ekranın altına bu kadar boşluk bırakılır
   const [keyboard, setKeyboard] = useState(0);
   // Kayıtlı kullanıcı "Giriş yap"tan mı geldi (kayıt adımları ve ilerleme çizgisi gösterilmez)
-  const [signingIn, setSigningIn] = useState(false);
+  const [signingIn, setSigningIn] = useState(start === "signin-phone" || start === "login-email");
 
   useEffect(() => {
     if (Capacitor.isNativePlatform()) {
@@ -179,7 +200,7 @@ export default function AuthScreen({
   function go(next: Screen) {
     haptic("light");
     // Giriş yap ekranlarından gelindiyse SMS kodu ekranının geri düğmesi oraya döner
-    if (next === "login") setSigningIn(false);
+    if (next === "login" || next === "biz-first") setSigningIn(false);
     if (next === "signin-phone" || next === "login-email") setSigningIn(true);
     setScreen(next);
     setError(null);
@@ -282,12 +303,22 @@ export default function AuthScreen({
     haptic("success");
     setCode("");
     if ("noAccount" in result) {
+      const fromTrial = mode === "verify" && !signingIn;
       // Girişte kayıtlı olmayan numara: kayıt adımlarıyla devam edilir
       setSigningIn(false);
       setPhoneToken(idToken);
       setPendingSession(null);
       setInvites(result.invites);
-      go(result.invites.length > 0 ? "invite" : "reg-business");
+      if (result.invites.length > 0) {
+        go("invite");
+        return;
+      }
+      // Denemeden gelen yeni kullanıcı: işletme adı zaten yazıldı, hesap hemen açılır ve kayıtları taşınır
+      if (fromTrial) {
+        await openTrialAccount(idToken);
+        return;
+      }
+      go("reg-business");
       return;
     }
     // Kayıtlı hesap: numaraya bekleyen ekip daveti varsa sorulur
@@ -299,6 +330,14 @@ export default function AuthScreen({
       return;
     }
     enter(result.session);
+  }
+
+  /** Denemeden sonra hesap açılır: işletme adı denemede yazıldı, telefondaki kayıtlar hesaba yazılır */
+  async function openTrialAccount(idToken: string) {
+    const created = await smsSession(idToken, true);
+    if ("noAccount" in created) throw new CloudError("unknown", "no account");
+    haptic("success");
+    enter(created.session, { isNew: true, businessName: trialBusiness ?? "" });
   }
 
   /** Kayıtlı olmayan numarayla hesap açılır (SMS doğrulamasının belirteciyle) */
@@ -361,7 +400,10 @@ export default function AuthScreen({
   /** Daveti geç: kayıtlı hesap uygulamaya girer, yeni numara işletme adını yazar */
   function ownBusiness() {
     if (pendingSession) enter(pendingSession);
-    else go("reg-business");
+    else if (mode === "verify" && phoneToken) {
+      const token = phoneToken;
+      void run(() => openTrialAccount(token));
+    } else go("reg-business");
   }
 
   async function submit(event: FormEvent) {
@@ -466,6 +508,11 @@ export default function AuthScreen({
           go("login-email");
           setInfo(t("Şifreniz yenilendi. Yeni şifrenizle giriş yapın."));
         });
+      case "biz-first":
+        if (!business.trim()) return;
+        haptic("success");
+        onTrial?.(business.trim());
+        return;
       case "reg-business":
         if (!business.trim()) return;
         return run(async () => {
@@ -602,7 +649,14 @@ export default function AuthScreen({
 
   const flow = REGISTER.includes(screen) && !(signingIn && screen === "login-sms") ? REGISTER : null;
   const step = flow ? flow.indexOf(screen) + 1 : 0;
-  const back = signingIn && screen === "login-sms" ? "signin-phone" : BACK[screen];
+  const back =
+    signingIn && screen === "login-sms"
+      ? "signin-phone"
+      : screen === "signin-phone" || screen === "login-email"
+        ? home
+        : screen === "login" && mode === "start"
+          ? undefined
+          : BACK[screen];
 
   // Giriş yap: telefon ve e-posta sekmeleri, altta üye olma bağlantısı
   const signinTabs = (
@@ -632,7 +686,7 @@ export default function AuthScreen({
     </div>
   );
   const toRegister = (
-    <button type="button" className="help-link" onClick={() => go("login")}>
+    <button type="button" className="help-link" onClick={() => go(home)}>
       {t("Hesabınız yok mu? Üye olun")}
     </button>
   );
@@ -646,8 +700,11 @@ export default function AuthScreen({
 
   switch (screen) {
     case "login":
-      title = t("Hesabınızı oluşturun");
-      lead = t("Telefon numaranıza SMS ile 6 haneli bir kod göndereceğiz.");
+      title = mode === "verify" ? t("Kayıtlarınızı kaybetmeyin") : t("Hesabınızı oluşturun");
+      lead =
+        mode === "verify"
+          ? t("Hesabınızı telefon numaranızla açalım; kayıtlarınız güvenle saklansın ve her cihazda açılsın. SMS ile 6 haneli bir kod göndereceğiz.")
+          : t("Telefon numaranıza SMS ile 6 haneli bir kod göndereceğiz.");
       body = (
         <>
           <div className="field">
@@ -791,6 +848,22 @@ export default function AuthScreen({
       action = t("ŞİFREYİ YENİLE");
       ready = strongEnough;
       break;
+    case "biz-first":
+      title = t("İşletmenizin adı");
+      lead = t("Ekstrelerde ve ekip ekranlarında bu ad görünür.");
+      body = (
+        <div className="field">
+          <label htmlFor="auth-business-first">{t("İşletme adı")}</label>
+          <input
+            id="auth-business-first"
+            autoComplete="organization"
+            value={business}
+            onChange={(e) => setBusiness(e.target.value)}
+          />
+        </div>
+      );
+      ready = business.trim() !== "";
+      break;
     case "reg-business":
       title = t("İşletmenizin adı");
       lead = t("Ekstrelerde ve ekip ekranlarında bu ad görünür.");
@@ -852,7 +925,7 @@ export default function AuthScreen({
               </span>
             </>
           )}
-          {screen === "login" && (
+          {screen === "biz-first" && (
             <button type="button" className="ob-signin-btn" onClick={() => go("signin-phone")}>
               {t("Giriş yap")}
             </button>
