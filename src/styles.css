@@ -2916,23 +2916,96 @@ a.action-btn {
   white-space: nowrap;
 }
 
-/* Telefon alanı: solda ülke alan kodu, sağda numara */
+/* Telefon alanı: solda bayrak + alan kodu, sağda numara */
 .phone-field {
   display: grid;
-  grid-template-columns: minmax(0, 0.42fr) minmax(0, 1fr);
+  grid-template-columns: auto minmax(0, 1fr);
   gap: 8px;
 }
 
 .phone-code {
-  min-width: 0;
-  padding: 12px 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 10px 0 12px;
   border: 1px solid var(--line);
   border-radius: 12px;
   background: var(--surface-head);
   color: var(--text);
-  font-size: 0.95rem;
-  text-overflow: ellipsis;
+  font: inherit;
+  font-size: 0.98rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color .15s, transform .1s;
 }
+.phone-code:active { transform: scale(.97); }
+.phone-code:focus-visible { outline: none; border-color: var(--green); }
+.phone-flag { font-size: 1.45rem; line-height: 1; }
+.phone-dial { font-variant-numeric: tabular-nums; }
+.phone-caret { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; opacity: .55; }
+
+/* Ülke seçimi: alttan açılan liste */
+.country-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgba(0, 0, 0, .45);
+  animation: country-fade .2s ease;
+}
+.country-sheet {
+  width: 100%;
+  max-width: 520px;
+  max-height: 78vh;
+  display: flex;
+  flex-direction: column;
+  padding: 8px 16px calc(12px + env(safe-area-inset-bottom));
+  border-radius: 20px 20px 0 0;
+  background: var(--surface, #fff);
+  color: var(--text);
+  box-shadow: 0 -10px 40px rgba(0, 0, 0, .25);
+  animation: country-up .28s cubic-bezier(.22, 1, .36, 1);
+}
+.country-grip { width: 40px; height: 5px; margin: 2px auto 10px; border-radius: 3px; background: var(--line); }
+.country-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.country-head strong { font-size: 1.08rem; }
+.country-close { display: grid; place-items: center; width: 34px; height: 34px; border: 0; border-radius: 50%; background: var(--surface-head); color: var(--text); }
+.country-close svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; }
+.country-search {
+  width: 100%;
+  padding: 11px 14px;
+  margin-bottom: 8px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface-head);
+  color: var(--text);
+  font: inherit;
+}
+.country-list { list-style: none; margin: 0; padding: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.country-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 11px 8px;
+  border: 0;
+  border-radius: 10px;
+  background: none;
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+}
+.country-row:active, .country-row.is-on { background: var(--surface-head); }
+.country-row.is-on .country-name { font-weight: 700; }
+.country-flag { font-size: 1.5rem; line-height: 1; }
+.country-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.country-dial { color: var(--muted); font-variant-numeric: tabular-nums; }
+.country-empty { padding: 18px 8px; text-align: center; color: var(--muted); }
+@keyframes country-fade { from { opacity: 0; } }
+@keyframes country-up { from { transform: translateY(100%); } }
+@media (prefers-reduced-motion: reduce) { .country-backdrop, .country-sheet { animation: none; } }
 
 /* İşletme silme: basılı tutunca çıkan Sil ve Vazgeç */
 .biz-group {

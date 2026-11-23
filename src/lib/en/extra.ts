@@ -157,6 +157,9 @@ export const extra: Record<string, string> = {
   "Miktar": "Amount",
   "Toplam": "Total",
   "Ülke alan kodu": "Country calling code",
+  "Ülke seçin": "Select country",
+  "Ülke ya da kod ara": "Search country or code",
+  "Sonuç bulunamadı": "No results",
   "Satış": "Sale",
   "Alış": "Purchase",
 
