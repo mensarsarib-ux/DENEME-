@@ -827,6 +827,11 @@ const dict: Record<string, string> = {
   "Çalışanınızın telefon numarasını yazın. Uygulamayı indirip bu numarayla girdiğinde ekibinize katılır.": "Scrivi il numero del tuo dipendente. Quando scaricherà l’app e accederà con questo numero, entrerà nel tuo team.",
   "İptal": "Annulla",
   "Ekip daveti": "Invito al team",
+  "Bu numaraya az önce kod gönderdik. Yeni kod için {s} saniye bekleyin.": "Abbiamo appena inviato un codice a questo numero. Attendi {s} secondi per un nuovo codice.",
+  "Bu numaraya az önce kod gönderdik. Yeni kod için {m} dakika bekleyin.": "Abbiamo appena inviato un codice a questo numero. Attendi {m} min per un nuovo codice.",
+  "Bu numaraya bir saatte en fazla 5 kod gönderilebilir. Biraz sonra tekrar deneyin.": "Puoi ricevere al massimo 5 codici all’ora su questo numero. Riprova tra poco.",
+  "Çok fazla deneme yapıldı. Birkaç dakika sonra tekrar deneyin ya da E-posta ile giriş yapın.": "Troppi tentativi. Riprova tra qualche minuto o accedi con l’email.",
+  "{p} numarasına az önce kod gönderdik. SMS'teki 6 haneli kodu girin.": "Abbiamo appena inviato un codice al {p}. Inserisci il codice a 6 cifre dell’SMS.",
 };
 
 export default dict;

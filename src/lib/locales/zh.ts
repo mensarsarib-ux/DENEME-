@@ -827,6 +827,11 @@ const dict: Record<string, string> = {
   "Çalışanınızın telefon numarasını yazın. Uygulamayı indirip bu numarayla girdiğinde ekibinize katılır.": "输入员工的手机号。对方下载应用并用此号码登录后即加入你的团队。",
   "İptal": "取消",
   "Ekip daveti": "团队邀请",
+  "Bu numaraya az önce kod gönderdik. Yeni kod için {s} saniye bekleyin.": "我们刚向此号码发送了验证码。请等待 {s} 秒后再获取新验证码。",
+  "Bu numaraya az önce kod gönderdik. Yeni kod için {m} dakika bekleyin.": "我们刚向此号码发送了验证码。请等待 {m} 分钟后再获取新验证码。",
+  "Bu numaraya bir saatte en fazla 5 kod gönderilebilir. Biraz sonra tekrar deneyin.": "此号码每小时最多可发送 5 个验证码，请稍后再试。",
+  "Çok fazla deneme yapıldı. Birkaç dakika sonra tekrar deneyin ya da E-posta ile giriş yapın.": "尝试次数过多。请几分钟后再试，或使用邮箱登录。",
+  "{p} numarasına az önce kod gönderdik. SMS'teki 6 haneli kodu girin.": "我们刚向 {p} 发送了验证码。请输入短信中的 6 位验证码。",
 };
 
 export default dict;

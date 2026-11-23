@@ -4,8 +4,8 @@
  * (ID token) alınır ve sunucumuza (phone-verify) gönderilir; Firebase oturumu hemen kapatılır.
  * iPhone ve Android'de yerel eklenti, web'de Firebase'in JavaScript kütüphanesi (yalnızca gerektiğinde yüklenir) kullanılır.
  *
- * Kötüye kullanım sınırları (SMS ücretli): aynı numaraya ilk yeniden gönderim 1 dakika, sonrakiler 5 dakika sonra;
- * saatte en fazla 3 kod;
+ * Kötüye kullanım sınırları (SMS ücretli): aynı numaraya ilk yeniden gönderim 1 dakika, sonrakiler 2 dakika sonra;
+ * saatte en fazla 5 kod;
  * bir cihaz 24 saatte en fazla 4 farklı numaraya kod isteyebilir.
  * Sayaçlar iPhone'da Keychain'de tutulur; uygulama silinip yeniden kurulunca sıfırlanmaz.
  */
@@ -14,12 +14,16 @@ import { firebaseConfig } from "./firebaseConfig";
 import { t } from "./i18n";
 
 const FIRST_WAIT_MS = 60 * 1000;
-const WAIT_MS = 5 * 60 * 1000;
+const WAIT_MS = 2 * 60 * 1000;
 const HOUR_MS = 60 * 60 * 1000;
 const DAY_MS = 24 * HOUR_MS;
-const MAX_PER_HOUR = 3;
+const MAX_PER_HOUR = 5;
 const MAX_NUMBERS_PER_DAY = 4;
 const STORE_KEY = "hesabim-sms-log";
+/** Gönderilen son kodun doğrulama kimliği: uygulama kapanıp açılsa da kod girilebilsin */
+const PENDING_KEY = "hesabim-sms-bekleyen";
+/** Firebase SMS kodu bu süre boyunca geçerli kabul edilir */
+const CODE_VALID_MS = 10 * 60 * 1000;
 
 export type SmsErrorCode =
   /** Aynı numaraya yeni kod için beklemek gerekiyor (seconds dolu) */
@@ -87,7 +91,7 @@ async function writeLog(list: SendLog[]): Promise<void> {
   }
 }
 
-/** Son gönderimden sonra beklenecek süre: son bir saatte tek kod gittiyse 1 dakika, daha fazlaysa 5 dakika */
+/** Son gönderimden sonra beklenecek süre: son bir saatte tek kod gittiyse 1 dakika, daha fazlaysa 2 dakika */
 function waitAfter(same: SendLog[], now: number): number {
   return same.filter((e) => now - e.at < HOUR_MS).length <= 1 ? FIRST_WAIT_MS : WAIT_MS;
 }
@@ -143,6 +147,31 @@ async function webAuth() {
 
 // Yerel: eklentinin verdiği doğrulama kimliği
 let nativeVerificationId: string | null = null;
+
+function savePending(phone: string, verificationId: string) {
+  try {
+    localStorage.setItem(PENDING_KEY, JSON.stringify({ phone, verificationId, at: Date.now() }));
+  } catch {
+    /* yazılamazsa yalnızca bu oturumda geçerli */
+  }
+}
+
+/**
+ * Bu numaraya az önce gönderilmiş ve hâlâ girilebilecek bir kod var mı? Varsa doğrulama kimliği geri yüklenir;
+ * kullanıcı yeni kod beklemek yerine gelen SMS'teki kodu girer (uygulama kapatılıp açılsa da).
+ */
+export function hasPendingCode(phone: string): boolean {
+  if (!Capacitor.isNativePlatform()) return false;
+  try {
+    const p = JSON.parse(localStorage.getItem(PENDING_KEY) ?? "null") as { phone: string; verificationId: string; at: number } | null;
+    if (!p || p.phone !== phone || Date.now() - p.at > CODE_VALID_MS) return false;
+    nativeVerificationId = p.verificationId;
+    nativeAutoToken = null;
+    return true;
+  } catch {
+    return false;
+  }
+}
 /** Android bazen SMS'i kendisi okuyup doğrular; o durumda belirteç doğrudan buraya düşer */
 let nativeAutoToken: string | null = null;
 
@@ -176,6 +205,7 @@ export async function sendSmsCode(phone: string, onAutoVerified?: (idToken: stri
         };
         void FirebaseAuthentication.addListener("phoneCodeSent", (event) => {
           nativeVerificationId = event.verificationId;
+          savePending(phone, event.verificationId);
           done(resolve);
         });
         void FirebaseAuthentication.addListener("phoneVerificationFailed", (event) => {
@@ -221,7 +251,14 @@ export async function confirmSmsCode(code: string): Promise<string> {
       if (!nativeVerificationId) throw new SmsError("expired");
       const { FirebaseAuthentication } = await import("@capacitor-firebase/authentication");
       await FirebaseAuthentication.confirmVerificationCode({ verificationId: nativeVerificationId, verificationCode: code });
-      return await nativeToken();
+      const token = await nativeToken();
+      // Kod kullanıldı: bir sonraki girişte eski doğrulama kimliği geri yüklenmez
+      try {
+        localStorage.removeItem(PENDING_KEY);
+      } catch {
+        /* sessizce geç */
+      }
+      return token;
     }
     if (!webConfirmation) throw new SmsError("expired");
     const result = await webConfirmation.confirm(code);
@@ -239,9 +276,11 @@ export function smsErrorText(e: unknown): string {
   const err = e instanceof SmsError ? e : mapError(e);
   switch (err.code) {
     case "wait":
-      return t("Yeni kod için {m} dakika bekleyin.", { m: Math.max(1, Math.ceil(err.seconds / 60)) });
+      return err.seconds < 60
+        ? t("Bu numaraya az önce kod gönderdik. Yeni kod için {s} saniye bekleyin.", { s: err.seconds })
+        : t("Bu numaraya az önce kod gönderdik. Yeni kod için {m} dakika bekleyin.", { m: Math.ceil(err.seconds / 60) });
     case "hourly":
-      return t("Bu numaraya bir saatte en fazla 3 kod gönderilebilir. Daha sonra tekrar deneyin.");
+      return t("Bu numaraya bir saatte en fazla 5 kod gönderilebilir. Biraz sonra tekrar deneyin.");
     case "device":
       return t("Bu cihazdan bugün başka numaralara kod gönderildi. Yarın tekrar deneyin.");
     case "invalid_phone":
@@ -253,7 +292,7 @@ export function smsErrorText(e: unknown): string {
     case "region":
       return t("Şimdilik yalnızca Türkiye numaralarına SMS gönderilebiliyor.");
     case "quota":
-      return t("Çok fazla deneme yapıldı. Biraz sonra tekrar deneyin.");
+      return t("Çok fazla deneme yapıldı. Birkaç dakika sonra tekrar deneyin ya da E-posta ile giriş yapın.");
     default:
       return t("SMS gönderilemedi; bağlantınızı kontrol edip tekrar deneyin.");
   }

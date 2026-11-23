@@ -827,6 +827,11 @@ const dict: Record<string, string> = {
   "Çalışanınızın telefon numarasını yazın. Uygulamayı indirip bu numarayla girdiğinde ekibinize katılır.": "अपने कर्मचारी का फ़ोन नंबर लिखें। ऐप डाउनलोड करके इस नंबर से साइन इन करने पर वे आपकी टीम में जुड़ जाएँगे।",
   "İptal": "रद्द करें",
   "Ekip daveti": "टीम आमंत्रण",
+  "Bu numaraya az önce kod gönderdik. Yeni kod için {s} saniye bekleyin.": "हमने अभी इस नंबर पर कोड भेजा है। नए कोड के लिए {s} सेकंड रुकें।",
+  "Bu numaraya az önce kod gönderdik. Yeni kod için {m} dakika bekleyin.": "हमने अभी इस नंबर पर कोड भेजा है। नए कोड के लिए {m} मिनट रुकें।",
+  "Bu numaraya bir saatte en fazla 5 kod gönderilebilir. Biraz sonra tekrar deneyin.": "इस नंबर पर एक घंटे में अधिकतम 5 कोड भेजे जा सकते हैं। थोड़ी देर बाद फिर कोशिश करें।",
+  "Çok fazla deneme yapıldı. Birkaç dakika sonra tekrar deneyin ya da E-posta ile giriş yapın.": "बहुत ज़्यादा कोशिशें हुईं। कुछ मिनट बाद फिर कोशिश करें या ईमेल से साइन इन करें।",
+  "{p} numarasına az önce kod gönderdik. SMS'teki 6 haneli kodu girin.": "हमने अभी {p} पर कोड भेजा है। SMS में आया 6 अंकों का कोड डालें।",
 };
 
 export default dict;

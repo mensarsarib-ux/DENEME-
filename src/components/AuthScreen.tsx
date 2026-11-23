@@ -24,7 +24,7 @@ import {
 import { haptic } from "../lib/haptics";
 import { getLanguage, t } from "../lib/i18n";
 import { legalBase } from "../lib/platform";
-import { confirmSmsCode, resendWait, sendSmsCode, smsErrorText } from "../lib/phoneVerify";
+import { confirmSmsCode, hasPendingCode, resendWait, sendSmsCode, smsErrorText } from "../lib/phoneVerify";
 import { Svg } from "./Icon";
 import PhoneField from "./PhoneField";
 
@@ -294,6 +294,15 @@ export default function AuthScreen({
   async function startSms(to: string, codeScreen: SmsScreen) {
     if (smsTo === to && resendIn > 0) {
       go(codeScreen);
+      return;
+    }
+    // Bu numaraya az önce kod gitti (uygulama kapatılıp açılmış olabilir): beklemek yerine gelen kod girilir
+    if (hasPendingCode(to)) {
+      setSmsTo(to);
+      setCode("");
+      setResendIn(await resendWait(to));
+      go(codeScreen);
+      setInfo(t("{p} numarasına az önce kod gönderdik. SMS'teki 6 haneli kodu girin.", { p: to }));
       return;
     }
     if (codeScreen === "forgot-sms") setResetPhoneToken(null);

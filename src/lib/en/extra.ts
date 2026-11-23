@@ -586,4 +586,9 @@ export const extra: Record<string, string> = {
   "Çalışanınızın telefon numarasını yazın. Uygulamayı indirip bu numarayla girdiğinde ekibinize katılır.": "Enter your employee's phone number. When they download the app and sign in with this number, they'll join your team.",
   "İptal": "Cancel",
   "Ekip daveti": "Team invite",
+  "Bu numaraya az önce kod gönderdik. Yeni kod için {s} saniye bekleyin.": "We just sent a code to this number. Wait {s} seconds for a new code.",
+  "Bu numaraya az önce kod gönderdik. Yeni kod için {m} dakika bekleyin.": "We just sent a code to this number. Wait {m} min for a new code.",
+  "Bu numaraya bir saatte en fazla 5 kod gönderilebilir. Biraz sonra tekrar deneyin.": "Up to 5 codes can be sent to this number per hour. Try again a bit later.",
+  "Çok fazla deneme yapıldı. Birkaç dakika sonra tekrar deneyin ya da E-posta ile giriş yapın.": "Too many attempts. Try again in a few minutes or sign in with email.",
+  "{p} numarasına az önce kod gönderdik. SMS'teki 6 haneli kodu girin.": "We just sent a code to {p}. Enter the 6-digit code from the SMS.",
 };

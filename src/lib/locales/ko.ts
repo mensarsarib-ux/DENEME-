@@ -827,6 +827,11 @@ const dict: Record<string, string> = {
   "Çalışanınızın telefon numarasını yazın. Uygulamayı indirip bu numarayla girdiğinde ekibinize katılır.": "직원의 전화번호를 입력하세요. 앱을 내려받아 이 번호로 로그인하면 팀에 참여합니다.",
   "İptal": "취소",
   "Ekip daveti": "팀 초대",
+  "Bu numaraya az önce kod gönderdik. Yeni kod için {s} saniye bekleyin.": "이 번호로 방금 코드를 보냈습니다. 새 코드는 {s}초 후에 요청하세요.",
+  "Bu numaraya az önce kod gönderdik. Yeni kod için {m} dakika bekleyin.": "이 번호로 방금 코드를 보냈습니다. 새 코드는 {m}분 후에 요청하세요.",
+  "Bu numaraya bir saatte en fazla 5 kod gönderilebilir. Biraz sonra tekrar deneyin.": "이 번호로는 1시간에 최대 5개의 코드를 보낼 수 있습니다. 잠시 후 다시 시도하세요.",
+  "Çok fazla deneme yapıldı. Birkaç dakika sonra tekrar deneyin ya da E-posta ile giriş yapın.": "시도 횟수가 너무 많습니다. 몇 분 후 다시 시도하거나 이메일로 로그인하세요.",
+  "{p} numarasına az önce kod gönderdik. SMS'teki 6 haneli kodu girin.": "{p}(으)로 방금 코드를 보냈습니다. SMS의 6자리 코드를 입력하세요.",
 };
 
 export default dict;
