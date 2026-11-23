@@ -13,12 +13,7 @@ import { Capacitor } from "@capacitor/core";
 import { firebaseConfig } from "./firebaseConfig";
 import { t } from "./i18n";
 
-const FIRST_WAIT_MS = 60 * 1000;
-const WAIT_MS = 2 * 60 * 1000;
-const HOUR_MS = 60 * 60 * 1000;
-const DAY_MS = 24 * HOUR_MS;
-const MAX_PER_HOUR = 5;
-const MAX_NUMBERS_PER_DAY = 4;
+const DAY_MS = 24 * 60 * 60 * 1000;
 const STORE_KEY = "hesabim-sms-log";
 /** Gönderilen son kodun doğrulama kimliği: uygulama kapanıp açılsa da kod girilebilsin */
 const PENDING_KEY = "hesabim-sms-bekleyen";
@@ -91,31 +86,9 @@ async function writeLog(list: SendLog[]): Promise<void> {
   }
 }
 
-/** Son gönderimden sonra beklenecek süre: son bir saatte tek kod gittiyse 1 dakika, daha fazlaysa 2 dakika */
-function waitAfter(same: SendLog[], now: number): number {
-  return same.filter((e) => now - e.at < HOUR_MS).length <= 1 ? FIRST_WAIT_MS : WAIT_MS;
-}
-
-/** Bu numaraya şimdi kod gönderilebilir mi? Gönderilemiyorsa SmsError fırlatır. */
-async function checkLimits(phone: string): Promise<void> {
-  const log = await readLog();
-  const now = Date.now();
-  const same = log.filter((e) => e.phone === phone);
-  const last = same.reduce((m, e) => Math.max(m, e.at), 0);
-  const wait = waitAfter(same, now);
-  if (last && now - last < wait) throw new SmsError("wait", Math.ceil((wait - (now - last)) / 1000));
-  if (same.filter((e) => now - e.at < HOUR_MS).length >= MAX_PER_HOUR) throw new SmsError("hourly");
-  const others = new Set(log.filter((e) => e.phone !== phone).map((e) => e.phone));
-  // Yeni bir numara: son 24 saatte en fazla MAX_NUMBERS_PER_DAY farklı numaraya kod gidebilir
-  if (same.length === 0 && others.size >= MAX_NUMBERS_PER_DAY) throw new SmsError("device");
-}
-
-/** Aynı numaraya yeniden gönderim için kalan süre (sn); beklemek gerekmiyorsa 0 */
-export async function resendWait(phone: string): Promise<number> {
-  const now = Date.now();
-  const same = (await readLog()).filter((e) => e.phone === phone);
-  const last = same.reduce((m, e) => Math.max(m, e.at), 0);
-  return last ? Math.max(0, Math.ceil((waitAfter(same, now) - (now - last)) / 1000)) : 0;
+/** Uygulama içi bekleme yok: yeniden gönderim her zaman açık */
+export async function resendWait(_phone: string): Promise<number> {
+  return 0;
 }
 
 // ---------- Firebase ----------
@@ -188,7 +161,6 @@ async function nativeToken(): Promise<string> {
  * Android SMS'i kendiliğinden doğrularsa onAutoVerified çağrılır (kod yazmaya gerek kalmaz).
  */
 export async function sendSmsCode(phone: string, onAutoVerified?: (idToken: string) => void): Promise<void> {
-  await checkLimits(phone);
   try {
     if (Capacitor.isNativePlatform()) {
       const { FirebaseAuthentication } = await import("@capacitor-firebase/authentication");
