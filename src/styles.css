@@ -4822,3 +4822,22 @@ a.action-btn:visited {
   width: 100%;
 }
 .ob-sheet button[type="submit"] { scroll-margin-bottom: 12px; }
+
+/* Kayıt ekranının sağ üstündeki "Giriş yap" ve giriş ekranındaki Telefon / E-posta sekmeleri */
+.ob-signin-btn {
+  flex: none;
+  min-height: 38px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--green);
+  color: #fff;
+  font: inherit;
+  font-size: 0.92rem;
+  font-weight: 700;
+  box-shadow: 0 6px 18px rgba(63, 191, 130, 0.35);
+}
+.ob-signin-btn:active { transform: scale(.96); }
+.ob-sheet .auth-tabs { background: rgba(10, 22, 34, 0.38); }
+.ob-sheet .auth-tabs button { color: #c6d3e0; }
+.ob-sheet .auth-tabs button.is-active { color: #fff; }

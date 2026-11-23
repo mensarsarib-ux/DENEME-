@@ -37,6 +37,7 @@ import PhoneField from "./PhoneField";
  */
 type Screen =
   | "login"
+  | "signin-phone"
   | "login-sms"
   | "login-email"
   | "add-phone"
@@ -63,6 +64,7 @@ const BACK: Partial<Record<Screen, Screen>> = {
   "reg-business": "login",
   invite: "login",
   "login-email": "login",
+  "signin-phone": "login",
   "add-sms": "add-phone",
   verify: "login-email",
   forgot: "login-email",
@@ -130,6 +132,8 @@ export default function AuthScreen({
   const [resendIn, setResendIn] = useState(0);
   // Klavye yüksekliği: alttaki düğme klavyenin üstünde kalsın diye ekranın altına bu kadar boşluk bırakılır
   const [keyboard, setKeyboard] = useState(0);
+  // Kayıtlı kullanıcı "Giriş yap"tan mı geldi (kayıt adımları ve ilerleme çizgisi gösterilmez)
+  const [signingIn, setSigningIn] = useState(false);
 
   useEffect(() => {
     if (Capacitor.isNativePlatform()) {
@@ -174,6 +178,9 @@ export default function AuthScreen({
 
   function go(next: Screen) {
     haptic("light");
+    // Giriş yap ekranlarından gelindiyse SMS kodu ekranının geri düğmesi oraya döner
+    if (next === "login") setSigningIn(false);
+    if (next === "signin-phone" || next === "login-email") setSigningIn(true);
     setScreen(next);
     setError(null);
     setInfo(null);
@@ -275,6 +282,8 @@ export default function AuthScreen({
     haptic("success");
     setCode("");
     if ("noAccount" in result) {
+      // Girişte kayıtlı olmayan numara: kayıt adımlarıyla devam edilir
+      setSigningIn(false);
       setPhoneToken(idToken);
       setPendingSession(null);
       setInvites(result.invites);
@@ -361,6 +370,7 @@ export default function AuthScreen({
     haptic("light");
     switch (screen) {
       case "login":
+      case "signin-phone":
         if (!loginPhone) return;
         return startSms(loginPhone, "login-sms");
       case "login-email":
@@ -590,9 +600,42 @@ export default function AuthScreen({
 
   // ---------- Sihirbaz ve form ekranları ----------
 
-  const flow = REGISTER.includes(screen) ? REGISTER : null;
+  const flow = REGISTER.includes(screen) && !(signingIn && screen === "login-sms") ? REGISTER : null;
   const step = flow ? flow.indexOf(screen) + 1 : 0;
-  const back = BACK[screen];
+  const back = signingIn && screen === "login-sms" ? "signin-phone" : BACK[screen];
+
+  // Giriş yap: telefon ve e-posta sekmeleri, altta üye olma bağlantısı
+  const signinTabs = (
+    <div className="auth-tabs" role="tablist">
+      <button
+        type="button"
+        role="tab"
+        aria-selected={screen === "signin-phone"}
+        className={screen === "signin-phone" ? "is-active" : ""}
+        onClick={() => screen !== "signin-phone" && go("signin-phone")}
+      >
+        {t("Telefon")}
+      </button>
+      <button
+        type="button"
+        role="tab"
+        aria-selected={screen === "login-email"}
+        className={screen === "login-email" ? "is-active" : ""}
+        onClick={() => {
+          if (screen === "login-email") return;
+          setPassword1("");
+          go("login-email");
+        }}
+      >
+        {t("E-posta")}
+      </button>
+    </div>
+  );
+  const toRegister = (
+    <button type="button" className="help-link" onClick={() => go("login")}>
+      {t("Hesabınız yok mu? Üye olun")}
+    </button>
+  );
 
   // Ekran içeriği: başlık, açıklama, alanlar ve alttaki düğme
   let title = "";
@@ -603,7 +646,7 @@ export default function AuthScreen({
 
   switch (screen) {
     case "login":
-      title = t("Telefon numaranız");
+      title = t("Hesabınızı oluşturun");
       lead = t("Telefon numaranıza SMS ile 6 haneli bir kod göndereceğiz.");
       body = (
         <>
@@ -612,26 +655,32 @@ export default function AuthScreen({
             <PhoneField id="auth-phone-login" value={loginPhoneInput} onChange={setLoginPhoneInput} />
           </div>
           {legal}
-          {/* Telefonu kayıtlı olmayan eski hesaplar */}
-          <button
-            type="button"
-            className="help-link"
-            onClick={() => {
-              setPassword1("");
-              go("login-email");
-            }}
-          >
-            {t("E-posta ile giriş yap")}
-          </button>
+        </>
+      );
+      action = t("KOD GÖNDER");
+      ready = loginPhone !== "";
+      break;
+    case "signin-phone":
+      title = t("Giriş yap");
+      lead = t("Kayıtlı telefon numaranıza SMS ile 6 haneli bir kod göndereceğiz.");
+      body = (
+        <>
+          {signinTabs}
+          <div className="field">
+            <label htmlFor="auth-phone-signin">{t("Telefon")}</label>
+            <PhoneField id="auth-phone-signin" value={loginPhoneInput} onChange={setLoginPhoneInput} />
+          </div>
+          {toRegister}
         </>
       );
       action = t("KOD GÖNDER");
       ready = loginPhone !== "";
       break;
     case "login-email":
-      title = t("E-posta ile giriş");
+      title = t("Giriş yap");
       body = (
         <>
+          {signinTabs}
           {emailField("auth-email-login")}
           {passwordField(t("Şifre"), "current-password")}
           <button
@@ -645,6 +694,7 @@ export default function AuthScreen({
           >
             {t("Şifremi unuttum")}
           </button>
+          {toRegister}
         </>
       );
       action = t("GİRİŞ YAP");
@@ -801,6 +851,11 @@ export default function AuthScreen({
                 {step}/{flow.length}
               </span>
             </>
+          )}
+          {screen === "login" && (
+            <button type="button" className="ob-signin-btn" onClick={() => go("signin-phone")}>
+              {t("Giriş yap")}
+            </button>
           )}
         </div>
         {/* Geri düğmesi üstte sabit; içerik altında ortalanır (klavye açılınca kesilmez, kaydırılır) */}
