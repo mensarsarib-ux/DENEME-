@@ -4190,7 +4190,8 @@ a.action-btn:visited {
   display: flex;
   flex-direction: column;
   padding: calc(env(safe-area-inset-top, 0px) + 16px) 0 0;
-  background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-mid) 45%, var(--bg-bottom) 100%);
+  /* Kayıt ve giriş ekranları: koyu petrol */
+  background: linear-gradient(180deg, #123a40 0%, #0c2430 100%);
   /* Sabit boy: klavye açılınca içerik sayfayı uzatmaz, panel kendi içinde kayar */
   height: 100dvh;
   overflow: hidden;
