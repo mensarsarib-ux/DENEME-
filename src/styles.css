@@ -4191,6 +4191,9 @@ a.action-btn:visited {
   flex-direction: column;
   padding: calc(env(safe-area-inset-top, 0px) + 16px) 0 0;
   background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-mid) 45%, var(--bg-bottom) 100%);
+  /* Sabit boy: klavye açılınca içerik sayfayı uzatmaz, panel kendi içinde kayar */
+  height: 100dvh;
+  overflow: hidden;
   color: #f2f5f8;
   transition: padding-bottom 0.25s ease;
 }
@@ -4279,6 +4282,7 @@ a.action-btn:visited {
   overflow-y: auto;
   margin-top: 8px;
   padding: 18px max(22px, env(safe-area-inset-right, 0px)) calc(env(safe-area-inset-bottom, 0px) + 24px) max(22px, env(safe-area-inset-left, 0px));
+  min-height: 0;
   /* Ayrı koyu panel yok: uygulamanın arka plan rengi baştan sona görünür */
   width: 100%;
   max-width: 480px;
@@ -4817,3 +4821,4 @@ a.action-btn:visited {
   margin: 0;
   width: 100%;
 }
+.ob-sheet button[type="submit"] { scroll-margin-bottom: 12px; }

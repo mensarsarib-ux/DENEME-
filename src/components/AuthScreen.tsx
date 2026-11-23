@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent, type ReactNode } from "react";
+import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { Capacitor } from "@capacitor/core";
 import { Keyboard } from "@capacitor/keyboard";
 import {
@@ -146,6 +146,16 @@ export default function AuthScreen({
     vv.addEventListener("resize", update);
     return () => vv.removeEventListener("resize", update);
   }, []);
+
+  // Klavye açılınca (ya da ekran değişince) gönder/kaydet düğmesi klavyenin hemen üstüne kaydırılır
+  const formRef = useRef<HTMLFormElement>(null);
+  useEffect(() => {
+    if (keyboard <= 0) return;
+    const timer = window.setTimeout(() => {
+      formRef.current?.querySelector<HTMLElement>('button[type="submit"]')?.scrollIntoView({ block: "end", behavior: "smooth" });
+    }, 300);
+    return () => window.clearTimeout(timer);
+  }, [keyboard, screen]);
 
   useEffect(() => {
     if (resendIn <= 0) return;
@@ -773,7 +783,7 @@ export default function AuthScreen({
 
   return (
     <div className="ob-page" style={{ paddingBottom: keyboard }}>
-      <form className={`ob-sheet ${done ? "is-done" : ""}`} onSubmit={submit} noValidate>
+      <form ref={formRef} className={`ob-sheet ${done ? "is-done" : ""}`} onSubmit={submit} noValidate>
         <div className="ob-top">
           {back ? (
             <button type="button" className="round-btn" aria-label={t("Geri")} onClick={() => go(back)}>
