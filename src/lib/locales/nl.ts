@@ -260,6 +260,7 @@ const dict: Record<string, string> = {
   "Miktar": "Bedrag",
   "Toplam": "Totaal",
   "Ülke alan kodu": "Landcode",
+  "Bu numaraya kayıtlı bir hesap yok. E-postanızla kayıt olduysanız E-posta sekmesinden giriş yapın.": "Er is geen account met dit nummer. Als je je met e-mail hebt aangemeld, log dan in via het tabblad E-mail.",
   "Bu numaraya şu an SMS gönderilemiyor. Aşağıdan e-posta ile devam edebilirsiniz.": "We kunnen nu geen sms naar dit nummer sturen. Je kunt hieronder verdergaan met e-mail.",
   "SMS gelmiyor mu? E-posta ile giriş yapın": "Geen sms ontvangen? Log in met e-mail",
   "SMS gelmiyor mu? E-posta ile devam edin": "Geen sms ontvangen? Ga verder met e-mail",

@@ -312,15 +312,26 @@ export default function AuthScreen({
     setCode("");
     if ("noAccount" in result) {
       const fromTrial = mode === "verify" && !signingIn;
-      // Girişte kayıtlı olmayan numara: kayıt adımlarıyla devam edilir
-      setSigningIn(false);
-      setPhoneToken(idToken);
-      setPendingSession(null);
-      setInvites(result.invites);
+      // Ekip daveti varsa (çalışan "Giriş yap"tan numarasıyla gelir) davet ekranı açılır
       if (result.invites.length > 0) {
+        setSigningIn(false);
+        setPhoneToken(idToken);
+        setPendingSession(null);
+        setInvites(result.invites);
         go("invite");
         return;
       }
+      // Giriş yap: numara kayıtlı değilse yeni hesap açılmaz. Kişi e-postayla kayıt olmuş olabilir;
+      // numarasını girince ikinci (boş) bir hesap açılmasın, e-postayla girmesi söylenir.
+      if (signingIn) {
+        setCode("");
+        go("signin-phone");
+        setError(t("Bu numaraya kayıtlı bir hesap yok. E-postanızla kayıt olduysanız E-posta sekmesinden giriş yapın."));
+        return;
+      }
+      setPhoneToken(idToken);
+      setPendingSession(null);
+      setInvites(result.invites);
       // Denemeden gelen yeni kullanıcı: işletme adı zaten yazıldı, hesap hemen açılır ve kayıtları taşınır
       if (fromTrial) {
         await openTrialAccount(idToken);

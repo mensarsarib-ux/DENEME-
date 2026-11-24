@@ -260,6 +260,7 @@ const dict: Record<string, string> = {
   "Miktar": "金额",
   "Toplam": "合计",
   "Ülke alan kodu": "国家/地区代码",
+  "Bu numaraya kayıtlı bir hesap yok. E-postanızla kayıt olduysanız E-posta sekmesinden giriş yapın.": "没有使用此号码的账户。如果您是用邮箱注册的，请在“邮箱”标签中登录。",
   "Bu numaraya şu an SMS gönderilemiyor. Aşağıdan e-posta ile devam edebilirsiniz.": "目前无法向此号码发送短信。您可以在下方用邮箱继续。",
   "SMS gelmiyor mu? E-posta ile giriş yapın": "收不到短信？用邮箱登录",
   "SMS gelmiyor mu? E-posta ile devam edin": "收不到短信？用邮箱继续",

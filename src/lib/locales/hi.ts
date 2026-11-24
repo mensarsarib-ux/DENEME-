@@ -260,6 +260,7 @@ const dict: Record<string, string> = {
   "Miktar": "राशि",
   "Toplam": "कुल",
   "Ülke alan kodu": "देश कोड",
+  "Bu numaraya kayıtlı bir hesap yok. E-postanızla kayıt olduysanız E-posta sekmesinden giriş yapın.": "इस नंबर से कोई खाता नहीं है। अगर आपने ईमेल से साइन अप किया है तो ईमेल टैब से साइन इन करें।",
   "Bu numaraya şu an SMS gönderilemiyor. Aşağıdan e-posta ile devam edebilirsiniz.": "अभी इस नंबर पर SMS नहीं भेजा जा सकता। नीचे ईमेल से जारी रखें।",
   "SMS gelmiyor mu? E-posta ile giriş yapın": "SMS नहीं आया? ईमेल से साइन इन करें",
   "SMS gelmiyor mu? E-posta ile devam edin": "SMS नहीं आया? ईमेल से जारी रखें",

@@ -157,6 +157,7 @@ export const extra: Record<string, string> = {
   "Miktar": "Amount",
   "Toplam": "Total",
   "Ülke alan kodu": "Country calling code",
+  "Bu numaraya kayıtlı bir hesap yok. E-postanızla kayıt olduysanız E-posta sekmesinden giriş yapın.": "There is no account with this number. If you signed up with email, sign in from the Email tab.",
   "Bu numaraya şu an SMS gönderilemiyor. Aşağıdan e-posta ile devam edebilirsiniz.": "We can't send an SMS to this number right now. You can continue with email below.",
   "SMS gelmiyor mu? E-posta ile giriş yapın": "Not getting the SMS? Sign in with email",
   "SMS gelmiyor mu? E-posta ile devam edin": "Not getting the SMS? Continue with email",
