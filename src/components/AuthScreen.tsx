@@ -13,6 +13,7 @@ import {
   sendResetEmail,
   setPassword,
   signIn,
+  signUp,
   smsSession,
   verifyRecoveryCode,
   verifySignupCode,
@@ -39,6 +40,7 @@ type Screen =
   | "login"
   | "signin-phone"
   | "biz-first"
+  | "reg-email"
   | "login-sms"
   | "login-email"
   | "add-phone"
@@ -67,6 +69,7 @@ const BACK: Partial<Record<Screen, Screen>> = {
   invite: "login",
   "login-email": "login",
   "signin-phone": "login",
+  "reg-email": "login",
   "add-sms": "add-phone",
   verify: "login-email",
   forgot: "login-email",
@@ -143,6 +146,11 @@ export default function AuthScreen({
   // Kodun gönderildiği e-posta; davet ve telefon eklemede açılmış oturum (adımlar bitince kaydedilir)
   const [pendingEmail, setPendingEmail] = useState<string | null>(null);
   const [pendingSession, setPendingSession] = useState<Session | null>(null);
+  // SMS gönderilemeyen numaralar (kaç kez): Firebase bazı numaralara hiç kod göndermiyor (hata 39). Aynı numarada
+  // art arda denemek cihazı geçici engelletir; ikinci hatadan sonra yeniden denenmez, e-postayla devam önerilir.
+  const [smsFails, setSmsFails] = useState<Record<string, number>>({});
+  // E-postayla kayıt (SMS gelmeyince): kod ekranından geri e-posta ekranına dönülür
+  const [emailSignup, setEmailSignup] = useState(false);
   // Şifre sıfırlama: e-postadaki bağlantının verdiği geçici anahtar
   const [resetToken, setResetToken] = useState<string | null>(recoveryToken ?? null);
   // Şifremi unuttum: e-posta mı telefon mu; telefonla yenilemede SMS doğrulanınca Firebase belirteci
@@ -364,12 +372,18 @@ export default function AuthScreen({
       return;
     }
     if (codeScreen === "forgot-sms") setResetPhoneToken(null);
+    if ((smsFails[to] ?? 0) >= 2) {
+      haptic("warning");
+      setError(t("Bu numaraya şu an SMS gönderilemiyor. Aşağıdan e-posta ile devam edebilirsiniz."));
+      return;
+    }
     setBusy(true);
     setError(null);
     try {
       await sendSms(to, codeScreen);
     } catch (e) {
       haptic("warning");
+      setSmsFails((m) => ({ ...m, [to]: (m[to] ?? 0) + 1 }));
       setError(smsErrorText(e));
     } finally {
       setBusy(false);
@@ -446,6 +460,20 @@ export default function AuthScreen({
       case "add-phone":
         if (!regPhone) return;
         return startSms(regPhone, "add-sms");
+      case "reg-email":
+        if (!validEmail || password.length < 6) return;
+        return run(async () => {
+          const address = email.trim();
+          const created = await signUp(address, password, { name: trialBusiness ?? "" });
+          if (created !== "pending") {
+            saveSession(created);
+            haptic("success");
+            onSession(created);
+            return;
+          }
+          setEmailSignup(true);
+          codeSent(address, "verify");
+        });
       case "verify":
         if (!validCode) return;
         return run(async () => {
@@ -650,7 +678,9 @@ export default function AuthScreen({
   const flow = REGISTER.includes(screen) && !(signingIn && screen === "login-sms") ? REGISTER : null;
   const step = flow ? flow.indexOf(screen) + 1 : 0;
   const back =
-    signingIn && screen === "login-sms"
+    emailSignup && screen === "verify"
+      ? "reg-email"
+      : signingIn && screen === "login-sms"
       ? "signin-phone"
       : screen === "signin-phone" || screen === "login-email"
         ? home
@@ -685,6 +715,20 @@ export default function AuthScreen({
       </button>
     </div>
   );
+  // SMS gönderilemediyse: yeni kullanıcı e-postayla hesap açar, kayıtlı kullanıcı e-postayla girer
+  const smsFailed = Object.keys(smsFails).length > 0;
+  const emailFallback = smsFailed && (
+    <button
+      type="button"
+      className="help-link"
+      onClick={() => {
+        setPassword1("");
+        go(signingIn || mode !== "verify" ? "login-email" : "reg-email");
+      }}
+    >
+      {signingIn || mode !== "verify" ? t("SMS gelmiyor mu? E-posta ile giriş yapın") : t("SMS gelmiyor mu? E-posta ile devam edin")}
+    </button>
+  );
   const toRegister = (
     <button type="button" className="help-link" onClick={() => go(home)}>
       {t("Hesabınız yok mu? Üye olun")}
@@ -712,6 +756,7 @@ export default function AuthScreen({
             <PhoneField id="auth-phone-login" value={loginPhoneInput} onChange={setLoginPhoneInput} />
           </div>
           {legal}
+          {emailFallback}
         </>
       );
       action = t("KOD GÖNDER");
@@ -727,6 +772,7 @@ export default function AuthScreen({
             <label htmlFor="auth-phone-signin">{t("Telefon")}</label>
             <PhoneField id="auth-phone-signin" value={loginPhoneInput} onChange={setLoginPhoneInput} />
           </div>
+          {emailFallback}
           {toRegister}
         </>
       );
@@ -777,7 +823,12 @@ export default function AuthScreen({
     case "login-sms":
     case "add-sms":
       title = t("Telefonunuzu doğrulayın");
-      body = codeField;
+      body = (
+        <>
+          {codeField}
+          {screen === "login-sms" && emailFallback}
+        </>
+      );
       action = t("DOĞRULA");
       ready = validCode;
       break;
@@ -847,6 +898,19 @@ export default function AuthScreen({
       );
       action = t("ŞİFREYİ YENİLE");
       ready = strongEnough;
+      break;
+    case "reg-email":
+      title = t("E-posta ile devam edin");
+      lead = t("Hesabınızı e-posta adresinizle açalım. Girdiğiniz kayıtlar hesabınıza taşınır.");
+      body = (
+        <>
+          {emailField("auth-email-reg")}
+          {passwordField(t("Şifre (en az 6 karakter)"), "new-password")}
+          {legal}
+        </>
+      );
+      action = t("HESAP AÇ");
+      ready = validEmail && password.length >= 6;
       break;
     case "biz-first":
       title = t("İşletmenizin adı");
