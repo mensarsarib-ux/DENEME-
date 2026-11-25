@@ -482,7 +482,8 @@ export async function smsSession(
     const body = (await res.json().catch(() => ({}))) as { invites?: TeamInvite[] };
     return { noAccount: true, invites: Array.isArray(body.invites) ? body.invites : [] };
   }
-  if (res.status === 401) throw new CloudError("invalid_credentials", "token");
+  // Kod hatalı ya da süresi dolmuşsa ayrı bir hata: "şifre hatalı" yerine kodun yeniden istenmesi söylenir
+  if (res.status === 401) throw new CloudError("invalid_sms_code", "token");
   if (!res.ok) throw new CloudError("unknown", String(res.status));
   const { tokenHash, isNew } = (await res.json()) as { tokenHash: string; isNew: boolean };
   const verify = await call("/auth/v1/verify", {
@@ -493,6 +494,14 @@ export async function smsSession(
   const session = verify.ok ? toSession(body, "") : null;
   if (!session) throw new CloudError("unknown", "no session");
   return { session, isNew };
+}
+
+/**
+ * Numaraya WhatsApp'tan 6 haneli giriş kodu gönderir (onaylı "hesabim_giris_kodu" şablonu).
+ * Sunucu sınırları: aynı numaraya 5 dakikada 1, saatte en fazla 3 kod.
+ */
+export async function sendWaCode(phone: string): Promise<Response> {
+  return call("/functions/v1/phone-verify", { method: "POST", body: JSON.stringify({ action: "wa-send", phone }) });
 }
 
 /** Sunucudaki bir fonksiyonu (rpc) çağırır; oturum düştüyse "expired" */

@@ -4857,3 +4857,22 @@ a.action-btn:visited {
 
 /* Tanıtımın altında kayıtlı kullanıcı için giriş bağlantısı */
 .intro-signin { align-self: center; margin-top: 10px; }
+
+/* Yeni hesap karşılaması: animasyonlu başlık, Premium kartı, ücretsiz devam */
+.welcome-plans { position: fixed; inset: 0; z-index: 900; background: #0c2430; color: #fff; display: flex; align-items: center; justify-content: center; padding: 24px 16px; overflow-y: auto; }
+.welcome-inner { width: 100%; max-width: 420px; display: flex; flex-direction: column; gap: 16px; }
+.welcome-title { margin: 0; font-size: 30px; line-height: 1.2; font-weight: 800; }
+.welcome-line { display: block; opacity: 0; transform: translateY(14px); animation: welcome-in 0.6s ease forwards; }
+.welcome-sub { margin: 0; opacity: 0.8; font-size: 15px; }
+.welcome-fade { opacity: 0; animation: welcome-fade 0.6s ease 0.7s forwards; }
+.welcome-card { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18); border-radius: 18px; padding: 18px; position: relative; }
+.welcome-card h2 { margin: 6px 0 4px; font-size: 22px; }
+.welcome-card p { margin: 0 0 14px; opacity: 0.85; font-size: 14px; }
+.welcome-badge { position: absolute; top: -10px; right: 14px; background: #3ddc84; color: #0c2430; font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 999px; }
+.welcome-cta { width: 100%; min-height: 50px; border: 0; border-radius: 14px; background: #3ddc84; color: #0c2430; font-weight: 800; font-size: 16px; }
+.welcome-cta:disabled { opacity: 0.6; }
+.welcome-free { min-height: 50px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.35); background: transparent; color: #fff; font-size: 16px; font-weight: 600; }
+.welcome-error { color: #ffb4b4; margin: 10px 0 0; font-size: 13px; }
+@keyframes welcome-in { to { opacity: 1; transform: translateY(0); } }
+@keyframes welcome-fade { to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .welcome-line, .welcome-fade { animation: none; opacity: 1; transform: none; } }

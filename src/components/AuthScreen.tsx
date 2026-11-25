@@ -219,6 +219,7 @@ export default function AuthScreen({
     const reason = e instanceof CloudError ? e.code : "unknown";
     switch (reason) {
       case "invalid_credentials": return t("Bilgiler veya şifre hatalı.");
+      case "invalid_sms_code": return t("Kod hatalı ya da süresi dolmuş. Yeni kod isteyin.");
       case "no_account": return t("Bu numarayla kayıtlı hesap yok. Üye olun ya da e-posta ile giriş yapın.");
       case "email_taken": return t("Bu e-posta ile zaten bir hesap var; giriş yapın.");
       case "phone_taken": return t("Bu telefon numarası başka bir hesapta kullanılıyor.");
@@ -270,7 +271,7 @@ export default function AuthScreen({
     setCode("");
     setResendIn(await resendWait(to));
     if (screen !== codeScreen) go(codeScreen);
-    setInfo(t("{p} numarasına SMS ile 6 haneli bir kod gönderdik.", { p: to }));
+    setInfo(t("{p} numarasına WhatsApp ile 6 haneli bir kod gönderdik.", { p: to }));
   }
 
   /** Oturum cihaza yazılır ve uygulama açılır */
@@ -379,13 +380,13 @@ export default function AuthScreen({
       setCode("");
       setResendIn(await resendWait(to));
       go(codeScreen);
-      setInfo(t("{p} numarasına az önce kod gönderdik. SMS'teki 6 haneli kodu girin.", { p: to }));
+      setInfo(t("{p} numarasına az önce kod gönderdik. WhatsApp'taki 6 haneli kodu girin.", { p: to }));
       return;
     }
     if (codeScreen === "forgot-sms") setResetPhoneToken(null);
     if ((smsFails[to] ?? 0) >= 2) {
       haptic("warning");
-      setError(t("Bu numaraya şu an SMS gönderilemiyor. Aşağıdan e-posta ile devam edebilirsiniz."));
+      setError(t("Bu numaraya şu an kod gönderilemiyor. Birkaç dakika sonra tekrar deneyin."));
       return;
     }
     setBusy(true);
@@ -726,20 +727,6 @@ export default function AuthScreen({
       </button>
     </div>
   );
-  // SMS gönderilemediyse: yeni kullanıcı e-postayla hesap açar, kayıtlı kullanıcı e-postayla girer
-  const smsFailed = Object.keys(smsFails).length > 0;
-  const emailFallback = smsFailed && (
-    <button
-      type="button"
-      className="help-link"
-      onClick={() => {
-        setPassword1("");
-        go(signingIn || mode !== "verify" ? "login-email" : "reg-email");
-      }}
-    >
-      {signingIn || mode !== "verify" ? t("SMS gelmiyor mu? E-posta ile giriş yapın") : t("SMS gelmiyor mu? E-posta ile devam edin")}
-    </button>
-  );
   const toRegister = (
     <button type="button" className="help-link" onClick={() => go(home)}>
       {t("Hesabınız yok mu? Üye olun")}
@@ -758,8 +745,8 @@ export default function AuthScreen({
       title = mode === "verify" ? t("Kayıtlarınızı kaybetmeyin") : t("Hesabınızı oluşturun");
       lead =
         mode === "verify"
-          ? t("Hesabınızı telefon numaranızla açalım; kayıtlarınız güvenle saklansın ve her cihazda açılsın. SMS ile 6 haneli bir kod göndereceğiz.")
-          : t("Telefon numaranıza SMS ile 6 haneli bir kod göndereceğiz.");
+          ? t("Hesabınızı telefon numaranızla açalım; kayıtlarınız güvenle saklansın ve her cihazda açılsın. WhatsApp ile 6 haneli bir kod göndereceğiz.")
+          : t("Telefon numaranıza WhatsApp ile 6 haneli bir kod göndereceğiz.");
       body = (
         <>
           <div className="field">
@@ -767,7 +754,6 @@ export default function AuthScreen({
             <PhoneField id="auth-phone-login" value={loginPhoneInput} onChange={setLoginPhoneInput} />
           </div>
           {legal}
-          {emailFallback}
         </>
       );
       action = t("KOD GÖNDER");
@@ -775,7 +761,7 @@ export default function AuthScreen({
       break;
     case "signin-phone":
       title = t("Giriş yap");
-      lead = t("Kayıtlı telefon numaranıza SMS ile 6 haneli bir kod göndereceğiz.");
+      lead = t("Kayıtlı telefon numaranıza WhatsApp ile 6 haneli bir kod göndereceğiz.");
       body = (
         <>
           {signinTabs}
@@ -783,7 +769,6 @@ export default function AuthScreen({
             <label htmlFor="auth-phone-signin">{t("Telefon")}</label>
             <PhoneField id="auth-phone-signin" value={loginPhoneInput} onChange={setLoginPhoneInput} />
           </div>
-          {emailFallback}
           {toRegister}
         </>
       );
@@ -816,7 +801,7 @@ export default function AuthScreen({
       break;
     case "add-phone":
       title = t("Telefonunuzu ekleyin");
-      lead = t("Bundan sonra şifre yerine telefonunuza gelen SMS koduyla giriş yaparsınız.");
+      lead = t("Bundan sonra şifre yerine WhatsApp'a gelen kodla giriş yaparsınız.");
       body = (
         <>
           <div className="field">
@@ -837,7 +822,6 @@ export default function AuthScreen({
       body = (
         <>
           {codeField}
-          {screen === "login-sms" && emailFallback}
         </>
       );
       action = t("DOĞRULA");
@@ -854,7 +838,7 @@ export default function AuthScreen({
       lead =
         forgotMethod === "email"
           ? t("Hesabınızın e-posta adresini yazın; size 6 haneli bir kod göndereceğiz.")
-          : t("Numaranıza SMS ile 6 haneli bir kod göndereceğiz.");
+          : t("Numaranıza WhatsApp ile 6 haneli bir kod göndereceğiz.");
       body = (
         <>
           <div className="sort-options auth-method" role="radiogroup" aria-label={t("Giriş yöntemi")}>

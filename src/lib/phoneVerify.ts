@@ -10,16 +10,12 @@
  * Sayaçlar iPhone'da Keychain'de tutulur; uygulama silinip yeniden kurulunca sıfırlanmaz.
  */
 import { Capacitor } from "@capacitor/core";
-import { firebaseConfig } from "./firebaseConfig";
 import { t } from "./i18n";
 import { trackEvent } from "./tapTrack";
+import { sendWaCode } from "./cloud";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const STORE_KEY = "hesabim-sms-log";
-/** Gönderilen son kodun doğrulama kimliği: uygulama kapanıp açılsa da kod girilebilsin */
-const PENDING_KEY = "hesabim-sms-bekleyen";
-/** Firebase SMS kodu bu süre boyunca geçerli kabul edilir */
-const CODE_VALID_MS = 10 * 60 * 1000;
 
 export type SmsErrorCode =
   /** Aynı numaraya yeni kod için beklemek gerekiyor (seconds dolu) */
@@ -120,145 +116,51 @@ function mapError(e: unknown): SmsError {
   return err("failed");
 }
 
-// Web: Firebase JavaScript kütüphanesi ve reCAPTCHA (görünmez)
-type WebConfirmation = { confirm: (code: string) => Promise<{ user: { getIdToken: () => Promise<string> } }> };
-let webConfirmation: WebConfirmation | null = null;
-let webVerifier: { clear: () => void } | null = null;
-
-async function webAuth() {
-  const [{ initializeApp, getApps }, auth] = await Promise.all([import("firebase/app"), import("firebase/auth")]);
-  const app = getApps()[0] ?? initializeApp(firebaseConfig);
-  const instance = auth.getAuth(app);
-  instance.languageCode = document.documentElement.lang || "tr";
-  return { auth, instance };
+/** Kod artık WhatsApp'tan gelir ve uygulama kapansa da sunucudan yeniden istenir: bekleyen Firebase kodu yoktur */
+export function hasPendingCode(_phone: string): boolean {
+  return false;
 }
 
-// Yerel: eklentinin verdiği doğrulama kimliği
-let nativeVerificationId: string | null = null;
-
-function savePending(phone: string, verificationId: string) {
-  try {
-    localStorage.setItem(PENDING_KEY, JSON.stringify({ phone, verificationId, at: Date.now() }));
-  } catch {
-    /* yazılamazsa yalnızca bu oturumda geçerli */
-  }
-}
+/** Son kod istenen numara: kod girilince kanıt bu numaradan kurulur (kod sunucuda doğrulanır) */
+let waPhone: string | null = null;
 
 /**
- * Bu numaraya az önce gönderilmiş ve hâlâ girilebilecek bir kod var mı? Varsa doğrulama kimliği geri yüklenir;
- * kullanıcı yeni kod beklemek yerine gelen SMS'teki kodu girer (uygulama kapatılıp açılsa da).
+ * Numaraya WhatsApp ile 6 haneli giriş kodu gönderir (onaylı "hesabim_giris_kodu" şablonu).
+ * Firebase kullanılmaz. Sunucu sınırları: aynı numaraya 5 dakikada 1, saatte en fazla 3 kod.
  */
-export function hasPendingCode(phone: string): boolean {
-  if (!Capacitor.isNativePlatform()) return false;
+export async function sendSmsCode(phone: string, _onAutoVerified?: (idToken: string) => void): Promise<void> {
+  let res: Response;
   try {
-    const p = JSON.parse(localStorage.getItem(PENDING_KEY) ?? "null") as { phone: string; verificationId: string; at: number } | null;
-    if (!p || p.phone !== phone || Date.now() - p.at > CODE_VALID_MS) return false;
-    nativeVerificationId = p.verificationId;
-    nativeAutoToken = null;
-    return true;
+    res = await sendWaCode(phone);
   } catch {
-    return false;
+    trackEvent("sms_hata", "failed:network");
+    throw new SmsError("failed", 0, "network");
   }
-}
-/** Android bazen SMS'i kendisi okuyup doğrular; o durumda belirteç doğrudan buraya düşer */
-let nativeAutoToken: string | null = null;
-
-async function nativeToken(): Promise<string> {
-  const { FirebaseAuthentication } = await import("@capacitor-firebase/authentication");
-  const { token } = await FirebaseAuthentication.getIdToken({ forceRefresh: true });
-  // Firebase oturumu uygulamanın oturumu değildir; belirteç alınır alınmaz kapatılır
-  await FirebaseAuthentication.signOut().catch(() => undefined);
-  return token;
-}
-
-/**
- * Numaraya SMS kodu gönderir. phone +90… biçiminde olmalıdır.
- * Android SMS'i kendiliğinden doğrularsa onAutoVerified çağrılır (kod yazmaya gerek kalmaz).
- */
-export async function sendSmsCode(phone: string, onAutoVerified?: (idToken: string) => void): Promise<void> {
-  try {
-    if (Capacitor.isNativePlatform()) {
-      const { FirebaseAuthentication } = await import("@capacitor-firebase/authentication");
-      await FirebaseAuthentication.removeAllListeners();
-      nativeVerificationId = null;
-      nativeAutoToken = null;
-      await FirebaseAuthentication.setLanguageCode({ languageCode: document.documentElement.lang || "tr" }).catch(() => undefined);
-      await new Promise<void>((resolve, reject) => {
-        let settled = false;
-        const done = (fn: () => void) => {
-          if (settled) return;
-          settled = true;
-          fn();
-        };
-        void FirebaseAuthentication.addListener("phoneCodeSent", (event) => {
-          nativeVerificationId = event.verificationId;
-          savePending(phone, event.verificationId);
-          done(resolve);
-        });
-        void FirebaseAuthentication.addListener("phoneVerificationFailed", (event) => {
-          done(() => reject(mapError({ message: event.message })));
-        });
-        void FirebaseAuthentication.addListener("phoneVerificationCompleted", () => {
-          void nativeToken()
-            .then((token) => {
-              nativeAutoToken = token;
-              onAutoVerified?.(token);
-            })
-            .catch(() => undefined);
-          done(resolve);
-        });
-        FirebaseAuthentication.signInWithPhoneNumber({ phoneNumber: phone }).catch((e) => done(() => reject(mapError(e))));
-      });
-    } else {
-      const { auth, instance } = await webAuth();
-      webVerifier?.clear();
-      let holder = document.getElementById("sms-recaptcha");
-      if (!holder) {
-        holder = document.createElement("div");
-        holder.id = "sms-recaptcha";
-        document.body.appendChild(holder);
-      }
-      const verifier = new auth.RecaptchaVerifier(instance, holder, { size: "invisible" });
-      webVerifier = verifier;
-      webConfirmation = await auth.signInWithPhoneNumber(instance, phone, verifier);
-    }
-  } catch (e) {
-    const err = mapError(e);
-    // Hata sunucuya kaydedilir (numara yazılmaz): hangi hatanın kaç kişide çıktığı görülebilsin
-    trackEvent("sms_hata", `${err.code}:${err.detail.replace(/\+?\d[\d\s]{5,}/g, "#")}`);
+  if (!res.ok) {
+    const body = (await res.json().catch(() => ({}))) as { error?: string; seconds?: number };
+    const err =
+      res.status === 429 && body.error === "hourly"
+        ? new SmsError("hourly")
+        : res.status === 429
+          ? new SmsError("wait", body.seconds ?? 60)
+          : res.status === 400
+            ? new SmsError("invalid_phone")
+            : new SmsError("failed", 0, `wa-${res.status}`);
+    trackEvent("sms_hata", `${err.code}:${err.detail}`);
     throw err;
   }
+  waPhone = phone;
   const log = await readLog();
   log.push({ phone, at: Date.now() });
   await writeLog(log);
 }
 
-/** SMS kodunu doğrular ve Firebase kimlik belirtecini döndürür (sunucuya gönderilecek) */
+/** Girilen 6 haneli kodu kanıta çevirir; kodun doğruluğunu sunucu numaraya göre yeniden hesaplayıp kontrol eder */
 export async function confirmSmsCode(code: string): Promise<string> {
-  try {
-    if (Capacitor.isNativePlatform()) {
-      if (nativeAutoToken) return nativeAutoToken;
-      if (!nativeVerificationId) throw new SmsError("expired");
-      const { FirebaseAuthentication } = await import("@capacitor-firebase/authentication");
-      await FirebaseAuthentication.confirmVerificationCode({ verificationId: nativeVerificationId, verificationCode: code });
-      const token = await nativeToken();
-      // Kod kullanıldı: bir sonraki girişte eski doğrulama kimliği geri yüklenmez
-      try {
-        localStorage.removeItem(PENDING_KEY);
-      } catch {
-        /* sessizce geç */
-      }
-      return token;
-    }
-    if (!webConfirmation) throw new SmsError("expired");
-    const result = await webConfirmation.confirm(code);
-    const token = await result.user.getIdToken();
-    const { instance } = await webAuth();
-    await instance.signOut().catch(() => undefined);
-    return token;
-  } catch (e) {
-    throw mapError(e);
-  }
+  const c = code.trim();
+  if (!/^\d{6}$/.test(c)) throw new SmsError("invalid_code");
+  if (!waPhone) throw new SmsError("expired");
+  return `wa:${waPhone}:${c}`;
 }
 
 /** Hata için kullanıcıya gösterilecek metin */
@@ -270,7 +172,7 @@ export function smsErrorText(e: unknown): string {
         ? t("Bu numaraya az önce kod gönderdik. Yeni kod için {s} saniye bekleyin.", { s: err.seconds })
         : t("Bu numaraya az önce kod gönderdik. Yeni kod için {m} dakika bekleyin.", { m: Math.ceil(err.seconds / 60) });
     case "hourly":
-      return t("Bu numaraya bir saatte en fazla 5 kod gönderilebilir. Biraz sonra tekrar deneyin.");
+      return t("Bu numaraya bir saatte en fazla 3 kod gönderilebilir. Biraz sonra tekrar deneyin.");
     case "device":
       return t("Bu cihazdan bugün başka numaralara kod gönderildi. Yarın tekrar deneyin.");
     case "invalid_phone":
@@ -280,14 +182,14 @@ export function smsErrorText(e: unknown): string {
     case "expired":
       return t("Kodun süresi doldu. Yeni kod isteyin.");
     case "region":
-      return t("Şimdilik yalnızca Türkiye numaralarına SMS gönderilebiliyor.");
+      return t("Şimdilik yalnızca Türkiye numaralarına kod gönderilebiliyor.");
     case "quota":
-      return t("Çok fazla deneme yapıldı. Birkaç dakika sonra tekrar deneyin ya da E-posta ile giriş yapın.");
+      return t("Çok fazla deneme yapıldı. Birkaç dakika sonra tekrar deneyin.");
     case "blocked":
-      return t("Bu telefondan kısa sürede çok fazla kod istendiği için SMS servisi geçici olarak engelledi. Birkaç saat sonra tekrar deneyin ya da E-posta ile giriş yapın.");
+      return t("Bu telefondan kısa sürede çok fazla kod istendiği için SMS servisi geçici olarak engelledi. Birkaç saat sonra tekrar deneyin.");
     case "app_verify":
-      return `${t("Uygulama doğrulanamadı; SMS gönderilemedi. Uygulamayı kapatıp yeniden açın.")}${err.detail ? ` (${err.detail.slice(0, 120)})` : ""}`;
+      return `${t("Uygulama doğrulanamadı; kod gönderilemedi. Uygulamayı kapatıp yeniden açın.")}${err.detail ? ` (${err.detail.slice(0, 120)})` : ""}`;
     default:
-      return `${t("SMS gönderilemedi; bağlantınızı kontrol edip tekrar deneyin.")}${err.detail ? ` (${err.detail.slice(0, 120)})` : ""}`;
+      return `${t("Kod gönderilemedi; bağlantınızı kontrol edip tekrar deneyin.")}${err.detail ? ` (${err.detail.slice(0, 120)})` : ""}`;
   }
 }

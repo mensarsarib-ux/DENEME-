@@ -60,6 +60,7 @@ import { GUIDE_KEY, startGuide } from "./components/Guide";
 import InviteCard from "./components/InviteCard";
 import { cloudEnabled, heartbeat, loadSession, readRecoveryToken, signOut, syncAccountLanguage, type Session } from "./lib/cloud";
 import { useCloudSync } from "./lib/useCloudSync";
+import WelcomePlans from "./components/WelcomePlans";
 import { clearStored, usePersistedState } from "./lib/storage";
 
 
@@ -168,6 +169,8 @@ export default function App() {
   // Hesapsız deneme sürüyor mu ve ilk müşteri rehberi bitti mi (bitince telefon doğrulaması istenir)
   const [trial, setTrial] = useState(() => cloudEnabled && readFlag(TRIAL_KEY) === "1");
   const [guideOver, setGuideOver] = useState(() => readFlag(GUIDE_KEY) === "bitti");
+  /** Yeni hesap açıldıktan sonra bir kez: karşılama ve paket seçimi */
+  const [welcome, setWelcome] = useState(false);
   useEffect(() => {
     const onGuideEnd = () => setGuideOver(true);
     window.addEventListener("hesabim:rehber-bitti", onGuideEnd);
@@ -615,6 +618,7 @@ export default function App() {
             // Kendi işletmesini açan yeni hesapta ilk müşteri rehberi başlar (davetle katılan üyede başlamaz)
             if (info?.isNew && info.businessName) startGuide();
           }
+          if (info?.isNew) setWelcome(true);
           setSession(next);
           setView({ name: "home" });
         }}
@@ -1036,6 +1040,7 @@ export default function App() {
 
   return (
     <>
+    {welcome && <WelcomePlans onDone={() => setWelcome(false)} />}
     {/* Numaraya gelen ekip daveti (Menü açıkken gösterilmez) */}
     {session && !drawerOpen && <InviteCard session={session} />}
     <Dashboard
