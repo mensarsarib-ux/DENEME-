@@ -188,7 +188,7 @@ export function smsErrorText(e: unknown): string {
     case "quota":
       return t("Çok fazla deneme yapıldı. Birkaç dakika sonra tekrar deneyin.");
     case "blocked":
-      return t("Bu telefondan kısa sürede çok fazla kod istendiği için SMS servisi geçici olarak engelledi. Birkaç saat sonra tekrar deneyin.");
+      return t("Bu telefondan kısa sürede çok fazla kod istendi. Birkaç saat sonra tekrar deneyin.");
     case "app_verify":
       return `${t("Uygulama doğrulanamadı; kod gönderilemedi. Uygulamayı kapatıp yeniden açın.")}${err.detail ? ` (${err.detail.slice(0, 120)})` : ""}`;
     default:

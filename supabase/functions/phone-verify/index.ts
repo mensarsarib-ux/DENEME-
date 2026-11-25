@@ -86,11 +86,13 @@ async function waSend(admin: ReturnType<typeof createClient>, raw: string, req: 
   if (!/^\+\d{8,15}$/.test(phone)) return json({ error: "invalid_phone" }, 400);
   // İnceleme numarasına mesaj gönderilmez (kod sabittir)
   if (phone === (Deno.env.get("WA_TEST_PHONE") ?? "").trim()) return json({ ok: true });
+  // phone-login ile aynı tablo: WhatsApp kayıtları "wa:" önekiyle ve IP'siz tutulur, böylece şifreli girişin sayaçlarını etkilemez
+  const key = `wa:${phone}`;
   const hourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
   const { data: rows, error } = await admin
     .from("phone_login_attempts")
     .select("at")
-    .eq("phone", phone)
+    .eq("phone", key)
     .gte("at", hourAgo)
     .order("at", { ascending: false });
   if (error) return json({ error: "server" }, 500);
@@ -100,10 +102,9 @@ async function waSend(admin: ReturnType<typeof createClient>, raw: string, req: 
     const wait = 5 * 60 * 1000 - (Date.now() - new Date(list[0].at as string).getTime());
     if (wait > 0) return json({ error: "wait", seconds: Math.ceil(wait / 1000) }, 429);
   }
-  const ip = (req.headers.get("x-forwarded-for") ?? "").split(",")[0].trim();
   await admin.from("phone_login_attempts").insert({
-    phone,
-    ip,
+    phone: key,
+    ip: null,
     at: new Date().toISOString(),
   });
   const code = await waCodeFor(phone, Math.floor(Date.now() / WA_WINDOW_MS));

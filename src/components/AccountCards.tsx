@@ -401,13 +401,13 @@ function LoginCard({
               ) : (
                 <PhoneField id="login-add" value={value} onChange={setValue} />
               )}
-              {adding === "phone" && <p className="field-hint">{t("Numaranıza SMS ile 6 haneli bir kod göndereceğiz.")}</p>}
+              {adding === "phone" && <p className="field-hint">{t("Numaranıza WhatsApp ile 6 haneli bir kod göndereceğiz.")}</p>}
             </div>
           ) : (
             <div className="field">
               <label htmlFor="login-code">
                 {adding === "phone"
-                  ? t("{p} numarasına SMS ile 6 haneli bir kod gönderdik.", { p: sentTo })
+                  ? t("{p} numarasına WhatsApp ile 6 haneli bir kod gönderdik.", { p: sentTo })
                   : t("{m} adresine 6 haneli bir doğrulama kodu gönderdik.", { m: sentTo })}
               </label>
               <input
