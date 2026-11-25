@@ -141,6 +141,8 @@ export async function sendSmsCode(phone: string, _onAutoVerified?: (idToken: str
     const err =
       res.status === 429 && body.error === "hourly"
         ? new SmsError("hourly")
+        : res.status === 429 && body.error === "device"
+          ? new SmsError("device")
         : res.status === 429
           ? new SmsError("wait", body.seconds ?? 60)
           : res.status === 400

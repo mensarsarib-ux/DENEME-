@@ -94,9 +94,22 @@ async function waSend(admin: ReturnType<typeof createClient>, raw: string, req: 
     const wait = 5 * 60 * 1000 - (Date.now() - new Date(list[0].at as string).getTime());
     if (wait > 0) return json({ error: "wait", seconds: Math.ceil(wait / 1000) }, 429);
   }
+  // Cihaz (ağ adresi) sınırı: 24 saatte en fazla 3 farklı numaraya kod. Aynı numara tekrar sayılmaz.
+  const ip = (req.headers.get("x-forwarded-for") ?? "").split(",")[0].trim();
+  if (ip) {
+    const dayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+    const { data: dev, error: devErr } = await admin
+      .from("phone_login_attempts")
+      .select("phone")
+      .eq("ip", ip)
+      .gte("at", dayAgo);
+    if (devErr) return json({ error: "server" }, 500);
+    const phones = new Set((dev ?? []).map((r) => r.phone as string));
+    if (!phones.has(phone) && phones.size >= 3) return json({ error: "device" }, 429);
+  }
   await admin.from("phone_login_attempts").insert({
     phone,
-    ip: req.headers.get("x-forwarded-for") ?? "",
+    ip,
     at: new Date().toISOString(),
   });
   const code = await waCodeFor(phone, Math.floor(Date.now() / WA_WINDOW_MS));
