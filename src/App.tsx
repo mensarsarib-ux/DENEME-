@@ -169,7 +169,13 @@ export default function App() {
   const [trial, setTrial] = useState(() => cloudEnabled && readFlag(TRIAL_KEY) === "1");
   const [guideOver, setGuideOver] = useState(() => readFlag(GUIDE_KEY) === "bitti");
   /** Yeni hesap açıldıktan sonra bir kez: karşılama ve paket seçimi */
-  const [welcome, setWelcome] = useState(false);
+  const [welcome, setWelcome] = useState<"off" | "wait" | "plans">("off");
+  // Müşteriler sayfası birkaç saniye görünsün, sonra paket seçimi açılsın
+  useEffect(() => {
+    if (welcome !== "wait") return;
+    const id = window.setTimeout(() => setWelcome("plans"), 4000);
+    return () => window.clearTimeout(id);
+  }, [welcome]);
   useEffect(() => {
     const onGuideEnd = () => setGuideOver(true);
     window.addEventListener("hesabim:rehber-bitti", onGuideEnd);
@@ -617,7 +623,7 @@ export default function App() {
             // Kendi işletmesini açan yeni hesapta ilk müşteri rehberi başlar (davetle katılan üyede başlamaz)
             if (info?.isNew && info.businessName) startGuide();
           }
-          if (info?.isNew) setWelcome(true);
+          if (info?.isNew) setWelcome("wait");
           setSession(next);
           setView({ name: "home" });
         }}
@@ -1039,11 +1045,11 @@ export default function App() {
 
   return (
     <>
-    {welcome && (
+    {welcome === "plans" && (
       <div className="welcome-wrap">
-        <PlansPage onBack={() => setWelcome(false)} onPrivacy={() => undefined} onTerms={() => undefined} />
+        <PlansPage onBack={() => setWelcome("off")} onPrivacy={() => undefined} onTerms={() => undefined} />
         <div className="welcome-bar">
-          <button type="button" className="welcome-free" onClick={() => setWelcome(false)}>{t("Ücretsiz olarak devam et")}</button>
+          <button type="button" className="welcome-free" onClick={() => setWelcome("off")}>{t("Ücretsiz olarak devam et")}</button>
         </div>
       </div>
     )}
