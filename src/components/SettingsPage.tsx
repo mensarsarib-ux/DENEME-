@@ -334,7 +334,7 @@ export default function SettingsPage({
                   ? t("Eşitleniyor…")
                   : account.lastSync
                     ? t("Son eşitleme: {time}", { time: account.lastSync.toLocaleTimeString(locale(), { hour: "2-digit", minute: "2-digit" }) })
-                    : t("Verileriniz hesabınızla eşitlenir; aynı e-posta ve şifreyle başka telefondan da girebilirsiniz.")}
+                    : t("Verileriniz hesabınızla eşitlenir; hesabınıza başka telefondan da giriş yapabilirsiniz.")}
             </p>
             <div className="card-actions">
               {account.paused ? (
@@ -668,6 +668,7 @@ export default function SettingsPage({
       {confirmDelete && account && (
         <AccountDeleteDialog
           email={account.email}
+          session={account.session}
           onClose={() => setConfirmDelete(false)}
           onConfirm={() => {
             setConfirmDelete(false);
@@ -680,6 +681,7 @@ export default function SettingsPage({
       {confirmReset && account && (
         <AccountDeleteDialog
           email={account.email}
+          session={account.session}
           title={t("Verileri silmek için şifrenizi girin")}
           note={t("Bu cihazdaki tüm kayıtlar, notlar ve ayarlar silinir. Hesabınızdaki veriler silinmez; hesaptan geri çekebilirsiniz.")}
           actionLabel={t("Tüm verileri sil")}

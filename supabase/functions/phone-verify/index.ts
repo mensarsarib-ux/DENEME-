@@ -142,8 +142,33 @@ Deno.serve(async (req) => {
     password?: string;
     create?: boolean;
     lang?: string;
+    phone?: string;
+    code?: string;
   };
   const admin = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+
+  // Hesap sahibinin kendi numarası (oturum gerekir): silme gibi işlemler için şifre yerine WhatsApp kodu
+  if (input.action === "owner-info" || input.action === "owner-send" || input.action === "owner-check") {
+    const token = req.headers.get("authorization")?.replace(/^Bearer\s+/i, "") ?? "";
+    const { data: who } = await admin.auth.getUser(token);
+    if (!who?.user) return json({ error: "expired" }, 401);
+    const ownPhone = String((who.user.user_metadata as { phone?: string } | null)?.phone ?? "");
+    const hasPhone = /^\+\d{8,15}$/.test(ownPhone);
+    if (input.action === "owner-info") {
+      if (!hasPhone) return json({ hasPhone: false });
+      return json({ hasPhone: true, masked: ownPhone.slice(0, 3) + " *** ** " + ownPhone.slice(-2) });
+    }
+    if (!hasPhone) return json({ error: "no_phone" }, 404);
+    if (input.action === "owner-send") return waSend(admin, ownPhone, req);
+    // owner-check: girilen kod, hesabın kendi numarasına göre üretilmiş olmalı
+    const code = String(input.code ?? "").trim();
+    if (!/^\d{6}$/.test(code)) return json({ error: "invalid_code" }, 400);
+    const now = Math.floor(Date.now() / WA_WINDOW_MS);
+    for (const win of [now, now - 1]) {
+      if ((await waCodeFor(ownPhone, win)) === code) return json({ ok: true });
+    }
+    return json({ error: "invalid_code" }, 403);
+  }
 
   // WhatsApp ile kod gönderme: onaylı "hesabim_giris_kodu" şablonuyla 6 haneli kod gider (kimlik belirteci gerekmez)
   if (input.action === "wa-send") return waSend(admin, String(input.phone ?? ""), req);

@@ -34,7 +34,7 @@ export default function AccountCards({
     <>
       <ProfileCard session={session} onExpired={onExpired} />
       <SubscriptionCard session={session} onOpenPlans={onOpenPlans} />
-      <PasswordCard session={session} onExpired={onExpired} />
+      {!session.email.endsWith("@tel.hesabimmuhasebe.com") && <PasswordCard session={session} onExpired={onExpired} />}
     </>
   );
 }

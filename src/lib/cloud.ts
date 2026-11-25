@@ -1148,6 +1148,37 @@ export async function leaveOrDeleteBusiness(session: Session, businessId: string
 }
 
 /** Giriş yapan kişinin hesabını ve tüm verisini siler */
+/** Oturumdaki hesabın kendi numarası var mı (silme gibi işlemler için şifre yerine WhatsApp kodu) */
+export async function ownerInfo(session: Session): Promise<{ hasPhone: boolean; masked?: string } | "expired"> {
+  const s = await fresh(session);
+  if (!s) return "expired";
+  const res = await call("/functions/v1/phone-verify", { method: "POST", token: s.accessToken, body: JSON.stringify({ action: "owner-info" }) });
+  if (res.status === 401) return "expired";
+  if (!res.ok) throw new CloudError("unknown", String(res.status));
+  return (await res.json()) as { hasPhone: boolean; masked?: string };
+}
+
+/** Hesabın kendi numarasına WhatsApp kodu gönderir */
+export async function ownerSendCode(session: Session): Promise<true | "expired" | { error: string; seconds?: number }> {
+  const s = await fresh(session);
+  if (!s) return "expired";
+  const res = await call("/functions/v1/phone-verify", { method: "POST", token: s.accessToken, body: JSON.stringify({ action: "owner-send" }) });
+  if (res.status === 401) return "expired";
+  if (res.ok) return true;
+  const body = (await res.json().catch(() => ({}))) as { error?: string; seconds?: number };
+  return { error: body.error ?? "unknown", seconds: body.seconds };
+}
+
+/** Girilen kodu hesabın kendi numarasına göre doğrular */
+export async function ownerCheckCode(session: Session, code: string): Promise<true | "invalid" | "expired"> {
+  const s = await fresh(session);
+  if (!s) return "expired";
+  const res = await call("/functions/v1/phone-verify", { method: "POST", token: s.accessToken, body: JSON.stringify({ action: "owner-check", code }) });
+  if (res.status === 401) return "expired";
+  if (res.ok) return true;
+  return "invalid";
+}
+
 export async function deleteMyAccount(session: Session): Promise<true | "expired"> {
   const s = await fresh(session);
   if (!s) return "expired";

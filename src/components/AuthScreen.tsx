@@ -835,35 +835,9 @@ export default function AuthScreen({
       break;
     case "forgot":
       title = t("Şifremi unuttum");
-      lead =
-        forgotMethod === "email"
-          ? t("Hesabınızın e-posta adresini yazın; size 6 haneli bir kod göndereceğiz.")
-          : t("Numaranıza WhatsApp ile 6 haneli bir kod göndereceğiz.");
+      lead = t("Hesabınızın e-posta adresini yazın; size 6 haneli bir kod göndereceğiz.");
       body = (
         <>
-          <div className="sort-options auth-method" role="radiogroup" aria-label={t("Giriş yöntemi")}>
-            {(
-              [
-                ["email", t("E-posta ile")],
-                ["phone", t("Telefon ile")],
-              ] as const
-            ).map(([value, label]) => (
-              <button
-                key={value}
-                type="button"
-                role="radio"
-                aria-checked={forgotMethod === value}
-                className={`sort-btn ${forgotMethod === value ? "is-active" : ""}`}
-                onClick={() => {
-                  setForgotMethod(value);
-                  setError(null);
-                  setInfo(null);
-                }}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
           {forgotMethod === "email" ? (
             emailField("auth-email-reset")
           ) : (
