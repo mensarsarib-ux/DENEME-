@@ -69,6 +69,10 @@ async function waVerifiedPhone(token: string): Promise<string | null> {
   const m = /^wa:(\+\d{8,15}):(\d{6})$/.exec(token);
   if (!m) return null;
   const [, phone, code] = m;
+  // Apple/Google inceleme numarası (gizli değerler): kod WhatsApp'a gitmez, sabit kodla girilir. Yalnızca iki değer de tanımlıysa.
+  const testPhone = (Deno.env.get("WA_TEST_PHONE") ?? "").trim();
+  const testCode = (Deno.env.get("WA_TEST_CODE") ?? "").trim();
+  if (testPhone && testCode && phone === testPhone && code === testCode) return phone;
   const now = Math.floor(Date.now() / WA_WINDOW_MS);
   for (const win of [now, now - 1]) {
     if ((await waCodeFor(phone, win)) === code) return phone;
@@ -80,6 +84,8 @@ async function waVerifiedPhone(token: string): Promise<string | null> {
 async function waSend(admin: ReturnType<typeof createClient>, raw: string, req: Request): Promise<Response> {
   const phone = raw.replace(/[^\d+]/g, "");
   if (!/^\+\d{8,15}$/.test(phone)) return json({ error: "invalid_phone" }, 400);
+  // İnceleme numarasına mesaj gönderilmez (kod sabittir)
+  if (phone === (Deno.env.get("WA_TEST_PHONE") ?? "").trim()) return json({ ok: true });
   const hourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
   const { data: rows, error } = await admin
     .from("phone_login_attempts")
