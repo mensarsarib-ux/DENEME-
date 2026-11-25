@@ -60,7 +60,6 @@ import { GUIDE_KEY, startGuide } from "./components/Guide";
 import InviteCard from "./components/InviteCard";
 import { cloudEnabled, heartbeat, loadSession, readRecoveryToken, signOut, syncAccountLanguage, type Session } from "./lib/cloud";
 import { useCloudSync } from "./lib/useCloudSync";
-import WelcomePlans from "./components/WelcomePlans";
 import { clearStored, usePersistedState } from "./lib/storage";
 
 
@@ -1040,7 +1039,14 @@ export default function App() {
 
   return (
     <>
-    {welcome && <WelcomePlans onDone={() => setWelcome(false)} />}
+    {welcome && (
+      <div className="welcome-wrap">
+        <PlansPage onBack={() => setWelcome(false)} onPrivacy={() => undefined} onTerms={() => undefined} />
+        <div className="welcome-bar">
+          <button type="button" className="welcome-free" onClick={() => setWelcome(false)}>{t("Ücretsiz olarak devam et")}</button>
+        </div>
+      </div>
+    )}
     {/* Numaraya gelen ekip daveti (Menü açıkken gösterilmez) */}
     {session && !drawerOpen && <InviteCard session={session} />}
     <Dashboard
