@@ -28,6 +28,7 @@ import { legalBase } from "../lib/platform";
 import { confirmSmsCode, hasPendingCode, resendWait, sendSmsCode, smsErrorText } from "../lib/phoneVerify";
 import { Svg } from "./Icon";
 import PhoneField from "./PhoneField";
+import { DEVICE_LIMIT_NOTICE_KEY } from "../lib/cloud";
 
 /**
  * Hesap ekranları. Tanıtımdan sonra telefon numarası ve SMS kodu: numara kayıtlıysa hesaba girilir, değilse işletme
@@ -95,6 +96,17 @@ const legalUrl = (page: "terms" | "privacy") =>
     ? `${legalBase()}/${page === "terms" ? "kullanim-kosullari" : "gizlilik"}.html`
     : `${legalBase()}/en/${page}.html`;
 
+/** Cihaz sınırı nedeniyle çıkış yapıldıysa uyarı bir kez gösterilir */
+function takeDeviceNotice(): string | null {
+  try {
+    const msg = localStorage.getItem(DEVICE_LIMIT_NOTICE_KEY);
+    if (msg) localStorage.removeItem(DEVICE_LIMIT_NOTICE_KEY);
+    return msg;
+  } catch {
+    return null;
+  }
+}
+
 export default function AuthScreen({
   recoveryToken,
   onSession,
@@ -141,7 +153,7 @@ export default function AuthScreen({
   // Numaraya gelmiş ekip davetleri
   const [invites, setInvites] = useState<TeamInvite[]>([]);
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(() => takeDeviceNotice());
   const [info, setInfo] = useState<string | null>(null);
   // Kodun gönderildiği e-posta; davet ve telefon eklemede açılmış oturum (adımlar bitince kaydedilir)
   const [pendingEmail, setPendingEmail] = useState<string | null>(null);

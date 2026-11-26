@@ -58,7 +58,7 @@ import AuthScreen from "./components/AuthScreen";
 import IntroSlides, { introDone } from "./components/IntroSlides";
 import { GUIDE_KEY, startGuide } from "./components/Guide";
 import InviteCard from "./components/InviteCard";
-import { cloudEnabled, heartbeat, loadSession, readRecoveryToken, signOut, syncAccountLanguage, type Session } from "./lib/cloud";
+import { cloudEnabled, DEVICE_LIMIT_NOTICE_KEY, heartbeat, loadSession, readRecoveryToken, signOut, syncAccountLanguage, type Session } from "./lib/cloud";
 import { useCloudSync } from "./lib/useCloudSync";
 import { clearStored, usePersistedState } from "./lib/storage";
 
@@ -215,7 +215,20 @@ export default function App() {
     if (!session) return;
     const beat = () => {
       if (document.visibilityState !== "visible") return;
-      heartbeat(session).then((r) => r === "expired" && setSession(null)).catch(() => undefined);
+      heartbeat(session)
+        .then((r) => {
+          if (r !== "expired") return;
+          try {
+            localStorage.setItem(
+              DEVICE_LIMIT_NOTICE_KEY,
+              t("Bu cihazda çıkış yapıldı: hesabınız paketinizin cihaz sınırına göre başka bir cihazda açıldı (Ücretsiz 1, Pro 3, Pro Plus 5 cihaz). Yeniden giriş yapabilirsiniz."),
+            );
+          } catch {
+            /* uyarı yazılamasa da çıkış yapılır */
+          }
+          setSession(null);
+        })
+        .catch(() => undefined);
     };
     beat();
     const timer = window.setInterval(beat, 60_000);

@@ -746,24 +746,42 @@ export async function removeDevice(session: Session, deviceId: string): Promise<
   return res.ok;
 }
 
-/** Bu cihazın açık olduğunu sunucuya bildirir */
+/** Erişim belirtecinin oturum kimliği (session_id); cihaz sınırı bu oturuma göre uygulanır */
+function sessionIdOf(accessToken: string): string | null {
+  try {
+    const part = accessToken.split(".")[1] ?? "";
+    const json = atob(part.replace(/-/g, "+").replace(/_/g, "/").padEnd(Math.ceil(part.length / 4) * 4, "="));
+    const sid = (JSON.parse(json) as { session_id?: unknown }).session_id;
+    return typeof sid === "string" ? sid : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Bu cihazın açık olduğunu sunucuya bildirir. Paket cihaz sınırını aşarsa en eski cihazlar çıkarılır;
+ * bu cihaz da çıkarıldıysa "expired" döner ve uygulama çıkış yapar.
+ */
 export async function heartbeat(session: Session): Promise<void | "expired"> {
   const s = await fresh(session);
   if (!s) return "expired";
-  const res = await call("/rest/v1/user_devices?on_conflict=user_id,device_id", {
+  const res = await call("/rest/v1/rpc/register_device", {
     method: "POST",
     token: s.accessToken,
-    headers: { Prefer: "resolution=merge-duplicates" },
     body: JSON.stringify({
-      user_id: s.userId,
-      device_id: currentDeviceId(),
-      label: deviceLabel(),
-      last_seen: new Date().toISOString(),
+      p_device_id: currentDeviceId(),
+      p_label: deviceLabel(),
+      p_session_id: sessionIdOf(s.accessToken),
     }),
   });
   if (res.status === 401) return "expired";
   if (!res.ok) throw new CloudError("unknown", String(res.status));
+  const result = (await res.json().catch(() => null)) as string | null;
+  if (result === "kicked") return "expired";
 }
+
+/** Cihaz sınırı nedeniyle çıkış yapıldığında giriş ekranında gösterilecek uyarı */
+export const DEVICE_LIMIT_NOTICE_KEY = "hesabim:notice";
 
 /** Hesabın tüm cihazları, en son görülen önce */
 export async function listDevices(session: Session): Promise<DeviceInfo[] | "expired"> {
