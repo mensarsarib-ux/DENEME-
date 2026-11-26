@@ -74,8 +74,8 @@ export default function PhonePrompt({
   }
 
   return (
-    <div className="action-backdrop is-high" onClick={onLater}>
-      <div className="action-sheet" onClick={(e) => e.stopPropagation()}>
+    <div className="action-backdrop phone-prompt-backdrop" onClick={onLater}>
+      <div className="action-sheet is-centered phone-prompt-sheet" onClick={(e) => e.stopPropagation()}>
         <div className="sheet-handle" aria-hidden="true" />
         <h2 className="sheet-title">{t("Telefon numaranızı doğrulayın")}</h2>
         <p className="sheet-note">

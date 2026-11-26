@@ -4867,3 +4867,7 @@ a.action-btn:visited {
 .ob-top-links { display: flex; gap: 8px; width: 100%; margin-bottom: 10px; }
 .ob-top-links .ob-signin-btn { flex: 1; min-height: 36px; padding: 0 12px; font-size: 14px; border-radius: 999px; background: var(--green); box-shadow: 0 4px 12px rgba(63, 191, 130, 0.3); }
 .ob-top-links .ob-signin-btn.ob-join-btn { background: #000; color: #fff; border: 1px solid rgba(255, 255, 255, 0.22); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4); }
+
+/* Telefon doğrulama penceresi: ekranın ortasında, yuvarlatılmış kart */
+.phone-prompt-backdrop { align-items: center; padding: 16px; }
+.phone-prompt-sheet { border-radius: 20px; max-width: 380px; margin: 0 auto; }
