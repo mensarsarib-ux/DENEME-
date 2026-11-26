@@ -975,21 +975,7 @@ export default function AuthScreen({
     <div className="ob-page" style={{ paddingBottom: keyboard }}>
       <form ref={formRef} className={`ob-sheet ${done ? "is-done" : ""}`} onSubmit={submit} noValidate>
           {screen === "biz-first" && (
-              <div className="ob-top-links">
-                <button
-                  type="button"
-                  className="ob-signin-btn"
-                  onClick={() => {
-                    try {
-                      sessionStorage.removeItem(JOIN_AFTER_LOGIN_KEY);
-                    } catch {
-                      /* yoksayılır */
-                    }
-                    go("signin-phone");
-                  }}
-                >
-                  {t("Giriş yap")}
-                </button>
+            <div className="ob-top-links">
                 <button
                   type="button"
                   className="ob-signin-btn ob-join-btn"
@@ -1004,8 +990,22 @@ export default function AuthScreen({
                 >
                   {t("Ekibe katıl")}
                 </button>
-              </div>
-            )}
+                <button
+                  type="button"
+                  className="ob-signin-btn"
+                  onClick={() => {
+                    try {
+                      sessionStorage.removeItem(JOIN_AFTER_LOGIN_KEY);
+                    } catch {
+                      /* yoksayılır */
+                    }
+                    go("signin-phone");
+                  }}
+                >
+                  {t("Giriş yap")}
+                </button>
+            </div>
+          )}
         <div className="ob-top">
           {back ? (
             <button type="button" className="round-btn" aria-label={t("Geri")} onClick={() => go(back)}>
