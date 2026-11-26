@@ -628,19 +628,7 @@ export default function App() {
             return;
           }
           setDataOwner(next.userId);
-          if (trial) {
-            // Denemeden gelindi: telefondaki kayıtlar korunur. Yeni hesapta sunucuda veri olmadığı için ilk
-            // eşitlemede hesaba yazılır; kayıtlı numarada hesabın kendi kayıtları açılır. Rehber zaten bitti.
-            writeFlag(TRIAL_KEY, null);
-            setTrial(false);
-          } else {
-            if (info?.isNew) emptyWorkspace(info.businessName);
-            // Kendi işletmesini açan yeni hesapta ilk müşteri rehberi başlar (davetle katılan üyede başlamaz)
-            if (info?.isNew && info.businessName) startGuide();
-          }
-          if (info?.isNew) setWelcome("wait");
-          setSession(next);
-          // "Ekibe katıl"dan girildiyse ekibe katılma sayfası açılır
+          // "Ekibe katıl"dan girildiyse ekibe katılma sayfası açılır; kendi işletme ve karşılama akışı başlamaz
           let joinNext = false;
           try {
             joinNext = sessionStorage.getItem(JOIN_AFTER_LOGIN_KEY) === "1";
@@ -648,6 +636,21 @@ export default function App() {
           } catch {
             /* yoksayılır */
           }
+          if (joinNext) {
+            writeFlag(TRIAL_KEY, null);
+            setTrial(false);
+          } else if (trial) {
+            // Denemeden gelindi: telefondaki kayıtlar korunur. Yeni hesapta sunucuda veri olmadığı için ilk
+            // eşitlemede hesaba yazılır; kayıtlı numarada hesabın kendi kayıtları açılır. Rehber zaten bitti.
+            writeFlag(TRIAL_KEY, null);
+            setTrial(false);
+          } else {
+            if (info?.isNew && !joinNext) emptyWorkspace(info.businessName);
+            // Kendi işletmesini açan yeni hesapta ilk müşteri rehberi başlar (davetle katılan üyede başlamaz)
+            if (info?.isNew && !joinNext && info.businessName) startGuide();
+          }
+          if (info?.isNew && !joinNext) setWelcome("wait");
+          setSession(next);
           setView(joinNext ? { name: "menu", page: "join" } : { name: "home" });
         }}
       />

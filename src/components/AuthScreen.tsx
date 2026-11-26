@@ -765,9 +765,10 @@ export default function AuthScreen({
 
   switch (screen) {
     case "login":
-      title = mode === "verify" ? t("Kayıtlarınızı kaybetmeyin") : t("Hesabınızı oluşturun");
-      lead =
-        mode === "verify"
+      title = joining ? t("Ekibe katılın") : mode === "verify" ? t("Kayıtlarınızı kaybetmeyin") : t("Hesabınızı oluşturun");
+      lead = joining
+        ? t("Önce telefon numaranızı doğrulayın; WhatsApp ile 6 haneli bir kod göndereceğiz. Ardından ekibe katılacağınız işletmenin yetkilisini gireceksiniz.")
+        : mode === "verify"
           ? t("Hesabınızı telefon numaranızla açalım; kayıtlarınız güvenle saklansın ve her cihazda açılsın. WhatsApp ile 6 haneli bir kod göndereceğiz.")
           : t("Telefon numaranıza WhatsApp ile 6 haneli bir kod göndereceğiz.");
       body = (
@@ -971,6 +972,38 @@ export default function AuthScreen({
   return (
     <div className="ob-page" style={{ paddingBottom: keyboard }}>
       <form ref={formRef} className={`ob-sheet ${done ? "is-done" : ""}`} onSubmit={submit} noValidate>
+          {screen === "biz-first" && (
+              <div className="ob-top-links">
+                <button
+                  type="button"
+                  className="ob-signin-btn"
+                  onClick={() => {
+                    try {
+                      sessionStorage.removeItem(JOIN_AFTER_LOGIN_KEY);
+                    } catch {
+                      /* yoksayılır */
+                    }
+                    go("signin-phone");
+                  }}
+                >
+                  {t("Giriş yap")}
+                </button>
+                <button
+                  type="button"
+                  className="ob-signin-btn ob-join-btn"
+                  onClick={() => {
+                    try {
+                      sessionStorage.setItem(JOIN_AFTER_LOGIN_KEY, "1");
+                    } catch {
+                      /* bayrak yazılamasa da giriş ekranı açılır */
+                    }
+                    go("login");
+                  }}
+                >
+                  {t("Ekibe katıl")}
+                </button>
+              </div>
+            )}
         <div className="ob-top">
           {back ? (
             <button type="button" className="round-btn" aria-label={t("Geri")} onClick={() => go(back)}>
@@ -988,38 +1021,6 @@ export default function AuthScreen({
                 {step}/{flow.length}
               </span>
             </>
-          )}
-          {screen === "biz-first" && (
-            <div className="ob-top-links">
-              <button
-                type="button"
-                className="ob-signin-btn"
-                onClick={() => {
-                  try {
-                    sessionStorage.removeItem(JOIN_AFTER_LOGIN_KEY);
-                  } catch {
-                    /* yoksayılır */
-                  }
-                  go("signin-phone");
-                }}
-              >
-                {t("Giriş yap")}
-              </button>
-              <button
-                type="button"
-                className="ob-signin-btn ob-join-btn"
-                onClick={() => {
-                  try {
-                    sessionStorage.setItem(JOIN_AFTER_LOGIN_KEY, "1");
-                  } catch {
-                    /* bayrak yazılamasa da giriş ekranı açılır */
-                  }
-                  go("signin-phone");
-                }}
-              >
-                {t("Ekibe katıl")}
-              </button>
-            </div>
           )}
         </div>
         {/* Geri düğmesi üstte sabit; içerik altında ortalanır (klavye açılınca kesilmez, kaydırılır) */}

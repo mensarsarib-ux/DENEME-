@@ -4864,5 +4864,6 @@ a.action-btn:visited {
 .welcome-free { width: 100%; min-height: 50px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.35); background: transparent; color: #fff; font-size: 16px; font-weight: 600; }
 
 /* Üst sağda: Giriş yap ve Ekibe katıl düğmeleri üst üste */
-.ob-top-links { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+.ob-top-links { display: flex; gap: 10px; width: 100%; margin-bottom: 10px; }
+.ob-top-links .ob-signin-btn { flex: 1; min-height: 52px; font-size: 17px; border-radius: 14px; box-shadow: none; background: var(--green); }
 .ob-join-btn { background: rgba(255, 255, 255, 0.14); box-shadow: none; border: 1px solid rgba(255, 255, 255, 0.35); }

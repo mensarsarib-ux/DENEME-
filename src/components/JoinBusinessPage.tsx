@@ -63,10 +63,10 @@ export default function JoinBusinessPage({ onBack }: { onBack: () => void }) {
 
   return (
     <div className="cust-page">
-      <PageHeader title={t("Var olan işletmeye katıl")} subtitle={t("Yetkilinin e-postasını girin")} icon={SUPPORT_ICON} onBack={onBack} />
+      <PageHeader title={t("Var olan işletmeye katıl")} subtitle={t("Yetkilinin e-posta adresini ya da telefonunu girin")} icon={SUPPORT_ICON} onBack={onBack} />
       <form className="form" onSubmit={search} noValidate>
         <div className="field">
-          <label htmlFor="jb-email">{t("Yetkilinin e-postası veya telefonu")}</label>
+          <label htmlFor="jb-email">{t("Yetkilinin e-posta adresi veya telefonu")}</label>
           <input
             id="jb-email"
             type="text"
