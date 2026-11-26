@@ -10,7 +10,8 @@ import ReportsPage from "./components/ReportsPage";
 import NotesPage from "./components/NotesPage";
 import ContactsPage from "./components/ContactsPage";
 import BusinessRequestsPage from "./components/BusinessRequestsPage";
-import { ensureOwnerBusiness, listChangeNotices, listPendingRequests, myBusinesses, myMembership, myRequestStatus, type Membership, type MyBusiness } from "./lib/cloud";
+import { ensureOwnerBusiness, listChangeNotices, listPendingRequests, myBusinesses, myMembership, myRequestStatus, ownerInfo, type Membership, type MyBusiness } from "./lib/cloud";
+import PhonePrompt, { markPhonePromptDismissed, phonePromptDismissedToday } from "./components/PhonePrompt";
 import WaitingScreen from "./components/WaitingScreen";
 import SettingsPage from "./components/SettingsPage";
 import SupportPage from "./components/SupportPage";
@@ -210,6 +211,20 @@ export default function App() {
     readIds,
     settings: syncSettings(settings),
   };
+  // Telefon numarası doğrulanmamış hesaplara doğrulama ekranı; "Şimdilik vazgeç" bugün için kapatır (günde bir kez)
+  const [phonePrompt, setPhonePrompt] = useState(false);
+  useEffect(() => {
+    if (!session || !cloudEnabled || welcome !== "off" || phonePromptDismissedToday()) return;
+    let alive = true;
+    ownerInfo(session)
+      .then((r) => {
+        if (alive && r !== "expired" && !r.hasPhone) setPhonePrompt(true);
+      })
+      .catch(() => undefined);
+    return () => {
+      alive = false;
+    };
+  }, [session, welcome]);
   // Açık cihazı sunucuya bildirir: açılışta, sonra dakikada bir ve uygulama öne gelince
   useEffect(() => {
     if (!session) return;
@@ -1078,6 +1093,16 @@ export default function App() {
           <button type="button" className="welcome-free" onClick={() => setWelcome("off")}>{t("Ücretsiz olarak devam et")}</button>
         </div>
       </div>
+    )}
+    {phonePrompt && session && (
+      <PhonePrompt
+        session={session}
+        onDone={() => setPhonePrompt(false)}
+        onLater={() => {
+          markPhonePromptDismissed();
+          setPhonePrompt(false);
+        }}
+      />
     )}
     {/* Numaraya gelen ekip daveti (Menü açıkken gösterilmez) */}
     {session && !drawerOpen && <InviteCard session={session} />}
