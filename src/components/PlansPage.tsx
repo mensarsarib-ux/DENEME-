@@ -133,10 +133,13 @@ export default function PlansPage({
   onBack,
   onPrivacy,
   onTerms,
+  reason,
 }: {
   onBack: () => void;
   onPrivacy: () => void;
   onTerms: () => void;
+  /** Sınır uyarısından gelindiyse hangi sınırın dolduğunu anlatan metin */
+  reason?: string | null;
 }) {
   // App Store'dan gelen fiyatlar (yalnızca yerel uygulamada); satın alma sürüyorsa düğmeler kilitlenir
   const [storePrices, setStorePrices] = useState<Record<string, string>>({});
@@ -225,6 +228,11 @@ export default function PlansPage({
   return (
     <div className="cust-page">
       <PageHeader title={t("İşletme paketleri")} subtitle={t("{p} paketini kullanıyorsunuz", { p: t(PLAN_NAME[shownPlan]) })} icon={SUPPORT_ICON} onBack={onBack} />
+      {reason && (
+        <p className="paywall-reason" role="status">
+          {reason}
+        </p>
+      )}
       <div className="paywall">
         <div className="paywall-hero">
           <Hero />

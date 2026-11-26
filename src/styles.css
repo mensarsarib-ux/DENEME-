@@ -4871,3 +4871,6 @@ a.action-btn:visited {
 /* Telefon doğrulama penceresi: ekranın ortasında, yuvarlatılmış kart */
 .phone-prompt-backdrop { align-items: center; padding: 16px; }
 .phone-prompt-sheet { border-radius: 20px; max-width: 380px; margin: 0 auto; }
+
+/* Paketler sayfasının üstünde, hangi sınırın dolduğunu anlatan satır */
+.paywall-reason { margin: 8px 16px 0; padding: 12px 14px; border-radius: 14px; background: rgba(63, 191, 130, 0.14); border: 1px solid rgba(63, 191, 130, 0.45); color: var(--ink, #eaf2f7); font-size: 14.5px; font-weight: 600; line-height: 1.45; }

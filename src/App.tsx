@@ -26,7 +26,7 @@ import TeamMemberPage from "./components/TeamMemberPage";
 import type { TeamPerson } from "./lib/cloud";
 import { renameBusiness } from "./lib/cloud";
 import { migrateLocalWorkspaces } from "./lib/migrate";
-import { canAddItem, canAddTab, onPlanChange, type Plan } from "./lib/plan";
+import { LIMITS, canAddItem, canAddTab, onPlanChange, type Plan } from "./lib/plan";
 import { syncPlanFromServer } from "./lib/entitlement";
 import { businessPlan, deleteMyAccount, pull, refreshOwnerPlan } from "./lib/cloud";
 import { businessList, listWorkspaces } from "./lib/storage";
@@ -66,6 +66,8 @@ import { clearStored, usePersistedState } from "./lib/storage";
 
 
 /** Açık olan ekran. Tüm sekmeler (müşteriler, tedarikçiler, özel sekmeler) ana ekranda açılır. */
+type LimitKind = "businesses" | "tabs" | "items" | "team";
+
 type View =
   | { name: "home" }
   | { name: "kasa"; account?: AccountId; back?: View }
@@ -211,6 +213,9 @@ export default function App() {
     readIds,
     settings: syncSettings(settings),
   };
+  // Paket sınırı uyarısı: hangi sınırın dolduğu ve paketler sayfasında gösterilecek neden
+  const [limitNotice, setLimitNotice] = useState<LimitKind | null>(null);
+  const [planReason, setPlanReason] = useState<LimitKind | null>(null);
   // Telefon numarası doğrulanmamış hesaplara doğrulama ekranı; "Şimdilik vazgeç" bugün için kapatır (günde bir kez)
   const [phonePrompt, setPhonePrompt] = useState(false);
   useEffect(() => {
@@ -814,18 +819,34 @@ export default function App() {
    * Paket sınırı dolunca: sahip paketler sayfasına gider. Ekip üyesi paket alsa da işe yaramaz
    * (sınır yetkilinin paketine bağlı), bu yüzden üyeye durum anlatılır.
    */
-  function limitReached() {
+  function limitReached(kind: LimitKind = "items") {
     if (memberBusinessId) {
       window.alert(t("Bu işletmenin paket sınırına ulaşıldı. Daha fazlası için işletme yetkilisinin paketini yükseltmesi gerekir."));
       return;
     }
-    go({ name: "menu", page: "plans" });
+    setLimitNotice(kind);
+  }
+
+  /** Hangi sınıra ulaşıldığını anlatan metin (uyarı penceresi ve paketler sayfasının üstünde aynı metin) */
+  function limitText(kind: LimitKind): string {
+    const p = LIMITS[limitPlan ?? "free"];
+    const n = (v: number) => (v === Infinity ? "∞" : String(v));
+    switch (kind) {
+      case "businesses":
+        return t("{n} işletme hakkınızı doldurdunuz. Daha fazla işletme için lütfen üst pakete geçin.", { n: n(p.businesses) });
+      case "tabs":
+        return t("{n} sekme hakkınızı doldurdunuz. Daha fazla sekme için lütfen üst pakete geçin.", { n: n(p.tabs) });
+      case "items":
+        return t("Sekme başına {n} kayıt hakkınızı doldurdunuz. Daha fazla kayıt için lütfen üst pakete geçin.", { n: n(p.itemsPerTab) });
+      case "team":
+        return t("Ekip kurmak için üst pakete geçin.");
+    }
   }
 
   /** Yeni sekme oluştur ve listesini göster */
   function createTab(name: string) {
     if (!canAddTab(groups.length, limitPlan)) {
-      limitReached();
+      limitReached("tabs");
       return;
     }
     const group: Group = { id: `g${Date.now()}`, name };
@@ -1020,7 +1041,17 @@ export default function App() {
       case "terms":
         return <TermsPage onBack={toHome} />;
       case "plans":
-        return <PlansPage onBack={toHome} onPrivacy={() => go({ name: "menu", page: "privacy" })} onTerms={() => go({ name: "menu", page: "terms" })} />;
+        return (
+          <PlansPage
+            onBack={() => {
+              setPlanReason(null);
+              toHome();
+            }}
+            reason={planReason ? limitText(planReason) : null}
+            onPrivacy={() => go({ name: "menu", page: "privacy" })}
+            onTerms={() => go({ name: "menu", page: "terms" })}
+          />
+        );
       case "newbusiness":
         return <NewBusinessPage onBack={toHome} onJoin={() => go({ name: "menu", page: "join" })} />;
       case "team":
@@ -1040,7 +1071,7 @@ export default function App() {
             businessId={effMembership?.role === "owner" ? effMembership.businessId : null}
             isMember={!!memberBusinessId}
             onOpen={setTeamPerson}
-            onPlans={() => go({ name: "menu", page: "plans" })}
+            onPlans={() => limitReached("team")}
             onBack={toHome}
           />
         ) : null;
@@ -1094,6 +1125,28 @@ export default function App() {
         </div>
       </div>
     )}
+    {limitNotice && (
+      <div className="action-backdrop phone-prompt-backdrop" onClick={() => setLimitNotice(null)}>
+        <div className="action-sheet is-centered phone-prompt-sheet" onClick={(e) => e.stopPropagation()}>
+          <h2 className="sheet-title">{t("Paket sınırına ulaştınız")}</h2>
+          <p className="sheet-note">{limitText(limitNotice)}</p>
+          <button
+            type="button"
+            className="action-btn"
+            onClick={() => {
+              setPlanReason(limitNotice);
+              setLimitNotice(null);
+              go({ name: "menu", page: "plans" });
+            }}
+          >
+            {t("İleri")}
+          </button>
+          <button type="button" className="help-link" onClick={() => setLimitNotice(null)}>
+            {t("Vazgeç")}
+          </button>
+        </div>
+      </div>
+    )}
     {phonePrompt && session && (
       <PhonePrompt
         session={session}
@@ -1113,7 +1166,7 @@ export default function App() {
       listSort={settings.listSort}
       onOpenKasa={() => go({ name: "kasa" })}
       onOpenPlans={() => go({ name: "menu", page: "newbusiness" })}
-      onPlans={() => go({ name: "menu", page: "plans" })}
+      onPlans={() => limitReached("businesses")}
       serverBusinesses={serverBusinesses}
       canCreateBusiness={canCreateBusiness}
       parties={parties}
@@ -1147,6 +1200,11 @@ export default function App() {
         canCreateBusiness={canCreateBusiness}
         onNavigate={(page) => {
           setDrawerOpen(false);
+          // Menüden işletme eklenirken sınır dolmuşsa uyarı penceresi açılır
+          if ((page as string) === "limit:businesses") {
+            setLimitNotice("businesses");
+            return;
+          }
           go({ name: "menu", page });
         }}
         onClose={() => setDrawerOpen(false)}

@@ -68,7 +68,7 @@ export default function MenuDrawer({
   /** Sınır doluysa işletme ekleme yerine paketler açılır */
   function addBusiness() {
     haptic("light");
-    onNavigate(canAddBusiness(businesses.length) ? "newbusiness" : "plans");
+    onNavigate((canAddBusiness(businesses.length) ? "newbusiness" : "limit:businesses") as MenuPage);
   }
 
   function open(page: MenuPage) {
