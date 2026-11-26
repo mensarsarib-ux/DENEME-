@@ -1,0 +1,4 @@
+-- Hesabım: sınır doluyken ikinci cihaz girişi reddedilir (eski cihaz açık kalır).
+-- device-limit-guard.sql'den sonra Supabase SQL Editor'de bir kez çalıştırın. Tekrar çalıştırmak zararsızdır.
+-- Aktif cihaz: son 3 dakika içinde kalp atışı gönderen ve oturumu açık olan cihaz.
+-- (Migration içeriği: device_limit_reject_second_login; yukarıdaki fonksiyonlar)

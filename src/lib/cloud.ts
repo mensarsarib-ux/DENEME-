@@ -759,10 +759,9 @@ function sessionIdOf(accessToken: string): string | null {
 }
 
 /**
- * Bu cihazın açık olduğunu sunucuya bildirir. Paket cihaz sınırını aşarsa en eski cihazlar çıkarılır;
- * bu cihaz da çıkarıldıysa "expired" döner ve uygulama çıkış yapar.
+ * Bu cihazın açık olduğunu sunucuya bildirir. Paketin cihaz sınırı doluysa bu cihaz reddedilir ve "limit" döner.
  */
-export async function heartbeat(session: Session): Promise<void | "expired"> {
+export async function heartbeat(session: Session): Promise<void | "expired" | "limit"> {
   const s = await fresh(session);
   if (!s) return "expired";
   const res = await call("/rest/v1/rpc/register_device", {
@@ -778,6 +777,7 @@ export async function heartbeat(session: Session): Promise<void | "expired"> {
   if (!res.ok) throw new CloudError("unknown", String(res.status));
   const result = (await res.json().catch(() => null)) as string | null;
   if (result === "kicked") return "expired";
+  if (result === "limit") return "limit";
 }
 
 /** Cihaz sınırı nedeniyle çıkış yapıldığında giriş ekranında gösterilecek uyarı */

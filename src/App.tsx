@@ -217,11 +217,13 @@ export default function App() {
       if (document.visibilityState !== "visible") return;
       heartbeat(session)
         .then((r) => {
-          if (r !== "expired") return;
+          if (!r) return;
           try {
             localStorage.setItem(
               DEVICE_LIMIT_NOTICE_KEY,
-              t("Bu cihazda çıkış yapıldı: hesabınız paketinizin cihaz sınırına göre başka bir cihazda açıldı (Ücretsiz 1, Pro 3, Pro Plus 5 cihaz). Yeniden giriş yapabilirsiniz."),
+              r === "limit"
+                ? t("Paketinizin cihaz sınırına ulaşıldı: hesabınız şu an başka bir cihazda açık. O cihazdan çıkış yapıp tekrar deneyin.")
+                : t("Bu cihazda çıkış yapıldı: hesabınız paketinizin cihaz sınırına göre başka bir cihazda açıldı. Yeniden giriş yapabilirsiniz."),
             );
           } catch {
             /* uyarı yazılamasa da çıkış yapılır */

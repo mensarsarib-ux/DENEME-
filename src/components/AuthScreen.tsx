@@ -766,7 +766,7 @@ export default function AuthScreen({
             <PhoneField id="auth-phone-login" value={loginPhoneInput} onChange={setLoginPhoneInput} />
           </div>
           <p className="field-hint">
-            {t("Paketinizin cihaz sınırı var: Ücretsiz 1, Pro 3, Pro Plus 5 cihaz (Premium sınırsız). Yeni cihazda giriş yaptığınızda sınırı aşan en eski cihazın oturumu kapanır.")}
+            {t("Paketinizin cihaz sınırı var: Ücretsiz 1, Pro 3, Pro Plus 5 cihaz (Premium sınırsız). Sınır doluyken yeni cihazda giriş yapılamaz; önce diğer cihazdan çıkış yapın.")}
           </p>
           {legal}
         </>
@@ -785,7 +785,7 @@ export default function AuthScreen({
             <PhoneField id="auth-phone-signin" value={loginPhoneInput} onChange={setLoginPhoneInput} />
           </div>
           <p className="field-hint">
-            {t("Paketinizin cihaz sınırı var: Ücretsiz 1, Pro 3, Pro Plus 5 cihaz (Premium sınırsız). Yeni cihazda giriş yaptığınızda sınırı aşan en eski cihazın oturumu kapanır.")}
+            {t("Paketinizin cihaz sınırı var: Ücretsiz 1, Pro 3, Pro Plus 5 cihaz (Premium sınırsız). Sınır doluyken yeni cihazda giriş yapılamaz; önce diğer cihazdan çıkış yapın.")}
           </p>
           {toRegister}
         </>
