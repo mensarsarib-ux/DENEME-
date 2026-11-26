@@ -19,8 +19,8 @@ android {
         applicationId "com.hesabimmuhasebe"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 92
-        versionName "1.6.92"
+        versionCode 93
+        versionName "1.6.93"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
