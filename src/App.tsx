@@ -54,7 +54,7 @@ import { useSwipeBack } from "./lib/useSwipeBack";
 import { setCurrency } from "./lib/format";
 import { getLanguage, locale, setLanguage, t, type Language } from "./lib/i18n";
 import { setDarkHeader } from "./lib/theme";
-import AuthScreen from "./components/AuthScreen";
+import AuthScreen, { JOIN_AFTER_LOGIN_KEY } from "./components/AuthScreen";
 import IntroSlides, { introDone } from "./components/IntroSlides";
 import { GUIDE_KEY, startGuide } from "./components/Guide";
 import InviteCard from "./components/InviteCard";
@@ -640,7 +640,15 @@ export default function App() {
           }
           if (info?.isNew) setWelcome("wait");
           setSession(next);
-          setView({ name: "home" });
+          // "Ekibe katıl"dan girildiyse ekibe katılma sayfası açılır
+          let joinNext = false;
+          try {
+            joinNext = sessionStorage.getItem(JOIN_AFTER_LOGIN_KEY) === "1";
+            sessionStorage.removeItem(JOIN_AFTER_LOGIN_KEY);
+          } catch {
+            /* yoksayılır */
+          }
+          setView(joinNext ? { name: "menu", page: "join" } : { name: "home" });
         }}
       />
     );

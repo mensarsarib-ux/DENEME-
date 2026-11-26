@@ -4862,3 +4862,7 @@ a.action-btn:visited {
 .welcome-wrap { position: fixed; inset: 0; z-index: 900; background: var(--bg, #0c2430); overflow-y: auto; }
 .welcome-bar { position: sticky; bottom: 0; padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); background: rgba(12,36,48,0.96); }
 .welcome-free { width: 100%; min-height: 50px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.35); background: transparent; color: #fff; font-size: 16px; font-weight: 600; }
+
+/* Üst sağda: Giriş yap ve Ekibe katıl düğmeleri üst üste */
+.ob-top-links { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+.ob-join-btn { background: rgba(255, 255, 255, 0.14); box-shadow: none; border: 1px solid rgba(255, 255, 255, 0.35); }

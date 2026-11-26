@@ -107,6 +107,9 @@ function takeDeviceNotice(): string | null {
   }
 }
 
+/** "Ekibe katıl"dan gelen giriş: girişten sonra katılma sayfası açılır (yalnızca bu oturumda) */
+export const JOIN_AFTER_LOGIN_KEY = "hesabim:join-after-login";
+
 export default function AuthScreen({
   recoveryToken,
   onSession,
@@ -133,6 +136,14 @@ export default function AuthScreen({
   onSession: (session: Session, info?: { isNew: boolean; businessName: string }) => void;
   onRecoveryDone: () => void;
 }) {
+  // "Ekibe katıl"dan gelindiyse giriş sonrası katılma sayfası açılır
+  const joining = (() => {
+    try {
+      return sessionStorage.getItem(JOIN_AFTER_LOGIN_KEY) === "1";
+    } catch {
+      return false;
+    }
+  })();
   const [screen, setScreen] = useState<Screen>(
     recoveryToken ? "new-password" : (start ?? (mode === "verify" ? "login" : "biz-first")),
   );
@@ -776,7 +787,9 @@ export default function AuthScreen({
       break;
     case "signin-phone":
       title = t("Giriş yap");
-      lead = t("Kayıtlı telefon numaranıza WhatsApp ile 6 haneli bir kod göndereceğiz.");
+      lead = joining
+        ? t("Ekibe katılmak için giriş yapın")
+        : t("Kayıtlı telefon numaranıza WhatsApp ile 6 haneli bir kod göndereceğiz.");
       body = (
         <>
           {signinTabs}
@@ -977,9 +990,36 @@ export default function AuthScreen({
             </>
           )}
           {screen === "biz-first" && (
-            <button type="button" className="ob-signin-btn" onClick={() => go("signin-phone")}>
-              {t("Giriş yap")}
-            </button>
+            <div className="ob-top-links">
+              <button
+                type="button"
+                className="ob-signin-btn"
+                onClick={() => {
+                  try {
+                    sessionStorage.removeItem(JOIN_AFTER_LOGIN_KEY);
+                  } catch {
+                    /* yoksayılır */
+                  }
+                  go("signin-phone");
+                }}
+              >
+                {t("Giriş yap")}
+              </button>
+              <button
+                type="button"
+                className="ob-signin-btn ob-join-btn"
+                onClick={() => {
+                  try {
+                    sessionStorage.setItem(JOIN_AFTER_LOGIN_KEY, "1");
+                  } catch {
+                    /* bayrak yazılamasa da giriş ekranı açılır */
+                  }
+                  go("signin-phone");
+                }}
+              >
+                {t("Ekibe katıl")}
+              </button>
+            </div>
           )}
         </div>
         {/* Geri düğmesi üstte sabit; içerik altında ortalanır (klavye açılınca kesilmez, kaydırılır) */}
