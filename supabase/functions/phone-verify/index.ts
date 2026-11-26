@@ -49,6 +49,8 @@ async function verifiedPhone(idToken: string): Promise<string | null> {
 /** Numara başına WhatsApp kodu: 10 dakikalık pencerede sabit (HMAC), tabloda tutulmaz */
 const WA_NUMBER_ID = "1481441048382966";
 const WA_WINDOW_MS = 10 * 60 * 1000;
+/** Tüm numaralar toplamı: günde en fazla bu kadar WhatsApp kodu (kötüye kullanımda maliyeti sınırlar; normal kullanım birkaç yüz) */
+const WA_DAILY_LIMIT = 400;
 
 async function waCodeFor(phone: string, win: number): Promise<string> {
   const enc = new TextEncoder();
@@ -86,6 +88,15 @@ async function waSend(admin: ReturnType<typeof createClient>, raw: string, req: 
   if (!/^\+\d{8,15}$/.test(phone)) return json({ error: "invalid_phone" }, 400);
   // İnceleme numarasına mesaj gönderilmez (kod sabittir)
   if (phone === (Deno.env.get("WA_TEST_PHONE") ?? "").trim()) return json({ ok: true });
+  // Günlük toplam üst sınır: farklı numaralara toplu kod gönderilip WhatsApp maliyetinin artmasını engeller
+  const dayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+  const { count: dailyCount, error: dailyError } = await admin
+    .from("phone_login_attempts")
+    .select("at", { count: "exact", head: true })
+    .eq("phone", "wa:global")
+    .gte("at", dayAgo);
+  if (dailyError) return json({ error: "server" }, 500);
+  if ((dailyCount ?? 0) >= WA_DAILY_LIMIT) return json({ error: "daily" }, 429);
   // phone-login ile aynı tablo: WhatsApp kayıtları "wa:" önekiyle ve IP'siz tutulur, böylece şifreli girişin sayaçlarını etkilemez
   const key = `wa:${phone}`;
   const hourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
@@ -107,6 +118,7 @@ async function waSend(admin: ReturnType<typeof createClient>, raw: string, req: 
     ip: null,
     at: new Date().toISOString(),
   });
+  await admin.from("phone_login_attempts").insert({ phone: "wa:global", ip: null, at: new Date().toISOString() });
   const code = await waCodeFor(phone, Math.floor(Date.now() / WA_WINDOW_MS));
   const r = await fetch(`https://graph.facebook.com/v21.0/${WA_NUMBER_ID}/messages`, {
     method: "POST",
