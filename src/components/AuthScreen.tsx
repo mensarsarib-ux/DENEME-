@@ -720,7 +720,9 @@ export default function AuthScreen({
       : screen === "signin-phone" || screen === "login-email"
         ? home
         : screen === "login" && mode === "start"
-          ? undefined
+          ? joining
+            ? "biz-first"
+            : undefined
           : BACK[screen];
 
   // Giriş yap: telefon ve e-posta sekmeleri, altta üye olma bağlantısı
